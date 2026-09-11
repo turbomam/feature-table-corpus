@@ -17,7 +17,7 @@ Four files, in this order, if you have twenty minutes:
    real data.
 4. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
 
-Four findings, each with how it is known:
+Five findings, each with how it is known:
 
 - **Read from the models.** Three of the four may share a lineage. The feature-class description in
   `gff-schema` and in NMDC's schema is identical character for character, and that string appears
@@ -28,9 +28,9 @@ Four findings, each with how it is known:
 - **Measured against the vendored files.** GFF3 phase and GTF frame map directly, across 84
   proteins present in both formats. The three exceptions are circular-genome segmentation, not
   disagreeing semantics.
-- **Read from the schema.** Chado already decomposes GFF3 column 9 into one table per reserved tag,
-  every one of them scalar only, which is the best available answer to how a multivalued attribute
-  survives a flat publishing profile. Its `feature` table also requires an organism per feature,
+- **Read from the schema.** Chado already decomposes GFF3 column 9 across five dedicated tables
+  plus a catch-all, every one of them scalar only, which is the best available answer to how a
+  multivalued attribute survives a flat publishing profile. Its `feature` table also requires an organism per feature,
   which metagenomics cannot supply, so the design is worth borrowing and the implementation is not.
 - **Computed from the schema**, by `scripts/flat_profile_audit.py`, not measured against data and
   not counted by hand. `gff-schema` largely survives a flat scalar-only publishing profile: of its
@@ -44,13 +44,13 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-53 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+55 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
-| linked | 20 | Too large or not redistributable, so a stable public URL is recorded instead |
+| linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
@@ -137,7 +137,7 @@ on access to it.
 
 ## The four models, compared
 
-[docs/model-comparison.md](docs/model-comparison.md) compares Chris Mungall's `gff-schema`, the
+[docs/model-comparison.md](docs/model-comparison.md) compares the `biodatamodels` GFF3 schema, the
 KBase Common Data Model Feature class, NMDC's `GenomeFeature` and the Chado feature tables, decision
 by decision.
 
@@ -167,7 +167,7 @@ GPL-3.0 ruled out.
 
 ## Specifications
 
-Twelve specifications are recorded, two of them vendored and ten linked.
+Thirteen specifications are recorded, two of them vendored and eleven linked.
 
 The vendored two are the ones whose licenses allow it. `specs/chado_1.4_feature_tables.sql` holds
 the seven Chado feature tables extracted from a 2.2 MB schema, under Artistic-2.0. Chado is worth
@@ -178,7 +178,9 @@ flat-table profile requires, reached independently twenty years earlier.
 under MIT. It constrains feature type to Sequence Ontology accessions under `sequence_feature` and
 carries provenance slots for source database and protocol, which the other models do not.
 
-The other ten are linked: the INSDC Feature Table Definition and the DDBJ rendering of it, which
+The other eleven are linked: the JGI IMG pipeline documentation, which specifies the GFF output of
+the pipeline that produced every NMDC file here; the INSDC Feature Table Definition and the DDBJ
+rendering of it, which
 are the ancestor of all of this and still govern what a feature means in a sequence database; the
 Sequence Ontology GFF3 and GVF specifications; GTF 2.2; the GMOD descriptions of GFF2 and GFF3;
 the BED version 1 specification; the UCSC format reference, which is the broadest single list of

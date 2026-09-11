@@ -110,11 +110,18 @@ def class_slot_names(cn, C, seen=None):
     return names
 
 
+RANGE_EXPRESSIONS = ("any_of", "exactly_one_of", "none_of", "all_of", "range_expression")
+
+
 def audit(doc):
     C = doc.get("classes") or {}
     S = doc.get("slots") or {}
     E = set(doc.get("enums") or {})
     T = set(doc.get("types") or {})
+    # A slot with no explicit range takes the schema's default_range, which may
+    # name a class. Treating a missing range as a scalar counted those as
+    # admissible, which is the one thing this tool must not get wrong.
+    default_range = doc.get("default_range")
     rows = []
     for cn, c in C.items():
         for sn in class_slot_names(cn, C):
@@ -127,7 +134,21 @@ def audit(doc):
             for anc in reversed(lineage(cn, C)):
                 defn.update((C[anc].get("attributes") or {}).get(sn) or {})
                 defn.update((C[anc].get("slot_usage") or {}).get(sn) or {})
+            # Refuse rather than guess. A range expression can carry a class
+            # range with no top-level `range` at all, so a plausible wrong
+            # number is the failure mode here.
+            present = [k for k in RANGE_EXPRESSIONS if defn.get(k)]
+            if present:
+                print(f"REFUSING to audit: {cn}.{sn} uses {', '.join(present)}, which this tool",
+                      file=sys.stderr)
+                print("does not resolve. A range expression can carry a class range with no",
+                      file=sys.stderr)
+                print("top-level `range`, so the slot would be miscounted as a scalar.",
+                      file=sys.stderr)
+                sys.exit(3)
             rng = resolve(defn, "range", S)
+            if rng is None:
+                rng = default_range
             mv = bool(resolve(defn, "multivalued", S))
             if rng in C:
                 kind = "class"
@@ -136,7 +157,10 @@ def audit(doc):
             elif rng in T:
                 kind = "type"
             elif rng is None:
-                kind = "unset"
+                # No explicit range and no default_range in the schema. LinkML
+                # falls back to string, so this is a scalar, but say so rather
+                # than leaving a category called "unset" that reads as unknown.
+                kind = "implicit string"
             else:
                 kind = "builtin"
             if not mv and kind != "class":

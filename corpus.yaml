@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 53
+entry_count: 55
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -850,22 +850,49 @@ entries:
   kind: model
   format: LinkML
   source: biodatamodels
-  producer: cmungall
+  producer: biodatamodels (single contributor)
   producer_kind: data model
   origin_url: https://github.com/biodatamodels/gff-schema
   license: no license file in the repository
   why_not_vendored: no license file at all, so the schema cannot be copied here; compared instead in docs/model-comparison.md
   retrieved: '2026-09-11'
-  notes: 'Self-described DRAFT. Last commit 2021-06-03, ten commits all from cmungall, one open issue,
-    number 1, from 2021-02-11. The only one of the four models that models a GFF3 file rather than a feature
-    table: a gff document class holds features and sequence entries side by side. Also the only one modeling
-    the header directives and pragmas as data, and the only one with an explicit seqid slot ranged over
-    a model class. Its feature-class description is identical character for character to NMDC''s GenomeFeature,
-    and that string is not in the GFF3 specification. First of the four artifacts in the 2026-09-08 link
-    list that prompted this corpus.'
+  notes: 'Self-described DRAFT. Last commit 2021-06-03, ten commits all from a single contributor, one
+    open issue, number 1, from 2021-02-11. The only one of the four models that models a GFF3 file rather
+    than a feature table: a gff document class holds features and sequence entries side by side. Also
+    the only one modeling the header directives and pragmas as data, and the only one with an explicit
+    seqid slot ranged over a model class. Its feature-class description is identical character for character
+    to NMDC''s GenomeFeature, and that string is not in the GFF3 specification. First of the four artifacts
+    in the 2026-09-08 link list that prompted this corpus.'
+- id: spec-img-pipeline
+  label: JGI IMG annotation pipeline documentation, version 5
+  tier: linked
+  kind: specification
+  format: prose specification of GFF output
+  source: JGI IMG
+  producer: IMG annotation pipeline
+  producer_kind: specification
+  origin_url: https://img.jgi.doe.gov/docs/pipelineV5/
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Specifies the GFF output of the pipeline that produced all 14 NMDC files vendored here, so it
+    is the normative source for what those files are supposed to contain. Added to the reading list at
+    the 2026-09-11 kickoff. Annotation specifics are behind a click-through from that page.
+- id: tool-bcbb
+  label: Blue Collar Bioinformatics, GFF parser
+  tier: linked
+  kind: tool
+  format: GFF3
+  source: chapmanb
+  producer: Brad Chapman
+  producer_kind: parser
+  origin_url: https://github.com/chapmanb/bcbb
+  license: see repository
+  retrieved: '2026-09-11'
+  notes: Named at the 2026-09-11 kickoff as an existing GFF parsing library. Recorded as an example of
+    what consumers run, not as a recommendation; not evaluated here.
 tier_counts:
   vendored: 20
-  linked: 20
+  linked: 22
   restricted: 3
   not located: 1
   derived: 9

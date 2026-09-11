@@ -212,7 +212,7 @@ They are the real malformed content the README previously listed as a gap.
 - **Score is routed around rather than used.** Correction, 2026-09-11: an earlier version of this
   document said both the NMDC schema and the KBase Common Data Model replaced the column with
   e_value and p_value slots. Only KBase does that, and its own documentation calls them ill-defined
-  score fields. NMDC's `GenomeFeature` omits score entirely, and Chris Mungall's `gff-schema`
+  score fields. NMDC's `GenomeFeature` omits score entirely, and the `biodatamodels` `gff-schema`
   defines the slot and does not attach it to the feature class, though nothing records whether that
   was deliberate. So the four models
   handle the column four different ways and none keeps it as specified. Not independent replication,

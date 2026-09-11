@@ -10,13 +10,20 @@ underneath them. Claims are *measured* with a date, *read* from a source, or mar
 | | |
 |---|---|
 | Last push | 2024-06-24 |
-| Releases | none, ever |
-| Open issues | 59 |
+| GitHub Releases | none |
+| Tags | one, `1.31-release` |
+| Open issues | 57, excluding two open pull requests |
 | Archived | no |
 | Default branch | `1.4` |
 
-Commits by year: 932 in 2011, then 26, 13, 0, 50, 2, 1, 31, 69, 7, 3, 15, and 34 in 2024. Nothing
-since.
+Commits by year, with every year present so the series is not shifted:
+
+| 2011 | 2012 | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 932 | 26 | 13 | 0 | 50 | 2 | 1 | 31 | 69 | 7 | 3 | 15 | 0 | 34 | 0 | 0 |
+
+The combined count GitHub reports on the repository page is 59, which includes the two open pull
+requests. The issue-only figure is 57.
 
 So there is a schema to read and learn from, and no project to depend on. Those are different
 things, and the distinction matters for this work: Chado's decomposition of GFF3 column 9 into one
@@ -58,7 +65,9 @@ they are reasons not to adopt the implementation.
 - Ontology terms live as a local copy in `cvterm` rather than as resolvable ontology identifiers,
   so they go stale silently.
 - No API. That is why Tripal exists.
-- No releases, so there is no versioned artifact to pin a dependency to.
+- No GitHub Releases. That is narrower than it sounds: the repository carries a `1.31-release` tag,
+  and any commit can be pinned directly, so a dependency is possible. What is missing is a published
+  release with notes, which is what would tell a consumer whether an upgrade is safe.
 - Row timestamps, `timeaccessioned` and `timelastmodified`, but no versioning of assertions and no
   agent model beyond publication and analysis references.
 
@@ -108,3 +117,48 @@ Three worth checking against any candidate:
    revised.
 3. Is the landmark an entity or a string? An entity costs nothing now and is the only cheap hedge
    against non-linear coordinates.
+
+## What the kickoff added, 2026-09-11
+
+Recorded here because the meeting notes live in a Google document that only attendees can open,
+and these are design positions rather than minutes.
+
+**The goal is mappable and subclassable, not replacement.** The stated aim is a model that groups
+with existing feature or GFF classes "should be able to map to our representation and/or subclass
+our implementation." That rules out a design that only works if everyone migrates, and it raises the
+value of the comparison in [model-comparison.md](model-comparison.md), since each of the four models
+has to be reachable from the result.
+
+**There is a live argument against designing for the flat profile at all.** One position put in the
+meeting: flattening nested data at import is not the hard part, and the real decision is whether to
+design a schema that is already flat. Ingest nested, then flatten, as the KBase lakehouse does.
+
+That is a different answer from the one this corpus works toward, and it is a reasonable one. It
+sharpens rather than settles the question, because the two positions disagree about *where* the
+flattening belongs rather than whether it is possible. Both agree a semantic model and a publishing
+profile are separate layers. Worth keeping the disagreement visible instead of resolving it by
+assertion.
+
+**The scalar-only profile question is now on the record and still unanswered.** The notes ask
+whether the catalog's all-scalar requirement applies to JGI, to BRIDGE, or to both, and "Do we need
+to stick to that?" Nobody has asked its author. Tracked at
+https://github.com/microbiomedata/nmdc-lakehouse/issues/342
+
+**The metagenome question was framed better than in this document.** Not only "must features belong
+to an organism" but: metagenome-assembled structures are *predicted*, so does the model need to
+distinguish a predicted feature from one observed in a sequenced physical sample from a single
+organism? That is a provenance distinction rather than a taxonomy one, and it may be recoverable
+from the file: the tool that called a feature is sometimes in column 2. Which is another reason
+column 2's openness, measured in
+[columns-and-discretion.md](columns-and-discretion.md), matters more than it looks.
+
+**The CURIE question is the column 3 finding, arrived at independently.** The notes ask whether
+feature classifications must always be compact identifiers, or whether names and unprefixed codes
+are acceptable, noting that NMDC has been using those. That is exactly the measurement in
+[columns-and-discretion.md](columns-and-discretion.md): seven of the fourteen NMDC file types put a
+bare database accession in column 3. So the question has an answer about current practice even
+though the policy is undecided.
+
+**Two sources added to the reading list**, both now in `corpus.yaml`: the IMG pipeline
+documentation, which specifies the GFF output of the pipeline that produced every NMDC file vendored
+here, and the Blue Collar Bioinformatics parser, as an example of what consumers actually run.
