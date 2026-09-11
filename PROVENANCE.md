@@ -35,3 +35,34 @@ an upstream record.
 
 See `~/Desktop/markdown/prior-art-feature-table-corpus-2026-09-11.md` on the machine where this was
 assembled, and the `why_not_vendored` field on each linked entry.
+
+## The 2 NCBI GTF files
+
+Same accessions as the GFF3 files, fetched from the `_genomic.gtf.gz` sibling on the same FTP path,
+then decompressed. Both declare `#gtf-version 2.2` in their own first line, so the flavor is the
+file's own claim rather than an assumption.
+
+## The 2 vendored specifications
+
+`specs/chado_1.4_feature_tables.sql`. Downloaded the 2.2 MB `schemas/1.4/default_schema.sql` from
+branch `1.4` of GMOD/Chado, then extracted the seven `create table` blocks whose names begin
+`feature`. The repository default branch is `1.4`, not `master`; a raw URL built on `master`
+returns 404, which is how the first attempt failed.
+
+`specs/kbase_cdm_bioentity.yaml`. Taken whole from `src/linkml/cdm_bioentity.yaml` on `main`. The
+Feature class is in that module, not in `cdm_components.yaml`; the first attempt fetched the wrong
+file and a grep for `Feature:` matched an enum value inside it, which looked like success.
+
+## The 7 derived malformed files
+
+Built by `scripts/make_malformed.py` from the vendored phiX174 GFF3. Each output differs from that
+source by exactly one change, applied in code so the change is auditable, and each carries header
+pragmas naming its source and its single defect. They are labeled `derived` in the index and are
+not evidence about any real producer.
+
+## EMSL, searched and not found
+
+Searched GitHub repository and code search across `ber-data` and `microbiomedata` for BASALT, and
+the open web for MONet data access. MONet is real, published without embargo on EMSL Science
+Central, and recorded. BASALT is not public anywhere that could be found on 2026-09-11. Recorded as
+`not located` so the gap is visible rather than forgotten.

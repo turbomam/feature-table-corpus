@@ -8,14 +8,16 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-25 entries in three tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+48 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 16 | The file is in this repository, with its origin URL and an MD5 checksum |
-| linked | 6 | Too large or not redistributable, so a stable public URL is recorded instead |
+| vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
+| linked | 17 | Too large or not redistributable, so a stable public URL is recorded instead |
+| derived | 7 | Built here from a vendored file by one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
+| not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
 Everything vendored totals about 80 KB of plain text, so a clone is cheap and every file is
 reviewable in a diff. Nothing here is binary or compressed.
@@ -41,6 +43,49 @@ All are outputs of the JGI IMG annotation pipeline, reachable openly through NMD
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the
 gzip the FTP site serves, because this repository carries no binary files. These give a clean baseline: a well formed GFF3 with
 a spec-version pragma, sequence regions, and proper parent and child structure.
+
+**NCBI RefSeq GTF, 2 files.** The same two annotations in GTF rather than GFF3, so a model can be
+tested for round-tripping between the two column 9 grammars. Both declare `#gtf-version 2.2` in
+their own header.
+
+## Specifications
+
+Eleven specifications are recorded, two of them vendored.
+
+The vendored two are the ones whose licenses allow it. `specs/chado_1.4_feature_tables.sql` holds
+the seven Chado feature tables extracted from a 2.2 MB schema, under Artistic-2.0. Chado is worth
+reading closely for this work: it keeps the feature separate from its location and expresses parent
+and child through a relationship table, so nothing is nested. That is the same normalization a
+flat-table profile requires, reached independently twenty years earlier.
+`specs/kbase_cdm_bioentity.yaml` is the KBase Common Data Model module holding the Feature class,
+under MIT. It constrains feature type to Sequence Ontology accessions under `sequence_feature` and
+carries provenance slots for source database and protocol, which the other models do not.
+
+The other nine are linked: the INSDC Feature Table Definition and the DDBJ rendering of it, which
+are the ancestor of all of this and still govern what a feature means in a sequence database; the
+Sequence Ontology GFF3 and GVF specifications; GTF 2.2; the GMOD descriptions of GFF2 and GFF3;
+the BED version 1 specification; the UCSC format reference, which is the broadest single list of
+real feature-table formats; and NCBI's own statement of what it emits.
+
+## Deliberately invalid files
+
+Seven files under `data/derived-malformed/` are invalid on purpose. Each is the vendored phiX174
+GFF3 with exactly one documented change, and each says so in its own header pragmas. Rebuild them
+with `python3 scripts/make_malformed.py`.
+
+They are **derived, not found**. They are not evidence about what any real producer emits, and the
+index labels them that way. They exist because the failures the AgBioData group describes are
+easier to test against than to read about.
+
+| Case | What changed |
+|---|---|
+| `cds_phase_altered` | Phase in column 8 no longer matches the coordinates. The headline failure: same coordinates, different protein |
+| `dangling_parent` | Parent names an ID defined nowhere. Breaks the graph without breaking the syntax |
+| `unescaped_semicolon` | A raw `;` inside an attribute value instead of `%3B`. Parses cleanly and means something else |
+| `start_after_end` | Columns 4 and 5 swapped. Ambiguous rather than wrong on a circular genome, which phiX174 is |
+| `multiple_parents` | Two parents on one feature. Legal GFF3 that many tools refuse, so malformed and rejected-in-practice are different sets |
+| `no_version_pragma` | No `##gff-version 3`. A parser cannot then tell GFF3 from GFF2, and column 9 differs between them |
+| `duplicate_id` | One ID on two features, so anything keyed on it collapses them |
 
 ## Why some things are only linked
 
@@ -75,20 +120,28 @@ the API looks down when it is not.
 
 ## Known gaps
 
-These are wanted and not yet here.
+These are wanted and still not here.
 
-- **EMSL.** MONet and the BASALT schema. A flattened BASALT schema was reported as coming from
-  James Carr. No stable public URL located yet.
-- **KBase.** The Common Data Model defines a
-  [Feature class](https://kbase.github.io/cdm-schema/Feature/), but that is a model rather than
-  data. No sample feature tables located.
-- **Chado.** The relational ancestor of most of this. Sample data not yet tracked down.
-- **GTF flavors as vendored files.** Currently only reachable through the linked AGAT suite.
-- **Malformed real files.** The corpus is all well formed so far. The failures the AgBioData group
-  describes, in particular the CDS phase column being misread, are better shown than described.
+- **EMSL BASALT.** Reported as EMSL's LinkML model for MONet and parts of the analysis database,
+  with a flattened version coming from James Carr. GitHub across the `ber-data` and
+  `microbiomedata` organizations and the open web were searched on 2026-09-11 and nothing public
+  turned up. Every code hit for "basalt" in those organizations is the rock, in environmental value
+  sets. Recorded as `not located` rather than dropped, because the next step is to ask EMSL rather
+  than to search again.
+- **EMSL MONet feature tables.** MONet itself is recorded and its data is published without
+  embargo on EMSL Science Central, but it is soil chemistry and microstructure rather than feature
+  tables. Its sequence-derived products route through JGI portals, which need an account.
+- **KBase sample feature tables.** The Common Data Model Feature class is vendored here, and no
+  example data was found in that repository. The model is present, the data is not.
+- **Archaic GTF and GFF flavors as vendored files.** GFF1, GFF2, GFF2.5, GTF1, GTF2.1 and GTF2.5
+  appear to survive only inside test suites, chiefly the GPL-3.0 AGAT one, which is linked. If a
+  real file in one of those flavors turns up with a redistributable license, it belongs here.
+- **Real malformed files.** The seven invalid files here are derived. Files that are broken because
+  a real pipeline broke them would be better evidence, and the two candidate sources found carry no
+  determinable license.
 
-Pull requests adding entries should fill in every field that the existing entries carry, especially
-`origin_url`, `retrieved` and `license`.
+Pull requests adding entries should fill in every field the existing entries carry, especially
+`origin_url`, `retrieved` and `license`. For a `derived` entry, also `derived_from` and `mutation`.
 
 ## Licensing
 
