@@ -48,6 +48,28 @@ a spec-version pragma, sequence regions, and proper parent and child structure.
 tested for round-tripping between the two column 9 grammars. Both declare `#gtf-version 2.2` in
 their own header.
 
+## Columns, discretion, and what writers get wrong
+
+[docs/columns-and-discretion.md](docs/columns-and-discretion.md) answers three questions with
+quotes from the specifications and measurements against the files here: how many fields each format
+has and which formats are not one table, which columns leave the writer discretion, and which
+columns get populated incorrectly in practice.
+
+Two findings from it are worth surfacing, both measured against real production files in this
+corpus rather than read from a document.
+
+**Column 3 carries database accessions instead of Sequence Ontology terms.** Every per-database
+NMDC annotation file here puts the matched accession in the type column: Pfam accessions such as
+`PF00011`, plus `COG3666`, `TIGR02937` and `SM01408`. The specification requires an SO term that is
+an is_a child of `sequence_feature`. Seven of the fourteen NMDC file types do this, systematically.
+A unified model cannot assume column 3 holds an SO term, because the data it would load does not.
+
+**Phase is the column to worry about.** GFF3 defines it as how many bases to skip inside the
+current feature; GTF defines the same column as which part of a codon the feature begins with. They
+agree at 0 and are easy to transpose at 1 and 2. In this corpus 366 of 368 phase values are 0, so a
+handler that mishandles 1 and 2 passes on almost all real data. The AgBioData group says the field
+is commonly misread by producers and consumers alike, yielding different amino acid sequences.
+
 ## Specifications
 
 Twelve specifications are recorded, two of them vendored and ten linked.
@@ -168,9 +190,12 @@ These are wanted and still not here.
 - **Archaic GTF and GFF flavors as vendored files.** GFF1, GFF2, GFF2.5, GTF1, GTF2.1 and GTF2.5
   appear to survive only inside test suites, chiefly the GPL-3.0 AGAT one, which is linked. If a
   real file in one of those flavors turns up with a redistributable license, it belongs here.
-- **Real malformed files.** The seven invalid files here are derived. Files that are broken because
-  a real pipeline broke them would be better evidence, and the two candidate sources found carry no
-  determinable license.
+- **More real malformed files.** This gap is partly closed. Two real violations were found in the
+  vendored NMDC files and are documented in
+  [docs/columns-and-discretion.md](docs/columns-and-discretion.md): database accessions in column 3
+  instead of Sequence Ontology terms, across seven of the fourteen file types, and an empty column 2
+  where the specification calls for `.`. More would still help, especially from producers other than
+  the JGI IMG pipeline.
 
 Pull requests adding entries should fill in every field the existing entries carry, especially
 `origin_url`, `retrieved` and `license`. For a `derived` entry, also `derived_from` and `mutation`.
