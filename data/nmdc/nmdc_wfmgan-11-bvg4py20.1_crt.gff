@@ -1,0 +1,4 @@
+nmdc:wfmgan-11-bvg4py20.1_11184	CRT 1.8.4	CRISPR	1	120	.	.	.	ID=nmdc:wfmgan-11-bvg4py20.1_11184_1_120;number_of_repeats=3;average_repeat_length=21;median_repeat_length=23;average_spacer_length=28;median_spacer_length=26
+nmdc:wfmgan-11-bvg4py20.1_11184	CRT 1.8.4	repeat_unit	1	17	.	.	.	ID=nmdc:wfmgan-11-bvg4py20.1_11184_1_120_DR1;Parent=nmdc:wfmgan-11-bvg4py20.1_11184_1_120
+nmdc:wfmgan-11-bvg4py20.1_11184	CRT 1.8.4	repeat_unit	49	71	.	.	.	ID=nmdc:wfmgan-11-bvg4py20.1_11184_1_120_DR2;Parent=nmdc:wfmgan-11-bvg4py20.1_11184_1_120
+nmdc:wfmgan-11-bvg4py20.1_11184	CRT 1.8.4	repeat_unit	98	120	.	.	.	ID=nmdc:wfmgan-11-bvg4py20.1_11184_1_120_DR3;Parent=nmdc:wfmgan-11-bvg4py20.1_11184_1_120

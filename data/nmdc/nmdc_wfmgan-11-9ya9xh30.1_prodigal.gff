@@ -1,0 +1,17 @@
+##gff-version  3
+# Sequence Data: seqnum=1;seqlen=359;seqhdr="nmdc:wfmgan-11-9ya9xh30.1_01"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="1|Mycoplasma_pneumoniae_M129|B|40.0|4|0";gc_cont=40.00;transl_table=4;uses_sd=0
+nmdc:wfmgan-11-9ya9xh30.1_01	Prodigal v2.6.3_patched	CDS	3	359	3.1	-	0	ID=nmdc:wfmgan-11-9ya9xh30.1_01_3_359;translation_table=4;partial=5',3'
+# Sequence Data: seqnum=2;seqlen=303;seqhdr="nmdc:wfmgan-11-9ya9xh30.1_02"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="19|Erythrobacter_litoralis_HTCC2594|B|63.1|11|1";gc_cont=63.10;transl_table=11;uses_sd=1
+nmdc:wfmgan-11-9ya9xh30.1_02	Prodigal v2.6.3_patched	CDS	100	303	31.9	+	0	ID=nmdc:wfmgan-11-9ya9xh30.1_02_100_303;translation_table=11;partial=3'
+# Sequence Data: seqnum=3;seqlen=298;seqhdr="nmdc:wfmgan-11-9ya9xh30.1_03"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="38|Rhodococcus_jostii_RHA1|B|65.0|11|1";gc_cont=65.10;transl_table=11;uses_sd=1
+nmdc:wfmgan-11-9ya9xh30.1_03	Prodigal v2.6.3_patched	CDS	1	78	8.5	-	0	ID=nmdc:wfmgan-11-9ya9xh30.1_03_1_78;translation_table=11;partial=3'
+nmdc:wfmgan-11-9ya9xh30.1_03	Prodigal v2.6.3_patched	CDS	179	298	24.8	+	0	ID=nmdc:wfmgan-11-9ya9xh30.1_03_179_298;translation_table=11;partial=3'
+# Sequence Data: seqnum=4;seqlen=298;seqhdr="nmdc:wfmgan-11-9ya9xh30.1_04"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="3|Aeropyrum_pernix_K1|A|56.3|11|0";gc_cont=56.30;transl_table=11;uses_sd=0
+nmdc:wfmgan-11-9ya9xh30.1_04	Prodigal v2.6.3_patched	CDS	2	298	17.7	-	0	ID=nmdc:wfmgan-11-9ya9xh30.1_04_2_298;translation_table=11;partial=5',3'
+# Sequence Data: seqnum=5;seqlen=295;seqhdr="nmdc:wfmgan-11-9ya9xh30.1_05"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="26|Methanopyrus_kandleri_AV19|A|61.2|11|0";gc_cont=61.20;transl_table=11;uses_sd=0
+nmdc:wfmgan-11-9ya9xh30.1_05	Prodigal v2.6.3_patched	CDS	2	295	31.3	+	0	ID=nmdc:wfmgan-11-9ya9xh30.1_05_2_295;translation_table=11;partial=5',3'

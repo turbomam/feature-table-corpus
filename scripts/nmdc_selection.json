@@ -1,0 +1,128 @@
+{
+  "Structural Annotation GFF": {
+    "id": "nmdc:dobj-11-25eqc554",
+    "name": "nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff",
+    "bytes": 158,
+    "md5": "4b8627ca236a7d9753185ccdfd6baada",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-q17q2c37/nmdc:wfmgan-11-hrn8ep39.1/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff",
+    "was_generated_by": null,
+    "sampled": 600
+  },
+  "Functional Annotation GFF": {
+    "id": "nmdc:dobj-11-16876g28",
+    "name": "nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff",
+    "bytes": 246,
+    "md5": "778d966552b57f82ece65e6581ce574e",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-q17q2c37/nmdc:wfmgan-11-hrn8ep39.1/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff",
+    "was_generated_by": null,
+    "sampled": 600
+  },
+  "Prodigal Annotation GFF": {
+    "id": "nmdc:dobj-11-2jq65c25",
+    "name": "nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
+    "bytes": 2033,
+    "md5": "92d78177f3c3d0c410d0b57c94ebf22c",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-cfaemn69/nmdc:wfmgan-11-9ya9xh30.1/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
+    "was_generated_by": null,
+    "sampled": 600
+  },
+  "Genemark Annotation GFF": {
+    "id": "nmdc:dobj-11-0t0kn065",
+    "name": "nmdc_wfmgan-11-prsstp65.1_genemark.gff",
+    "bytes": 3333,
+    "md5": "5121dc1269540aeb5f6b9a9a7dcd914f",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-12-vanwrb64/nmdc:wfmgan-11-prsstp65.1/nmdc_wfmgan-11-prsstp65.1_genemark.gff",
+    "was_generated_by": null,
+    "sampled": 600
+  },
+  "Pfam Annotation GFF": {
+    "id": "nmdc:dobj-11-2cbp5z37",
+    "name": "nmdc_wfmgan-11-tn3gnf41.1_pfam.gff",
+    "bytes": 4626,
+    "md5": "7fdd0333e764c69d87e95094713abf81",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-g54wdz69/nmdc:wfmgan-11-tn3gnf41.1/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff",
+    "was_generated_by": null,
+    "sampled": 600
+  },
+  "KO_EC Annotation GFF": {
+    "id": "nmdc:dobj-11-30x39t60",
+    "name": "nmdc_wfmgan-11-v44mx103.1_ko_ec.gff",
+    "bytes": 289,
+    "md5": "7751226802a1cc5db22c26d5c8956938",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-xpbh2e04/nmdc:wfmgan-11-v44mx103.1/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff",
+    "was_generated_by": null,
+    "sampled": 599
+  },
+  "CRT Annotation GFF": {
+    "id": "nmdc:dobj-11-3cjcxz28",
+    "name": "nmdc_wfmgan-11-bvg4py20.1_crt.gff",
+    "bytes": 688,
+    "md5": "e5b1788663cc6c0c7b50a48558cb49bb",
+    "url": "https://data.microbiomedata.org/data/nmdc:manif-15-2dqj6n85/nmdc:wfmgan-11-bvg4py20.1/nmdc_wfmgan-11-bvg4py20.1_crt.gff",
+    "was_generated_by": "nmdc:wfmgan-11-bvg4py20.1",
+    "sampled": 507
+  },
+  "TRNA Annotation GFF": {
+    "id": "nmdc:dobj-11-24g8zk65",
+    "name": "nmdc_wfmgan-11-p2fy8323.1_trna.gff",
+    "bytes": 183,
+    "md5": "28ee4b6dda9c66f3c6cf755931725e35",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-02tp7916/nmdc:wfmgan-11-p2fy8323.1/nmdc_wfmgan-11-p2fy8323.1_trna.gff",
+    "was_generated_by": null,
+    "sampled": 595
+  },
+  "RFAM Annotation GFF": {
+    "id": "nmdc:dobj-11-26sjcj43",
+    "name": "nmdc_wfmgan-11-p2fy8323.1_rfam.gff",
+    "bytes": 735,
+    "md5": "cd367ad9b2445ba7a40049a2fc052739",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-02tp7916/nmdc:wfmgan-11-p2fy8323.1/nmdc_wfmgan-11-p2fy8323.1_rfam.gff",
+    "was_generated_by": null,
+    "sampled": 597
+  },
+  "TIGRFam Annotation GFF": {
+    "id": "nmdc:dobj-11-2j11wr22",
+    "name": "nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff",
+    "bytes": 191,
+    "md5": "b6b168f24def6d0d12f238d31cf48f35",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-haha6973/nmdc:wfmgan-11-8qy5m271.1/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff",
+    "was_generated_by": "nmdc:wfmgan-11-8qy5m271.1",
+    "sampled": 595
+  },
+  "SMART Annotation GFF": {
+    "id": "nmdc:dobj-11-03kh9653",
+    "name": "nmdc_wfmgan-11-1sz9qv06.1_smart.gff",
+    "bytes": 265,
+    "md5": "8107e708d5abe55ab2c25fb45c39cf8e",
+    "url": "https://data.microbiomedata.org/data/nmdc:dgns-11-dy2n0z32/nmdc:wfmgan-11-1sz9qv06.1/nmdc_wfmgan-11-1sz9qv06.1_smart.gff",
+    "was_generated_by": "nmdc:wfmgan-11-1sz9qv06.1",
+    "sampled": 598
+  },
+  "SUPERFam Annotation GFF": {
+    "id": "nmdc:dobj-11-10126e89",
+    "name": "nmdc_wfmgan-11-5pdxej61.1_supfam.gff",
+    "bytes": 603,
+    "md5": "6460a86d5eab227d644578d0c15bea88",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-12-fmd4p583/nmdc:wfmgan-11-5pdxej61.1/nmdc_wfmgan-11-5pdxej61.1_supfam.gff",
+    "was_generated_by": null,
+    "sampled": 600
+  },
+  "CATH FunFams (Functional Families) Annotation GFF": {
+    "id": "nmdc:dobj-11-3pw65847",
+    "name": "nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff",
+    "bytes": 295,
+    "md5": "385ae451b6c19e33abcf3c37f0ae4b69",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-4e682h13/nmdc:wfmgan-11-ghk5e506.1/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff",
+    "was_generated_by": null,
+    "sampled": 599
+  },
+  "Clusters of Orthologous Groups (COG) Annotation GFF": {
+    "id": "nmdc:dobj-11-22ky0702",
+    "name": "nmdc_wfmgan-11-ghk5e506.1_cog.gff",
+    "bytes": 268,
+    "md5": "9ddb5396a789d11cf01370ebb8daf479",
+    "url": "https://data.microbiomedata.org/data/nmdc:omprc-11-4e682h13/nmdc:wfmgan-11-ghk5e506.1/nmdc_wfmgan-11-ghk5e506.1_cog.gff",
+    "was_generated_by": null,
+    "sampled": 599
+  }
+}

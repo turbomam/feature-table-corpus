@@ -1,0 +1,402 @@
+corpus: feature-table-corpus
+generated: '2026-09-11'
+description: Real, traceable examples of GFF and other genome feature table content, for testing and for
+  modeling work on a unified feature schema.
+tiers:
+  vendored: the file is in this repository, with its origin URL and a checksum
+  linked: the file is too large or not redistributable; a stable public URL is recorded instead
+  restricted: the content sits behind a login; recorded for completeness and not fetchable here
+entry_count: 25
+entries:
+- id: nmdc-funfam
+  label: CATH FunFams (Functional Families) Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
+  format: GFF3
+  source: NMDC
+  producer: CATH functional families database search
+  producer_kind: database search
+  bytes: 295
+  md5: 385ae451b6c19e33abcf3c37f0ae4b69
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-4e682h13/nmdc:wfmgan-11-ghk5e506.1/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
+  origin_record: nmdc:dobj-11-3pw65847
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-crt
+  label: CRT Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+  format: GFF3
+  source: NMDC
+  producer: CRISPR Recognition Tool, feature finder
+  producer_kind: feature finder
+  bytes: 688
+  md5: e5b1788663cc6c0c7b50a48558cb49bb
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:manif-15-2dqj6n85/nmdc:wfmgan-11-bvg4py20.1/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+  origin_record: nmdc:dobj-11-3cjcxz28
+  generated_by: nmdc:wfmgan-11-bvg4py20.1
+  selection: smallest of 507 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-cog
+  label: Clusters of Orthologous Groups (COG) Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff
+  format: GFF3
+  source: NMDC
+  producer: COG database search
+  producer_kind: database search
+  bytes: 268
+  md5: 9ddb5396a789d11cf01370ebb8daf479
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-4e682h13/nmdc:wfmgan-11-ghk5e506.1/nmdc_wfmgan-11-ghk5e506.1_cog.gff
+  origin_record: nmdc:dobj-11-22ky0702
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-annotation
+  label: Functional Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
+  format: GFF3
+  source: NMDC
+  producer: JGI IMG annotation pipeline, functional roll-up
+  producer_kind: roll-up
+  bytes: 246
+  md5: 778d966552b57f82ece65e6581ce574e
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-q17q2c37/nmdc:wfmgan-11-hrn8ep39.1/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
+  origin_record: nmdc:dobj-11-16876g28
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-genemark
+  label: Genemark Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff
+  format: GFF3
+  source: NMDC
+  producer: GeneMark, gene caller
+  producer_kind: gene caller
+  bytes: 3333
+  md5: 5121dc1269540aeb5f6b9a9a7dcd914f
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-12-vanwrb64/nmdc:wfmgan-11-prsstp65.1/nmdc_wfmgan-11-prsstp65.1_genemark.gff
+  origin_record: nmdc:dobj-11-0t0kn065
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-ec
+  label: KO_EC Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
+  format: GFF3
+  source: NMDC
+  producer: KEGG Orthology and Enzyme Commission assignment
+  producer_kind: database search
+  bytes: 289
+  md5: 7751226802a1cc5db22c26d5c8956938
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-xpbh2e04/nmdc:wfmgan-11-v44mx103.1/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
+  origin_record: nmdc:dobj-11-30x39t60
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-pfam
+  label: Pfam Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff
+  format: GFF3
+  source: NMDC
+  producer: Pfam database search
+  producer_kind: database search
+  bytes: 4626
+  md5: 7fdd0333e764c69d87e95094713abf81
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-g54wdz69/nmdc:wfmgan-11-tn3gnf41.1/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff
+  origin_record: nmdc:dobj-11-2cbp5z37
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-prodigal
+  label: Prodigal Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
+  format: GFF3
+  source: NMDC
+  producer: Prodigal, gene caller
+  producer_kind: gene caller
+  bytes: 2033
+  md5: 92d78177f3c3d0c410d0b57c94ebf22c
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-cfaemn69/nmdc:wfmgan-11-9ya9xh30.1/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
+  origin_record: nmdc:dobj-11-2jq65c25
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-rfam
+  label: RFAM Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff
+  format: GFF3
+  source: NMDC
+  producer: Rfam, feature finder
+  producer_kind: feature finder
+  bytes: 735
+  md5: cd367ad9b2445ba7a40049a2fc052739
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-02tp7916/nmdc:wfmgan-11-p2fy8323.1/nmdc_wfmgan-11-p2fy8323.1_rfam.gff
+  origin_record: nmdc:dobj-11-26sjcj43
+  generated_by: null
+  selection: smallest of 597 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-smart
+  label: SMART Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff
+  format: GFF3
+  source: NMDC
+  producer: SMART database search
+  producer_kind: database search
+  bytes: 265
+  md5: 8107e708d5abe55ab2c25fb45c39cf8e
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:dgns-11-dy2n0z32/nmdc:wfmgan-11-1sz9qv06.1/nmdc_wfmgan-11-1sz9qv06.1_smart.gff
+  origin_record: nmdc:dobj-11-03kh9653
+  generated_by: nmdc:wfmgan-11-1sz9qv06.1
+  selection: smallest of 598 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-supfam
+  label: SUPERFam Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
+  format: GFF3
+  source: NMDC
+  producer: SUPERFAMILY database search
+  producer_kind: database search
+  bytes: 603
+  md5: 6460a86d5eab227d644578d0c15bea88
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-12-fmd4p583/nmdc:wfmgan-11-5pdxej61.1/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
+  origin_record: nmdc:dobj-11-10126e89
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-annotation
+  label: Structural Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
+  format: GFF3
+  source: NMDC
+  producer: JGI IMG annotation pipeline, structural roll-up
+  producer_kind: roll-up
+  bytes: 158
+  md5: 4b8627ca236a7d9753185ccdfd6baada
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-q17q2c37/nmdc:wfmgan-11-hrn8ep39.1/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
+  origin_record: nmdc:dobj-11-25eqc554
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-tigrfam
+  label: TIGRFam Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff
+  format: GFF3
+  source: NMDC
+  producer: TIGRFAM database search
+  producer_kind: database search
+  bytes: 191
+  md5: b6b168f24def6d0d12f238d31cf48f35
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-haha6973/nmdc:wfmgan-11-8qy5m271.1/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff
+  origin_record: nmdc:dobj-11-2j11wr22
+  generated_by: nmdc:wfmgan-11-8qy5m271.1
+  selection: smallest of 595 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-trna
+  label: TRNA Annotation GFF
+  tier: vendored
+  path: data/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff
+  format: GFF3
+  source: NMDC
+  producer: tRNAscan, feature finder
+  producer_kind: feature finder
+  bytes: 183
+  md5: 28ee4b6dda9c66f3c6cf755931725e35
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-02tp7916/nmdc:wfmgan-11-p2fy8323.1/nmdc_wfmgan-11-p2fy8323.1_trna.gff
+  origin_record: nmdc:dobj-11-24g8zk65
+  generated_by: null
+  selection: smallest of 595 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: ncbi-refseq-GCF_000819615-1
+  label: NCBI RefSeq GFF3, Escherichia phage phiX174
+  tier: vendored
+  path: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 6571
+  md5: 704a57e8aeb9e7c80930a88fad0b1994
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/819/615/GCF_000819615.1_ViralProj14015/GCF_000819615.1_ViralProj14015_genomic.gff.gz
+  origin_record: GCF_000819615.1
+  selection: chosen as a complete, tiny reference annotation from the canonical GFF3 producer
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  vendored_form: decompressed from the gzip the origin URL serves, because this repository does not carry
+    binary files
+- id: ncbi-refseq-GCF_000840245-1
+  label: NCBI RefSeq GFF3, Escherichia phage lambda
+  tier: vendored
+  path: data/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 58152
+  md5: e1c633cadbff78104fae79ab1bee4c0c
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/840/245/GCF_000840245.1_ViralProj14204/GCF_000840245.1_ViralProj14204_genomic.gff.gz
+  origin_record: GCF_000840245.1
+  selection: chosen as a complete, tiny reference annotation from the canonical GFF3 producer
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  vendored_form: decompressed from the gzip the origin URL serves, because this repository does not carry
+    binary files
+- id: agat-flavor-suite
+  label: AGAT flavor and syntax test suite
+  tier: linked
+  format: GFF, GFF1, GFF2, GFF2.5, GFF3, GTF, GTF2, GTF2.1, GTF2.2, GTF2.5, GTF3
+  source: NBIS Sweden
+  producer: hand-built test fixtures
+  producer_kind: test suite
+  origin_url: https://github.com/NBISweden/AGAT/tree/master/t
+  license: GPL-3.0
+  why_not_vendored: GPL-3.0 is copyleft; linking avoids putting a license obligation on this corpus
+  notes: The single best source for the named format flavors. AGAT's own documentation claims more than
+    30 distinct cases. Subdirectories t/gff_version and t/gff_syntax are the relevant ones.
+  retrieved: '2026-09-11'
+- id: genometools-testdata
+  label: GenomeTools GFF3 test data
+  tier: linked
+  format: GFF3
+  source: GenomeTools
+  producer: hand-built test fixtures
+  producer_kind: test suite
+  origin_url: https://github.com/genometools/genometools/tree/master/testdata
+  license: unstated in repository metadata
+  why_not_vendored: license could not be determined; 315 GFF files matched a name filter
+  notes: Largest single pile of GFF3 edge cases found. Includes malformed files used to test the validator.
+  retrieved: '2026-09-11'
+- id: gff3toolkit-examples
+  label: GFF3toolkit example files
+  tier: linked
+  format: GFF3
+  source: USDA i5K
+  producer: arthropod genome projects
+  producer_kind: curated real annotation
+  origin_url: https://github.com/NAL-i5K/GFF3toolkit/tree/master/example_file
+  license: unstated in repository metadata
+  why_not_vendored: license could not be determined
+  notes: Real arthropod annotations with the merge and quality-control problems the AgBioData group describes.
+  retrieved: '2026-09-11'
+- id: so-gff3-spec
+  label: Sequence Ontology GFF3 specification, with canonical examples
+  tier: linked
+  format: GFF3
+  source: Sequence Ontology
+  producer: specification authors
+  producer_kind: specification
+  origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md
+  license: no license file in repository
+  why_not_vendored: no license; and the examples are worth reading in their specification context
+  notes: The normative definition. Its worked examples are the reference for canonical parent and child
+    structure.
+  retrieved: '2026-09-11'
+- id: nmdc-functional-annotation-gff-large
+  label: NMDC Functional Annotation GFF, full size example
+  tier: linked
+  format: GFF3
+  source: NMDC
+  producer: JGI IMG annotation pipeline, functional roll-up
+  producer_kind: roll-up
+  origin_url: https://api.microbiomedata.org/nmdcschema/data_object_set
+  license: CC BY 4.0
+  why_not_vendored: the collection is about 4,836 files and 1,309 GB, averaging 277 MB each
+  notes: Column 9 carries every annotation system at once, with multivalued pfam, tigrfam, cath_funfam
+    and superfamily keys. Query the API by data_object_type to list them. Tracked in https://github.com/microbiomedata/nmdc-lakehouse/issues/84
+  retrieved: '2026-09-11'
+- id: gencode-human-gtf
+  label: GENCODE human annotation, GTF
+  tier: linked
+  format: GTF
+  source: GENCODE at EMBL-EBI
+  producer: GENCODE
+  producer_kind: reference annotation
+  origin_url: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/latest_release/
+  license: free for academic and commercial use per GENCODE terms
+  why_not_vendored: tens of megabytes compressed
+  notes: The GTF lineage in its most widely consumed form. Directory URL rather than a file URL, because
+    the release number moves.
+  retrieved: '2026-09-11'
+- id: jgi-phytozome
+  label: JGI Phytozome plant annotations
+  tier: restricted
+  format: GFF3
+  source: JGI
+  producer: JGI plant annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://phytozome-next.jgi.doe.gov/
+  license: JGI data use policy
+  barrier: requires a JGI account and accepting a data use policy
+  notes: A BER producer of plant feature tables. Recorded because a unified BER model has to cover it,
+    not because it can be fetched here.
+  retrieved: '2026-09-11'
+- id: jgi-mycocosm
+  label: JGI MycoCosm fungal annotations
+  tier: restricted
+  format: GFF3
+  source: JGI
+  producer: JGI fungal annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://mycocosm.jgi.doe.gov/
+  license: JGI data use policy
+  barrier: requires a JGI account
+  notes: Same reasoning as Phytozome.
+  retrieved: '2026-09-11'
+- id: jgi-img
+  label: JGI IMG annotations
+  tier: restricted
+  format: GFF3
+  source: JGI
+  producer: IMG annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://img.jgi.doe.gov/
+  license: JGI data use policy
+  barrier: requires a JGI account for bulk access
+  notes: This is the pipeline that produced every vendored NMDC file in this corpus. The NMDC copies are
+    the open route to the same output.
+  retrieved: '2026-09-11'
+tier_counts:
+  vendored: 16
+  linked: 6
+  restricted: 3
