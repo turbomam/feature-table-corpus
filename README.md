@@ -113,6 +113,11 @@ rather than a feature table, holding the `##FASTA` sequences alongside the featu
 that models the `##` directives as data, and the only one that makes `seqid` an object rather than
 a string.
 
+It also answers a question that looked like a blocker. Of the 32 class and slot pairs in
+`gff-schema`, 22 are admissible under a flat scalar-only publishing profile as written, and 9 of the
+10 rejections resolve to foreign keys or child tables, which such a profile accepts. Exactly one, a
+multivalued scalar, requires a real decision.
+
 ## Prior art
 
 [docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
