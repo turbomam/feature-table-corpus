@@ -76,8 +76,10 @@ changed the files themselves rather than only their descriptions.
 wrote a fresh header, so `#!genome-build`, `##sequence-region`, `##species` and the `###`
 terminator were all lost. Each file therefore differed from its source in many header semantics
 while claiming one documented change. The generator now preserves the source line for line and
-appends provenance comments after the terminator, so the header region is byte-identical. The one
-exception is `no_version_pragma`, whose single change is the removal of that one line.
+appends provenance comments, single-hash lines after the terminator, so the header region is
+byte-identical. These are comments rather than pragmas and they sit outside the header, which
+earlier wording in this file got wrong. The one exception is `no_version_pragma`, whose single
+change is the removal of that one header line.
 
 **Two fixtures carried a second, undocumented defect.** The semicolon case overwrote a `product`
 attribute that already existed, adding a duplicate-attribute defect beside the intended one; it now
@@ -109,3 +111,27 @@ naming it.
 
 **The README counts were wrong.** Twelve specifications, not eleven, and ten linked, not nine. The
 byte total still said 80 KB after four files were added.
+
+## Corrections after the balanced review, 2026-09-11
+
+Two fixtures were classified as specification violations without checking the specification, which
+is the same mistake as the `multiple_parents` misclassification corrected earlier the same day.
+
+**A changed CDS phase is not a violation.** GFF3 permits 0, 1 and 2, so altering 0 to 1 produces a
+biologically wrong annotation that stays valid. That file moved to `derived-edge-cases/` as
+`cds_phase_biologically_wrong`, and a genuine violation was added as `cds_phase_illegal`, which
+sets phase to 3. The pair is now the most useful thing in the derived set: one is caught by a
+validator and the other is not, and the one that is not is the failure AgBioData leads with.
+
+**A duplicated row is not a duplicate ID.** GFF3 permits a discontinuous feature to span several
+lines under a shared ID. The earlier fixture inserted a row with the same seqid, source, type,
+strand and attributes, which is exactly a legal discontinuous feature. The ID now collides across a
+`gene` and a `sequence_alteration`, which cannot describe one feature, so the violation is real.
+
+**Descriptions that contradicted the files.** The README stated "one change to one data row" and a
+byte-identical header as blanket claims, while `no_version_pragma` is the exception to both. That
+exception is now stated in the README and in that entry's own notes rather than the entry repeating
+the generic text.
+
+**Wording.** The provenance lines were called header pragmas. They are single-hash comments
+appended after the source's `###` terminator, outside the header and not pragmas at all.

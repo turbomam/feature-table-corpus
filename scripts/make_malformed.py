@@ -11,7 +11,7 @@ different things and a consumer picking invalid fixtures must not get a valid
 file by mistake:
 
     data/derived-malformed/    six files that violate the GFF3 specification
-    data/derived-edge-cases/   one file that is valid GFF3 and widely refused
+    data/derived-edge-cases/   two files that are valid GFF3 and still wrong in practice
 
 These are DERIVED, not found in the wild. They are not evidence about what any
 real producer emits, and corpus.yaml labels them that way.
@@ -79,14 +79,13 @@ def build():
 
     # --- six that violate the specification -------------------------------
 
-    # Phase in column 8 no longer matches the coordinates. The AgBioData
-    # group's headline failure: identical coordinates, different protein.
+    # Phase outside the permitted set. GFF3 allows only 0, 1 and 2 on a CDS,
+    # so 3 is a specification violation rather than a judgement call.
     i = data_index(lines, "CDS")
-    cur = lines[i].split("\t")[7]
-    cases["cds_phase_altered.gff3"] = (
-        BAD, set_col(lines, i, 7, "1" if cur != "1" else "2"),
-        "phase in column 8 of the first CDS changed so it no longer matches the coordinates",
-        "invalid: the phase contradicts the frame implied by the coordinates")
+    cases["cds_phase_illegal.gff3"] = (
+        BAD, set_col(lines, i, 7, "3"),
+        "phase in column 8 of the first CDS set to 3, outside the permitted 0, 1 and 2",
+        "invalid: GFF3 permits only 0, 1 or 2 in the phase column")
 
     # Parent names an ID defined nowhere. Breaks the graph, not the syntax.
     i = data_index(lines, "CDS")
@@ -124,18 +123,35 @@ def build():
         "the ##gff-version 3 line removed; every other header line preserved",
         "invalid: GFF3 requires the version directive on line 1")
 
-    # One ID on two features, so anything keyed on ID collapses them.
-    i = data_index(lines, "gene")
-    dup = lines[i].split("\t")
-    dup[3], dup[4] = str(int(dup[4]) + 1), str(int(dup[4]) + 50)
-    out = list(lines)
-    out.insert(i + 1, "\t".join(dup))
+    # One ID on two features of DIFFERENT type. Repeating an ID is not by
+    # itself an error: GFF3 permits a discontinuous feature to span several
+    # lines under a shared ID, provided every line describes the same feature.
+    # Two different types cannot be the same feature, so this collision is a
+    # genuine violation where simply duplicating a row would not have been.
+    gi = data_index(lines, "gene")
+    gene_id = dict(p.split("=", 1) for p in lines[gi].split("\t")[8].split(";"))["ID"]
+    ai = data_index(lines, "sequence_alteration")
     cases["duplicate_id.gff3"] = (
-        BAD, out,
-        "a second gene row inserted carrying the same ID as the first, at different coordinates",
-        "invalid: GFF3 requires ID to be unique within the file")
+        BAD, set_attr(lines, ai, "ID", gene_id),
+        f"the first sequence_alteration given the first gene's ID, {gene_id}, so one ID "
+        f"names two features of different type",
+        "invalid: a repeated ID is only legal across lines describing one feature, and "
+        "these differ in type")
 
-    # --- one that is valid and widely refused ------------------------------
+    # --- two that are valid GFF3 and still problems ------------------------
+
+    # Phase changed to another permitted value. This is the failure the
+    # AgBioData group leads with, and it is NOT a specification violation:
+    # 0, 1 and 2 are all legal, so no validator can catch it. Identical
+    # coordinates with a different phase translate to a different protein.
+    i = data_index(lines, "CDS")
+    cur = lines[i].split("\t")[7]
+    cases["cds_phase_biologically_wrong.gff3"] = (
+        EDGE, set_col(lines, i, 7, "1" if cur != "1" else "2"),
+        f"phase in column 8 of the first CDS changed from {cur} to another permitted value",
+        "VALID GFF3: 0, 1 and 2 are all legal, so no validator catches this; the "
+        "annotation is biologically wrong rather than malformed")
+
 
     # Two parents on one feature. LEGAL GFF3. The AgBioData recommendations
     # ask that parsers keep supporting it, and many refuse it. Both parents

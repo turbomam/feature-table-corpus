@@ -91,7 +91,7 @@ jobs:
           git add -A -- data/derived-malformed data/derived-edge-cases
           git diff --cached --exit-code --stat -- data/derived-malformed data/derived-edge-cases
           test "$(ls data/derived-malformed | wc -l)" -eq 6
-          test "$(ls data/derived-edge-cases | wc -l)" -eq 1
+          test "$(ls data/derived-edge-cases | wc -l)" -eq 2
 
       - name: Origin URLs (reported, never fatal)
         continue-on-error: true

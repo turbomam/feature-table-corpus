@@ -8,14 +8,14 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-47 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+48 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 16 | Too large or not redistributable, so a stable public URL is recorded instead |
-| derived | 7 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
+| derived | 8 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
@@ -69,34 +69,45 @@ real feature-table formats; and NCBI's own statement of what it emits.
 
 ## Derived files, in two directories
 
-Seven files are built here from the vendored phiX174 GFF3. Each is that source preserved line for
-line with **exactly one change to one data row**, plus provenance comments appended after the
-source's own `###` terminator, so the header region stays byte-identical. Rebuild them with
+Eight files are built here from the vendored phiX174 GFF3. Each is that source preserved line for
+line with **one change to one data row**, plus provenance comments, single-hash lines appended after
+the source's own `###` terminator, so the header region stays byte-identical. Rebuild them with
 `python3 scripts/make_malformed.py`.
+
+`no_version_pragma` is the documented exception to both halves of that sentence. Its one change
+removes a header directive, so its change is not to a data row and its header is deliberately not
+byte-identical. Every other header line is preserved, and its index entry says so rather than
+repeating the generic claim.
 
 They are **derived, not found**. They are not evidence about what any real producer emits, and the
 index labels them that way. They exist because the failures the AgBioData group describes are
 easier to test against than to read about.
 
-The split into two directories is deliberate. Invalid and refused-in-practice are different things,
-and a consumer selecting invalid fixtures must not receive a valid file by mistake.
+The split into two directories is deliberate, and one pair of files is the reason why.
 
 **`data/derived-malformed/`**, six files that violate the specification.
 
 | Case | The one change |
 |---|---|
-| `cds_phase_altered` | Phase in column 8 no longer matches the coordinates. The headline failure: same coordinates, different protein |
+| `cds_phase_illegal` | Phase set to 3, outside the permitted 0, 1 and 2 |
 | `dangling_parent` | Parent names an ID defined nowhere. Breaks the graph without breaking the syntax |
 | `unescaped_semicolon` | A raw `;` inside a `Note` value instead of `%3B`. Parses cleanly and means something else |
 | `start_after_end` | Columns 4 and 5 swapped. GFF3 requires start no greater than end on every feature, circular ones included, where wraparound is expressed by extending end past the landmark length |
-| `no_version_pragma` | The `##gff-version 3` line removed and every other header line kept. A parser then cannot tell GFF3 from GFF2 |
-| `duplicate_id` | One ID on two features, so anything keyed on it collapses them |
+| `no_version_pragma` | The `##gff-version 3` line removed and every other header line kept |
+| `duplicate_id` | One ID on a `gene` and a `sequence_alteration`. Repeating an ID is legal when every line describes one discontinuous feature, so duplicating a row would not be a violation; colliding across two types is |
 
-**`data/derived-edge-cases/`**, one file that is valid GFF3 and widely refused.
+**`data/derived-edge-cases/`**, two files that are valid GFF3 and still wrong in practice.
 
-`multiple_parents` gives one CDS two parents, both of them defined in the file. That is permitted by
-the specification, the AgBioData recommendations ask that parsers keep supporting it, and many tools
-refuse it anyway. Every entry in the index carries a `validity` field for exactly this reason.
+`cds_phase_biologically_wrong` changes a CDS phase to another permitted value. This is the failure
+the AgBioData group leads with, and **no validator can catch it**: 0, 1 and 2 are all legal, so
+identical coordinates with a different phase translate to a different protein while the file stays
+valid. Read it beside `cds_phase_illegal`, which a validator does catch. The pair is the clearest
+thing in this corpus: a syntax check is not a correctness check.
+
+`multiple_parents` gives one CDS two parents, both defined in the file. That is permitted, the
+AgBioData recommendations ask that parsers keep supporting it, and many tools refuse it anyway.
+
+Every derived entry carries a `validity` field for exactly these cases.
 
 ## Why some things are only linked
 
