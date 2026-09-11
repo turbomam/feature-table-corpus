@@ -50,14 +50,42 @@ def resolve(defn, key, slots):
     return None
 
 
-def has_identifier(cls, slots):
-    names = list(cls.get("slots") or []) + list(cls.get("attributes") or {})
-    usage = cls.get("slot_usage") or {}
-    for n in names:
-        for d in ((cls.get("attributes") or {}).get(n), usage.get(n), slots.get(n)):
-            if d and d.get("identifier"):
-                return True
+def has_identifier(cn, C, S):
+    """Does this class have an identifier, including inherited ones?
+
+    Checks every slot the class effectively has, across its own lineage, and
+    resolves the `identifier` flag through slot `is_a` as well. An earlier
+    version looked only at directly declared slots with a directly declared
+    flag, which misclassified a subclass whose identity is inherited as a value
+    object.
+    """
+    for n in class_slot_names(cn, C):
+        defn = dict(S.get(n) or {})
+        for anc in reversed(lineage(cn, C)):
+            defn.update((C[anc].get("attributes") or {}).get(n) or {})
+            defn.update((C[anc].get("slot_usage") or {}).get(n) or {})
+        if resolve(defn, "identifier", S):
+            return True
     return False
+
+
+def lineage(cn, C, seen=None):
+    """The class's own name followed by its ancestors, in precedence order.
+
+    Precedence is the class itself, then its is_a chain, then its mixins, which
+    is the order a definition should be looked up in.
+    """
+    seen = seen or set()
+    if cn in seen or cn not in C:
+        return []
+    seen.add(cn)
+    out = [cn]
+    c = C[cn]
+    if c.get("is_a"):
+        out += lineage(c["is_a"], C, seen)
+    for m in c.get("mixins") or []:
+        out += lineage(m, C, seen)
+    return out
 
 
 def class_slot_names(cn, C, seen=None):
@@ -91,13 +119,14 @@ def audit(doc):
     for cn, c in C.items():
         for sn in class_slot_names(cn, C):
             defn = dict(S.get(sn) or {})
-            # an inherited slot may be defined on an ancestor's attributes
-            for anc in [cn] + [x for x in C if x != cn]:
-                a = (C[anc].get("attributes") or {}).get(sn)
-                if a:
-                    defn.update(a)
-                    break
-            defn.update((c.get("slot_usage") or {}).get(sn) or {})
+            # Walk ONLY this class's own lineage, from the most distant
+            # ancestor inwards, so a nearer definition overrides a farther one
+            # and an unrelated class that happens to use the same slot name
+            # cannot supply it. Scanning every class made the result depend on
+            # dictionary order.
+            for anc in reversed(lineage(cn, C)):
+                defn.update((C[anc].get("attributes") or {}).get(sn) or {})
+                defn.update((C[anc].get("slot_usage") or {}).get(sn) or {})
             rng = resolve(defn, "range", S)
             mv = bool(resolve(defn, "multivalued", S))
             if rng in C:
@@ -116,7 +145,7 @@ def audit(doc):
                 group, becomes = "multivalued class reference", "child or junction table"
             elif mv:
                 group, becomes = "multivalued scalar", "ARRAY COLUMN OR JUNCTION TABLE (a decision)"
-            elif has_identifier(C[rng], S):
+            elif has_identifier(rng, C, S):
                 group, becomes = "identified class reference", "scalar id column plus a foreign key"
             else:
                 group, becomes = "value object, no identity", "slots expand into the parent row"

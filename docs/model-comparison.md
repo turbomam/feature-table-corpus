@@ -10,7 +10,10 @@ vendored here at `specs/kbase_cdm_bioentity.yaml`, the NMDC schema at
 `src/schema/annotation.yaml` in `microbiomedata/nmdc-schema`, and the Chado tables vendored here at
 `specs/chado_1.4_feature_tables.sql`.
 
-## Three of the four share a lineage, and one shared string does not count
+## Three of the four may share a lineage, and one shared string is not evidence
+
+Stated as a hypothesis throughout. The textual evidence below is real and the conclusion it
+supports is not settled; the caveat at the end of this section says what would settle it.
 
 Scoped deliberately to the three LinkML models. Chado is relational and has no feature-class
 description to compare, so it is outside this section.
@@ -118,18 +121,6 @@ both constraints today, and the constraint is right while the data is what exist
 decision for people, not for a schema: coerce at load, carry the accession in a different slot, or
 relax the constraint.
 
-## What this implies about scope
-
-A unified model looks like reconciliation, not construction. The pieces exist and no two models hold
-the same subset. The unresolved items are the ones no model addresses:
-
-- How multivalued column 9 attributes are represented, which the BRIDGE Data Catalog's flat profile
-  forces a decision on. Tracked at
-  https://github.com/microbiomedata/nmdc-lakehouse/issues/342
-- What happens to the database accessions currently sitting in column 3.
-- Whether the model describes a file, a feature, or one evidence stream. NMDC production says these
-  are different things, because the same feature appears across several per-database files.
-
 ## Is `gff-schema` compatible with a flat, scalar-only publishing profile?
 
 Largely yes. Nine of the thirteen rejections are mechanical, and the remaining four share a single
@@ -186,4 +177,3 @@ the same subset. The unresolved items are the ones no model addresses:
 - What happens to the database accessions currently sitting in column 3.
 - Whether the model describes a file, a feature, or one evidence stream. NMDC production says these
   are different things, because the same feature appears across several per-database files.
-
