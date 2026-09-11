@@ -8,13 +8,13 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-48 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+51 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
-| linked | 16 | Too large or not redistributable, so a stable public URL is recorded instead |
+| linked | 19 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 8 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
@@ -69,6 +69,14 @@ current feature; GTF defines the same column as which part of a codon the featur
 agree at 0 and are easy to transpose at 1 and 2. In this corpus 366 of 368 phase values are 0, so a
 handler that mishandles 1 and 2 passes on almost all real data. The AgBioData group says the field
 is commonly misread by producers and consumers alike, yielding different amino acid sequences.
+
+## Prior art
+
+[docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
+building was still the right call: four models of a genome feature, three of them dormant; seven
+normalization efforts, none of which is a data model; the eleven named format flavors with their
+attributions; and the approaches considered and rejected, including vendoring the AGAT suite, which
+GPL-3.0 ruled out.
 
 ## Specifications
 

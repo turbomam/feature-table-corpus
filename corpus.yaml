@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 48
+entry_count: 51
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -776,9 +776,48 @@ entries:
     The file is its source preserved line for line with exactly one change to one data row, plus provenance
     comments, single-hash lines appended after the source''s own ### terminator, so the header region
     is byte-identical.'
+- id: tool-gffread
+  label: gffread, GFF3 to GTF conversion
+  tier: linked
+  kind: tool
+  format: GFF3 and GTF
+  source: Cufflinks and StringTie lineage
+  producer: Geo Pertea
+  producer_kind: converter
+  origin_url: https://github.com/gpertea/gffread
+  license: MIT
+  retrieved: '2026-09-11'
+  notes: The conversion most people actually run between the two column 9 grammars. A parser and rewriter,
+    not a data model.
+- id: tool-gff3sort
+  label: GFF3sort, sorting for tabix indexing
+  tier: linked
+  kind: tool
+  format: GFF3
+  source: billzt
+  producer: billzt
+  producer_kind: sorter
+  origin_url: https://github.com/billzt/gff3sort
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Exists because feature order is underspecified and browsers need a particular one. A parser and
+    rewriter, not a data model.
+- id: tool-aegis
+  label: AEGIS, annotation extraction and genomic integration
+  tier: linked
+  kind: tool
+  format: GFF and GTF
+  source: preprint, 2025-12
+  producer: AEGIS authors
+  producer_kind: parser and normalizer
+  origin_url: https://www.biorxiv.org/content/10.64898/2025.12.04.692274v1.full
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Newest of the normalizers. Claims it parses files that make the other tools fail. Recorded as
+    evidence that the problem is still open in 2025, not as a recommendation; not evaluated here.
 tier_counts:
   vendored: 20
-  linked: 16
+  linked: 19
   restricted: 3
   not located: 1
   derived: 8

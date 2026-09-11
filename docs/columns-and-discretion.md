@@ -34,7 +34,12 @@ attributes and optional comments. Two attributes are mandatory: `gene_id` and `t
 
 *Unverified:* the column counts for GFF1, GFF2.5, GTF1, GTF2.1, GTF2.5 and GTF3. The AGAT
 documentation distinguishes those flavors by which feature types they admit, from five in GTF1 to
-nine in GTF3, not by column count.
+nine in GTF3, not by column count. It also documents an explicit `relax` mode that accepts any
+feature type at all, which is what most real files amount to.
+
+Lineage, for reading old files: GFF1 and GFF2 come from the Sanger Institute, GTF originated at
+Ensembl and was adapted into GTF2 for the Mouse and Human Annotation Collaboration, and GFF3 is
+specified by the Sequence Ontology group. Fuller version in [prior-art.md](prior-art.md).
 
 ## 2. Discretion, column by column
 
@@ -133,9 +138,10 @@ They are the real malformed content the README previously listed as a gap.
   identifiers, which belong in `Dbxref` or `gene_id`.
 - **Attribute values not escaped.** A raw `;` inside a value splits one attribute into two and
   parses cleanly. See `data/derived-malformed/unescaped_semicolon.gff3`.
-- **Term-ranged fields taking free text.** A note in the NMDC schema dated 2021-06-23 records that a
-  slot declared to range over a functional annotation term takes strings in practice, frequently
-  full text rather than compact identifiers.
+- **Term-ranged fields taking free text.** A note in the NMDC schema dated 2021-06-23 records that
+  `has_function`, declared to range over `FunctionalAnnotationTerm`, takes strings in practice, and
+  that those are frequently full text rather than compact identifiers. The declared range and the
+  stored values disagree, and nothing rejected the values.
 - **A repeated ID read as an error.** GFF3 permits a discontinuous feature to span several lines
   under one ID, so a repeated ID is only a violation when the lines cannot describe one feature. See
   `data/derived-malformed/duplicate_id.gff3`, which collides an ID across two different types.

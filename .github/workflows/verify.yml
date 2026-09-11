@@ -82,6 +82,16 @@ jobs:
           PY
           expect_reject "an entry with no tier" "UNKNOWN-TIER"
 
+          # Prose drifting from the index has been a review finding twice.
+          cp README.md /tmp/README.good.md
+          sed -i 's/entries in five tiers/entries in six tiers/' README.md
+          if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
+            echo "FAIL: verifier accepted a README whose total does not parse"
+            cat /tmp/out.txt; cp /tmp/README.good.md README.md; exit 1
+          fi
+          echo "ok: rejected a README count that no longer matches the index"
+          cp /tmp/README.good.md README.md
+
       # git diff ignores untracked files, so a fixture deleted from the pull
       # request would be silently recreated and the step would pass. Staging
       # first makes additions, deletions and modifications all visible.

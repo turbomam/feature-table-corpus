@@ -33,8 +33,10 @@ an upstream record.
 
 ## What was searched and not used
 
-See `~/Desktop/markdown/prior-art-feature-table-corpus-2026-09-11.md` on the machine where this was
-assembled, and the `why_not_vendored` field on each linked entry.
+See [docs/prior-art.md](docs/prior-art.md), which records the four existing models and their
+staleness, the seven normalization efforts and why none of them is a data model, the eleven named
+format flavors with their attributions, and the approaches that were considered and rejected. Also
+the `why_not_vendored` field on each linked entry.
 
 ## The 2 NCBI GTF files
 

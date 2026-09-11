@@ -78,6 +78,50 @@ def check_index(entries):
     return bad
 
 
+def check_readme(doc):
+    """Fail when the README's advertised counts drift from the index.
+
+    Stale counts have been a review finding twice: "eleven specifications" when
+    there were twelve, and "48 entries" after a split took it to 51. The index
+    is the source of truth, so the prose has to be checked against it rather
+    than maintained by hand.
+    """
+    import re
+    path = os.path.join(ROOT, "README.md")
+    if not os.path.exists(path):
+        print("README missing")
+        return 1
+    text = open(path).read()
+    bad = 0
+
+    m = re.search(r"(\d+) entries in (?:two|three|four|five|six) tiers", text)
+    if not m:
+        print("README does not state a total entry count in the expected form")
+        bad += 1
+    elif int(m.group(1)) != doc["entry_count"]:
+        print(f"README-COUNT    total: README says {m.group(1)}, index has {doc['entry_count']}")
+        bad += 1
+
+    for tier, n in doc["tier_counts"].items():
+        row = re.search(rf"\|\s*{re.escape(tier)}\s*\|\s*(\d+)\s*\|", text)
+        if not row:
+            print(f"README-COUNT    tier {tier!r} has no row in the README table")
+            bad += 1
+        elif int(row.group(1)) != n:
+            print(f"README-COUNT    tier {tier}: README says {row.group(1)}, index has {n}")
+            bad += 1
+
+    specs = sum(1 for e in doc["entries"] if e.get("kind") == "specification")
+    words = {"eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "ten": 10, "nine": 9}
+    m = re.search(r"(\w+) specifications are recorded", text)
+    if m and words.get(m.group(1).lower()) not in (None, specs):
+        print(f"README-COUNT    specifications: README says {m.group(1)}, index has {specs}")
+        bad += 1
+
+    print(f"readme: counts checked against the index, {bad} mismatch(es)")
+    return bad
+
+
 def check_vendored(entries):
     bad = 0
     for e in (x for x in entries if x.get("tier") in ("vendored", "derived")):
@@ -138,8 +182,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--links", action="store_true", help="also HEAD every origin_url")
     args = ap.parse_args()
-    entries = yaml.safe_load(open(os.path.join(ROOT, "corpus.yaml")))["entries"]
+    doc = yaml.safe_load(open(os.path.join(ROOT, "corpus.yaml")))
+    entries = doc["entries"]
     bad = check_index(entries)
+    print()
+    bad += check_readme(doc)
     print()
     bad += check_vendored(entries)
     if args.links:
