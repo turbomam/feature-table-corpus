@@ -8,21 +8,21 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-51 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+52 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 19 | Too large or not redistributable, so a stable public URL is recorded instead |
-| derived | 8 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
+| derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
 **The one promise this corpus makes.** A file under `data/nmdc/` or `data/ncbi-refseq/` is
 byte-for-byte what its origin served. Nothing in this repository writes into those files, and the
 verifier enforces it two ways: every checksum is compared on each run, and any provenance comment
-appearing in a sourced file is reported as `SOURCED-EDITED`. The eight files under
+appearing in a sourced file is reported as `SOURCED-EDITED`. The nine files under
 `data/derived-malformed/` and `data/derived-edge-cases/` are the only altered content, they live
 only in those directories, and each one carries four appended comment lines naming its source and
 the single change made to it. The verifier fails if a derived file lacks them, and CI proves both
@@ -112,7 +112,7 @@ real feature-table formats; and NCBI's own statement of what it emits.
 
 ## Derived files, in two directories
 
-Eight files are built here from the vendored phiX174 GFF3. Each is that source preserved line for
+Nine files are built here from the vendored phiX174 GFF3. Each is that source preserved line for
 line with **one change to one data row**, plus provenance comments, single-hash lines appended after
 the source's own `###` terminator, so the header region stays byte-identical. Rebuild them with
 `python3 scripts/make_malformed.py`.
@@ -134,12 +134,12 @@ The split into two directories is deliberate, and one pair of files is the reaso
 |---|---|
 | `cds_phase_illegal` | Phase set to 3, outside the permitted 0, 1 and 2 |
 | `dangling_parent` | Parent names an ID defined nowhere. Breaks the graph without breaking the syntax |
-| `unescaped_semicolon` | A raw `;` inside a `Note` value instead of `%3B`. Parses cleanly and means something else |
+| `unescaped_semicolon` | A raw `;` inside a `Note` value instead of `%3B`. The tail has no `tag=value` form, so a conforming parser must reject the record |
 | `start_after_end` | Columns 4 and 5 swapped. GFF3 requires start no greater than end on every feature, circular ones included, where wraparound is expressed by extending end past the landmark length |
 | `no_version_pragma` | The `##gff-version 3` line removed and every other header line kept |
 | `duplicate_id` | One ID on a `gene` and a `sequence_alteration`. Repeating an ID is legal when every line describes one discontinuous feature, so duplicating a row would not be a violation; colliding across two types is |
 
-**`data/derived-edge-cases/`**, two files that are valid GFF3 and still wrong in practice.
+**`data/derived-edge-cases/`**, three files that are valid GFF3 and still wrong in practice.
 
 `cds_phase_biologically_wrong` changes a CDS phase to another permitted value. This is the failure
 the AgBioData group leads with, and **no syntax-only validator can catch it**: 0, 1 and 2 are all legal, so
@@ -149,6 +149,12 @@ thing in this corpus: a syntax check is not a correctness check.
 
 `multiple_parents` gives one CDS two parents, both defined in the file. That is permitted, the
 AgBioData recommendations ask that parsers keep supporting it, and many tools refuse it anyway.
+
+`unescaped_semicolon_silent` is the dangerous half of the escaping problem, and it is worth reading
+beside `unescaped_semicolon` in the invalid set. There the tail of the unescaped value is a bare
+segment and a parser must reject it. Here the tail is itself a valid lowercase `tag=value` pair, so
+the file stays valid, the intended `Note` is silently truncated, and a `note` attribute nobody wrote
+now exists. Nothing reports anything.
 
 Every derived entry carries a `validity` field for exactly these cases.
 

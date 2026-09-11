@@ -11,7 +11,7 @@ different things and a consumer picking invalid fixtures must not get a valid
 file by mistake:
 
     data/derived-malformed/    six files that violate the GFF3 specification
-    data/derived-edge-cases/   two files that are valid GFF3 and still wrong in practice
+    data/derived-edge-cases/   three files that are valid GFF3 and still wrong in practice
 
 These are DERIVED, not found in the wild. They are not evidence about what any
 real producer emits, and corpus.yaml labels them that way.
@@ -94,15 +94,17 @@ def build():
         "Parent of the first CDS changed to an ID defined nowhere in the file",
         "invalid: GFF3 requires every Parent to resolve within the file")
 
-    # A raw semicolon inside an attribute value. Must be %3B. Unencoded it
-    # silently splits one attribute into two. Note is used rather than product
-    # because the first CDS already carries product, and overwriting it would
-    # add a second defect.
+    # A raw semicolon inside an attribute value, where GFF3 requires %3B.
+    # What the parser then sees is " putative", a segment with no tag=value
+    # form at all, so a conforming parser must reject it. Note rather than
+    # product, because the first CDS already carries product and overwriting
+    # it would add a second defect.
     i = data_index(lines, "CDS")
     cases["unescaped_semicolon.gff3"] = (
         BAD, set_attr(lines, i, "Note", "coat protein; putative"),
         "a raw semicolon inside a Note value on the first CDS, where GFF3 requires %3B",
-        "invalid: the unencoded separator splits one attribute into two")
+        "invalid: the text after the separator is a bare segment with no tag=value form, "
+        "which a conforming parser must reject")
 
     # Coordinate inversion. GFF3 requires start <= end for every feature,
     # circular ones included: wraparound is expressed by extending end past
@@ -138,12 +140,27 @@ def build():
         "invalid: a repeated ID is only legal across lines describing one feature, and "
         "these differ in type")
 
-    # --- two that are valid GFF3 and still problems ------------------------
+    # --- three that are valid GFF3 and still problems ----------------------
+
+    # The silent version of the semicolon problem, and the dangerous one. Here
+    # the text after the unescaped separator does have tag=value form, and the
+    # tag is lowercase, which the specification reserves for free use by
+    # applications. So the file is VALID, the intended Note is truncated, and a
+    # note attribute nobody wrote now exists. Nothing reports anything.
+    i = data_index(lines, "CDS")
+    cases["unescaped_semicolon_silent.gff3"] = (
+        EDGE, set_attr(lines, i, "Note", "coat protein;note=putative"),
+        "an unescaped semicolon in a Note value whose tail is itself a valid lowercase "
+        "tag=value pair",
+        "VALID GFF3: the Note is silently truncated and a second attribute appears that "
+        "nobody wrote; no validator reports anything because nothing is malformed")
+
 
     # Phase changed to another permitted value. This is the failure the
     # AgBioData group leads with, and it is NOT a specification violation:
-    # 0, 1 and 2 are all legal, so no validator can catch it. Identical
-    # coordinates with a different phase translate to a different protein.
+    # 0, 1 and 2 are all legal, so no syntax-only validator can catch it.
+    # Translating the CDS against the reference protein does catch it.
+    # Identical coordinates with a different phase give a different protein.
     i = data_index(lines, "CDS")
     cur = lines[i].split("\t")[7]
     cases["cds_phase_biologically_wrong.gff3"] = (

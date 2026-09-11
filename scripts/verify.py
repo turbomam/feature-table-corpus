@@ -152,15 +152,34 @@ def check_readme(doc):
     text = open(path).read()
     bad = 0
 
+    # Counts are DERIVED from the entries, never read from the summary fields.
+    # Comparing the README against entry_count and tier_counts would let a new
+    # entry pass while the summaries and the README were both stale, which is
+    # the exact failure this pass exists to prevent.
+    entries = doc["entries"]
+    derived_total = len(entries)
+    derived_tiers = {}
+    for e in entries:
+        derived_tiers[e.get("tier")] = derived_tiers.get(e.get("tier"), 0) + 1
+
+    if doc.get("entry_count") != derived_total:
+        print(f"STALE-SUMMARY   entry_count says {doc.get('entry_count')}, "
+              f"entries number {derived_total}")
+        bad += 1
+    if doc.get("tier_counts") != derived_tiers:
+        print(f"STALE-SUMMARY   tier_counts {doc.get('tier_counts')} "
+              f"disagrees with the entries {derived_tiers}")
+        bad += 1
+
     m = re.search(r"(\d+) entries in (?:two|three|four|five|six) tiers", text)
     if not m:
         print("README does not state a total entry count in the expected form")
         bad += 1
-    elif int(m.group(1)) != doc["entry_count"]:
-        print(f"README-COUNT    total: README says {m.group(1)}, index has {doc['entry_count']}")
+    elif int(m.group(1)) != derived_total:
+        print(f"README-COUNT    total: README says {m.group(1)}, entries number {derived_total}")
         bad += 1
 
-    for tier, n in doc["tier_counts"].items():
+    for tier, n in derived_tiers.items():
         row = re.search(rf"\|\s*{re.escape(tier)}\s*\|\s*(\d+)\s*\|", text)
         if not row:
             print(f"README-COUNT    tier {tier!r} has no row in the README table")
@@ -169,7 +188,7 @@ def check_readme(doc):
             print(f"README-COUNT    tier {tier}: README says {row.group(1)}, index has {n}")
             bad += 1
 
-    specs = sum(1 for e in doc["entries"] if e.get("kind") == "specification")
+    specs = sum(1 for e in entries if e.get("kind") == "specification")
     words = {"eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "ten": 10, "nine": 9}
     m = re.search(r"(\w+) specifications are recorded", text)
     if m and words.get(m.group(1).lower()) not in (None, specs):
@@ -183,10 +202,6 @@ def check_readme(doc):
 def check_vendored(entries):
     bad = 0
     for e in (x for x in entries if x.get("tier") in ("vendored", "derived")):
-        # An entry that check_index already rejected can be missing "path".
-        # Indexing it here would raise KeyError and replace a clean nonzero
-        # report with a traceback, which is the failure this whole pass exists
-        # to avoid.
         # Guard EVERY field this pass reads, not only path. An entry that
         # check_index already rejected can be missing any of them, and
         # indexing one here would replace a clean nonzero report with a
@@ -222,23 +237,24 @@ def check_links(entries):
         url = e.get("origin_url")
         if not url:
             continue
+        eid = e.get("id", "<missing id>")
         for method in ("HEAD", "GET"):
             req = urllib.request.Request(url, method=method,
                                          headers={"User-Agent": "curl/8.7.1"})
             try:
                 with urllib.request.urlopen(req, timeout=30) as r:
                     note = "" if method == "HEAD" else "  (GET; HEAD not allowed)"
-                    print(f"{r.status}  {e['id']}  {url}{note}")
+                    print(f"{r.status}  {eid}  {url}{note}")
                 break
             except urllib.error.HTTPError as exc:
                 # Some endpoints answer 405 to HEAD and 200 to GET. Retrying with
                 # GET keeps a live URL from being reported as dead.
                 if exc.code == 405 and method == "HEAD":
                     continue
-                print(f"{exc.code}  {e['id']}  {url}")
+                print(f"{exc.code}  {eid}  {url}")
                 break
             except Exception as exc:
-                print(f"---  {e['id']}  {url}  ({exc})")
+                print(f"---  {eid}  {url}  ({exc})")
                 break
 
 
