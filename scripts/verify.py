@@ -16,8 +16,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 REQUIRED_ALWAYS = ("id", "label", "tier", "source", "license", "retrieved")
 REQUIRED_BY_TIER = {
-    "vendored": ("path", "bytes", "md5"),
-    "derived": ("path", "bytes", "md5", "derived_from", "mutation"),
+    "vendored": ("path", "bytes", "md5", "origin_url"),
+    "derived": ("path", "bytes", "md5", "origin_url", "derived_from", "mutation",
+                "validity"),
     "linked": ("origin_url",),
     "restricted": ("origin_url",),
     "not located": (),
@@ -33,7 +34,7 @@ def check_index(entries):
     no check enforces is worse than no invariant, because it is trusted.
     """
     bad = 0
-    seen_ids, seen_paths = {}, {}
+    seen_ids, seen_paths, seen_urls = {}, {}, {}
     for e in entries:
         eid = e.get("id", "<missing id>")
 
@@ -48,6 +49,17 @@ def check_index(entries):
                 print(f"DUPLICATE-PATH  {p}  claimed by {seen_paths[p]} and {eid}")
                 bad += 1
             seen_paths[p] = eid
+
+        # Duplicate origin_url means one artifact indexed under two identities,
+        # which inflates the counts. Derived entries legitimately share one URL,
+        # the generator that produces them, so they are exempt.
+        u = e.get("origin_url")
+        if u and e.get("tier") != "derived":
+            if u in seen_urls:
+                print(f"DUPLICATE-URL   {u}\n"
+                      f"                claimed by {seen_urls[u]} and {eid}")
+                bad += 1
+            seen_urls[u] = eid
 
         tier = e.get("tier")
         if tier not in REQUIRED_BY_TIER:
@@ -68,7 +80,15 @@ def check_index(entries):
 
 def check_vendored(entries):
     bad = 0
-    for e in (x for x in entries if x["tier"] == "vendored"):
+    for e in (x for x in entries if x.get("tier") in ("vendored", "derived")):
+        # An entry that check_index already rejected can be missing "path".
+        # Indexing it here would raise KeyError and replace a clean nonzero
+        # report with a traceback, which is the failure this whole pass exists
+        # to avoid.
+        if not e.get("path"):
+            print(f"NO-PATH   {e.get('id', '<missing id>')}  (already reported above)")
+            bad += 1
+            continue
         p = os.path.join(ROOT, e["path"])
         if not os.path.exists(p):
             print(f"MISSING   {e['id']}  {e['path']}")

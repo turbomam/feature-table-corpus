@@ -15,33 +15,83 @@ jobs:
       - name: Index invariants and vendored checksums
         run: uv run --with pyyaml python scripts/verify.py
 
-      # A duplicate id passed every check once, because the only assertion
-      # lived in an uncommitted script. This proves the check can fail before
-      # trusting it to say the corpus is clean.
+      # A duplicate id once passed every check, because the only assertion
+      # lived in an uncommitted script. Prove the check can fail before
+      # trusting it to say the corpus is clean. Each injected defect below is
+      # one the verifier claims to catch, so the claim is tested and not just
+      # written down.
       - name: Prove the invariant check can fail
         run: |
           cp corpus.yaml /tmp/corpus.good.yaml
+          restore() { cp /tmp/corpus.good.yaml corpus.yaml; }
+          expect_reject() {
+            if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
+              echo "FAIL: verifier accepted an index with $1"; cat /tmp/out.txt; restore; exit 1
+            fi
+            if ! grep -q "$2" /tmp/out.txt; then
+              echo "FAIL: verifier rejected $1 but never printed $2"; cat /tmp/out.txt; restore; exit 1
+            fi
+            echo "ok: rejected $1 with $2"; restore
+          }
+
+          # Duplicate id AND duplicate path: copying an entry whole does both.
           uv run --with pyyaml python - <<'PY'
           import yaml, copy
           d = yaml.safe_load(open("corpus.yaml"))
-          dup = copy.deepcopy(d["entries"][1])
-          dup["id"] = d["entries"][0]["id"]
-          d["entries"].append(dup)
+          d["entries"].append(copy.deepcopy(d["entries"][0]))
           yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
           PY
-          if uv run --with pyyaml python scripts/verify.py; then
-            echo "FAIL: the verifier passed an index with a duplicate id"
-            cp /tmp/corpus.good.yaml corpus.yaml
-            exit 1
-          fi
-          echo "ok: the verifier rejected a duplicate id"
-          cp /tmp/corpus.good.yaml corpus.yaml
+          expect_reject "a duplicated entry" "DUPLICATE-ID"
 
-      - name: Malformed cases reproduce byte for byte
+          uv run --with pyyaml python - <<'PY'
+          import yaml, copy
+          d = yaml.safe_load(open("corpus.yaml"))
+          d["entries"].append(copy.deepcopy(d["entries"][0]))
+          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          PY
+          expect_reject "a duplicated path" "DUPLICATE-PATH"
+
+          # Missing required field.
+          uv run --with pyyaml python - <<'PY'
+          import yaml, copy
+          d = yaml.safe_load(open("corpus.yaml"))
+          e = copy.deepcopy(d["entries"][0]); e["id"] = "no-license"; e.pop("license", None)
+          d["entries"].append(e)
+          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          PY
+          expect_reject "a missing license" "MISSING-FIELDS"
+
+          # Two identities for one upstream artifact.
+          uv run --with pyyaml python - <<'PY'
+          import yaml, copy
+          d = yaml.safe_load(open("corpus.yaml"))
+          src = next(e for e in d["entries"] if e["tier"] == "linked")
+          e = copy.deepcopy(src); e["id"] = src["id"] + "-again"
+          d["entries"].append(e)
+          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          PY
+          expect_reject "a duplicated origin_url" "DUPLICATE-URL"
+
+          # An entry the index rejects must not crash the file pass.
+          uv run --with pyyaml python - <<'PY'
+          import yaml
+          d = yaml.safe_load(open("corpus.yaml"))
+          d["entries"].append({"id": "no-tier-no-path", "label": "x", "source": "x",
+                               "license": "x", "retrieved": "2026-01-01"})
+          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          PY
+          expect_reject "an entry with no tier" "UNKNOWN-TIER"
+
+      # git diff ignores untracked files, so a fixture deleted from the pull
+      # request would be silently recreated and the step would pass. Staging
+      # first makes additions, deletions and modifications all visible.
+      - name: Derived fixtures reproduce exactly
         run: |
-          uv run --with pyyaml python scripts/verify.py > /dev/null
           python3 scripts/make_malformed.py
-          git diff --exit-code -- data/derived-malformed
+          git add -A -- data/derived-malformed data/derived-edge-cases
+          git diff --cached --exit-code --stat -- data/derived-malformed data/derived-edge-cases
+          test "$(ls data/derived-malformed | wc -l)" -eq 6
+          test "$(ls data/derived-edge-cases | wc -l)" -eq 1
 
       - name: Origin URLs (reported, never fatal)
         continue-on-error: true

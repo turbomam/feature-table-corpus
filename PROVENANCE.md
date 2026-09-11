@@ -66,3 +66,46 @@ Searched GitHub repository and code search across `ber-data` and `microbiomedata
 the open web for MONet data access. MONet is real, published without embargo on EMSL Science
 Central, and recorded. BASALT is not public anywhere that could be found on 2026-09-11. Recorded as
 `not located` so the gap is visible rather than forgotten.
+
+## Corrections after the second review, 2026-09-11
+
+The first version of the derived files was wrong in ways the review caught, and the corrections
+changed the files themselves rather than only their descriptions.
+
+**The generator discarded every source pragma.** It rebuilt each fixture from data rows alone and
+wrote a fresh header, so `#!genome-build`, `##sequence-region`, `##species` and the `###`
+terminator were all lost. Each file therefore differed from its source in many header semantics
+while claiming one documented change. The generator now preserves the source line for line and
+appends provenance comments after the terminator, so the header region is byte-identical. The one
+exception is `no_version_pragma`, whose single change is the removal of that one line.
+
+**Two fixtures carried a second, undocumented defect.** The semicolon case overwrote a `product`
+attribute that already existed, adding a duplicate-attribute defect beside the intended one; it now
+uses `Note`. The multiple-parent case named a second parent that was defined nowhere, making it a
+dangling-parent fixture as well; it now uses `gene-phiX174p06`, which the source defines.
+
+**The circular-genome rationale was backwards.** The earlier text said a swapped start and end was
+ambiguous rather than wrong because phiX174 is circular. GFF3 requires start no greater than end on
+every feature, circular included, and expresses wraparound by extending end past the landmark
+length. The case is a plain coordinate-rule violation. Corrected in the generator, the index and
+the README.
+
+**One valid file was filed as invalid.** The multiple-parent case is legal GFF3 that many tools
+refuse, and it sat in `derived-malformed/` labeled invalid. It now lives in `derived-edge-cases/`,
+and every derived entry carries a `validity` field so the distinction cannot be lost again.
+
+**The index was indexing one artifact twice.** The Sequence Ontology GFF3 specification appeared as
+both `so-gff3-spec` and `spec-gff3-so`, which inflated the entry and specification counts. The
+duplicate is removed, and the verifier now rejects a repeated `origin_url`, exempting derived
+entries because they legitimately share the generator that produces them.
+
+**Three checks could not fail.** The verifier did not require `origin_url` on a vendored entry
+though the README calls it part of the contract; it raised `KeyError` instead of a clean nonzero
+report when an entry it had just rejected lacked `path` or `tier`; and the CI fixture check used
+`git diff`, which ignores untracked files, so a fixture deleted from a pull request would have been
+silently regenerated and the step would have passed. All three are fixed, and CI now injects five
+separate defects and fails the build if the verifier accepts any of them or rejects one without
+naming it.
+
+**The README counts were wrong.** Twelve specifications, not eleven, and ten linked, not nine. The
+byte total still said 80 KB after four files were added.

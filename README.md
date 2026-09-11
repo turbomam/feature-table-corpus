@@ -8,19 +8,19 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-48 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+47 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
-| linked | 17 | Too large or not redistributable, so a stable public URL is recorded instead |
-| derived | 7 | Built here from a vendored file by one documented change. Traceable, but not observed in the wild |
+| linked | 16 | Too large or not redistributable, so a stable public URL is recorded instead |
+| derived | 7 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
-Everything vendored totals about 80 KB of plain text, so a clone is cheap and every file is
-reviewable in a diff. Nothing here is binary or compressed.
+Everything in the repository totals about 260 KB of plain text, so a clone is cheap and every file
+is reviewable in a diff. Nothing here is binary or compressed.
 
 ## The vendored files
 
@@ -50,7 +50,7 @@ their own header.
 
 ## Specifications
 
-Eleven specifications are recorded, two of them vendored.
+Twelve specifications are recorded, two of them vendored and ten linked.
 
 The vendored two are the ones whose licenses allow it. `specs/chado_1.4_feature_tables.sql` holds
 the seven Chado feature tables extracted from a 2.2 MB schema, under Artistic-2.0. Chado is worth
@@ -61,31 +61,42 @@ flat-table profile requires, reached independently twenty years earlier.
 under MIT. It constrains feature type to Sequence Ontology accessions under `sequence_feature` and
 carries provenance slots for source database and protocol, which the other models do not.
 
-The other nine are linked: the INSDC Feature Table Definition and the DDBJ rendering of it, which
+The other ten are linked: the INSDC Feature Table Definition and the DDBJ rendering of it, which
 are the ancestor of all of this and still govern what a feature means in a sequence database; the
 Sequence Ontology GFF3 and GVF specifications; GTF 2.2; the GMOD descriptions of GFF2 and GFF3;
 the BED version 1 specification; the UCSC format reference, which is the broadest single list of
 real feature-table formats; and NCBI's own statement of what it emits.
 
-## Deliberately invalid files
+## Derived files, in two directories
 
-Seven files under `data/derived-malformed/` are invalid on purpose. Each is the vendored phiX174
-GFF3 with exactly one documented change, and each says so in its own header pragmas. Rebuild them
-with `python3 scripts/make_malformed.py`.
+Seven files are built here from the vendored phiX174 GFF3. Each is that source preserved line for
+line with **exactly one change to one data row**, plus provenance comments appended after the
+source's own `###` terminator, so the header region stays byte-identical. Rebuild them with
+`python3 scripts/make_malformed.py`.
 
 They are **derived, not found**. They are not evidence about what any real producer emits, and the
 index labels them that way. They exist because the failures the AgBioData group describes are
 easier to test against than to read about.
 
-| Case | What changed |
+The split into two directories is deliberate. Invalid and refused-in-practice are different things,
+and a consumer selecting invalid fixtures must not receive a valid file by mistake.
+
+**`data/derived-malformed/`**, six files that violate the specification.
+
+| Case | The one change |
 |---|---|
 | `cds_phase_altered` | Phase in column 8 no longer matches the coordinates. The headline failure: same coordinates, different protein |
 | `dangling_parent` | Parent names an ID defined nowhere. Breaks the graph without breaking the syntax |
-| `unescaped_semicolon` | A raw `;` inside an attribute value instead of `%3B`. Parses cleanly and means something else |
-| `start_after_end` | Columns 4 and 5 swapped. Ambiguous rather than wrong on a circular genome, which phiX174 is |
-| `multiple_parents` | Two parents on one feature. Legal GFF3 that many tools refuse, so malformed and rejected-in-practice are different sets |
-| `no_version_pragma` | No `##gff-version 3`. A parser cannot then tell GFF3 from GFF2, and column 9 differs between them |
+| `unescaped_semicolon` | A raw `;` inside a `Note` value instead of `%3B`. Parses cleanly and means something else |
+| `start_after_end` | Columns 4 and 5 swapped. GFF3 requires start no greater than end on every feature, circular ones included, where wraparound is expressed by extending end past the landmark length |
+| `no_version_pragma` | The `##gff-version 3` line removed and every other header line kept. A parser then cannot tell GFF3 from GFF2 |
 | `duplicate_id` | One ID on two features, so anything keyed on it collapses them |
+
+**`data/derived-edge-cases/`**, one file that is valid GFF3 and widely refused.
+
+`multiple_parents` gives one CDS two parents, both of them defined in the file. That is permitted by
+the specification, the AgBioData recommendations ask that parsers keep supporting it, and many tools
+refuse it anyway. Every entry in the index carries a `validity` field for exactly this reason.
 
 ## Why some things are only linked
 

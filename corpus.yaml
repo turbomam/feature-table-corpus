@@ -6,10 +6,11 @@ tiers:
   vendored: the file is in this repository, with its origin URL and a checksum
   linked: the file is too large or not redistributable; a stable public URL is recorded instead
   restricted: the content sits behind a login; recorded for completeness and not fetchable here
-  derived: built here from a vendored file by one documented change; traceable but NOT observed in the
-    wild
+  derived: built here from a vendored file by exactly one documented change; traceable, but NOT observed
+    in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
+    refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 48
+entry_count: 47
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -332,9 +333,11 @@ entries:
   origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md
   license: no license file in repository
   why_not_vendored: no license; and the examples are worth reading in their specification context
-  notes: The normative definition. Its worked examples are the reference for canonical parent and child
+  notes: Normative. Defines the nine columns, the parent and child model, percent-encoding in column 9,
+    and the rule that start <= end on every feature. Its worked examples are the reference for canonical
     structure.
   retrieved: '2026-09-11'
+  kind: specification
 - id: nmdc-functional-annotation-gff-large
   label: NMDC Functional Annotation GFF, full size example
   tier: linked
@@ -458,17 +461,6 @@ entries:
   license: not stated
   notes: The most readable rendering of the INSDC feature table.
   retrieved: '2026-09-11'
-- id: spec-gff3-so
-  label: GFF3 specification, Sequence Ontology
-  tier: linked
-  kind: specification
-  origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md
-  source: Sequence Ontology
-  license: no license file in repository
-  why_not_vendored: no license, and the worked examples read better in context
-  notes: Normative. Defines the nine columns, the parent and child model, and percent-encoding in column
-    9.
-  retrieved: '2026-09-11'
 - id: spec-gvf-so
   label: GVF specification, Sequence Ontology
   tier: linked
@@ -571,142 +563,6 @@ entries:
   notes: Vendorable because MIT. Constrains feature type to Sequence Ontology accessions under sequence_feature
     and carries provenance slots for source database and protocol, which the other models do not. No sample
     feature tables were found in that repository, so this is the model without data.
-- id: derived-cds-phase-altered
-  label: 'Derived malformed GFF3: CDS phase in column 8 changed to a value inconsistent with the coordinates'
-  tier: derived
-  path: data/derived-malformed/cds_phase_altered.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6582
-  md5: 4fdb8327a16b43a7d2c163edb406496c
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: CDS phase in column 8 changed to a value inconsistent with the coordinates
-  why_it_matters: 'The AgBioData group''s headline failure: the same coordinates with a different phase
-    translate to a different protein.'
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
-- id: derived-dangling-parent
-  label: 'Derived malformed GFF3: Parent attribute names an ID defined nowhere in the file'
-  tier: derived
-  path: data/derived-malformed/dangling_parent.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6568
-  md5: a16f7b32302b21bca4c951f0130e0216
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: Parent attribute names an ID defined nowhere in the file
-  why_it_matters: Breaks the parent and child graph without breaking the line syntax.
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
-- id: derived-unescaped-semicolon
-  label: 'Derived malformed GFF3: an attribute value contains a raw semicolon instead of %3B'
-  tier: derived
-  path: data/derived-malformed/unescaped_semicolon.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6597
-  md5: f40873e9180326ea9cc3b156fbf8abe4
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: an attribute value contains a raw semicolon instead of %3B
-  why_it_matters: Silently splits one attribute into two. Parses cleanly and means something else.
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
-- id: derived-start-after-end
-  label: 'Derived malformed GFF3: columns 4 and 5 swapped so start is greater than end'
-  tier: derived
-  path: data/derived-malformed/start_after_end.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6560
-  md5: d927c677958b268c660c8dfa2b7304c3
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: columns 4 and 5 swapped so start is greater than end
-  why_it_matters: Ambiguous rather than simply wrong on a circular genome, which phiX174 is.
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
-- id: derived-multiple-parents
-  label: 'Derived malformed GFF3: one feature declares two parents'
-  tier: derived
-  path: data/derived-malformed/multiple_parents.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6614
-  md5: cdcb67df637284d767a8cfacf07e05c4
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: one feature declares two parents
-  why_it_matters: LEGAL GFF3, and the AgBioData recommendations ask that parsers keep supporting it, yet
-    many tools refuse. Malformed and rejected-in-practice are different sets.
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
-- id: derived-no-version-pragma
-  label: 'Derived malformed GFF3: the ##gff-version 3 pragma is absent'
-  tier: derived
-  path: data/derived-malformed/no_version_pragma.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6528
-  md5: 7be9898ed2a39f562894d4720ae1a89f
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: 'the ##gff-version 3 pragma is absent'
-  why_it_matters: Without it a parser cannot tell GFF3 from GFF2, and the column 9 grammar differs between
-    them.
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
-- id: derived-duplicate-id
-  label: 'Derived malformed GFF3: two distinct features share one ID attribute'
-  tier: derived
-  path: data/derived-malformed/duplicate_id.gff3
-  format: GFF3 (invalid)
-  source: derived in this repository
-  producer: scripts/make_malformed.py
-  producer_kind: derived test case
-  bytes: 6707
-  md5: e49160c2d0926bc9652385a7e79cd9c6
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
-  mutation: two distinct features share one ID attribute
-  why_it_matters: Makes ID non-unique, so anything keyed on it collapses two features into one.
-  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
-  retrieved: '2026-09-11'
-  license: public domain (derived from a US Government work)
-  notes: DELIBERATELY INVALID. Derived, not observed in the wild, so it is not evidence about what any
-    real producer emits. Each file differs from its source by exactly one change and says so in its own
-    header pragmas.
 - id: emsl-monet
   label: EMSL MONet soil molecular data
   tier: linked
@@ -735,9 +591,160 @@ entries:
     coming from James Carr. Searched GitHub across the ber-data and microbiomedata organizations and the
     open web on 2026-09-11 and found nothing public. Every code hit for ''basalt'' in those organizations
     is the rock, in environmental value sets. This is an open gap, not a dead end: ask EMSL directly.'
+- id: derived-cds-phase-altered
+  label: 'Derived malformed GFF3: phase in column 8 of the first CDS changed so it no longer matches the
+    coordinates'
+  tier: derived
+  path: data/derived-malformed/cds_phase_altered.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6888
+  md5: 1008608711007bd08c0a4bc99450a5c5
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: phase in column 8 of the first CDS changed so it no longer matches the coordinates
+  validity: 'invalid: the phase contradicts the frame implied by the coordinates'
+  why_it_matters: 'The AgBioData group''s headline failure: identical coordinates with a different phase
+    translate to a different protein.'
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
+- id: derived-dangling-parent
+  label: 'Derived malformed GFF3: Parent of the first CDS changed to an ID defined nowhere in the file'
+  tier: derived
+  path: data/derived-malformed/dangling_parent.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6873
+  md5: 97cbf6d61ac75774dcbaf15ef40bf3d5
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: Parent of the first CDS changed to an ID defined nowhere in the file
+  validity: 'invalid: GFF3 requires every Parent to resolve within the file'
+  why_it_matters: Breaks the parent and child graph without breaking the line syntax, so it parses cleanly.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
+- id: derived-duplicate-id
+  label: 'Derived malformed GFF3: a second gene row inserted carrying the same ID as the first, at different
+    coordinates'
+  tier: derived
+  path: data/derived-malformed/duplicate_id.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 7034
+  md5: c9d9a5a51062145bc2a776d99a364c49
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a second gene row inserted carrying the same ID as the first, at different coordinates
+  validity: 'invalid: GFF3 requires ID to be unique within the file'
+  why_it_matters: Makes ID non-unique, so anything keyed on it collapses two features into one.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
+- id: derived-no-version-pragma
+  label: 'Derived malformed GFF3: the ##gff-version 3 line removed; every other header line preserved'
+  tier: derived
+  path: data/derived-malformed/no_version_pragma.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6844
+  md5: 3f44405f00e2dd1ddfffa8c254ac0ffb
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: 'the ##gff-version 3 line removed; every other header line preserved'
+  validity: 'invalid: GFF3 requires the version directive on line 1'
+  why_it_matters: Without the directive a parser cannot tell GFF3 from GFF2, and the column 9 grammar
+    differs between them.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
+- id: derived-start-after-end
+  label: 'Derived malformed GFF3: columns 4 and 5 of the first gene swapped, so start is greater than
+    end'
+  tier: derived
+  path: data/derived-malformed/start_after_end.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6881
+  md5: 41f474923ae543512ba080b3af4849c1
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: columns 4 and 5 of the first gene swapped, so start is greater than end
+  validity: 'invalid: GFF3 requires start <= end on every feature, circular included'
+  why_it_matters: 'GFF3 requires start <= end on every feature. A circular genome does not change that:
+    wraparound is expressed by extending end past the landmark length. phiX174 carries Is_circular=true,
+    which is why the rule is worth stating here rather than assuming.'
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
+- id: derived-unescaped-semicolon
+  label: 'Derived malformed GFF3: a raw semicolon inside a Note value on the first CDS, where GFF3 requires
+    %3B'
+  tier: derived
+  path: data/derived-malformed/unescaped_semicolon.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6906
+  md5: e8c9a18bebe7d223cea7c6f724acb48b
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a raw semicolon inside a Note value on the first CDS, where GFF3 requires %3B
+  validity: 'invalid: the unencoded separator splits one attribute into two'
+  why_it_matters: Silently splits one attribute into two. Parses cleanly and means something else.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
+- id: derived-multiple-parents
+  label: 'Derived edge case: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined
+    in this file'
+  tier: derived
+  path: data/derived-edge-cases/multiple_parents.gff3
+  format: GFF3 (valid; refused by many tools)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6924
+  md5: be468036e4a68af0d467a79061a0dac5
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined in this file
+  validity: 'VALID GFF3: multiple parents are permitted, and many tools refuse them anyway'
+  why_it_matters: Legal GFF3 that many tools refuse. Kept separate from the invalid files so a consumer
+    selecting invalid fixtures never receives a valid one by mistake. The AgBioData recommendations explicitly
+    ask that parsers keep supporting it.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments appended after the source''s own ### terminator, so the header region is byte-identical.'
 tier_counts:
   vendored: 20
-  linked: 17
+  linked: 16
   restricted: 3
-  derived: 7
   not located: 1
+  derived: 7
