@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 52
+entry_count: 53
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -844,9 +844,28 @@ entries:
     The file is its source preserved line for line with exactly one change to one data row, plus provenance
     comments, single-hash lines appended after the source''s own ### terminator, so the header region
     is byte-identical.'
+- id: model-gff-schema
+  label: GFF3 LinkML schema, biodatamodels
+  tier: linked
+  kind: model
+  format: LinkML
+  source: biodatamodels
+  producer: cmungall
+  producer_kind: data model
+  origin_url: https://github.com/biodatamodels/gff-schema
+  license: no license file in the repository
+  why_not_vendored: no license file at all, so the schema cannot be copied here; compared instead in docs/model-comparison.md
+  retrieved: '2026-09-11'
+  notes: 'Self-described DRAFT. Last commit 2021-06-03, ten commits all from cmungall, two open issues
+    the older from 2021-02-11. The only one of the four models that models a GFF3 file rather than a feature
+    table: a gff document class holds features and sequence entries side by side. Also the only one modeling
+    the header directives and pragmas as data, and the only one with an explicit seqid slot ranged over
+    a model class. Its feature-class description is identical character for character to NMDC''s GenomeFeature,
+    and that string is not in the GFF3 specification. First of the four artifacts in the 2026-09-08 link
+    list that prompted this corpus.'
 tier_counts:
   vendored: 20
-  linked: 19
+  linked: 20
   restricted: 3
   not located: 1
   derived: 9

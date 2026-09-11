@@ -46,12 +46,12 @@ which is why it carries weight and the circular comment does not.
 | Design decision | gff-schema | KBase Feature | NMDC GenomeFeature | Chado |
 |---|---|---|---|---|
 | Models the whole file or one table | **`gff document` class holding both `sequences` and `features`** | feature only | feature only | relational, seven tables |
-| seqid | **range `seq`, an object** | via a link to `Contig` | `string`, carrying a TODO to change it | `srcfeature_id`, a foreign key to `feature` |
+| seqid | **range `seq`, an object** | not declared. `Feature` has only `feature_id` and `hash` plus scalar attributes; `contig_id` belongs to `Contig` | `string`, carrying a TODO to change it | `srcfeature_id`, a foreign key to `feature` |
 | type constrained to Sequence Ontology | **pattern `^SO:\d+`** | `LocalCurie` matching `SO:xxxxxx`, constrained to children of `sequence_feature` | `type` plus a `feature_type` string whose description is "TODO: Yuri to write" | `type_id`, a foreign key to `cvterm` |
 | phase | **`phase_enum`: 0, 1, 2** | `CdsPhaseType` | integer, minimum 0, maximum 2 | `phase int` on `featureloc`, unconstrained |
 | strand | **`strand_enum`: `+`, `-`, `.`, `?`** | `StrandType` | no range, carrying a TODO to add an enum | `strand`, a smallint |
-| score | slot defined and **deliberately not attached to the feature class** | **replaced by `e_value` and `p_value`** | absent | not applicable |
-| Parent and hierarchy | **`Parent`, range `genome feature`, multivalued** | via `EncodedFeature` and related classes | not modeled on the feature class | `feature_relationship`, with subject, object, type and rank |
+| score | slot defined and not attached to the feature class | **replaced by `e_value` and `p_value`** | absent | `rawscore`, `normscore` and `significance` on `analysisfeature`, which is outside the seven-table excerpt vendored here |
+| Parent and hierarchy | **`Parent`, range `genome feature`, multivalued** | not declared in the vendored module. `EncodedFeature` carries its own identifier and no link to `Feature` | not modeled on the feature class | `feature_relationship`, with subject, object, type and rank |
 | Column 9 modeled explicitly | **`genome feature attribute set` class: ID, Name, Parent, Ontology term** | flat attributes on the class | not modeled | `featureprop` table |
 | Header directives and pragmas modeled | **yes: gff version, feature, attribute and source ontology URIs, species, sequence region, genome build** | no | no | no |
 | Provenance of the assertion | no | `source_database`, `protocol_id`, `hash` | no | via `analysisfeature` and `dbxref` |
@@ -61,10 +61,17 @@ which is why it carries weight and the circular comment does not.
 
 ## What that table says
 
-**Nobody kept the score column.** Three independent models refused it in three different ways: the
-slot defined and left off the class, replaced by two typed slots, or omitted entirely. The
-specification says the semantics are ill-defined, and every modeler who read that sentence acted on
-it. A unified model should not reintroduce it.
+**None of the four keeps the score column as the specification defines it**, and each does something
+different with it: the slot defined and left off the feature class, replaced by two typed slots,
+omitted entirely, or moved to a separate analysis table with three named scores. These are not
+independent data points, since the lineage section above shows three of the models share text. But
+the handling is distinct in all four cases, and the specification's own admission that the semantics
+are ill-defined is the obvious common cause. A unified model should not reintroduce it as one
+column.
+
+Note what the source supports and what it does not: `gff-schema` defines a `score` slot and does not
+attach it to `genome feature`. That is what the file shows. Whether the omission was deliberate is
+not recorded anywhere, and an earlier version of this document asserted that it was.
 
 **The dormant draft is the only one that models a file rather than a feature table.**
 `gff-schema` has a `gff document` class holding `features` and `sequences` side by side, so the
