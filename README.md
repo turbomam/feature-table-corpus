@@ -16,8 +16,9 @@ Three files, in this order, if you have fifteen minutes:
 
 Four findings, each measured against real files rather than read from a document:
 
-- The four models share a lineage. The feature-class description in `gff-schema` and in NMDC's
-  schema is identical character for character.
+- Three of the four share a lineage. The feature-class description in `gff-schema` and in NMDC's
+  schema is identical character for character, and that string appears nowhere in the GFF3
+  specification, so it was inherited rather than quoted.
 - Seven of the fourteen NMDC annotation file types put a database accession in column 3 where the
   specification requires a Sequence Ontology term.
 - GFF3 phase and GTF frame map directly, measured across 84 proteins. The three exceptions are
@@ -131,10 +132,10 @@ by decision.
 Two results worth knowing before reading anything else. The feature-class descriptions in
 `gff-schema` and NMDC's schema are identical character for character, and KBase's differs by one
 word, so these are one family rather than four independent efforts. And the model written off as a
-dormant draft is the most complete on file structure: it is the only one that models a GFF3 file
-rather than a feature table, holding the `##FASTA` sequences alongside the features, the only one
-that models the `##` directives as data, and the only one that makes `seqid` an object rather than
-a string.
+dormant draft is the only one that models a GFF3 file rather than a feature table: its
+`gff document` class holds `features` and sequence entries side by side, so the `##FASTA` section
+has a place in the model. It is also the only one that models the header directives and pragmas as
+data, and the only one with an explicit `seqid` slot ranged over a model class.
 
 It also answers a question that looked like a blocker. Of the 32 class and slot pairs in
 `gff-schema`, 22 are admissible under a flat scalar-only publishing profile as written, and 9 of the

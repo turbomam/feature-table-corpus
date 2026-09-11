@@ -10,7 +10,10 @@ vendored here at `specs/kbase_cdm_bioentity.yaml`, the NMDC schema at
 `src/schema/annotation.yaml` in `microbiomedata/nmdc-schema`, and the Chado tables vendored here at
 `specs/chado_1.4_feature_tables.sql`.
 
-## They share a lineage, verbatim
+## Three of the four share a lineage, and one shared string does not count
+
+Scoped deliberately to the three LinkML models. Chado is relational and has no feature-class
+description to compare, so it is outside this section.
 
 The class descriptions are not merely similar.
 
@@ -27,6 +30,17 @@ the wrong framing to walk into a room with.
 Which came first is not established here. The identical string is evidence of shared ancestry, not
 of a direction.
 
+**One test worth running before trusting any shared string.** All three models also carry the
+circular-genome convention in near-identical words, and that is *not* evidence of anything: the
+sentence "For features that cross the origin of a circular feature (e.g. most bacterial genomes,
+plasmids, and some viral genomes), the requirement for start to be less than or equal to end is
+satisfied by making end = the position of the end + the length of the landmark feature" is verbatim
+GFF3 specification text. Three models quoting the specification means three people read it.
+
+The class description is different. "localized to an interval" appears nowhere in the GFF3
+specification, checked 2026-09-11. That string had to come from one of these models into another,
+which is why it carries weight and the circular comment does not.
+
 ## Decision by decision
 
 | Design decision | gff-schema | KBase Feature | NMDC GenomeFeature | Chado |
@@ -34,16 +48,16 @@ of a direction.
 | Models the whole file or one table | **`gff document` class holding both `sequences` and `features`** | feature only | feature only | relational, seven tables |
 | seqid | **range `seq`, an object** | via a link to `Contig` | `string`, carrying a TODO to change it | `srcfeature_id`, a foreign key to `feature` |
 | type constrained to Sequence Ontology | **pattern `^SO:\d+`** | `LocalCurie` matching `SO:xxxxxx`, constrained to children of `sequence_feature` | `type` plus a `feature_type` string whose description is "TODO: Yuri to write" | `type_id`, a foreign key to `cvterm` |
-| phase | **`phase_enum`: 0, 1, 2** | `CdsPhaseType` | integer, minimum 0, maximum 2 | not applicable |
+| phase | **`phase_enum`: 0, 1, 2** | `CdsPhaseType` | integer, minimum 0, maximum 2 | `phase int` on `featureloc`, unconstrained |
 | strand | **`strand_enum`: `+`, `-`, `.`, `?`** | `StrandType` | no range, carrying a TODO to add an enum | `strand`, a smallint |
 | score | slot defined and **deliberately not attached to the feature class** | **replaced by `e_value` and `p_value`** | absent | not applicable |
 | Parent and hierarchy | **`Parent`, range `genome feature`, multivalued** | via `EncodedFeature` and related classes | not modeled on the feature class | `feature_relationship`, with subject, object, type and rank |
 | Column 9 modeled explicitly | **`genome feature attribute set` class: ID, Name, Parent, Ontology term** | flat attributes on the class | not modeled | `featureprop` table |
-| The `##` directives modeled | **yes: gff version, feature, attribute and source ontology URIs, species, sequence region, genome build** | no | no | no |
-| Provenance of the assertion | no | **`source_database`, `protocol_id`, `hash`** | no | via `analysisfeature` and `dbxref` |
-| Circular genomes | not addressed | not addressed | **the extend-end convention is documented in a comment** | not applicable |
+| Header directives and pragmas modeled | **yes: gff version, feature, attribute and source ontology URIs, species, sequence region, genome build** | no | no | no |
+| Provenance of the assertion | no | `source_database`, `protocol_id`, `hash` | no | via `analysisfeature` and `dbxref` |
+| Circular genomes | the convention quoted, plus an `Is circular` slot | the convention quoted | the convention quoted | not applicable |
 | Partial coordinates | not addressed | not addressed | not addressed | **`is_fmin_partial`, `is_fmax_partial`** |
-| Several locations per feature | `target location` class | no | no | **`locgroup` and `rank` on `featureloc`** |
+| Several locations per feature | no. `target location` is the range of the GFF3 `Target` attribute, an alignment target, not a second location for the feature | no | no | **`locgroup` and `rank` on `featureloc`** |
 
 ## What that table says
 
@@ -52,20 +66,31 @@ slot defined and left off the class, replaced by two typed slots, or omitted ent
 specification says the semantics are ill-defined, and every modeler who read that sentence acted on
 it. A unified model should not reintroduce it.
 
-**The dormant draft is the most complete on file structure.** `gff-schema` is the only one of the
-four that models a GFF3 file rather than a feature table: `gff document` holds `sequences` alongside
-`features`, which is the `##FASTA` section that the other models silently drop. It is also the only
-one that models the `##` directives as data, and the only one that makes `seqid` an object rather
-than a string, which is the change NMDC's own schema carries a TODO asking for.
+**The dormant draft is the only one that models a file rather than a feature table.**
+`gff-schema` has a `gff document` class holding `features` and `sequences` side by side, so the
+`##FASTA` section exists in the model where the other three have no place to put it. Note the limit:
+its `seq` class carries an ID and a `has sequence string` slot whose range is an `NA` or `AA` enum,
+so it models sequence *entries* and their type, not residues. Nothing in these four models stores
+the sequence itself.
+
+It is also the only one that models the header directives and pragmas as data, and the only one with
+an explicit `seqid` slot ranged over a model class. That last point needs the qualifier: KBase
+reaches the landmark through a link to `Contig` and Chado through the `srcfeature_id` foreign key, so
+three of the four treat the landmark as an entity. Only `gff-schema` does it as a named `seqid` slot,
+which is the change NMDC's own schema carries a TODO asking for.
 
 **It also already supports the case that breaks tools.** `Parent` is multivalued with a range of
 `genome feature`, so multiple parents are first class. That is the legal-but-widely-refused
 construct in `data/derived-edge-cases/multiple_parents.gff3`.
 
-**Each model has exactly one thing the others lack.** Provenance is only in KBase. The circular
-convention is only in NMDC. Partial coordinates and multiple locations per feature are only in
-Chado. File structure and the directives are only in gff-schema. None of these is a large piece of
-work; the risk is picking a base and losing the other three.
+**Each model carries something the others do not, and the counts are smaller than "only" suggests.**
+Provenance of the assertion is modeled in KBase and in Chado, and absent from the other two. Partial
+coordinates and several locations per feature are in Chado alone. File structure and the header
+directives are in `gff-schema` alone. The circular convention is in three of the four, because all
+three quote the specification for it.
+
+None of these is a large piece of work. The risk in picking a base is losing what the others hold,
+which is a shorter list than it first appears.
 
 ## The obstacle the table does not show
 
