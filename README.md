@@ -133,7 +133,8 @@ by decision.
 
 Two results worth knowing before reading anything else. The feature-class descriptions in
 `gff-schema` and NMDC's schema are identical character for character, and KBase's differs by one
-word, so these are one family rather than four independent efforts. And the model written off as a
+word, which is evidence of a shared source but does not settle it; the comparison treats shared
+lineage as a hypothesis and says what would confirm it. And the model written off as a
 dormant draft is the only one that models a GFF3 file rather than a feature table: its
 `gff document` class holds `features` and sequence entries side by side, so the `##FASTA` section
 has a place in the model. It is also the only one that models the header directives and pragmas as

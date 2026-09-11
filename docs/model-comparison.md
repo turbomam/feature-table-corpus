@@ -82,8 +82,11 @@ not recorded anywhere, and an earlier version of this document asserted that it 
 `gff-schema` has a `gff document` class holding `features` and `sequences` side by side, so the
 `##FASTA` section exists in the model where the other three have no place to put it. Note the limit:
 its `seq` class carries an ID and a `has sequence string` slot whose range is an `NA` or `AA` enum,
-so it models sequence *entries* and their type, not residues. Nothing in these four models stores
-the sequence itself.
+so it models sequence *entries* and their type, not residues.
+
+Chado does store residues, in `feature.residues text`, which an earlier version of this document
+denied. So the accurate statement is narrower: `gff-schema` is the only one of the four that gives
+the FASTA section a place at document level, and it is not the one that stores sequence content.
 
 It is also the only one that models the header directives and pragmas as data, and the only one with
 an explicit `seqid` slot ranged over a model class. Chado also treats the landmark as an entity, via
@@ -184,70 +187,3 @@ the same subset. The unresolved items are the ones no model addresses:
 - Whether the model describes a file, a feature, or one evidence stream. NMDC production says these
   are different things, because the same feature appears across several per-database files.
 
-## Is `gff-schema` compatible with a flat, scalar-only publishing profile?
-
-Yes, and the flattening is mechanical for all but one slot.
-
-The question matters because the BRIDGE Data Catalog's stated input profile is "Flat; scalar-valued
-columns only," rejecting multivalued slots, class-valued slots, nested structures and inlined object
-graphs. Tracked at https://github.com/microbiomedata/nmdc-lakehouse/issues/342 . On its face that
-looks fatal for `gff-schema`, which is an object graph by design.
-
-Measured 2026-09-11 across all 32 class and slot pairs in that schema:
-
-| Under a scalar-only profile | Count |
-|---|---|
-| Admissible as written | 22 |
-| Rejected | 10 |
-
-But the ten rejections are not ten problems. Nine of them are a foreign key or a child table in a
-normalized relational rendering, and the catalog supports declared foreign keys between multiple
-tables per dataset version. Grouped by what they become:
-
-| What was rejected | Count | What it flattens to |
-|---|---|---|
-| Single class-valued reference | 5 | Scalar id column plus a declared foreign key |
-| Value object with no identity | 1 | Its slots expand into the parent row |
-| Multivalued class reference | 3 | Child or junction table |
-| Multivalued scalar | 1 | The only genuine array-or-junction choice |
-
-Slot by slot:
-
-| Slot | Why rejected | Flattened form |
-|---|---|---|
-| `gff document.sequence region` | class-valued | scalar id column plus a declared foreign key |
-| `gff document.genome build` | class-valued | same |
-| `genome feature.seqid` | class-valued | same |
-| `sequence region value.seqid` | class-valued | same |
-| `target location.seqid` | class-valued | same |
-| `genome feature.has attributes` | class-valued | a value object with no identity, so its slots expand into the parent row |
-| `gff document.sequences` | class-valued, multivalued | child table keyed on the document |
-| `gff document.features` | class-valued, multivalued | child table keyed on the document |
-| `genome feature attribute set.Parent` | class-valued, multivalued | junction table of feature and parent |
-| `genome feature attribute set.Ontology term` | multivalued, scalar range | **the only genuine choice: array column or junction table** |
-
-So nine of the ten resolve to shapes the catalog already accepts. Exactly one, a multivalued scalar,
-lands on the open question in that issue.
-
-**Chado is the proof rather than the analogy.** It is the same model already normalized this way and
-in production for twenty years: `feature` separate from `featureloc`, hierarchy in
-`feature_relationship` with subject, object, type and rank, column 9 in `featureprop`, and not one
-nested structure anywhere. A flat scalar-only profile is close to a description of Chado. The
-question is not whether this family of models can be flattened. One member of it has only ever
-existed flat.
-
-**What that means for scope.** A semantic model and a publishing profile are not competitors at the
-same layer, and treating them as alternatives is the mistake to avoid. `gff-schema` says what a
-feature is; the catalog profile says what bytes it may be published as. The mapping between them is
-the flattener, which already exists in `microbiomedata/nmdc-lakehouse` and already implements all
-three mechanisms above: scalar id columns for single references, child tables for inlined
-multivalued slots, and junction tables for referenced multivalued slots.
-
-One decision covers more than it looks: whether a multivalued scalar becomes an array column or a
-junction table. That settles all four remaining slots in `gff-schema` and the 150 multivalued
-attributes in the flattened NMDC schema, which are also multivalued scalars.
-
-It does not settle GFF3's `Parent`. At the format level `Parent` is a comma-separated list of
-identifiers, so it looks like a multivalued scalar, but in `gff-schema` it is a multivalued
-reference to `genome feature` and flattens to a junction table mechanically. An earlier version of
-this section conflated the two.

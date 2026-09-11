@@ -20,8 +20,12 @@ Usage:
 """
 import sys, urllib.request, yaml
 
+# Pinned to the commit that produced the counts published in
+# docs/model-comparison.md. Following `main` would let the documented
+# reproduction command audit a future revision while the dated results stand.
+GFF_SCHEMA_COMMIT = "cb31263471ab3855c3622c3be3d3f908db8be654"
 DEFAULT = ("https://raw.githubusercontent.com/biodatamodels/gff-schema/"
-           "main/src/schema/gff.yaml")
+           f"{GFF_SCHEMA_COMMIT}/src/schema/gff.yaml")
 
 
 def load(src):
@@ -56,6 +60,28 @@ def has_identifier(cls, slots):
     return False
 
 
+def class_slot_names(cn, C, seen=None):
+    """Slot names on a class, including those inherited via is_a and mixins.
+
+    A class that shares slots through inheritance would otherwise be
+    undercounted, which matters for any schema other than the pinned one.
+    """
+    seen = seen or set()
+    if cn in seen or cn not in C:
+        return []
+    seen.add(cn)
+    c = C[cn]
+    names = []
+    for parent in ([c.get("is_a")] if c.get("is_a") else []) + list(c.get("mixins") or []):
+        for n in class_slot_names(parent, C, seen):
+            if n not in names:
+                names.append(n)
+    for n in list(c.get("slots") or []) + list(c.get("attributes") or {}):
+        if n not in names:
+            names.append(n)
+    return names
+
+
 def audit(doc):
     C = doc.get("classes") or {}
     S = doc.get("slots") or {}
@@ -63,11 +89,14 @@ def audit(doc):
     T = set(doc.get("types") or {})
     rows = []
     for cn, c in C.items():
-        names = list(c.get("slots") or [])
-        names += [n for n in (c.get("attributes") or {}) if n not in names]
-        for sn in names:
+        for sn in class_slot_names(cn, C):
             defn = dict(S.get(sn) or {})
-            defn.update((c.get("attributes") or {}).get(sn) or {})
+            # an inherited slot may be defined on an ancestor's attributes
+            for anc in [cn] + [x for x in C if x != cn]:
+                a = (C[anc].get("attributes") or {}).get(sn)
+                if a:
+                    defn.update(a)
+                    break
             defn.update((c.get("slot_usage") or {}).get(sn) or {})
             rng = resolve(defn, "range", S)
             mv = bool(resolve(defn, "multivalued", S))
