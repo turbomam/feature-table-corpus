@@ -737,15 +737,15 @@ entries:
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6941
-  md5: 7ba3147589d233d89848bffe074f6384
+  bytes: 7001
+  md5: 5f60b8984e9975f6144dca06c74e270f
   derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: phase in column 8 of the first CDS changed from 0 to another permitted value
-  validity: 'VALID GFF3: 0, 1 and 2 are all legal, so no validator catches this; the annotation is biologically
-    wrong rather than malformed'
-  why_it_matters: 'The failure the AgBioData group leads with, and no validator can catch it: 0, 1 and
-    2 are all legal phases, so identical coordinates with a different phase translate to a different protein
-    while the file stays valid.'
+  validity: 'VALID GFF3: 0, 1 and 2 are all legal, so no syntax-only validator catches this; translating
+    against the reference protein does. The annotation is biologically wrong rather than malformed'
+  why_it_matters: 'The failure the AgBioData group leads with, and no syntax-only validator can catch
+    it, though translating against the reference protein does: 0, 1 and 2 are all legal phases, so identical
+    coordinates with a different phase translate to a different protein while the file stays valid.'
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
   retrieved: '2026-09-11'
   license: public domain (derived from a US Government work)

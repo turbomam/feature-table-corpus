@@ -55,12 +55,24 @@ returns 404, which is how the first attempt failed.
 Feature class is in that module, not in `cdm_components.yaml`; the first attempt fetched the wrong
 file and a grep for `Feature:` matched an enum value inside it, which looked like success.
 
-## The 7 derived malformed files
+## The 8 derived files
 
-Built by `scripts/make_malformed.py` from the vendored phiX174 GFF3. Each output differs from that
-source by exactly one change, applied in code so the change is auditable, and each carries header
-pragmas naming its source and its single defect. They are labeled `derived` in the index and are
-not evidence about any real producer.
+Built by `scripts/make_malformed.py` from the vendored phiX174 GFF3, six in
+`data/derived-malformed/` and two in `data/derived-edge-cases/`. Each output is that source
+preserved line for line with one change to one data row, plus provenance comments, which are
+ordinary single-hash lines appended after the source's own `###` terminator. They are not pragmas
+and they are not in the header, and earlier wording in this file called them header pragmas, which
+was wrong.
+
+`no_version_pragma` is the one exception to both halves of that: its single change removes a header
+directive, so its change is not to a data row and its header is deliberately not byte-identical.
+
+The two files in `derived-edge-cases/` are valid GFF3 rather than malformed. `multiple_parents` is
+permitted by the specification and refused by many tools. `cds_phase_biologically_wrong` carries a
+legal phase value that is biologically wrong, so a syntax-only validator passes it while the
+translated protein changes.
+
+All eight are labeled `derived` in the index and are not evidence about any real producer.
 
 ## EMSL, searched and not found
 

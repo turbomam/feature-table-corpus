@@ -149,8 +149,9 @@ def build():
     cases["cds_phase_biologically_wrong.gff3"] = (
         EDGE, set_col(lines, i, 7, "1" if cur != "1" else "2"),
         f"phase in column 8 of the first CDS changed from {cur} to another permitted value",
-        "VALID GFF3: 0, 1 and 2 are all legal, so no validator catches this; the "
-        "annotation is biologically wrong rather than malformed")
+        "VALID GFF3: 0, 1 and 2 are all legal, so no syntax-only validator catches "
+        "this; translating against the reference protein does. The annotation is "
+        "biologically wrong rather than malformed")
 
 
     # Two parents on one feature. LEGAL GFF3. The AgBioData recommendations

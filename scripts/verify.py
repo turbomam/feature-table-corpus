@@ -129,8 +129,14 @@ def check_vendored(entries):
         # Indexing it here would raise KeyError and replace a clean nonzero
         # report with a traceback, which is the failure this whole pass exists
         # to avoid.
-        if not e.get("path"):
-            print(f"NO-PATH   {e.get('id', '<missing id>')}  (already reported above)")
+        # Guard EVERY field this pass reads, not only path. An entry that
+        # check_index already rejected can be missing any of them, and
+        # indexing one here would replace a clean nonzero report with a
+        # traceback that hides every later entry.
+        missing = [k for k in ("id", "path", "md5", "bytes") if not e.get(k)]
+        if missing:
+            print(f"NO-METADATA  {e.get('id', '<missing id>')}  "
+                  f"missing {', '.join(missing)}  (already reported above)")
             bad += 1
             continue
         p = os.path.join(ROOT, e["path"])

@@ -13,7 +13,7 @@ the date, or *unverified*. Nothing here is inferred.
 |---|---|---|---|---|
 | GFF2 | 8 | `group`: a class and an ID | 9 | Yes |
 | GFF3 | 8 | `attributes`: `tag=value;` pairs | 9 | **No** |
-| GTF 2.2 | 8 | `attributes`, plus optional comments | 9 or more | Yes |
+| GTF 2.2 | 8 | `attributes` | 9 | Yes |
 | BED | 3 required | 9 further optional fields | 3 to 12 | Yes |
 | Chado | relational | seven feature tables | many | **No** |
 | KBase Common Data Model | LinkML classes | Feature plus related classes | many | **No** |
@@ -29,8 +29,10 @@ as one table silently drops that section.
 **GFF2 is deprecated** and its ninth column is a `group` holding the class and ID of the logical
 parent, which is how hierarchy was expressed before GFF3 had `Parent`.
 
-**GTF 2.2** lists its fields as seqname, source, feature, start, end, score, strand, frame, then
-attributes and optional comments. Two attributes are mandatory: `gene_id` and `transcript_id`.
+**GTF 2.2** has nine tab-separated fields: seqname, source, feature, start, end, score, strand,
+frame, attributes. The specification also allows a trailing `#` comment on a line, but a comment is
+not a tenth field and a parser should not expect one. Two attributes are mandatory: `gene_id` and
+`transcript_id`.
 
 *Unverified:* the column counts for GFF1, GFF2.5, GTF1, GTF2.1, GTF2.5 and GTF3. The AGAT
 documentation distinguishes those flavors by which feature types they admit, from five in GTF1 to
@@ -136,9 +138,39 @@ also gives an arithmetic rule for the next feature: `(3 - ((length - frame) mod 
 So one specification frames it as how many bases to skip inside this feature, and the other as which
 part of a codon this feature begins with. They agree at 0 and are easy to transpose at 1 and 2.
 
-*Unverified:* the exact arithmetic mapping between GFF3 phase and GTF frame. Sources differ on
-whether they are identical or complements, and this document will not assert one. That uncertainty
-is itself the finding.
+**Measured 2026-09-11, and this settles it.** NCBI publishes the same annotation in both formats,
+and both files are vendored here, so the question can be answered with data rather than argued from
+wording. Joining CDS records on `protein_id` across phiX174 and phage lambda gives 84 proteins
+present in both formats:
+
+| Result | Count |
+|---|---|
+| Identical phase list in GFF3 and GTF | 81 |
+| Different | 3 |
+
+So phase and frame encode the same quantity and the values map directly. They are not complements.
+An earlier version of this document called the mapping unverified; that was resolved by measurement,
+not by reading.
+
+**The three exceptions are not about phase at all**, and they are the more interesting result. All
+three are phiX174 genes that cross the origin of a circular genome, and the two formats represent
+that differently:
+
+| Protein | GFF3 span | GTF span | GFF3 phase | GTF phase |
+|---|---|---|---|---|
+| NP_040703.1 | 3981 to 5522 | 1 to 5386 | `0` | `1`, `0` |
+| NP_040704.1 | 4497 to 5522 | 1 to 5386 | `0` | `1`, `0` |
+| NP_040705.1 | 5075 to 5437 | 1 to 5386 | `0` | `0`, `0` |
+
+The landmark is 5386 bases. GFF3 uses the extend-end convention, putting end past the landmark
+length, and keeps one feature with one phase. GTF splits the gene into two segments, and the second
+segment then needs a nonzero phase. Same biology, same phase semantics, different segmentation. That
+is also why phiX174 has 11 CDS rows in GFF3 and 13 in GTF.
+
+**One more boundary difference, same measurement.** For NP_040706.1 the GFF3 span is 51 to 221 and
+the GTF span is 51 to 218. GTF excludes the stop codon from the CDS where GFF3 includes it. Any
+converter that preserves coordinates without adjusting for this shifts every terminal CDS by three
+bases.
 
 *Quoted, AgBioData GFF3 recommendations:* the CDS phase field "is commonly misinterpreted by both
 dataset generators and consumers, which can lead to vastly different ... amino acid sequences."
@@ -149,7 +181,9 @@ Two fixtures in this corpus isolate the problem:
 - `data/derived-malformed/cds_phase_illegal.gff3` sets phase to 3, outside the permitted set. A
   validator catches it.
 - `data/derived-edge-cases/cds_phase_biologically_wrong.gff3` changes phase to another permitted
-  value. **No validator can catch it.** The file stays valid and the protein changes.
+  value. **No syntax-only validator can catch it**, because the value is legal. Biological
+  validation can: translating the CDS against the reference protein detects the change, which is
+  what the AgBioData recommendation to validate phase against translation tables amounts to.
 
 That pair is the most useful thing in the derived set, because it shows the phase problem is not a
 syntax problem.

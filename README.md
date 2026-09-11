@@ -129,7 +129,7 @@ The split into two directories is deliberate, and one pair of files is the reaso
 **`data/derived-edge-cases/`**, two files that are valid GFF3 and still wrong in practice.
 
 `cds_phase_biologically_wrong` changes a CDS phase to another permitted value. This is the failure
-the AgBioData group leads with, and **no validator can catch it**: 0, 1 and 2 are all legal, so
+the AgBioData group leads with, and **no syntax-only validator can catch it**: 0, 1 and 2 are all legal, so
 identical coordinates with a different phase translate to a different protein while the file stays
 valid. Read it beside `cds_phase_illegal`, which a validator does catch. The pair is the clearest
 thing in this corpus: a syntax check is not a correctness check.
