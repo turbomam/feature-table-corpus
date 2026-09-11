@@ -83,6 +83,22 @@ agree at 0 and are easy to transpose at 1 and 2. In this corpus 366 of 368 phase
 handler that mishandles 1 and 2 passes on almost all real data. The AgBioData group says the field
 is commonly misread by producers and consumers alike, yielding different amino acid sequences.
 
+## Where this came from, and the analysis built on it
+
+This corpus was assembled on 2026-09-11 as input to a discussion about a unified LinkML model for
+genome features across DOE Biological and Environmental Research data sources.
+
+The companion analysis, which surveys the four existing models, the eleven named format flavors,
+the prior normalization efforts, and what the measurements here imply for a unified model, is a
+Claude artifact:
+
+https://claude.ai/code/artifact/d8ee05e5-c7b1-49f7-a700-3ae4e9adad1c
+
+That page is private to its owner, so it will ask you to sign in. Everything in it that this
+repository can support is reproduced here, in [docs/prior-art.md](docs/prior-art.md) and
+[docs/columns-and-discretion.md](docs/columns-and-discretion.md), so nothing load-bearing depends
+on access to it.
+
 ## Prior art
 
 [docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
