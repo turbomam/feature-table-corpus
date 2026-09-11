@@ -83,13 +83,21 @@ jobs:
           expect_reject "an entry with no tier" "UNKNOWN-TIER"
 
           # Prose drifting from the index has been a review finding twice.
+          # Change the NUMBER, not the tier word: the tier word is inside the
+          # pattern the checker accepts, so changing it proves nothing. An
+          # earlier version of this step made exactly that mistake and failed
+          # the build while the checker was working correctly.
           cp README.md /tmp/README.good.md
-          sed -i 's/entries in five tiers/entries in six tiers/' README.md
+          sed -i -E 's/^[0-9]+ entries in /999 entries in /' README.md
           if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
-            echo "FAIL: verifier accepted a README whose total does not parse"
+            echo "FAIL: verifier accepted a README total that disagrees with the index"
             cat /tmp/out.txt; cp /tmp/README.good.md README.md; exit 1
           fi
-          echo "ok: rejected a README count that no longer matches the index"
+          if ! grep -q "README-COUNT" /tmp/out.txt; then
+            echo "FAIL: rejected the README but never printed README-COUNT"
+            cat /tmp/out.txt; cp /tmp/README.good.md README.md; exit 1
+          fi
+          echo "ok: rejected a README total that no longer matches the index"
           cp /tmp/README.good.md README.md
 
       # git diff ignores untracked files, so a fixture deleted from the pull
