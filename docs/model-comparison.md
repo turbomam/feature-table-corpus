@@ -38,8 +38,13 @@ satisfied by making end = the position of the end + the length of the landmark f
 GFF3 specification text. Three models quoting the specification means three people read it.
 
 The class description is different. "localized to an interval" appears nowhere in the GFF3
-specification, checked 2026-09-11. That string had to come from one of these models into another,
-which is why it carries weight and the circular comment does not.
+specification, checked 2026-09-11. That rules out the obvious shared source, which is why the string
+carries weight where the circular comment does not.
+
+It does not prove inheritance. Independent phrasing, or a fourth source none of these documents
+cites, remain possible. **Treat shared lineage as a hypothesis supported by textual similarity**, and
+note what would settle it: commit history in either repository showing the text arriving from the
+other, or an author saying so. Neither has been checked.
 
 ## Decision by decision
 
@@ -81,10 +86,10 @@ so it models sequence *entries* and their type, not residues. Nothing in these f
 the sequence itself.
 
 It is also the only one that models the header directives and pragmas as data, and the only one with
-an explicit `seqid` slot ranged over a model class. That last point needs the qualifier: KBase
-reaches the landmark through a link to `Contig` and Chado through the `srcfeature_id` foreign key, so
-three of the four treat the landmark as an entity. Only `gff-schema` does it as a named `seqid` slot,
-which is the change NMDC's own schema carries a TODO asking for.
+an explicit `seqid` slot ranged over a model class. Chado also treats the landmark as an entity, via
+the `srcfeature_id` foreign key. KBase does not, in the vendored module: `Feature` declares no
+landmark reference at all. So two of the four reach the landmark as an entity, and only `gff-schema`
+does it as a named `seqid` slot, which is the change NMDC's own schema carries a TODO asking for.
 
 **It also already supports the case that breaks tools.** `Parent` is multivalued with a range of
 `genome feature`, so multiple parents are first class. That is the legal-but-widely-refused
@@ -109,6 +114,63 @@ Both gff-schema and the KBase Feature class constrain type to SO accessions. So 
 both constraints today, and the constraint is right while the data is what exists. That is a
 decision for people, not for a schema: coerce at load, carry the accession in a different slot, or
 relax the constraint.
+
+## What this implies about scope
+
+A unified model looks like reconciliation, not construction. The pieces exist and no two models hold
+the same subset. The unresolved items are the ones no model addresses:
+
+- How multivalued column 9 attributes are represented, which the BRIDGE Data Catalog's flat profile
+  forces a decision on. Tracked at
+  https://github.com/microbiomedata/nmdc-lakehouse/issues/342
+- What happens to the database accessions currently sitting in column 3.
+- Whether the model describes a file, a feature, or one evidence stream. NMDC production says these
+  are different things, because the same feature appears across several per-database files.
+
+## Is `gff-schema` compatible with a flat, scalar-only publishing profile?
+
+Largely yes. Nine of the thirteen rejections are mechanical, and the remaining four share a single
+representation decision.
+
+The question matters because the BRIDGE Data Catalog's stated input profile is "Flat; scalar-valued
+columns only," rejecting multivalued slots, class-valued slots, nested structures and inlined object
+graphs. Tracked at https://github.com/microbiomedata/nmdc-lakehouse/issues/342 . On its face that
+looks fatal for `gff-schema`, which is an object graph by design.
+
+**These numbers are computed, not counted.** Reproduce them with
+`uv run --with pyyaml python scripts/flat_profile_audit.py`. Two earlier hand counts were wrong: the
+first read only each class's `slots` list and missed the classes that declare `attributes` inline,
+and the second did not follow `is_a` slot inheritance, so it treated three multivalued slots as
+single-valued. Both produced a clean-looking table.
+
+| Under a scalar-only profile | Count |
+|---|---|
+| Admissible as written | 19 |
+| Rejected | 13 |
+
+The thirteen rejections are not thirteen problems. Grouped by what each becomes:
+
+| What was rejected | Count | What it flattens to | Mechanical? |
+|---|---|---|---|
+| Multivalued scalar | 4 | array column or junction table | **No. One decision, four slots** |
+| Identified class reference | 4 | scalar id column plus a declared foreign key | Yes |
+| Multivalued class reference | 3 | child or junction table | Yes |
+| Value object with no identity | 2 | its slots expand into the parent row | Yes |
+
+So nine resolve without a judgement call, in three different ways, and the catalog accepts all three:
+it supports declared foreign keys across multiple tables per dataset version, and a value object
+with no identifier simply flattens into its parent row.
+
+The four that remain are `Ontology term` on the attribute set, and the three ontology URI directives
+on `gff document`, which inherit `multivalued: true` from an abstract `ontology URI` slot. All four
+are multivalued scalars, so all four are answered by the same choice.
+
+**Chado is the proof rather than the analogy.** It is the same model already normalized this way and
+in production for twenty years: `feature` separate from `featureloc`, hierarchy in
+`feature_relationship` with subject, object, type and rank, column 9 in `featureprop`, and not one
+nested structure anywhere. A flat scalar-only profile is close to a description of Chado. The
+question is not whether this family of models can be flattened. One member of it has only ever
+existed flat.
 
 ## What this implies about scope
 
@@ -181,6 +243,11 @@ the flattener, which already exists in `microbiomedata/nmdc-lakehouse` and alrea
 three mechanisms above: scalar id columns for single references, child tables for inlined
 multivalued slots, and junction tables for referenced multivalued slots.
 
-One decision therefore unblocks both: whether a multivalued scalar becomes an array column or a
-junction table. Answering it settles `Ontology term` here, the multivalued `Parent` attribute of
-GFF3, and the 150 multivalued attributes in the flattened NMDC schema, all at once.
+One decision covers more than it looks: whether a multivalued scalar becomes an array column or a
+junction table. That settles all four remaining slots in `gff-schema` and the 150 multivalued
+attributes in the flattened NMDC schema, which are also multivalued scalars.
+
+It does not settle GFF3's `Parent`. At the format level `Parent` is a comma-separated list of
+identifiers, so it looks like a multivalued scalar, but in `gff-schema` it is a multivalued
+reference to `genome feature` and flattens to a junction table mechanically. An earlier version of
+this section conflated the two.

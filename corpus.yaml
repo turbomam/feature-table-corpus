@@ -856,8 +856,8 @@ entries:
   license: no license file in the repository
   why_not_vendored: no license file at all, so the schema cannot be copied here; compared instead in docs/model-comparison.md
   retrieved: '2026-09-11'
-  notes: 'Self-described DRAFT. Last commit 2021-06-03, ten commits all from cmungall, two open issues
-    the older from 2021-02-11. The only one of the four models that models a GFF3 file rather than a feature
+  notes: 'Self-described DRAFT. Last commit 2021-06-03, ten commits all from cmungall, one open issue,
+    number 1, from 2021-02-11. The only one of the four models that models a GFF3 file rather than a feature
     table: a gff document class holds features and sequence entries side by side. Also the only one modeling
     the header directives and pragmas as data, and the only one with an explicit seqid slot ranged over
     a model class. Its feature-class description is identical character for character to NMDC''s GenomeFeature,

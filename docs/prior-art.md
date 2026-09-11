@@ -12,7 +12,7 @@ active incumbent.
 
 | Model | State |
 |---|---|
-| https://github.com/biodatamodels/gff-schema | Self-described DRAFT. Last commit 2021-06-03. Ten commits, all from `cmungall`. Two open issues, the older from 2021-02-11 |
+| https://github.com/biodatamodels/gff-schema | Self-described DRAFT. Last commit 2021-06-03. Ten commits, all from `cmungall`. One open issue, number 1, from 2021-02-11 |
 | https://github.com/NAL-i5K/AgBioData_GFF3_recommendation | Active. Published as https://arxiv.org/abs/2202.07782 . Recommendations rather than a model |
 | https://kbase.github.io/cdm-schema/Feature/ | Last push 2026-05-01. Sole human contributor is the handle `ialarmedalien`, 73 commits |
 | https://laceysanderson.github.io/chado-docs/sequence/tables/feature.html | The relational ancestor the others descend from |

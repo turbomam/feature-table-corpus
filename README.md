@@ -16,15 +16,17 @@ Three files, in this order, if you have fifteen minutes:
 
 Four findings, each measured against real files rather than read from a document:
 
-- Three of the four share a lineage. The feature-class description in `gff-schema` and in NMDC's
+- Three of the four may share a lineage. The feature-class description in `gff-schema` and in NMDC's
   schema is identical character for character, and that string appears nowhere in the GFF3
-  specification, so it was inherited rather than quoted.
+  specification, which rules out the obvious shared source. Treated as a hypothesis, not settled.
 - Seven of the fourteen NMDC annotation file types put a database accession in column 3 where the
   specification requires a Sequence Ontology term.
 - GFF3 phase and GTF frame map directly, measured across 84 proteins. The three exceptions are
   circular-genome segmentation, not disagreeing semantics.
-- `gff-schema` survives a flat scalar-only publishing profile: 22 of its 32 slots pass as written,
-  9 of the 10 rejections are foreign keys or child tables, and exactly 1 is a real decision.
+- `gff-schema` largely survives a flat scalar-only publishing profile: of its 32 class and slot
+  pairs, 19 pass as written, 9 of the 13 rejections flatten mechanically as foreign keys, child
+  tables or value objects expanded into their parent, and the remaining 4 share one representation
+  decision. Computed by `scripts/flat_profile_audit.py`, not counted by hand.
 
 Built to support work on a unified LinkML model for genome features across DOE Biological and
 Environmental Research data sources. The point is breadth of real producers, not volume: every
@@ -135,12 +137,14 @@ word, so these are one family rather than four independent efforts. And the mode
 dormant draft is the only one that models a GFF3 file rather than a feature table: its
 `gff document` class holds `features` and sequence entries side by side, so the `##FASTA` section
 has a place in the model. It is also the only one that models the header directives and pragmas as
-data, and the only one with an explicit `seqid` slot ranged over a model class.
+data, and the only one with an explicit `seqid` slot ranged over a model class, though Chado also
+reaches the landmark as an entity through a foreign key.
 
 It also answers a question that looked like a blocker. Of the 32 class and slot pairs in
-`gff-schema`, 22 are admissible under a flat scalar-only publishing profile as written, and 9 of the
-10 rejections resolve to foreign keys or child tables, which such a profile accepts. Exactly one, a
-multivalued scalar, requires a real decision.
+`gff-schema`, 19 are admissible under a flat scalar-only publishing profile as written. Nine of the
+13 rejections flatten mechanically, in three ways the profile accepts: a scalar id column with a
+declared foreign key, a child or junction table, or a value object whose slots expand into the
+parent row. The remaining four are multivalued scalars and share one representation decision.
 
 ## Prior art
 
