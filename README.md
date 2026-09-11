@@ -28,9 +28,10 @@ Five findings, each with how it is known:
 - **Measured against the vendored files.** GFF3 phase and GTF frame map directly, across 84
   proteins present in both formats. The three exceptions are circular-genome segmentation, not
   disagreeing semantics.
-- **Read from the schema.** Chado already decomposes GFF3 column 9 across five dedicated tables
-  plus a catch-all, every one of them scalar only, which is the best available answer to how a
-  multivalued attribute survives a flat publishing profile. Its `feature` table also requires an organism per feature,
+- **Read from the schema.** Chado already distributes GFF3 column 9 across seven locations, two of
+  them columns on the base table and four dedicated relation tables plus a catch-all, every one
+  scalar only. That is the best available answer to how a multivalued attribute survives a flat
+  publishing profile. Its `feature` table also requires an organism per feature,
   which metagenomics cannot supply, so the design is worth borrowing and the implementation is not.
 - **Computed from the schema**, by `scripts/flat_profile_audit.py`, not measured against data and
   not counted by hand. `gff-schema` largely survives a flat scalar-only publishing profile: of its

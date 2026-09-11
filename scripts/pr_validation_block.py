@@ -42,21 +42,32 @@ def main():
     n, tiers, ids = counts(now)
     before = load(base)
 
+    # Run everything this block claims to have run. Listing a command without
+    # executing it is how a generated artifact starts lying, which is the
+    # failure this whole script was added to prevent.
+    def run(rel):
+        r = subprocess.run(["uv", "run", "--quiet", "--with", "pyyaml", "python",
+                            os.path.join(ROOT, rel)],
+                           capture_output=True, text=True, cwd=ROOT)
+        last = [l for l in r.stdout.splitlines() if l.strip()][-1:]
+        return r.returncode, (last[0].strip() if last else "no output")
+
+    verify_rc, verify_tail = run("scripts/verify.py")
+    audit_rc, audit_tail = run("scripts/flat_profile_audit.py")
+
     print("## Validation\n")
     print("```")
     print("uv run --with pyyaml python scripts/verify.py")
     print("uv run --with pyyaml python scripts/flat_profile_audit.py")
     print("```\n")
-
-    verify = subprocess.run(
-        ["uv", "run", "--quiet", "--with", "pyyaml", "python",
-         os.path.join(ROOT, "scripts/verify.py")],
-        capture_output=True, text=True, cwd=ROOT)
-    last = [l for l in verify.stdout.splitlines() if l.strip()][-1:]
-    tail = last[0] if last else "no output"
-
-    print(f"{n} entries, {len(ids)} distinct ids, {tail.strip()}. "
-          f"Exit status {verify.returncode}.\n")
+    print(f"| command | exit | last line |")
+    print(f"|---|---|---|")
+    print(f"| `verify.py` | {verify_rc} | {verify_tail} |")
+    print(f"| `flat_profile_audit.py` | {audit_rc} | {audit_tail} |")
+    print()
+    if verify_rc or audit_rc:
+        print("**One of these failed. Do not paste this block until it passes.**\n")
+    print(f"{n} entries, {len(ids)} distinct ids.\n")
     print("| tier | count |")
     print("|---|---|")
     for t, c in sorted(tiers.items(), key=lambda x: -x[1]):

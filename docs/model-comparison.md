@@ -61,7 +61,7 @@ other, or an author saying so. Neither has been checked.
 | strand | **`strand_enum`: `+`, `-`, `.`, `?`** | `StrandType` | no range, carrying a TODO to add an enum | `strand`, a smallint |
 | score | slot defined and not attached to the feature class | **replaced by `e_value` and `p_value`** | absent | `rawscore`, `normscore` and `significance` on `analysisfeature`, which is outside the seven-table excerpt vendored here |
 | Parent and hierarchy | **`Parent`, range `genome feature`, multivalued** | not declared in the vendored module. `EncodedFeature` carries its own identifier and no link to `Feature` | not modeled on the feature class | `feature_relationship`, with subject, object, type and rank |
-| Column 9 modeled explicitly | **`genome feature attribute set` class: ID, Name, Parent, Ontology term** | flat attributes on the class | not modeled | **decomposed across five dedicated tables plus a catch-all** |
+| Column 9 modeled explicitly | **`genome feature attribute set` class: ID, Name, Parent, Ontology term** | flat attributes on the class | not modeled | **distributed: 2 columns on `feature`, 4 relation tables, 1 catch-all** |
 | Header directives and pragmas modeled | **yes: gff version, feature, attribute and source ontology URIs, species, sequence region, genome build** | no | no | no |
 | Provenance of the assertion | no | `source_database`, `protocol_id`, `hash` | no | via `analysisfeature` and `dbxref` |
 | Circular genomes | the convention quoted, plus an `Is circular` slot | the convention quoted | the convention quoted | not applicable |
@@ -163,24 +163,27 @@ are multivalued scalars, so all four are answered by the same choice.
 **Chado is the proof rather than the analogy, and it already solved the column 9 problem.** It is
 the same model normalized this way and in production for twenty years, with `feature` separate from
 `featureloc` and not one nested structure anywhere. More to the point, it does not put column 9 in
-one place. It decomposes it across five tables, giving the structural tags their own and sending the
-rest to a catch-all, and every one of those tables is scalar only:
+one place. It distributes it: two reserved tags become columns on `feature`, four get their own
+relation tables, and unreserved tags go to a catch-all. Seven locations, every one scalar only:
 
-| GFF3 column 9 | Chado table | Columns |
-|---|---|---|
-| `Parent` | `feature_relationship` | subject, object, type, rank |
-| `Ontology_term` | `feature_cvterm` | feature, cvterm, publication, rank |
-| `Dbxref` | `feature_dbxref` | feature, dbxref |
-| `Alias` and `Name` | `feature_synonym` | synonym, feature, publication |
-| everything else | `featureprop` | feature, type, value, rank |
+| GFF3 column 9 | Where Chado puts it |
+|---|---|
+| `ID` | `feature.uniquename`, a column |
+| `Name` | `feature.name`, a column |
+| `Dbxref` | `feature.dbxref_id`, and `feature_dbxref` for additional ones |
+| `Alias` | `feature_synonym` |
+| `Parent` | `feature_relationship`, with subject, object, type and rank |
+| `Ontology_term` | `feature_cvterm` |
+| everything unreserved | `featureprop`, the catch-all |
 
 So the open question in this document, how a multivalued column 9 attribute is represented under a
 flat profile, has a twenty-year-old answer sitting in a schema nobody in the conversation has been
-treating as a candidate: a dedicated junction table for each structural tag, and one catch-all
-property table for the rest. Two earlier versions of this document got this wrong in opposite directions, first saying Chado
-puts column 9 in one property table, then saying it uses one table per reserved tag. Neither is
-right: `Alias` and `Name` share `feature_synonym`, and everything unreserved falls to
-`featureprop`.
+treating as a candidate: columns on the base table for the tags
+that are single-valued by nature, dedicated relation tables for the ones that are not, and one
+catch-all property table for everything unreserved. Three earlier versions of this document got this wrong: first that Chado puts column 9 in one
+property table, then that it uses one table per reserved tag, then that `Alias` and `Name` share
+`feature_synonym`. `Name` is a column on `feature`, not a synonym row. The table above is read
+directly from `specs/chado_1.4_feature_tables.sql` and is the version to trust.
 
 A flat scalar-only profile is close to a description of Chado. The question is not whether this
 family of models can be flattened. One member of it has only ever existed flat.
