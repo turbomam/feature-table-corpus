@@ -4,15 +4,18 @@ Real, traceable examples of GFF and other genome feature table content.
 
 ## Start here
 
-Three files, in this order, if you have fifteen minutes:
+Four files, in this order, if you have twenty minutes:
 
-1. **[docs/model-comparison.md](docs/model-comparison.md)** compares the four existing models of a
+1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
+   first: is Chado maintained, and what should a feature table be expected to cover. Short answers:
+   no, and metagenomics but not much else.
+2. **[docs/model-comparison.md](docs/model-comparison.md)** compares the four existing models of a
    genome feature decision by decision, and answers whether they survive a flat publishing profile.
    This is the one to read if you only read one.
-2. **[docs/columns-and-discretion.md](docs/columns-and-discretion.md)** says how many fields each
+3. **[docs/columns-and-discretion.md](docs/columns-and-discretion.md)** says how many fields each
    format has, which columns leave the writer discretion, and which get populated incorrectly in
    real data.
-3. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
+4. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
 
 Four findings, each with how it is known:
 
@@ -25,6 +28,10 @@ Four findings, each with how it is known:
 - **Measured against the vendored files.** GFF3 phase and GTF frame map directly, across 84
   proteins present in both formats. The three exceptions are circular-genome segmentation, not
   disagreeing semantics.
+- **Read from the schema.** Chado already decomposes GFF3 column 9 into one table per reserved tag,
+  every one of them scalar only, which is the best available answer to how a multivalued attribute
+  survives a flat publishing profile. Its `feature` table also requires an organism per feature,
+  which metagenomics cannot supply, so the design is worth borrowing and the implementation is not.
 - **Computed from the schema**, by `scripts/flat_profile_audit.py`, not measured against data and
   not counted by hand. `gff-schema` largely survives a flat scalar-only publishing profile: of its
   32 class and slot pairs, 19 pass as written, 9 of the 13 rejections flatten mechanically as
