@@ -177,8 +177,13 @@ def audit(doc):
     return rows
 
 
-STD_IMPORTS = ("linkml:types", "linkml:mappings", "linkml:extensions",
-               "linkml:annotations", "linkml:meta")
+# ONLY linkml:types. It defines types and no classes, so a slot ranged over
+# something it provides cannot be a class. Every other standard import defines
+# classes: linkml:extensions has `extension` and `AnyValue`, for instance, and
+# a slot ranged over one of those would fall through to "builtin" and be
+# counted as an admissible scalar. That is precisely the misclassification this
+# guard exists to prevent, so whitelisting them reproduced the bug.
+STD_IMPORTS = ("linkml:types",)
 
 
 def check_imports(doc, src):
@@ -208,6 +213,9 @@ def main():
     check_imports(doc, src)
     rows = audit(doc)
     print(f"source: {src}\n")
+    if not rows:
+        print("0 class/slot pairs. Nothing to audit.")
+        return
     w = max(len(r[0]) for r in rows) + 2
     for cn, sn, kind, mv, rng, group, becomes in rows:
         flag = "  " if group == "admissible" else "->"

@@ -46,9 +46,9 @@ That is incompatible with the data BER holds. A metagenome contig comes from a m
 unbinned contig has no organism assignment at all. A metagenome-assembled genome carries a
 provisional taxonomy, and revising it changes the feature's uniqueness key.
 
-**Measured 2026-09-11:** NMDC's `GenomeFeature` has ten slots and zero mentions of organism or
-taxon. It deliberately does not tie a feature to an organism. Chado requires precisely what NMDC
-cannot supply, and the fourteen NMDC annotation files vendored in this corpus are all metagenome
+**Measured 2026-09-11:** NMDC's `GenomeFeature` declares nine slots and zero mentions of organism or
+taxon. Note what that does and does not establish: the absence is measured, and whether it was
+deliberate is not recorded anywhere. Chado requires precisely what NMDC does not carry, and the fourteen NMDC annotation files vendored in this corpus are all metagenome
 annotation.
 
 ## What Chado predates, for completeness

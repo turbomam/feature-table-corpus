@@ -56,7 +56,7 @@ other, or an author saying so. Neither has been checked.
 |---|---|---|---|---|
 | Models the whole file or one table | **`gff document` class holding both `sequences` and `features`** | feature only | feature only | relational, seven tables |
 | seqid | **range `seq`, an object** | not declared. `Feature` has only `feature_id` and `hash` plus scalar attributes; `contig_id` belongs to `Contig` | `string`, carrying a TODO to change it | `srcfeature_id`, a foreign key to `feature` |
-| type constrained to Sequence Ontology | **pattern `^SO:\d+`** | `LocalCurie` matching `SO:xxxxxx`, constrained to children of `sequence_feature` | `type` plus a `feature_type` string whose description is "TODO: Yuri to write" | `type_id`, a foreign key to `cvterm` |
+| type constrained to Sequence Ontology | **pattern `^SO:\d+`** | pattern `^SO:\d+$` only. The requirement that the term descend from `sequence_feature` is in the description and is not validated | `type` plus a `feature_type` string whose description is "TODO: Yuri to write" | `type_id`, a foreign key to `cvterm` |
 | phase | **`phase_enum`: 0, 1, 2** | `CdsPhaseType` | integer, minimum 0, maximum 2 | `phase int` on `featureloc`, unconstrained |
 | strand | **`strand_enum`: `+`, `-`, `.`, `?`** | `StrandType` | no range, carrying a TODO to add an enum | `strand`, a smallint |
 | score | slot defined and not attached to the feature class | **replaced by `e_value` and `p_value`** | absent | `rawscore`, `normscore` and `significance` on `analysisfeature`, which is outside the seven-table excerpt vendored here |
@@ -190,9 +190,11 @@ family of models can be flattened. One member of it has only ever existed flat.
 A unified model looks like reconciliation, not construction. The pieces exist and no two models hold
 the same subset. The unresolved items are the ones no model addresses:
 
-- How multivalued column 9 attributes are represented, which the BRIDGE Data Catalog's flat profile
-  forces a decision on. Tracked at
-  https://github.com/microbiomedata/nmdc-lakehouse/issues/342
+- Whether to adopt Chado's column 9 mapping. This is no longer an open question about what is
+  *possible*: Chado's dedicated junction tables are a working answer, and
+  https://github.com/microbiomedata/nmdc-lakehouse/issues/342 establishes that the catalog accepts
+  side tables and rejects only array columns. The open part is whether the unified model adopts that
+  mapping or keeps arrays and asks the profile to widen.
 - What happens to the database accessions currently sitting in column 3.
 - Whether the model describes a file, a feature, or one evidence stream. NMDC production says these
   are different things, because the same feature appears across several per-database files.

@@ -247,9 +247,15 @@ it blank.
 ## Verifying it
 
 ```shell
-uv run --with pyyaml python scripts/verify.py          # index invariants and checksums
-uv run --with pyyaml python scripts/verify.py --links  # also check every URL
+uv run --with pyyaml python scripts/verify.py             # index invariants and checksums
+uv run --with pyyaml python scripts/verify.py --links     # also check every URL
+uv run --with pyyaml python scripts/flat_profile_audit.py # the flat-profile figures
+uv run --with pyyaml python scripts/pr_validation_block.py # a pull request validation block
 ```
+
+The last one exists because a pull request description drifted from its own diff four times: entry
+counts, tier counts, generated-file counts, and a claim about which change moved the total. Every
+one was updating the change and not the claim about it, so the claim is generated now.
 
 Two things are checked. **Index invariants**: ids and paths are unique, tiers are known, and every
 entry carries the fields its tier requires, which for a `derived` entry includes `derived_from` and
