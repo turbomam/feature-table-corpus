@@ -106,9 +106,18 @@ Measured 2026-09-11 across all 32 class and slot pairs in that schema:
 | Admissible as written | 22 |
 | Rejected | 10 |
 
-But the ten rejections are not ten problems. Every one of them is a foreign key or a child table in
-a normalized relational rendering, and the catalog supports declared foreign keys between multiple
-tables per dataset version. Sorting them by what they become:
+But the ten rejections are not ten problems. Nine of them are a foreign key or a child table in a
+normalized relational rendering, and the catalog supports declared foreign keys between multiple
+tables per dataset version. Grouped by what they become:
+
+| What was rejected | Count | What it flattens to |
+|---|---|---|
+| Single class-valued reference | 5 | Scalar id column plus a declared foreign key |
+| Value object with no identity | 1 | Its slots expand into the parent row |
+| Multivalued class reference | 3 | Child or junction table |
+| Multivalued scalar | 1 | The only genuine array-or-junction choice |
+
+Slot by slot:
 
 | Slot | Why rejected | Flattened form |
 |---|---|---|
