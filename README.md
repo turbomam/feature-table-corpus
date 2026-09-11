@@ -14,19 +14,22 @@ Three files, in this order, if you have fifteen minutes:
    real data.
 3. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
 
-Four findings, each measured against real files rather than read from a document:
+Four findings, each with how it is known:
 
-- Three of the four may share a lineage. The feature-class description in `gff-schema` and in NMDC's
-  schema is identical character for character, and that string appears nowhere in the GFF3
-  specification, which rules out the obvious shared source. Treated as a hypothesis, not settled.
-- Seven of the fourteen NMDC annotation file types put a database accession in column 3 where the
-  specification requires a Sequence Ontology term.
-- GFF3 phase and GTF frame map directly, measured across 84 proteins. The three exceptions are
-  circular-genome segmentation, not disagreeing semantics.
-- `gff-schema` largely survives a flat scalar-only publishing profile: of its 32 class and slot
-  pairs, 19 pass as written, 9 of the 13 rejections flatten mechanically as foreign keys, child
-  tables or value objects expanded into their parent, and the remaining 4 share one representation
-  decision. Computed by `scripts/flat_profile_audit.py`, not counted by hand.
+- **Read from the models.** Three of the four may share a lineage. The feature-class description in
+  `gff-schema` and in NMDC's schema is identical character for character, and that string appears
+  nowhere in the GFF3 specification, which rules out the obvious shared source. A hypothesis, not
+  settled.
+- **Measured against the vendored files.** Seven of the fourteen NMDC annotation file types put a
+  database accession in column 3 where the specification requires a Sequence Ontology term.
+- **Measured against the vendored files.** GFF3 phase and GTF frame map directly, across 84
+  proteins present in both formats. The three exceptions are circular-genome segmentation, not
+  disagreeing semantics.
+- **Computed from the schema**, by `scripts/flat_profile_audit.py`, not measured against data and
+  not counted by hand. `gff-schema` largely survives a flat scalar-only publishing profile: of its
+  32 class and slot pairs, 19 pass as written, 9 of the 13 rejections flatten mechanically as
+  foreign keys, child tables or value objects expanded into their parent, and the remaining 4 share
+  one representation decision.
 
 Built to support work on a unified LinkML model for genome features across DOE Biological and
 Environmental Research data sources. The point is breadth of real producers, not volume: every

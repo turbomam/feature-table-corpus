@@ -60,7 +60,7 @@ other, or an author saying so. Neither has been checked.
 | strand | **`strand_enum`: `+`, `-`, `.`, `?`** | `StrandType` | no range, carrying a TODO to add an enum | `strand`, a smallint |
 | score | slot defined and not attached to the feature class | **replaced by `e_value` and `p_value`** | absent | `rawscore`, `normscore` and `significance` on `analysisfeature`, which is outside the seven-table excerpt vendored here |
 | Parent and hierarchy | **`Parent`, range `genome feature`, multivalued** | not declared in the vendored module. `EncodedFeature` carries its own identifier and no link to `Feature` | not modeled on the feature class | `feature_relationship`, with subject, object, type and rank |
-| Column 9 modeled explicitly | **`genome feature attribute set` class: ID, Name, Parent, Ontology term** | flat attributes on the class | not modeled | `featureprop` table |
+| Column 9 modeled explicitly | **`genome feature attribute set` class: ID, Name, Parent, Ontology term** | flat attributes on the class | not modeled | **decomposed across five tables, one per reserved tag** |
 | Header directives and pragmas modeled | **yes: gff version, feature, attribute and source ontology URIs, species, sequence region, genome build** | no | no | no |
 | Provenance of the assertion | no | `source_database`, `protocol_id`, `hash` | no | via `analysisfeature` and `dbxref` |
 | Circular genomes | the convention quoted, plus an `Is circular` slot | the convention quoted | the convention quoted | not applicable |
@@ -159,12 +159,28 @@ The four that remain are `Ontology term` on the attribute set, and the three ont
 on `gff document`, which inherit `multivalued: true` from an abstract `ontology URI` slot. All four
 are multivalued scalars, so all four are answered by the same choice.
 
-**Chado is the proof rather than the analogy.** It is the same model already normalized this way and
-in production for twenty years: `feature` separate from `featureloc`, hierarchy in
-`feature_relationship` with subject, object, type and rank, column 9 in `featureprop`, and not one
-nested structure anywhere. A flat scalar-only profile is close to a description of Chado. The
-question is not whether this family of models can be flattened. One member of it has only ever
-existed flat.
+**Chado is the proof rather than the analogy, and it already solved the column 9 problem.** It is
+the same model normalized this way and in production for twenty years, with `feature` separate from
+`featureloc` and not one nested structure anywhere. More to the point, it does not put column 9 in
+one place. It decomposes it, one table per reserved tag, and every one of those tables is scalar
+only:
+
+| GFF3 column 9 | Chado table | Columns |
+|---|---|---|
+| `Parent` | `feature_relationship` | subject, object, type, rank |
+| `Ontology_term` | `feature_cvterm` | feature, cvterm, publication, rank |
+| `Dbxref` | `feature_dbxref` | feature, dbxref |
+| `Alias` and `Name` | `feature_synonym` | synonym, feature, publication |
+| everything else | `featureprop` | feature, type, value, rank |
+
+So the open question in this document, how a multivalued column 9 attribute is represented under a
+flat profile, has a twenty-year-old answer sitting in a schema nobody in the conversation has been
+treating as a candidate: a junction table per reserved tag, with `featureprop` as the catch-all for
+free tags. An earlier version of this document said Chado puts column 9 in one
+property table, which understated it badly.
+
+A flat scalar-only profile is close to a description of Chado. The question is not whether this
+family of models can be flattened. One member of it has only ever existed flat.
 
 ## What this implies about scope
 

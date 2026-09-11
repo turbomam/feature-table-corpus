@@ -153,9 +153,36 @@ def audit(doc):
     return rows
 
 
+STD_IMPORTS = ("linkml:types", "linkml:mappings", "linkml:extensions",
+               "linkml:annotations", "linkml:meta")
+
+
+def check_imports(doc, src):
+    """Refuse a schema whose imports we do not resolve.
+
+    Classification only indexes definitions in the top-level file, so a slot
+    ranged over an imported class would fall through to "builtin" and be
+    counted as an admissible scalar. A wrong number that looks right is worse
+    than a refusal, so this exits instead.
+    """
+    unresolved = [i for i in (doc.get("imports") or []) if i not in STD_IMPORTS]
+    if unresolved:
+        print(f"REFUSING to audit {src}\n", file=sys.stderr)
+        print("It imports schemas this tool does not resolve, so any class ranged over a",
+              file=sys.stderr)
+        print("definition from them would be miscounted as an admissible scalar:\n", file=sys.stderr)
+        for i in unresolved:
+            print(f"    {i}", file=sys.stderr)
+        print("\nMerge the imports into one file first, or extend this tool to follow them.",
+              file=sys.stderr)
+        sys.exit(2)
+
+
 def main():
     src = sys.argv[1] if len(sys.argv) > 1 else DEFAULT
-    rows = audit(load(src))
+    doc = load(src)
+    check_imports(doc, src)
+    rows = audit(doc)
     print(f"source: {src}\n")
     w = max(len(r[0]) for r in rows) + 2
     for cn, sn, kind, mv, rng, group, becomes in rows:
