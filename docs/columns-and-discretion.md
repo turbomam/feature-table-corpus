@@ -73,6 +73,52 @@ lookup table it has to maintain itself. And the phase distribution is so skewed 
 handler which mishandles 1 and 2 would pass on almost all of this data, which is the worst shape of
 bug: rare enough to survive testing, consequential enough to change a protein.
 
+## 2b. Three columns are intentionally open, and they are open in different ways
+
+Naming them properly matters, because "ambiguous" hides the distinction. *Quoted* column names, in
+order: seqid, source, type, start, end, score, strand, phase, **attributes**.
+
+Three of the nine are open by design, and no two are open in the same sense.
+
+| Column | What is open | What is closed |
+|---|---|---|
+| 9 attributes | The vocabulary | The syntax, completely |
+| 2 source | Everything | Nothing |
+| 6 score | The meaning | The syntax |
+
+**Column 9, attributes: open vocabulary, closed syntax.** The grammar is fully specified as
+semicolon-separated `tag=value` pairs with percent-encoding for the separators. Eleven tags are
+reserved: ID, Name, Alias, Parent, Target, Gap, Derives_from, Note, Dbxref, Ontology_term and
+Is_circular. The namespace is then partitioned by capitalisation. *Quoted:* "All attributes that
+begin with an uppercase letter are reserved for later use. Attributes that begin with a lowercase
+letter can be used freely by applications." And *quoted:* "attribute names are case sensitive.
+'Parent' is not the same as 'parent'."
+
+So whether a tag is legitimate is mechanically decidable. A parser can reject an unknown
+uppercase-initial tag and accept any lowercase one. That is a bounded extension point, not an
+ambiguity.
+
+**Column 2, source: open in every respect.** *Quoted:* "a free text qualifier intended to describe
+the algorithm or operating procedure that generated this feature." No grammar, no vocabulary, no
+rule. Measured here, 18 files produced 9 distinct values, most carrying a version string, and one
+empty. Nothing can be decided about this column mechanically, which makes it the widest of the
+three in practice.
+
+**Column 6, score: open where it counts.** The syntax is closed, a floating point number, so it
+always parses. The meaning is not. *Quoted:* "the semantics of the score are ill-defined", with
+E-values and P-values only recommended for two kinds of feature. This is the strongest admission of
+intentional ambiguity in the document, and it is the reason both the NMDC schema and the KBase
+Common Data Model replaced the single column with separate e_value and p_value slots.
+
+**The one to actually worry about is none of these.** Column 8 phase has a closed value set and a
+contested meaning across the two specifications that use it, which is worse than an open column,
+because an open column announces itself. See the next section.
+
+For contrast, the closed end: column 3 type must be a Sequence Ontology term that is an is_a child
+of sequence_feature, and columns 4, 5 and 7 admit a small fixed set of values. Column 1 seqid has no
+controlled vocabulary, but it is locally defined by the file's own `##sequence-region` directives
+rather than left open.
+
 ## 3. Phase, which is the question worth asking
 
 The same column is defined differently by the two specifications that use it.
