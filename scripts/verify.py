@@ -78,6 +78,64 @@ def check_index(entries):
     return bad
 
 
+SOURCED_DIRS = ("data/nmdc", "data/ncbi-refseq")
+PROVENANCE_TAGS = ("# derived-from: ", "# single-change: ", "# validity: ")
+
+
+def check_separation(entries):
+    """Keep sourced files byte-faithful and derived files self-identifying.
+
+    The corpus makes one promise above all others: a file under a sourced
+    directory is exactly what its origin served. The derived fixtures carry
+    four appended provenance comments, which is acceptable only because those
+    files are never mistaken for sourced ones. This pass enforces both halves
+    so that stays true rather than merely being intended.
+    """
+    bad = 0
+
+    # No sourced file may carry a provenance comment, because that would mean
+    # something in this repository had written into it.
+    for e in entries:
+        p = e.get("path")
+        if not p or not p.startswith(SOURCED_DIRS):
+            continue
+        full = os.path.join(ROOT, p)
+        if not os.path.exists(full):
+            continue
+        text = open(full, errors="replace").read()
+        hits = [t.strip() for t in PROVENANCE_TAGS if t in text]
+        if hits:
+            print(f"SOURCED-EDITED  {p}  carries {', '.join(hits)}")
+            bad += 1
+        if e.get("tier") == "derived":
+            print(f"MISFILED        {p}  is tier 'derived' but sits in a sourced directory")
+            bad += 1
+
+    # Every derived file must say what it came from and what was done to it.
+    for e in entries:
+        if e.get("tier") != "derived":
+            continue
+        p = e.get("path")
+        if not p:
+            continue
+        if p.startswith(SOURCED_DIRS):
+            continue  # already reported above
+        full = os.path.join(ROOT, p)
+        if not os.path.exists(full):
+            continue
+        text = open(full, errors="replace").read()
+        missing = [t.strip() for t in PROVENANCE_TAGS if t not in text]
+        if missing:
+            print(f"NO-PROVENANCE   {p}  missing {', '.join(missing)}")
+            bad += 1
+
+    n_src = sum(1 for e in entries if (e.get("path") or "").startswith(SOURCED_DIRS))
+    n_der = sum(1 for e in entries if e.get("tier") == "derived")
+    print(f"separation: {n_src} sourced files unwritten, {n_der} derived files "
+          f"self-identifying, {bad} problem(s)")
+    return bad
+
+
 def check_readme(doc):
     """Fail when the README's advertised counts drift from the index.
 
@@ -191,6 +249,8 @@ def main():
     doc = yaml.safe_load(open(os.path.join(ROOT, "corpus.yaml")))
     entries = doc["entries"]
     bad = check_index(entries)
+    print()
+    bad += check_separation(entries)
     print()
     bad += check_readme(doc)
     print()

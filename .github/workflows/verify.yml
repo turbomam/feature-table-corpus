@@ -82,6 +82,32 @@ jobs:
           PY
           expect_reject "an entry with no tier" "UNKNOWN-TIER"
 
+          # The corpus's central promise is that a file under a sourced
+          # directory is byte-for-byte what its origin served. Prove the check
+          # that guards it can fail, by writing into one and by stripping the
+          # provenance from a derived one.
+          restore_data() { git checkout -- data; }
+          echo "# derived-from: injected" >> data/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+          if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
+            echo "FAIL: verifier accepted a sourced file that had been written into"
+            cat /tmp/out.txt; restore_data; exit 1
+          fi
+          grep -q "SOURCED-EDITED" /tmp/out.txt || {
+            echo "FAIL: rejected it without naming SOURCED-EDITED"; cat /tmp/out.txt; restore_data; exit 1; }
+          echo "ok: rejected a sourced file that had been written into"
+          restore_data
+
+          grep -v "^# single-change: " data/derived-malformed/dangling_parent.gff3 > /tmp/dp
+          cp /tmp/dp data/derived-malformed/dangling_parent.gff3
+          if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
+            echo "FAIL: verifier accepted a derived file with no provenance"
+            cat /tmp/out.txt; restore_data; exit 1
+          fi
+          grep -q "NO-PROVENANCE" /tmp/out.txt || {
+            echo "FAIL: rejected it without naming NO-PROVENANCE"; cat /tmp/out.txt; restore_data; exit 1; }
+          echo "ok: rejected a derived file with no provenance"
+          restore_data
+
           # Prose drifting from the index has been a review finding twice.
           # Change the NUMBER, not the tier word: the tier word is inside the
           # pattern the checker accepts, so changing it proves nothing. An

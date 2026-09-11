@@ -19,6 +19,19 @@ this README describes it.
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
+**The one promise this corpus makes.** A file under `data/nmdc/` or `data/ncbi-refseq/` is
+byte-for-byte what its origin served. Nothing in this repository writes into those files, and the
+verifier enforces it two ways: every checksum is compared on each run, and any provenance comment
+appearing in a sourced file is reported as `SOURCED-EDITED`. The eight files under
+`data/derived-malformed/` and `data/derived-edge-cases/` are the only altered content, they live
+only in those directories, and each one carries four appended comment lines naming its source and
+the single change made to it. The verifier fails if a derived file lacks them, and CI proves both
+halves of that check can fail by injecting each violation on purpose.
+
+So the derived files are not byte-exact copies plus one change; they are that plus four comment
+lines. The trade is deliberate: a fixture found loose on disk still says where it came from, which
+`corpus.yaml` cannot do once a file is copied out.
+
 Everything in the repository totals about 260 KB of plain text, so a clone is cheap and every file
 is reviewable in a diff. Nothing here is binary or compressed.
 
