@@ -1,0 +1,48 @@
+name: verify corpus
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Index invariants and vendored checksums
+        run: uv run --with pyyaml python scripts/verify.py
+
+      # A duplicate id passed every check once, because the only assertion
+      # lived in an uncommitted script. This proves the check can fail before
+      # trusting it to say the corpus is clean.
+      - name: Prove the invariant check can fail
+        run: |
+          cp corpus.yaml /tmp/corpus.good.yaml
+          uv run --with pyyaml python - <<'PY'
+          import yaml, copy
+          d = yaml.safe_load(open("corpus.yaml"))
+          dup = copy.deepcopy(d["entries"][1])
+          dup["id"] = d["entries"][0]["id"]
+          d["entries"].append(dup)
+          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          PY
+          if uv run --with pyyaml python scripts/verify.py; then
+            echo "FAIL: the verifier passed an index with a duplicate id"
+            cp /tmp/corpus.good.yaml corpus.yaml
+            exit 1
+          fi
+          echo "ok: the verifier rejected a duplicate id"
+          cp /tmp/corpus.good.yaml corpus.yaml
+
+      - name: Malformed cases reproduce byte for byte
+        run: |
+          uv run --with pyyaml python scripts/verify.py > /dev/null
+          python3 scripts/make_malformed.py
+          git diff --exit-code -- data/derived-malformed
+
+      - name: Origin URLs (reported, never fatal)
+        continue-on-error: true
+        run: uv run --with pyyaml python scripts/verify.py --links

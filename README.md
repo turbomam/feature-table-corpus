@@ -100,12 +100,22 @@ it blank.
 ## Verifying it
 
 ```shell
-uv run --with pyyaml python scripts/verify.py          # checksums
-uv run --with pyyaml python scripts/verify.py --links  # also HEAD every URL
+uv run --with pyyaml python scripts/verify.py          # index invariants and checksums
+uv run --with pyyaml python scripts/verify.py --links  # also check every URL
 ```
 
-Checksum failures exit non-zero. Dead upstream links do not, because a moved URL is something to
+Two things are checked. **Index invariants**: ids and paths are unique, tiers are known, and every
+entry carries the fields its tier requires, which for a `derived` entry includes `derived_from` and
+`mutation`. **Vendored checksums**: every file is present, its size matches, and its MD5 matches.
+
+Either failure exits non-zero. Dead upstream links do not, because a moved URL is something to
 record rather than a defect here.
+
+The invariant check exists because of a real failure in this repository. An earlier commit claimed
+id uniqueness was asserted while nothing in the repository checked it, two entries collided on the
+id `nmdc-annotation`, and every check still passed. A claimed invariant that no check enforces is
+worse than no invariant, because it gets trusted. So CI does not only run the check, it also
+injects a duplicate id and fails the build if the check passes anyway.
 
 ## Reproducing the NMDC selection
 

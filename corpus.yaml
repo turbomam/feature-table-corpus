@@ -448,6 +448,7 @@ entries:
   license: not stated
   notes: The ancestor of all of this. GenBank, EMBL and DDBJ feature keys and qualifiers. Predates GFF
     and still governs what a 'feature' means in sequence databases.
+  retrieved: '2026-09-11'
 - id: spec-ddbj-flat-file
   label: DDBJ flat file and feature table documentation
   tier: linked
@@ -456,6 +457,7 @@ entries:
   source: DDBJ
   license: not stated
   notes: The most readable rendering of the INSDC feature table.
+  retrieved: '2026-09-11'
 - id: spec-gff3-so
   label: GFF3 specification, Sequence Ontology
   tier: linked
@@ -466,6 +468,7 @@ entries:
   why_not_vendored: no license, and the worked examples read better in context
   notes: Normative. Defines the nine columns, the parent and child model, and percent-encoding in column
     9.
+  retrieved: '2026-09-11'
 - id: spec-gvf-so
   label: GVF specification, Sequence Ontology
   tier: linked
@@ -475,6 +478,7 @@ entries:
   license: no license file in repository
   notes: GFF3 with variant-specific attributes. Shows how the format is meant to be extended rather than
     forked.
+  retrieved: '2026-09-11'
 - id: spec-gtf22
   label: GTF 2.2 specification
   tier: linked
@@ -484,6 +488,7 @@ entries:
   license: not stated
   notes: The version the vendored NCBI GTF files declare. The clearest statement of how GTF's column 9
     differs from GFF3's.
+  retrieved: '2026-09-11'
 - id: spec-gff2-gmod
   label: GFF2 description, GMOD
   tier: linked
@@ -493,6 +498,7 @@ entries:
   license: not stated
   notes: The Sanger-lineage format Chado and older tools consume. Documents why GFF2 could not express
     parent and child properly, which is why GFF3 exists.
+  retrieved: '2026-09-11'
 - id: spec-gff3-gmod
   label: GFF3 description, GMOD
   tier: linked
@@ -501,6 +507,7 @@ entries:
   source: GMOD
   license: not stated
   notes: Practical companion to the normative specification.
+  retrieved: '2026-09-11'
 - id: spec-bed-hts
   label: BED specification version 1
   tier: linked
@@ -511,6 +518,7 @@ entries:
   why_not_vendored: PDF, and this repository carries no binary files
   notes: Other feature-table content. BED is the minimal interval format and the one most feature tables
     get reduced to for browsing.
+  retrieved: '2026-09-11'
 - id: spec-ucsc-formats
   label: UCSC genome browser format reference
   tier: linked
@@ -520,6 +528,7 @@ entries:
   license: not stated
   notes: BED, bigBed, genePred, PSL, narrowPeak and GFF/GTF as UCSC consumes them. The broadest single
     list of real feature-table formats.
+  retrieved: '2026-09-11'
 - id: spec-ncbi-gff3-guide
   label: NCBI guidance on GFF3 and GTF
   tier: linked
@@ -528,6 +537,7 @@ entries:
   source: NCBI
   license: public domain (US Government work)
   notes: What the producer of the vendored NCBI files says it emits, including its deviations.
+  retrieved: '2026-09-11'
 - id: spec-chado-feature
   label: Chado feature tables, version 1.4
   tier: vendored

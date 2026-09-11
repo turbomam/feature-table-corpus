@@ -1,17 +1,69 @@
 #!/usr/bin/env python3
-"""Verify the corpus: vendored checksums, then link liveness.
+"""Verify the corpus: index invariants, vendored checksums, then link liveness.
 
 Usage:
-    uv run --with pyyaml python scripts/verify.py            # checksums only
-    uv run --with pyyaml python scripts/verify.py --links    # also HEAD every URL
+    uv run --with pyyaml python scripts/verify.py            # index + checksums
+    uv run --with pyyaml python scripts/verify.py --links    # also check every URL
 
-Exit status is non-zero if any vendored file is missing or its checksum moved,
-so this can gate a merge. Link checks never fail the run: a dead upstream URL
-is a fact to record, not a defect in this repository.
+Exit status is non-zero if an index invariant is broken or a vendored file is
+missing or changed, so this can gate a merge. Link checks never fail the run:
+a dead upstream URL is a fact to record, not a defect in this repository.
 """
 import argparse, hashlib, os, sys, urllib.request, yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+REQUIRED_ALWAYS = ("id", "label", "tier", "source", "license", "retrieved")
+REQUIRED_BY_TIER = {
+    "vendored": ("path", "bytes", "md5"),
+    "derived": ("path", "bytes", "md5", "derived_from", "mutation"),
+    "linked": ("origin_url",),
+    "restricted": ("origin_url",),
+    "not located": (),
+}
+
+
+def check_index(entries):
+    """Enforce the invariants the index relies on.
+
+    This exists because a previous release claimed id uniqueness was asserted
+    while nothing in the repository checked it, so two entries collided on
+    "nmdc-annotation" and every check still passed. A claimed invariant that
+    no check enforces is worse than no invariant, because it is trusted.
+    """
+    bad = 0
+    seen_ids, seen_paths = {}, {}
+    for e in entries:
+        eid = e.get("id", "<missing id>")
+
+        if eid in seen_ids:
+            print(f"DUPLICATE-ID    {eid}  also used by entry {seen_ids[eid]}")
+            bad += 1
+        seen_ids[eid] = eid
+
+        p = e.get("path")
+        if p:
+            if p in seen_paths:
+                print(f"DUPLICATE-PATH  {p}  claimed by {seen_paths[p]} and {eid}")
+                bad += 1
+            seen_paths[p] = eid
+
+        tier = e.get("tier")
+        if tier not in REQUIRED_BY_TIER:
+            print(f"UNKNOWN-TIER    {eid}  tier={tier!r}")
+            bad += 1
+            continue
+
+        missing = [f for f in REQUIRED_ALWAYS + REQUIRED_BY_TIER[tier]
+                   if not e.get(f)]
+        if missing:
+            print(f"MISSING-FIELDS  {eid}  ({tier})  {', '.join(missing)}")
+            bad += 1
+
+    print(f"index: {len(entries)} entries, {len(seen_ids)} distinct ids, "
+          f"{bad} invariant problem(s)")
+    return bad
 
 
 def check_vendored(entries):
@@ -67,11 +119,13 @@ def main():
     ap.add_argument("--links", action="store_true", help="also HEAD every origin_url")
     args = ap.parse_args()
     entries = yaml.safe_load(open(os.path.join(ROOT, "corpus.yaml")))["entries"]
-    bad = check_vendored(entries)
+    bad = check_index(entries)
+    print()
+    bad += check_vendored(entries)
     if args.links:
         print()
         check_links(entries)
-    print(f"\n{bad} problem(s) in vendored files")
+    print(f"\n{bad} problem(s) total")
     return 1 if bad else 0
 
 
