@@ -12,7 +12,7 @@ active incumbent.
 
 | Model | State |
 |---|---|
-| https://github.com/biodatamodels/gff-schema | Self-described DRAFT. Last commit 2021-06-03. Ten commits, all from `cmungall`. Two open issues, the older from 2021-02-11 |
+| https://github.com/biodatamodels/gff-schema | Self-described DRAFT. Last commit 2021-06-03. Ten commits, all from a single contributor. One open issue, number 1, from 2021-02-11 |
 | https://github.com/NAL-i5K/AgBioData_GFF3_recommendation | Active. Published as https://arxiv.org/abs/2202.07782 . Recommendations rather than a model |
 | https://kbase.github.io/cdm-schema/Feature/ | Last push 2026-05-01. Sole human contributor is the handle `ialarmedalien`, 73 commits |
 | https://laceysanderson.github.io/chado-docs/sequence/tables/feature.html | The relational ancestor the others descend from |
@@ -55,9 +55,16 @@ generators and consumers, which can lead to vastly different ... amino acid sequ
 
 **Inside DOE, no cross-agency normalization effort was found.** GitHub across the `ber-data` and
 `microbiomedata` organizations, both Slack workspaces available at the time, and the literature were
-searched on 2026-09-11. What exists instead is three unconnected models: the draft GFF3 schema, the
-KBase Feature class, and NMDC's own. Treat this as *looked and did not find one*, not as proof that
-none exists.
+searched on 2026-09-11. What exists instead is three models that no program coordinates: the draft
+GFF3 schema, the KBase Feature class, and NMDC's own.
+
+Do not read that as three unrelated models, which an earlier version of this file implied. See
+[model-comparison.md](model-comparison.md): the feature-class description in the draft GFF3 schema
+and in NMDC's schema is identical character for character, and that string appears nowhere in the
+GFF3 specification. They are uncoordinated, not unconnected.
+
+Treat the absence of a cross-agency effort as *looked and did not find one*, not as proof that none
+exists.
 
 ## Eleven named format flavors, and where each came from
 

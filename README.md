@@ -2,19 +2,56 @@
 
 Real, traceable examples of GFF and other genome feature table content.
 
+## Start here
+
+Four files, in this order, if you have twenty minutes:
+
+1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
+   first: is Chado maintained, and what should a feature table be expected to cover. Short answers:
+   no, and metagenomics but not much else.
+2. **[docs/model-comparison.md](docs/model-comparison.md)** compares the four existing models of a
+   genome feature decision by decision, and answers whether they survive a flat publishing profile.
+   This is the one to read if you only read one.
+3. **[docs/columns-and-discretion.md](docs/columns-and-discretion.md)** says how many fields each
+   format has, which columns leave the writer discretion, and which get populated incorrectly in
+   real data.
+4. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
+
+Five findings, each with how it is known:
+
+- **Read from the models.** Three of the four may share a lineage. The feature-class description in
+  `gff-schema` and in NMDC's schema is identical character for character, and that string appears
+  nowhere in the GFF3 specification, which rules out the obvious shared source. A hypothesis, not
+  settled.
+- **Measured against the vendored files.** Seven of the fourteen NMDC annotation file types put a
+  database accession in column 3 where the specification requires a Sequence Ontology term.
+- **Measured against the vendored files.** GFF3 phase and GTF frame map directly, across 84
+  proteins present in both formats. The three exceptions are circular-genome segmentation, not
+  disagreeing semantics.
+- **Read from the schema.** Chado already distributes GFF3 column 9 across seven locations, two of
+  them columns on the base table and four dedicated relation tables plus a catch-all, every one
+  scalar only. That is the best available answer to how a multivalued attribute survives a flat
+  publishing profile. Its `feature` table also requires an organism per feature,
+  which metagenomics cannot supply, so the design is worth borrowing and the implementation is not.
+- **Computed from the schema**, by `scripts/flat_profile_audit.py`, not measured against data and
+  not counted by hand. `gff-schema` largely survives a flat scalar-only publishing profile: of its
+  32 class and slot pairs, 19 pass as written, 9 of the 13 rejections flatten mechanically as
+  foreign keys, child tables or value objects expanded into their parent, and the remaining 4 share
+  one representation decision.
+
 Built to support work on a unified LinkML model for genome features across DOE Biological and
 Environmental Research data sources. The point is breadth of real producers, not volume: every
 entry names the tool or project that wrote it, the URL it came from, and the date it was fetched.
 
 ## What is here
 
-52 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+55 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
-| linked | 19 | Too large or not redistributable, so a stable public URL is recorded instead |
+| linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
@@ -99,6 +136,28 @@ repository can support is reproduced here, in [docs/prior-art.md](docs/prior-art
 [docs/columns-and-discretion.md](docs/columns-and-discretion.md), so nothing load-bearing depends
 on access to it.
 
+## The four models, compared
+
+[docs/model-comparison.md](docs/model-comparison.md) compares the `biodatamodels` GFF3 schema, the
+KBase Common Data Model Feature class, NMDC's `GenomeFeature` and the Chado feature tables, decision
+by decision.
+
+Two results worth knowing before reading anything else. The feature-class descriptions in
+`gff-schema` and NMDC's schema are identical character for character, and KBase's differs by one
+word, which is evidence of a shared source but does not settle it; the comparison treats shared
+lineage as a hypothesis and says what would confirm it. And the model written off as a
+dormant draft is the only one that models a GFF3 file rather than a feature table: its
+`gff document` class holds `features` and sequence entries side by side, so the `##FASTA` section
+has a place in the model. It is also the only one that models the header directives and pragmas as
+data, and the only one with an explicit `seqid` slot ranged over a model class, though Chado also
+reaches the landmark as an entity through a foreign key.
+
+It also answers a question that looked like a blocker. Of the 32 class and slot pairs in
+`gff-schema`, 19 are admissible under a flat scalar-only publishing profile as written. Nine of the
+13 rejections flatten mechanically, in three ways the profile accepts: a scalar id column with a
+declared foreign key, a child or junction table, or a value object whose slots expand into the
+parent row. The remaining four are multivalued scalars and share one representation decision.
+
 ## Prior art
 
 [docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
@@ -109,7 +168,7 @@ GPL-3.0 ruled out.
 
 ## Specifications
 
-Twelve specifications are recorded, two of them vendored and ten linked.
+Thirteen specifications are recorded, two of them vendored and eleven linked.
 
 The vendored two are the ones whose licenses allow it. `specs/chado_1.4_feature_tables.sql` holds
 the seven Chado feature tables extracted from a 2.2 MB schema, under Artistic-2.0. Chado is worth
@@ -120,7 +179,9 @@ flat-table profile requires, reached independently twenty years earlier.
 under MIT. It constrains feature type to Sequence Ontology accessions under `sequence_feature` and
 carries provenance slots for source database and protocol, which the other models do not.
 
-The other ten are linked: the INSDC Feature Table Definition and the DDBJ rendering of it, which
+The other eleven are linked: the JGI IMG pipeline documentation, which specifies the GFF output of
+the pipeline that produced every NMDC file here; the INSDC Feature Table Definition and the DDBJ
+rendering of it, which
 are the ancestor of all of this and still govern what a feature means in a sequence database; the
 Sequence Ontology GFF3 and GVF specifications; GTF 2.2; the GMOD descriptions of GFF2 and GFF3;
 the BED version 1 specification; the UCSC format reference, which is the broadest single list of
@@ -187,9 +248,15 @@ it blank.
 ## Verifying it
 
 ```shell
-uv run --with pyyaml python scripts/verify.py          # index invariants and checksums
-uv run --with pyyaml python scripts/verify.py --links  # also check every URL
+uv run --with pyyaml python scripts/verify.py             # index invariants and checksums
+uv run --with pyyaml python scripts/verify.py --links     # also check every URL
+uv run --with pyyaml python scripts/flat_profile_audit.py # the flat-profile figures
+uv run --with pyyaml python scripts/pr_validation_block.py # a pull request validation block
 ```
+
+The last one exists because a pull request description drifted from its own diff four times: entry
+counts, tier counts, generated-file counts, and a claim about which change moved the total. Every
+one was updating the change and not the claim about it, so the claim is generated now.
 
 Two things are checked. **Index invariants**: ids and paths are unique, tiers are known, and every
 entry carries the fields its tier requires, which for a `derived` entry includes `derived_from` and

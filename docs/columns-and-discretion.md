@@ -109,8 +109,8 @@ three in practice.
 **Column 6, score: open where it counts.** The syntax is closed, a floating point number, so it
 always parses. The meaning is not. *Quoted:* "the semantics of the score are ill-defined", with
 E-values and P-values only recommended for two kinds of feature. This is the strongest admission of
-intentional ambiguity in the document, and it is the reason both the NMDC schema and the KBase
-Common Data Model replaced the single column with separate e_value and p_value slots.
+intentional ambiguity in the document, and it is why none of the four models on file keeps the
+column as the specification defines it. See [model-comparison.md](model-comparison.md).
 
 **The one to actually worry about is none of these.** Column 8 phase has a closed value set and a
 contested meaning across the two specifications that use it, which is worse than an open column,
@@ -209,10 +209,14 @@ They are the real malformed content the README previously listed as a gap.
 
 **Other failures, from the specifications and from adjacent work:**
 
-- **Score is routed around rather than used.** Both the NMDC schema and the KBase Common Data Model
-  replace the single score column with separate e_value and p_value slots, and the KBase schema
-  calls them ill-defined score fields in its own documentation. When two independent models make the
-  same substitution, the column is the problem.
+- **Score is routed around rather than used.** Correction, 2026-09-11: an earlier version of this
+  document said both the NMDC schema and the KBase Common Data Model replaced the column with
+  e_value and p_value slots. Only KBase does that, and its own documentation calls them ill-defined
+  score fields. NMDC's `GenomeFeature` omits score entirely, and the `biodatamodels` `gff-schema`
+  defines the slot and does not attach it to the feature class, though nothing records whether that
+  was deliberate. So the four models
+  handle the column four different ways and none keeps it as specified. Not independent replication,
+  since three of them share text, but distinct handling in every case. See [model-comparison.md](model-comparison.md).
 - **ID conflated with a persistent identifier.** The AgBioData recommendations ask that the `ID`
   attribute, which exists to express hierarchy within one file, be kept separate from persistent
   identifiers, which belong in `Dbxref` or `gene_id`.
