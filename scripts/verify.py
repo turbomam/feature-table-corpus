@@ -42,13 +42,24 @@ def check_links(entries):
         url = e.get("origin_url")
         if not url:
             continue
-        req = urllib.request.Request(url, method="HEAD",
-                                     headers={"User-Agent": "curl/8.7.1"})
-        try:
-            with urllib.request.urlopen(req, timeout=30) as r:
-                print(f"{r.status}  {e['id']}  {url}")
-        except Exception as exc:
-            print(f"---  {e['id']}  {url}  ({exc})")
+        for method in ("HEAD", "GET"):
+            req = urllib.request.Request(url, method=method,
+                                         headers={"User-Agent": "curl/8.7.1"})
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    note = "" if method == "HEAD" else "  (GET; HEAD not allowed)"
+                    print(f"{r.status}  {e['id']}  {url}{note}")
+                break
+            except urllib.error.HTTPError as exc:
+                # Some endpoints answer 405 to HEAD and 200 to GET. Retrying with
+                # GET keeps a live URL from being reported as dead.
+                if exc.code == 405 and method == "HEAD":
+                    continue
+                print(f"{exc.code}  {e['id']}  {url}")
+                break
+            except Exception as exc:
+                print(f"---  {e['id']}  {url}  ({exc})")
+                break
 
 
 def main():

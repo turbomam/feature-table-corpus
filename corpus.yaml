@@ -8,7 +8,7 @@ tiers:
   restricted: the content sits behind a login; recorded for completeness and not fetchable here
 entry_count: 25
 entries:
-- id: nmdc-funfam
+- id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
@@ -59,7 +59,7 @@ entries:
   selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-annotation
+- id: nmdc-functional-annotation
   label: Functional Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
@@ -93,7 +93,7 @@ entries:
   selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-ec
+- id: nmdc-ko-ec
   label: KO_EC Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
@@ -178,7 +178,7 @@ entries:
   selection: smallest of 598 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-supfam
+- id: nmdc-superfam
   label: SUPERFam Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
@@ -195,7 +195,7 @@ entries:
   selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-annotation
+- id: nmdc-structural-annotation
   label: Structural Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
