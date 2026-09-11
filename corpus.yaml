@@ -6,9 +6,13 @@ tiers:
   vendored: the file is in this repository, with its origin URL and a checksum
   linked: the file is too large or not redistributable; a stable public URL is recorded instead
   restricted: the content sits behind a login; recorded for completeness and not fetchable here
-entry_count: 25
+  derived: built here from a vendored file by exactly one documented change; traceable, but NOT observed
+    in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
+    refused
+  not located: known to exist, no public URL found; recorded so the gap stays visible
+entry_count: 52
 entries:
-- id: nmdc-funfam
+- id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
@@ -59,7 +63,7 @@ entries:
   selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-annotation
+- id: nmdc-functional-annotation
   label: Functional Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
@@ -93,7 +97,7 @@ entries:
   selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-ec
+- id: nmdc-ko-ec
   label: KO_EC Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
@@ -178,7 +182,7 @@ entries:
   selection: smallest of 598 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-supfam
+- id: nmdc-superfam
   label: SUPERFam Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
@@ -195,7 +199,7 @@ entries:
   selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
   retrieved: '2026-09-11'
   license: CC BY 4.0
-- id: nmdc-annotation
+- id: nmdc-structural-annotation
   label: Structural Annotation GFF
   tier: vendored
   path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
@@ -329,9 +333,11 @@ entries:
   origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md
   license: no license file in repository
   why_not_vendored: no license; and the examples are worth reading in their specification context
-  notes: The normative definition. Its worked examples are the reference for canonical parent and child
+  notes: Normative. Defines the nine columns, the parent and child model, percent-encoding in column 9,
+    and the rule that start <= end on every feature. Its worked examples are the reference for canonical
     structure.
   retrieved: '2026-09-11'
+  kind: specification
 - id: nmdc-functional-annotation-gff-large
   label: NMDC Functional Annotation GFF, full size example
   tier: linked
@@ -396,7 +402,451 @@ entries:
   notes: This is the pipeline that produced every vendored NMDC file in this corpus. The NMDC copies are
     the open route to the same output.
   retrieved: '2026-09-11'
+- id: ncbi-refseq-gtf-GCF_000819615-1
+  label: NCBI RefSeq GTF, Escherichia phage phiX174
+  tier: vendored
+  path: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gtf
+  format: GTF
+  gtf_version: '2.2 (declared in the file''s own #gtf-version pragma)'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 14316
+  md5: 83a7c266f67a91d4ac51a4e9b39babab
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/819/615/GCF_000819615.1_ViralProj14015/GCF_000819615.1_ViralProj14015_genomic.gtf.gz
+  origin_record: GCF_000819615.1
+  selection: the GTF NCBI publishes beside the GFF3 already in this corpus, so the same annotation is
+    available in both formats
+  vendored_form: decompressed from the gzip the origin URL serves
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  notes: Pairs with the GFF3 of the same accession. Useful for testing that a model round-trips between
+    the two column-9 grammars.
+- id: ncbi-refseq-gtf-GCF_000840245-1
+  label: NCBI RefSeq GTF, Escherichia phage lambda
+  tier: vendored
+  path: data/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf
+  format: GTF
+  gtf_version: '2.2 (declared in the file''s own #gtf-version pragma)'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 96276
+  md5: 149c9381a2267c837dee92f12c191859
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/840/245/GCF_000840245.1_ViralProj14204/GCF_000840245.1_ViralProj14204_genomic.gtf.gz
+  origin_record: GCF_000840245.1
+  selection: the GTF NCBI publishes beside the GFF3 already in this corpus, so the same annotation is
+    available in both formats
+  vendored_form: decompressed from the gzip the origin URL serves
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  notes: Pairs with the GFF3 of the same accession. Useful for testing that a model round-trips between
+    the two column-9 grammars.
+- id: spec-insdc-feature-table
+  label: INSDC Feature Table Definition
+  tier: linked
+  kind: specification
+  origin_url: https://www.insdc.org/submitting-standards/feature-table/
+  source: INSDC
+  license: not stated
+  notes: The ancestor of all of this. GenBank, EMBL and DDBJ feature keys and qualifiers. Predates GFF
+    and still governs what a 'feature' means in sequence databases.
+  retrieved: '2026-09-11'
+- id: spec-ddbj-flat-file
+  label: DDBJ flat file and feature table documentation
+  tier: linked
+  kind: specification
+  origin_url: https://www.ddbj.nig.ac.jp/ddbj/flat-file-e.html
+  source: DDBJ
+  license: not stated
+  notes: The most readable rendering of the INSDC feature table.
+  retrieved: '2026-09-11'
+- id: spec-gvf-so
+  label: GVF specification, Sequence Ontology
+  tier: linked
+  kind: specification
+  origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gvf.md
+  source: Sequence Ontology
+  license: no license file in repository
+  notes: GFF3 with variant-specific attributes. Shows how the format is meant to be extended rather than
+    forked.
+  retrieved: '2026-09-11'
+- id: spec-gtf22
+  label: GTF 2.2 specification
+  tier: linked
+  kind: specification
+  origin_url: http://mblab.wustl.edu/GTF22.html
+  source: Brent Lab, Washington University
+  license: not stated
+  notes: The version the vendored NCBI GTF files declare. The clearest statement of how GTF's column 9
+    differs from GFF3's.
+  retrieved: '2026-09-11'
+- id: spec-gff2-gmod
+  label: GFF2 description, GMOD
+  tier: linked
+  kind: specification
+  origin_url: http://gmod.org/wiki/GFF2
+  source: GMOD
+  license: not stated
+  notes: The Sanger-lineage format Chado and older tools consume. Documents why GFF2 could not express
+    parent and child properly, which is why GFF3 exists.
+  retrieved: '2026-09-11'
+- id: spec-gff3-gmod
+  label: GFF3 description, GMOD
+  tier: linked
+  kind: specification
+  origin_url: http://gmod.org/wiki/GFF3
+  source: GMOD
+  license: not stated
+  notes: Practical companion to the normative specification.
+  retrieved: '2026-09-11'
+- id: spec-bed-hts
+  label: BED specification version 1
+  tier: linked
+  kind: specification
+  origin_url: https://samtools.github.io/hts-specs/BEDv1.pdf
+  source: Samtools and GA4GH
+  license: no license file in repository
+  why_not_vendored: PDF, and this repository carries no binary files
+  notes: Other feature-table content. BED is the minimal interval format and the one most feature tables
+    get reduced to for browsing.
+  retrieved: '2026-09-11'
+- id: spec-ucsc-formats
+  label: UCSC genome browser format reference
+  tier: linked
+  kind: specification
+  origin_url: https://genome.ucsc.edu/FAQ/FAQformat.html
+  source: UCSC
+  license: not stated
+  notes: BED, bigBed, genePred, PSL, narrowPeak and GFF/GTF as UCSC consumes them. The broadest single
+    list of real feature-table formats.
+  retrieved: '2026-09-11'
+- id: spec-ncbi-gff3-guide
+  label: NCBI guidance on GFF3 and GTF
+  tier: linked
+  kind: specification
+  origin_url: https://www.ncbi.nlm.nih.gov/genbank/genomes_gff/
+  source: NCBI
+  license: public domain (US Government work)
+  notes: What the producer of the vendored NCBI files says it emits, including its deviations.
+  retrieved: '2026-09-11'
+- id: spec-chado-feature
+  label: Chado feature tables, version 1.4
+  tier: vendored
+  kind: specification
+  path: specs/chado_1.4_feature_tables.sql
+  format: PostgreSQL DDL
+  source: GMOD Chado
+  license: Artistic-2.0
+  bytes: 5336
+  md5: b39f9c0efeef2475c87cc9776f4e6726
+  origin_url: https://github.com/GMOD/Chado/blob/1.4/schemas/1.4/default_schema.sql
+  selection: 'the 7 feature tables extracted from a 2.2 MB schema: feature, featureloc, featureprop, feature_dbxref,
+    feature_relationship, feature_cvterm, feature_synonym'
+  retrieved: '2026-09-11'
+  notes: The relational ancestor, and the fourth artifact in the link list that prompted this corpus.
+    Chado keeps the feature separate from its location and expresses parent and child through a relationship
+    table. Neither is nested, which is the same normalization a flat-table profile requires.
+- id: spec-kbase-cdm-feature
+  label: KBase Common Data Model, bioentity module with the Feature class
+  tier: vendored
+  kind: specification
+  path: specs/kbase_cdm_bioentity.yaml
+  format: LinkML
+  source: KBase
+  license: MIT
+  bytes: 22093
+  md5: 2e30ced8ef62e424e8b06bb87d25c5a4
+  origin_url: https://github.com/kbase/cdm-schema/blob/main/src/linkml/cdm_bioentity.yaml
+  selection: the module holding Feature, EncodedFeature, Contig, ContigCollection, Protein and CdsPhaseType
+  retrieved: '2026-09-11'
+  notes: Vendorable because MIT. Constrains feature type to Sequence Ontology accessions under sequence_feature
+    and carries provenance slots for source database and protocol, which the other models do not. No sample
+    feature tables were found in that repository, so this is the model without data.
+- id: emsl-monet
+  label: EMSL MONet soil molecular data
+  tier: linked
+  format: various, not primarily feature tables
+  source: EMSL at PNNL
+  producer: MONet 1000 Soils pilot and later proposal calls
+  producer_kind: observation network
+  origin_url: https://www.emsl.pnnl.gov/monet
+  data_portal_url: https://sc-data.emsl.pnnl.gov/
+  jgi_portal_url: https://genome.jgi.doe.gov/portal/MONSoiUsFacility/MONSoiUsFacility.info.html
+  paper_url: https://www.biorxiv.org/content/10.1101/2022.12.12.520098
+  license: EMSL data policy; published without embargo
+  retrieved: '2026-09-11'
+  notes: Published on EMSL Science Central without embargo. Sequence-derived products route through JGI
+    portals, which need an account. Recorded because BASALT, the LinkML model below, covers MONet.
+- id: emsl-basalt
+  label: EMSL BASALT schema
+  tier: not located
+  format: LinkML, reported
+  source: EMSL at PNNL
+  producer: EMSL
+  producer_kind: schema
+  license: unknown
+  retrieved: '2026-09-11'
+  notes: 'Reported as EMSL''s LinkML for MONet and parts of the analysis database, with a flattened version
+    coming from James Carr. Searched GitHub across the ber-data and microbiomedata organizations and the
+    open web on 2026-09-11 and found nothing public. Every code hit for ''basalt'' in those organizations
+    is the rock, in environmental value sets. This is an open gap, not a dead end: ask EMSL directly.'
+- id: tool-gffread
+  label: gffread, GFF3 to GTF conversion
+  tier: linked
+  kind: tool
+  format: GFF3 and GTF
+  source: Cufflinks and StringTie lineage
+  producer: Geo Pertea
+  producer_kind: converter
+  origin_url: https://github.com/gpertea/gffread
+  license: MIT
+  retrieved: '2026-09-11'
+  notes: The conversion most people actually run between the two column 9 grammars. A parser and rewriter,
+    not a data model.
+- id: tool-gff3sort
+  label: GFF3sort, sorting for tabix indexing
+  tier: linked
+  kind: tool
+  format: GFF3
+  source: billzt
+  producer: billzt
+  producer_kind: sorter
+  origin_url: https://github.com/billzt/gff3sort
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Exists because feature order is underspecified and browsers need a particular one. A parser and
+    rewriter, not a data model.
+- id: tool-aegis
+  label: AEGIS, annotation extraction and genomic integration
+  tier: linked
+  kind: tool
+  format: GFF and GTF
+  source: preprint, 2025-12
+  producer: AEGIS authors
+  producer_kind: parser and normalizer
+  origin_url: https://www.biorxiv.org/content/10.64898/2025.12.04.692274v1.full
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Newest of the normalizers. Claims it parses files that make the other tools fail. Recorded as
+    evidence that the problem is still open in 2025, not as a recommendation; not evaluated here.
+- id: derived-cds-phase-illegal
+  label: 'Derived malformed GFF3: phase in column 8 of the first CDS set to 3, outside the permitted 0,
+    1 and 2'
+  tier: derived
+  path: data/derived-malformed/cds_phase_illegal.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6872
+  md5: eb173c30948bdf3f0948baf0bfd32431
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: phase in column 8 of the first CDS set to 3, outside the permitted 0, 1 and 2
+  validity: 'invalid: GFF3 permits only 0, 1 or 2 in the phase column'
+  why_it_matters: A validator catches this one. Paired with cds_phase_biologically_wrong, which no syntax-only
+    validator catches, the two show that the AgBioData phase failure is not a syntax problem.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-dangling-parent
+  label: 'Derived malformed GFF3: Parent of the first CDS changed to an ID defined nowhere in the file'
+  tier: derived
+  path: data/derived-malformed/dangling_parent.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6873
+  md5: 97cbf6d61ac75774dcbaf15ef40bf3d5
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: Parent of the first CDS changed to an ID defined nowhere in the file
+  validity: 'invalid: GFF3 requires every Parent to resolve within the file'
+  why_it_matters: Breaks the parent and child graph without breaking the line syntax, so it parses cleanly.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-duplicate-id
+  label: 'Derived malformed GFF3: the first sequence_alteration given the first gene''s ID, gene-phiX174p04,
+    so one ID names two features of different type'
+  tier: derived
+  path: data/derived-malformed/duplicate_id.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6959
+  md5: 25645d2ab3a7ecbd6f2db34089540b15
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: the first sequence_alteration given the first gene's ID, gene-phiX174p04, so one ID names
+    two features of different type
+  validity: 'invalid: a repeated ID is only legal across lines describing one feature, and these differ
+    in type'
+  why_it_matters: A repeated ID is legal when every line describes one discontinuous feature, so a duplicated
+    row would NOT be a violation. Colliding the ID across two different feature types is, which is the
+    distinction this fixture exists to hold.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-no-version-pragma
+  label: 'Derived malformed GFF3: the ##gff-version 3 line removed; every other header line preserved'
+  tier: derived
+  path: data/derived-malformed/no_version_pragma.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6844
+  md5: 3f44405f00e2dd1ddfffa8c254ac0ffb
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: 'the ##gff-version 3 line removed; every other header line preserved'
+  validity: 'invalid: GFF3 requires the version directive on line 1'
+  why_it_matters: Without the directive a parser cannot tell GFF3 from GFF2, and the column 9 grammar
+    differs between them.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    This is the documented exception among the derived files: its one change removes a header directive
+    rather than altering a data row, so its header is deliberately NOT byte-identical to the source. Every
+    other header line is preserved, and provenance comments are appended after the source''s own ### terminator.'
+- id: derived-start-after-end
+  label: 'Derived malformed GFF3: columns 4 and 5 of the first gene swapped, so start is greater than
+    end'
+  tier: derived
+  path: data/derived-malformed/start_after_end.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6881
+  md5: 41f474923ae543512ba080b3af4849c1
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: columns 4 and 5 of the first gene swapped, so start is greater than end
+  validity: 'invalid: GFF3 requires start <= end on every feature, circular included'
+  why_it_matters: 'GFF3 requires start no greater than end on every feature. A circular genome does not
+    change that: wraparound is expressed by extending end past the landmark length. phiX174 carries Is_circular=true,
+    which is why the rule is worth stating rather than assuming.'
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-unescaped-semicolon
+  label: 'Derived malformed GFF3: a raw semicolon inside a Note value on the first CDS, where GFF3 requires
+    %3B'
+  tier: derived
+  path: data/derived-malformed/unescaped_semicolon.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6961
+  md5: 09c25bd7d3e10d0500b2873966aa771a
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a raw semicolon inside a Note value on the first CDS, where GFF3 requires %3B
+  validity: 'invalid: the text after the separator is a bare segment with no tag=value form, which a conforming
+    parser must reject'
+  why_it_matters: The loud version. The text after the unescaped separator has no tag=value form, so a
+    conforming parser must reject the record. Paired with unescaped_semicolon_silent, which a parser accepts.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-cds-phase-biologically-wrong
+  label: 'Derived edge case: phase in column 8 of the first CDS changed from 0 to another permitted value'
+  tier: derived
+  path: data/derived-edge-cases/cds_phase_biologically_wrong.gff3
+  format: GFF3 (valid; wrong or refused in practice)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 7001
+  md5: 5f60b8984e9975f6144dca06c74e270f
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: phase in column 8 of the first CDS changed from 0 to another permitted value
+  validity: 'VALID GFF3: 0, 1 and 2 are all legal, so no syntax-only validator catches this; translating
+    against the reference protein does. The annotation is biologically wrong rather than malformed'
+  why_it_matters: 'The failure the AgBioData group leads with, and no syntax-only validator can catch
+    it: 0, 1 and 2 are all legal phases, so identical coordinates with a different phase translate to
+    a different protein while the file stays valid. Translating against the reference protein does catch
+    it.'
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-multiple-parents
+  label: 'Derived edge case: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined
+    in this file'
+  tier: derived
+  path: data/derived-edge-cases/multiple_parents.gff3
+  format: GFF3 (valid; wrong or refused in practice)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6924
+  md5: be468036e4a68af0d467a79061a0dac5
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined in this file
+  validity: 'VALID GFF3: multiple parents are permitted, and many tools refuse them anyway'
+  why_it_matters: Legal GFF3 that many tools refuse. The AgBioData recommendations explicitly ask that
+    parsers keep supporting it.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-unescaped-semicolon-silent
+  label: 'Derived edge case: an unescaped semicolon in a Note value whose tail is itself a valid lowercase
+    tag=value pair'
+  tier: derived
+  path: data/derived-edge-cases/unescaped_semicolon_silent.gff3
+  format: GFF3 (valid; wrong or refused in practice)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 7014
+  md5: b732a0b49c8c7e797b49bdd4abf4d776
+  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: an unescaped semicolon in a Note value whose tail is itself a valid lowercase tag=value pair
+  validity: 'VALID GFF3: the Note is silently truncated and a second attribute appears that nobody wrote;
+    no validator reports anything because nothing is malformed'
+  why_it_matters: The dangerous version of the escaping problem. The tail of the unescaped value is itself
+    a valid lowercase tag=value pair, so the file stays valid, the intended Note is truncated, and an
+    attribute nobody wrote now exists. Nothing reports anything, which is why this sits in edge-cases
+    rather than malformed.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
 tier_counts:
-  vendored: 16
-  linked: 6
+  vendored: 20
+  linked: 19
   restricted: 3
+  not located: 1
+  derived: 9
