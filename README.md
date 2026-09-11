@@ -2,6 +2,29 @@
 
 Real, traceable examples of GFF and other genome feature table content.
 
+## Start here
+
+Three files, in this order, if you have fifteen minutes:
+
+1. **[docs/model-comparison.md](docs/model-comparison.md)** compares the four existing models of a
+   genome feature decision by decision, and answers whether they survive a flat publishing profile.
+   This is the one to read if you only read one.
+2. **[docs/columns-and-discretion.md](docs/columns-and-discretion.md)** says how many fields each
+   format has, which columns leave the writer discretion, and which get populated incorrectly in
+   real data.
+3. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
+
+Four findings, each measured against real files rather than read from a document:
+
+- The four models share a lineage. The feature-class description in `gff-schema` and in NMDC's
+  schema is identical character for character.
+- Seven of the fourteen NMDC annotation file types put a database accession in column 3 where the
+  specification requires a Sequence Ontology term.
+- GFF3 phase and GTF frame map directly, measured across 84 proteins. The three exceptions are
+  circular-genome segmentation, not disagreeing semantics.
+- `gff-schema` survives a flat scalar-only publishing profile: 22 of its 32 slots pass as written,
+  9 of the 10 rejections are foreign keys or child tables, and exactly 1 is a real decision.
+
 Built to support work on a unified LinkML model for genome features across DOE Biological and
 Environmental Research data sources. The point is breadth of real producers, not volume: every
 entry names the tool or project that wrote it, the URL it came from, and the date it was fetched.
