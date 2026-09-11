@@ -99,6 +99,20 @@ repository can support is reproduced here, in [docs/prior-art.md](docs/prior-art
 [docs/columns-and-discretion.md](docs/columns-and-discretion.md), so nothing load-bearing depends
 on access to it.
 
+## The four models, compared
+
+[docs/model-comparison.md](docs/model-comparison.md) compares Chris Mungall's `gff-schema`, the
+KBase Common Data Model Feature class, NMDC's `GenomeFeature` and the Chado feature tables, decision
+by decision.
+
+Two results worth knowing before reading anything else. The feature-class descriptions in
+`gff-schema` and NMDC's schema are identical character for character, and KBase's differs by one
+word, so these are one family rather than four independent efforts. And the model written off as a
+dormant draft is the most complete on file structure: it is the only one that models a GFF3 file
+rather than a feature table, holding the `##FASTA` sequences alongside the features, the only one
+that models the `##` directives as data, and the only one that makes `seqid` an object rather than
+a string.
+
 ## Prior art
 
 [docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
