@@ -232,6 +232,32 @@ They are the real malformed content the README previously listed as a gap.
 - **Multiple parents refused.** Legal, and many tools reject it. See
   `data/derived-edge-cases/multiple_parents.gff3`.
 
+## 5. Feature sources beyond GFF, added 2026-09-17
+
+Everything above is about the nine-column GFF/GTF family. NMDC's own `FileTypeEnum` (106 permissible
+values, in `microbiomedata/nmdc-schema` `src/schema/basic_slots.yaml`) names at least three more
+`data_object_type` values that are one-row-per-feature tables in their own, non-GFF formats. None of
+these were in this corpus before 2026-09-17; the fourteen-GFF-file counts elsewhere in this document
+are unaffected and still describe only the GFF/GTF family.
+
+| `data_object_type` | Format here | Fields | Header | Corpus entry |
+|---|---|---|---|---|
+| Annotation Enzyme Commission | TSV | 11 | None | `nmdc-ec` |
+| Annotation KEGG Orthology | TSV | 11 | None | `nmdc-ko` |
+| Crispr Terms | CRT's own format | 6 | None | `nmdc-crispr-terms` |
+
+**Column meanings for all three are unverified.** No header row exists in any sampled file, and no
+IMG/JGI pipeline documentation for these exact outputs has been read yet. The two TSVs' fields 4 and 9
+are shaped like a percent and a small exponential number respectively, consistent with a BLAST- or
+HMMER-style hit record, but that is a shape observation from one sample each, not a confirmed schema.
+Do not assert column names for these three without reading the producing tool's own source or docs
+first.
+
+**Why they matter more than their sample size suggests.** `nmdc-ec` and `nmdc-ko` correspond to
+`annotation_enzyme_commission` and `annotation_kegg_orthology` in BERDL's `nmdc.results` namespace,
+1.23 billion and 1.83 billion rows respectively at production scale, the two largest tables in the
+lakehouse. A unified feature model that only covers the GFF family would miss both of them.
+
 ## Sources
 
 - GFF3 specification, https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md

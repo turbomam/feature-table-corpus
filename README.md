@@ -45,12 +45,12 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-55 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+58 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 23 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
