@@ -84,6 +84,15 @@ would not make any clearer.
   `CRT Annotation GFF` pair added to `corpus.yaml` on 2026-09-17; the corpus's own vendored
   examples of these two types are empty (no hits) in every file sampled for them so far.
 
+**None of these three contigs are MAG scaffolds.** Confirmed 2026-09-18 by unzipping both MAG
+binning outputs for this biosample (`nmdc:wfmag-11-n2d0ma07.2` and `.3`): every one of the four
+bin archives (`hqmq_bin.zip` and `lq_bin.zip`, both versions) contains only an empty marker file,
+`no_hqmq_mags.txt` or `no_lq_mags.txt`. This assembly produced zero MAGs, of either quality
+category, in either binning run. `scf_1_c1`, `scf_2_c1`, and `scf_344_c1` are plain metagenome
+assembly contigs, never binned into anything. Recorded here because an early description of this
+case study (in meeting notes, not in this repository) called them "MAG scaffolds," which this
+directly contradicts.
+
 **Not represented, and why:** Product Names duplicates `product`/`product_source` exactly (checked
 for both genes here); Gene Phylogeny and Scaffold Lineage are used but folded into the Feature and
 Contig they describe rather than kept as separate rows; the tiny gene's absence from Annotation

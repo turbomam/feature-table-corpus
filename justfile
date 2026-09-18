@@ -54,6 +54,27 @@ validate-example-closed example="examples/one-biosample-sequencing/harmonized.ya
 diagram:
     uv run --with linkml python3 -m linkml.generators.erdiagramgen schema/ber_feature_model.yaml -f mermaid --no-metadata
 
+# --- relational / lakehouse shape --------------------------------------
+
+# Audit the schema against a flat, scalar-only publishing profile (the same
+# tool used on Chris Mungall's gff-schema in docs/model-comparison.md).
+flat-profile-audit:
+    uv run --with linkml-runtime python3 scripts/flat_profile_audit.py schema/ber_feature_model.yaml
+
+# Build a real DuckDB database from one example, resolving the flat-profile
+# audit's findings at the physical layer: parent and attributes become native
+# LIST columns, not junction tables. Output is gitignored (local/build/); this
+# recipe regenerates it, nothing here is meant to be committed as a binary.
+build-duckdb example="examples/one-biosample-sequencing/harmonized.yaml" out="local/build/ber_feature_model.duckdb":
+    mkdir -p $(dirname {{out}})
+    uv run --with duckdb --with pyyaml python3 scripts/build_duckdb.py schema/ber_feature_model.yaml {{example}} {{out}}
+
+# Run the kickoff doc's own named use case against the DuckDB build: genes
+# with more than one functional-evidence hit (the "multiple Pfams in one
+# gene" pattern), plus whatever else has multiple children via `parent`.
+query-duckdb db="local/build/ber_feature_model.duckdb":
+    duckdb {{db}} -c "SELECT p.feature_id AS gene_id, p.product, count(*) AS n_evidence_hits, list(DISTINCT c.type) AS evidence_types FROM feature c JOIN feature p ON list_contains(c.parent, p.feature_id) GROUP BY p.feature_id, p.product HAVING count(*) > 1 ORDER BY n_evidence_hits DESC;"
+
 # Everything expected to pass cleanly: corpus integrity, metamodel validation,
 # the recommended lint profile, and example-data validation (open and closed
 # schema). This is the target to run before pushing a schema change. Run

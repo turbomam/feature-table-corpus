@@ -16,6 +16,13 @@ Four files, in this order, if you have twenty minutes:
    format has, which columns leave the writer discretion, and which get populated incorrectly in
    real data.
 4. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
+5. **[schema/README.md](schema/README.md)** and
+   **[examples/one-biosample-sequencing/README.md](examples/one-biosample-sequencing/README.md)**
+   cover a separate, later addition: a draft unified LinkML feature model
+   (`schema/ber_feature_model.yaml`) and a worked example harmonizing one real biosample's
+   sequencing against it. These have no relationship to `corpus.yaml` or `data/nmdc/`; they're a
+   different part of the repository, staged here because
+   [ber-data/gff-schema](https://github.com/ber-data/gff-schema) doesn't exist yet.
 
 Five findings, each with how it is known:
 
