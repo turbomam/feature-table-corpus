@@ -140,3 +140,19 @@ jobs:
       - name: Origin URLs (reported, never fatal)
         continue-on-error: true
         run: uv run --with pyyaml python scripts/verify.py --links
+
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+      - uses: extractions/setup-just@v3
+
+      # Separate job, not a step in `verify`: that job mutates corpus.yaml in
+      # place to test scripts/verify.py itself, and this has nothing to do
+      # with that. `just check` runs scripts/verify.py again as its first
+      # recipe (harmless, cheap) plus every schema/example check added
+      # 2026-09-18: metamodel validation, the recommended lint profile, and
+      # example-data validation against both an open and a closed schema.
+      - name: Schema and example validation
+        run: just check

@@ -1,0 +1,351 @@
+id: https://w3id.org/ber-data/gff-feature-model
+name: ber-feature-model
+title: BER unified feature model (draft, unpublished)
+description: >-
+  Draft LinkML model for genome and metagenome sequence features across BER data sources
+  (NMDC, JGI IMG, KBase).
+notes:
+  - Staged in turbomam/feature-table-corpus, not in ber-data/gff-schema, because that
+    repository does not exist yet as of 2026-09-18; the 2026-09-11 kickoff floated creating
+    it or moving biodatamodels/gff-schema into ber-data, and neither has happened. Move or
+    re-home this file once that decision is made.
+  - Every field's `notes` cites the measurement or confirmation it is based on, dated, so a
+    reader can tell what is verified versus what is still a guess.
+  - "Two design decisions this draft takes that earlier drafts did not: (1) multivalued and
+    nested slots (parent, attributes) are used directly rather than decomposed into join
+    tables Chado-style, because Georg Rath (gbrath-lbl) confirmed 2026-09-17 that BRIDGE's
+    scalar-only flat-table profile (ber-data/bridge-catalog-mvp docs/architecture.md) is an
+    early-prototype decision, not a requirement; flattening remains a legitimate downstream
+    publishing-profile decision, see scripts/flat_profile_audit.py in this repository. (2)
+    `type` stays a plain string, not Sequence-Ontology-constrained, because 7 of 14 real
+    NMDC GFF file types put a bare database accession there instead (measured 2026-09-11,
+    see docs/columns-and-discretion.md)."
+  - Open questions from the 2026-09-11 kickoff this draft does NOT resolve, predicted-vs-sequenced
+    metagenome disambiguation, whether CURIEs are required more broadly than the one
+    column-3 finding above, and where this schema's permanent home is.
+  - "No Directive or pragma class, on purpose so far, not by oversight: measured 2026-09-18
+    across all 14 real NMDC GFF files, only 1 carries any `##` directive at all
+    (`##gff-version  3`, two spaces, in the Prodigal file); the other 13 open straight into
+    data rows. The 2 vendored NCBI RefSeq files carry 4 each (gff-version, sequence-region,
+    species, and a closing `###`). GFF3's `##sequence-region` and `##species` directives would
+    otherwise be a natural source for Contig.length_bp and Contig.taxonomic_lineage, but real
+    NMDC data mostly doesn't carry them, which is why both those slots are populated from other
+    sidecar files here instead (see their own notes)."
+license: CC BY 4.0
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  bfm: https://w3id.org/ber-data/gff-feature-model/
+
+default_prefix: bfm
+default_range: string
+
+imports:
+  - linkml:types
+
+classes:
+  Dataset:
+    tree_root: true
+    title: Feature dataset
+    description: A document holding every Contig and Feature harmonized from one or more workflow executions.
+    notes:
+      - Added 2026-09-18 so a whole harmonized data file (e.g.
+        examples/one-biosample-sequencing/harmonized.yaml) can be validated as one instance
+        of one class, rather than only validating its Contig and Feature entries one at a
+        time. linkml-lint's tree_root_class check caught the absence of this class.
+    slots:
+      - contigs
+      - features
+
+  Contig:
+    title: Contig
+    description: A single assembled sequence (scaffold or contig) that features are located on.
+    slots:
+      - contig_id
+      - length_bp
+      - taxonomic_lineage
+      - lineage_confidence
+
+  Feature:
+    title: Feature
+    description: One row per feature, matching GFF3's nine columns as closely as real data allows.
+    notes:
+      - Used for both gene/CDS-level calls and for finer-grained per-database evidence hits
+        (Pfam, COG, CATH-FunFam, SUPERFAMILY, KO, EC) that a functional annotation pipeline
+        reports about a gene, linked via `parent` rather than a second, parallel class. See
+        docs/columns-and-discretion.md section 5 for the non-GFF formats (EC, KO, CRISPR
+        Terms) this same class also holds.
+    slots:
+      - feature_id
+      - seqid
+      - source
+      - type
+      - start
+      - end
+      - coordinate_system
+      - score
+      - strand
+      - phase
+      - parent
+      - attributes
+      - predicted_by
+      - is_selected
+      - product
+      - product_source
+      - translated_sequence
+    slot_usage:
+      feature_id:
+        identifier: true
+
+  Attribute:
+    title: Attribute
+    description: One column-9-style tag/value pair, or one tool-reported evidence field.
+    notes:
+      - Kept generic rather than typed per tool, because tools do not agree on field names
+        for the same concept (`independent_domain_e-value` vs `evalue`) or report the same
+        concept at all (CRT reports repeat/spacer counts instead of a similarity score). See
+        docs/columns-and-discretion.md section 4, "Score is routed around rather than used."
+    slots:
+      - tag
+      - value
+
+slots:
+  contigs:
+    title: Contigs
+    multivalued: true
+    inlined_as_list: true
+    range: Contig
+    description: Every Contig referenced by this dataset's Features.
+  features:
+    title: Features
+    multivalued: true
+    inlined_as_list: true
+    range: Feature
+    description: Every Feature in this dataset.
+
+  contig_id:
+    title: Contig ID
+    identifier: true
+    description: Native NMDC or source-system identifier for the contig or scaffold.
+  length_bp:
+    title: Length (bp)
+    range: integer
+    description: Contig length in base pairs.
+    notes:
+      - Compute directly from the contig's own FASTA record, not from a summary statistics
+        file, so it is exact rather than an average.
+  taxonomic_lineage:
+    title: Taxonomic lineage
+    multivalued: true
+    description: Ranked lineage path, domain to strain, one string per rank.
+    notes:
+      - Left as a list rather than named rank slots (domain, phylum, class, ...), because
+        forcing a fixed depth breaks on any lineage reported at a different resolution.
+        Confirmed 2026-09-18 on one real run, per-contig lineage (Scaffold Lineage tsv) and
+        per-gene lineage (Gene Phylogeny tsv) for the same organism were reported at
+        different depths, 2 ranks versus 8.
+  lineage_confidence:
+    title: Lineage confidence
+    range: float
+    description: Confidence value reported alongside the lineage call.
+    notes:
+      - Meaning unverified against any pipeline's own documentation; treat the name as
+        descriptive, not confirmed.
+
+  feature_id:
+    title: Feature ID
+    description: GFF3 column-9 ID equivalent. Globally unique within a corpus.
+  seqid:
+    title: Sequence ID
+    range: Contig
+    description: GFF3 column 1.
+  source:
+    title: Source
+    description: GFF3 column 2, the producing tool and version, e.g. "Prodigal v2.6.3_patched".
+    notes:
+      - Measured 2026-09-11 across 14 real NMDC GFF file types, blank in 3 of them (SMART,
+        TIGRFAM, COG). A blank value is expected, not an error.
+      - Confirmed 2026-09-18 on a real run, a workflow's own Annotation Info File sidecar
+        names the exact database versions (e.g. "TIGRFAM v15.0", "SMART 01_06_2016") even
+        where the individual GFF's own source column is empty; use `predicted_by` plus that
+        sidecar for full provenance when this is blank.
+  type:
+    title: Type
+    description: GFF3 column 3, nominally a Sequence Ontology term or accession.
+    notes:
+      - Range left as a plain string rather than SO-constrained. Measured 2026-09-11, 7 of 14
+        real NMDC GFF file types put a bare database accession here instead (Pfam, COG,
+        TIGRFAM, SMART, and others); an SO-constrained range would reject real production
+        data. Unresolved from the 2026-09-11 kickoff, whether CURIEs should be required going
+        forward even though today's data does not comply.
+      - Confirmed 2026-09-18, the inconsistency runs both directions. A real RFAM/INFERNAL
+        ncRNA hit used the generic term "misc_feature" here and put its actual identity (an
+        Rfam covariance model accession) in a lowercase `model`/`accession` attribute pair
+        instead, an accession where an SO term is expected in one case, a generic placeholder
+        where an accession would be more specific in another.
+  start:
+    title: Start
+    range: integer
+    required: true
+    description: 1-based, inclusive. See `coordinate_system` before comparing across rows.
+  end:
+    title: End
+    range: integer
+    required: true
+    description: 1-based, inclusive, always >= start. See `coordinate_system`.
+  coordinate_system:
+    title: Coordinate system
+    range: CoordinateSystemEnum
+    description: Which coordinate space `start`/`end` are measured in.
+    notes:
+      - Added 2026-09-18 after measuring a real functional-annotation hit against its own
+        parent's translated protein length, a Pfam hit on a 159-residue protein reported
+        start=61, end=136, alignment_length=76 (matching end-start+1 exactly in amino acids,
+        not nucleotides), so the hit's coordinates are protein-relative while its parent
+        CDS's own start/end are contig-relative. A table mixing both kinds of row without
+        this field would silently let one be misread as the other.
+  score:
+    title: Score
+    range: float
+    description: GFF3 column 6.
+    notes:
+      - The GFF3 specification itself says the semantics of the score are ill-defined.
+        Meaning is tool-specific (an HMMER bit score, a Prodigal confidence value, and so
+        on); do not compare scores across different `source` values.
+  strand:
+    title: Strand
+    range: StrandEnum
+    description: GFF3 column 7.
+  phase:
+    title: Phase
+    range: integer
+    description: GFF3 column 8. One of 0, 1, 2; only meaningful when type is CDS.
+    notes:
+      - Measured 2026-09-11, 366 of 368 real values are 0, so a handler that mishandles 1
+        and 2 will still pass almost all real-data testing.
+  parent:
+    title: Parent
+    multivalued: true
+    range: Feature
+    description: GFF3 column-9 Parent tag(s).
+    notes:
+      - Multivalued per the GFF3 spec's own allowance for a discontinuous feature to have
+        more than one Parent, and per the 2026-09-17 confirmation that BRIDGE does not
+        require this to be flattened into a join table.
+  attributes:
+    title: Attributes
+    multivalued: true
+    inlined_as_list: true
+    range: Attribute
+    description: Catch-all for every column-9 tag not given its own slot, plus tool-reported evidence.
+    notes:
+      - See the Attribute class description for why this stays generic rather than typed.
+  predicted_by:
+    title: Predicted by
+    description: The workflow execution (or tool run) that produced this feature.
+    notes:
+      - Confirmed 2026-09-18 against a real biosample's full sequencing, a Contig and the
+        Features on it typically come from two DIFFERENT workflow executions, not one. A
+        metagenome assembly workflow (e.g. nmdc:wfmgas-11-19jh9v28.1) produces the Contig; a
+        separate annotation workflow run against that assembly (e.g.
+        nmdc:wfmgan-11-5xxrm214.2) produces the Feature rows on it. Do not assume one
+        workflow execution id covers both.
+  is_selected:
+    title: Is selected
+    range: boolean
+    description: Whether the annotation pipeline chose this call as canonical for its locus.
+    notes:
+      - Measured 2026-09-18, Structural Annotation GFF (the roll-up) contains only the
+        Prodigal calls for a locus where both Prodigal and GeneMark called competing
+        boundaries, even though both tools' calls exist as separate DataObjects. Without this
+        field, a table holding both calls has no way to say which is canonical, and naively
+        adding the roll-up as a third source would silently duplicate the Prodigal rows. See
+        examples/one-biosample-sequencing/ for the worked case.
+      - "Open question, found 2026-09-18 in that same worked case: is_selected=false does not
+        always mean \"a competing caller won\". One real Prodigal call there
+        (nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_3_65) had no GeneMark call at all for the same
+        locus, and still did not appear in the roll-up, most plausibly filtered for length or
+        confidence. This schema does not yet distinguish \"lost to a competitor\" from
+        \"filtered despite no competitor\"; a future revision may need a second field, or an
+        enum instead of a boolean."
+  product:
+    title: Product
+    description: Human-readable functional product name for a gene, e.g. "transposase".
+    notes:
+      - Populated once, on the gene-level feature; not repeated per functional-evidence hit.
+  product_source:
+    title: Product source
+    description: What justified the product call, e.g. a COG accession or "Hypo-rule applied".
+    notes:
+      - Measured 2026-09-18, identical byte for byte to the parallel Product Names sidecar
+        file for every real gene checked so far. Use this slot or that file, never both, so
+        the same product assignment is never recorded twice under two different provenance
+        stories.
+  translated_sequence:
+    title: Translated sequence
+    description: Amino-acid translation of a CDS feature, from the workflow's protein FASTA output.
+    notes:
+      - Not available anywhere else in structured form; GFF files reference a CDS by
+        coordinate but never carry its sequence.
+      - Confirmed 2026-09-18, this can legitimately be absent even for a real gene call. One
+        short, partial Prodigal call had no entry at all in Annotation Amino Acid FASTA,
+        apparently filtered before translation; treat a missing value as informative, not as
+        a data gap to fill in.
+
+  tag:
+    title: Tag
+    identifier: true
+    description: Attribute name exactly as the source tool wrote it, unnormalized.
+    notes:
+      - "For example \"independent_domain_e-value\", \"evalue\", \"fake_percent_id\". Left
+        unnormalized on purpose; normalizing it would require a per-tool lookup table this
+        schema does not yet have evidence to build."
+  value:
+    title: Value
+    description: Attribute value, stored as its original string form.
+
+enums:
+  StrandEnum:
+    title: Strand
+    description: GFF3 column-7 strand values.
+    notes:
+      - "Permissible value names are the literal GFF3 symbols (+, -, ., ?), not word forms
+        (Plus, Minus, ...), so a value here round-trips to a real GFF3 file unchanged.
+        linkml-lint's standard_naming and permissible_values_format checks both flag these
+        four as non-conforming (not uppersnake-case); that is a deliberate exception, not an
+        oversight, since a word form would be less faithful to the source format this schema
+        exists to represent."
+      - "Consequence, confirmed 2026-09-18 by running gen-pydantic against this schema: the
+        generated Python Enum member for the minus strand is named `_`
+        (StrandEnum('-') is StrandEnum._), Python's conventional throwaway name, because
+        pydantic generation can't turn a bare '-' into a valid identifier. Anyone writing code
+        against a generated model will hit this; it's a consequence of the choice above, not a
+        new problem, but worth knowing before it surprises someone."
+    permissible_values:
+      "+":
+        description: Plus/forward strand.
+      "-":
+        description: Minus/reverse strand.
+      ".":
+        description: Strand is irrelevant or unknown (GFF3 default).
+      "?":
+        description: Strand is relevant but unknown (GFF3 allowance).
+  CoordinateSystemEnum:
+    title: Coordinate system
+    description: Which coordinate space a Feature's start/end are measured in.
+    notes:
+      - "Named contig/protein, lowercase, not CONTIG/PROTEIN. An earlier revision tried
+        uppersnake to satisfy linkml-lint's permissible_values_format rule, which suggests
+        uppersnake by default, without checking it against standard_naming, whose own
+        default (as used in LinkML's bundled recommended.yaml) expects lowercase snake_case
+        and would then flag the uppercase form instead. schema/strict-lint-config.yaml sets
+        both rules to the same snake-case convention so they agree, and this enum's values
+        match it; unlike StrandEnum, this enum is the schema's own invention so there was no
+        format-fidelity reason to pick uppersnake in the first place."
+    permissible_values:
+      contig:
+        description: start/end are nucleotide positions on the referenced Contig.
+      protein:
+        description: >-
+          start/end are amino-acid positions within the parent feature's translated
+          sequence, not nucleotide positions on any contig.
