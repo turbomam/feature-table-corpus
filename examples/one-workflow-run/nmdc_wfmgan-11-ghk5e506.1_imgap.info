@@ -1,6 +1,0 @@
-IMGAP Version: 5.2.0
-Mapping Programs Used: fasta_sanity.py 1.0.0
-Structural Annotation Programs Used: Prodigal v2.6.3_patched
-Structural Annotation DBs Used: Rfam 13.0
-Functional Annotation Programs Used: HMMER 3.1b2; lastal 1456
-Functional Annotation DBs Used: COG 2003; Cath-Funfam v4.2.0; IMG-NR 20230629; Pfam v34.0; SMART 01_06_2016; SuperFamily v1.75; TIGRFAM v15.0

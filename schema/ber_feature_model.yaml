@@ -139,7 +139,12 @@ slots:
       put a bare database accession here instead (Pfam, COG, TIGRFAM, SMART, and others), so
       this slot's range is a plain string rather than SO-constrained, to avoid rejecting real
       production data. Unresolved from the 2026-09-11 kickoff: whether CURIEs should be
-      required going forward even though today's data does not comply.
+      required going forward even though today's data does not comply. Confirmed 2026-09-18: not
+      every tool follows the bare-accession pattern. A real RFAM/INFERNAL ncRNA hit used the
+      generic term "misc_feature" here and put its actual identity (an Rfam covariance model
+      accession) in a lowercase `model`/`accession` attribute pair instead, so this slot's
+      contents are inconsistent in both directions, sometimes an accession where an SO term is
+      expected, sometimes a generic placeholder where an accession would be more specific.
   start:
     range: integer
     required: true
@@ -193,7 +198,11 @@ slots:
   predicted_by:
     description: >-
       The workflow execution (or, for a raw hit, the underlying tool run) that produced this
-      feature.
+      feature. Confirmed 2026-09-18 against a real biosample's full sequencing: a Contig and the
+      Features on it typically come from two DIFFERENT workflow executions, not one. A metagenome
+      assembly workflow (for example nmdc:wfmgas-11-19jh9v28.1) produces the Contig; a separate
+      annotation workflow that ran against that assembly (for example nmdc:wfmgan-11-5xxrm214.2)
+      produces the Feature rows on it. Do not assume a single workflow execution id covers both.
   is_selected:
     range: boolean
     description: >-
@@ -204,8 +213,15 @@ slots:
       calls for the same two loci, even though both tools ran and both sets of calls exist as
       separate DataObjects. Without this field, a table holding both tools' calls has no way
       to say which one is canonical, and naively adding the roll-up file as a third, separate
-      source would silently duplicate the Prodigal rows. See examples/one-workflow-run/ in
-      this repository for the worked case.
+      source would silently duplicate the Prodigal rows. See
+      examples/one-biosample-sequencing/ in this repository for the worked case. Open question,
+      found 2026-09-18 in that same worked case: is_selected=false does not always mean "a
+      competing caller won". One real Prodigal call there
+      (nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_3_65) has no GeneMark call at all for the same locus,
+      and still does not appear in the roll-up, most plausibly filtered for length or confidence.
+      This schema does not yet distinguish "lost to a competitor" from "filtered despite no
+      competitor"; a future revision may need a second field, or an enum instead of a boolean,
+      to say which.
   product:
     description: >-
       Human-readable functional product name for a gene, for example "transposase".
