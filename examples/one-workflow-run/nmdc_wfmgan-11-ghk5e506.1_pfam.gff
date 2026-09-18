@@ -1,0 +1,2 @@
+nmdc:wfmgan-11-ghk5e506.1_01_2_478	HMMER 3.1b2 (February 2015)	PF05598	61	136	43.2	.	.	ID=nmdc:wfmgan-11-ghk5e506.1_01_2_478_61_136;Name=DUF772;fake_percent_id=84.40;alignment_length=76;e-value=1.6e-15;model_start=1;model_end=71
+nmdc:wfmgan-11-ghk5e506.1_02_3_332	HMMER 3.1b2 (February 2015)	PF14104	19	110	65.2	.	.	ID=nmdc:wfmgan-11-ghk5e506.1_02_3_332_19_110;Name=DUF4277;fake_percent_id=84.40;alignment_length=92;e-value=3.3e-22;model_start=4;model_end=95

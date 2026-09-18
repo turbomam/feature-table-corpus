@@ -1,0 +1,7 @@
+##gff-version  3
+# Sequence Data: seqnum=1;seqlen=480;seqhdr="nmdc:wfmgan-11-ghk5e506.1_01"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="36|Ralstonia_solanacearum_PSI07|B|66.1|11|1";gc_cont=66.10;transl_table=11;uses_sd=1
+nmdc:wfmgan-11-ghk5e506.1_01	Prodigal v2.6.3_patched	CDS	2	478	72.1	-	0	ID=nmdc:wfmgan-11-ghk5e506.1_01_2_478;translation_table=11;partial=5',3'
+# Sequence Data: seqnum=2;seqlen=333;seqhdr="nmdc:wfmgan-11-ghk5e506.1_02"
+# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model="38|Rhodococcus_jostii_RHA1|B|65.0|11|1";gc_cont=65.10;transl_table=11;uses_sd=1
+nmdc:wfmgan-11-ghk5e506.1_02	Prodigal v2.6.3_patched	CDS	3	332	36.7	-	0	ID=nmdc:wfmgan-11-ghk5e506.1_02_3_332;translation_table=11;partial=5',3'
