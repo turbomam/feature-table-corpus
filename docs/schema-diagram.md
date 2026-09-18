@@ -16,6 +16,9 @@ Contig {
     float lineage_confidence
     stringList taxonomic_lineage
 }
+Dataset {
+
+}
 Feature {
     CoordinateSystemEnum coordinate_system
     integer end
@@ -33,10 +36,16 @@ Feature {
     string type
 }
 
+Dataset ||--}o Contig : "contigs"
+Dataset ||--}o Feature : "features"
 Feature ||--|o Contig : "seqid"
 Feature ||--}o Attribute : "attributes"
 Feature ||--}o Feature : "parent"
 ```
+
+`Dataset` is the tree root, added 2026-09-18 so a whole harmonized data file validates as one
+instance of one class instead of a bag of loose Contig and Feature fragments. Its own box is
+empty because it has no scalar slots, only the two relationships shown.
 
 `erdiagramgen` lists every scalar and enum slot inside each entity box and draws an arrow only
 for slots whose range is another class (`Contig`, `Feature`, `Attribute`). `schema/ber_feature_model.yaml`

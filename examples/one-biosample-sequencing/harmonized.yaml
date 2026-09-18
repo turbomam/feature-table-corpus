@@ -52,7 +52,7 @@ features:
     type: CDS
     start: 104
     end: 853
-    coordinate_system: contig
+    coordinate_system: CONTIG
     score: 85.0
     strand: "-"
     phase: 0
@@ -74,7 +74,7 @@ features:
     type: "KO:K00059__EC:1.1.1.100" # combined label, exactly as ko_ec.gff itself encodes it; see notes.md
     start: 1
     end: 249
-    coordinate_system: protein
+    coordinate_system: PROTEIN
     score: 518
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
@@ -89,7 +89,7 @@ features:
     type: COG1028
     start: 2
     end: 248
-    coordinate_system: protein
+    coordinate_system: PROTEIN
     score: 239.1
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
@@ -105,7 +105,7 @@ features:
     type: 3.40.50.720
     start: 3
     end: 249
-    coordinate_system: protein
+    coordinate_system: PROTEIN
     score: 290.3
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
@@ -121,7 +121,7 @@ features:
     type: PF13561
     start: 13
     end: 249
-    coordinate_system: protein
+    coordinate_system: PROTEIN
     score: 220.8
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
@@ -136,7 +136,7 @@ features:
     type: "51735"
     start: 5
     end: 248
-    coordinate_system: protein
+    coordinate_system: PROTEIN
     score: 280.3
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
@@ -153,7 +153,7 @@ features:
     type: CDS
     start: 3
     end: 866
-    coordinate_system: contig
+    coordinate_system: CONTIG
     score: 71.4
     strand: "-"
     phase: 0
@@ -174,7 +174,7 @@ features:
     type: CDS
     start: 3
     end: 740
-    coordinate_system: contig
+    coordinate_system: CONTIG
     score: 33.69
     strand: "-"
     phase: 0
@@ -189,7 +189,7 @@ features:
     type: "KO:K00986__EC:2.7.7.49"
     start: 1
     end: 288
-    coordinate_system: protein
+    coordinate_system: PROTEIN
     score: 532
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_2_c1_3_866]
     attributes:
@@ -205,7 +205,7 @@ features:
     type: CDS
     start: 3
     end: 65
-    coordinate_system: contig
+    coordinate_system: CONTIG
     score: 13.0
     strand: "-"
     phase: 0
@@ -226,7 +226,7 @@ features:
                         # The specific identity (an Rfam covariance model) lives in attributes, not type.
     start: 887
     end: 1104
-    coordinate_system: contig # NOT a child of any CDS; this is its own standalone structural call
+    coordinate_system: CONTIG # NOT a child of any CDS; this is its own standalone structural call
     score: 170.0
     strand: "-"
     attributes:
@@ -242,7 +242,7 @@ features:
     type: CRISPR
     start: 76
     end: 183
-    coordinate_system: contig
+    coordinate_system: CONTIG
     strand: "."
     attributes:
       - {tag: number_of_repeats, value: "3"}
@@ -257,7 +257,7 @@ features:
     type: repeat_unit
     start: 76
     end: 95
-    coordinate_system: contig
+    coordinate_system: CONTIG
     strand: "."
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_344_c1_76_183]
 
@@ -267,7 +267,7 @@ features:
     type: repeat_unit
     start: 118
     end: 137
-    coordinate_system: contig
+    coordinate_system: CONTIG
     strand: "."
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_344_c1_76_183]
 
@@ -277,6 +277,6 @@ features:
     type: repeat_unit
     start: 164
     end: 183
-    coordinate_system: contig
+    coordinate_system: CONTIG
     strand: "."
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_344_c1_76_183]

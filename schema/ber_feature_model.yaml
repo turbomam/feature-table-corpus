@@ -37,7 +37,21 @@ imports:
   - linkml:types
 
 classes:
+  Dataset:
+    tree_root: true
+    title: Feature dataset
+    description: A document holding every Contig and Feature harmonized from one or more workflow executions.
+    notes:
+      - Added 2026-09-18 so a whole harmonized data file (e.g.
+        examples/one-biosample-sequencing/harmonized.yaml) can be validated as one instance
+        of one class, rather than only validating its Contig and Feature entries one at a
+        time. linkml-lint's tree_root_class check caught the absence of this class.
+    slots:
+      - contigs
+      - features
+
   Contig:
+    title: Contig
     description: A single assembled sequence (scaffold or contig) that features are located on.
     slots:
       - contig_id
@@ -46,6 +60,7 @@ classes:
       - lineage_confidence
 
   Feature:
+    title: Feature
     description: One row per feature, matching GFF3's nine columns as closely as real data allows.
     notes:
       - Used for both gene/CDS-level calls and for finer-grained per-database evidence hits
@@ -76,6 +91,7 @@ classes:
         identifier: true
 
   Attribute:
+    title: Attribute
     description: One column-9-style tag/value pair, or one tool-reported evidence field.
     notes:
       - Kept generic rather than typed per tool, because tools do not agree on field names
@@ -87,16 +103,32 @@ classes:
       - value
 
 slots:
+  contigs:
+    title: Contigs
+    multivalued: true
+    inlined_as_list: true
+    range: Contig
+    description: Every Contig referenced by this dataset's Features.
+  features:
+    title: Features
+    multivalued: true
+    inlined_as_list: true
+    range: Feature
+    description: Every Feature in this dataset.
+
   contig_id:
+    title: Contig ID
     identifier: true
     description: Native NMDC or source-system identifier for the contig or scaffold.
   length_bp:
+    title: Length (bp)
     range: integer
     description: Contig length in base pairs.
     notes:
       - Compute directly from the contig's own FASTA record, not from a summary statistics
         file, so it is exact rather than an average.
   taxonomic_lineage:
+    title: Taxonomic lineage
     multivalued: true
     description: Ranked lineage path, domain to strain, one string per rank.
     notes:
@@ -106,6 +138,7 @@ slots:
         per-gene lineage (Gene Phylogeny tsv) for the same organism were reported at
         different depths, 2 ranks versus 8.
   lineage_confidence:
+    title: Lineage confidence
     range: float
     description: Confidence value reported alongside the lineage call.
     notes:
@@ -113,11 +146,14 @@ slots:
         descriptive, not confirmed.
 
   feature_id:
+    title: Feature ID
     description: GFF3 column-9 ID equivalent. Globally unique within a corpus.
   seqid:
+    title: Sequence ID
     range: Contig
     description: GFF3 column 1.
   source:
+    title: Source
     description: GFF3 column 2, the producing tool and version, e.g. "Prodigal v2.6.3_patched".
     notes:
       - Measured 2026-09-11 across 14 real NMDC GFF file types, blank in 3 of them (SMART,
@@ -127,6 +163,7 @@ slots:
         where the individual GFF's own source column is empty; use `predicted_by` plus that
         sidecar for full provenance when this is blank.
   type:
+    title: Type
     description: GFF3 column 3, nominally a Sequence Ontology term or accession.
     notes:
       - Range left as a plain string rather than SO-constrained. Measured 2026-09-11, 7 of 14
@@ -140,14 +177,17 @@ slots:
         instead, an accession where an SO term is expected in one case, a generic placeholder
         where an accession would be more specific in another.
   start:
+    title: Start
     range: integer
     required: true
     description: 1-based, inclusive. See `coordinate_system` before comparing across rows.
   end:
+    title: End
     range: integer
     required: true
     description: 1-based, inclusive, always >= start. See `coordinate_system`.
   coordinate_system:
+    title: Coordinate system
     range: CoordinateSystemEnum
     description: Which coordinate space `start`/`end` are measured in.
     notes:
@@ -158,6 +198,7 @@ slots:
         CDS's own start/end are contig-relative. A table mixing both kinds of row without
         this field would silently let one be misread as the other.
   score:
+    title: Score
     range: float
     description: GFF3 column 6.
     notes:
@@ -165,15 +206,18 @@ slots:
         Meaning is tool-specific (an HMMER bit score, a Prodigal confidence value, and so
         on); do not compare scores across different `source` values.
   strand:
+    title: Strand
     range: StrandEnum
     description: GFF3 column 7.
   phase:
+    title: Phase
     range: integer
     description: GFF3 column 8. One of 0, 1, 2; only meaningful when type is CDS.
     notes:
       - Measured 2026-09-11, 366 of 368 real values are 0, so a handler that mishandles 1
         and 2 will still pass almost all real-data testing.
   parent:
+    title: Parent
     multivalued: true
     range: Feature
     description: GFF3 column-9 Parent tag(s).
@@ -182,6 +226,7 @@ slots:
         more than one Parent, and per the 2026-09-17 confirmation that BRIDGE does not
         require this to be flattened into a join table.
   attributes:
+    title: Attributes
     multivalued: true
     inlined_as_list: true
     range: Attribute
@@ -189,6 +234,7 @@ slots:
     notes:
       - See the Attribute class description for why this stays generic rather than typed.
   predicted_by:
+    title: Predicted by
     description: The workflow execution (or tool run) that produced this feature.
     notes:
       - Confirmed 2026-09-18 against a real biosample's full sequencing, a Contig and the
@@ -198,6 +244,7 @@ slots:
         nmdc:wfmgan-11-5xxrm214.2) produces the Feature rows on it. Do not assume one
         workflow execution id covers both.
   is_selected:
+    title: Is selected
     range: boolean
     description: Whether the annotation pipeline chose this call as canonical for its locus.
     notes:
@@ -215,10 +262,12 @@ slots:
         \"filtered despite no competitor\"; a future revision may need a second field, or an
         enum instead of a boolean."
   product:
+    title: Product
     description: Human-readable functional product name for a gene, e.g. "transposase".
     notes:
       - Populated once, on the gene-level feature; not repeated per functional-evidence hit.
   product_source:
+    title: Product source
     description: What justified the product call, e.g. a COG accession or "Hypo-rule applied".
     notes:
       - Measured 2026-09-18, identical byte for byte to the parallel Product Names sidecar
@@ -226,6 +275,7 @@ slots:
         the same product assignment is never recorded twice under two different provenance
         stories.
   translated_sequence:
+    title: Translated sequence
     description: Amino-acid translation of a CDS feature, from the workflow's protein FASTA output.
     notes:
       - Not available anywhere else in structured form; GFF files reference a CDS by
@@ -236,6 +286,7 @@ slots:
         a data gap to fill in.
 
   tag:
+    title: Tag
     identifier: true
     description: Attribute name exactly as the source tool wrote it, unnormalized.
     notes:
@@ -243,17 +294,20 @@ slots:
         unnormalized on purpose; normalizing it would require a per-tool lookup table this
         schema does not yet have evidence to build."
   value:
+    title: Value
     description: Attribute value, stored as its original string form.
 
 enums:
   StrandEnum:
+    title: Strand
     description: GFF3 column-7 strand values.
     notes:
       - "Permissible value names are the literal GFF3 symbols (+, -, ., ?), not word forms
         (Plus, Minus, ...), so a value here round-trips to a real GFF3 file unchanged.
-        linkml-lint's standard_naming check flags all four as non-conforming; that is a
-        deliberate exception to the check, not an oversight, since word forms would be less
-        faithful to the source format this schema exists to represent."
+        linkml-lint's standard_naming and permissible_values_format checks both flag these
+        four as non-conforming (not uppersnake-case); that is a deliberate exception, not an
+        oversight, since a word form would be less faithful to the source format this schema
+        exists to represent."
     permissible_values:
       "+":
         description: Plus/forward strand.
@@ -264,11 +318,16 @@ enums:
       "?":
         description: Strand is relevant but unknown (GFF3 allowance).
   CoordinateSystemEnum:
+    title: Coordinate system
     description: Which coordinate space a Feature's start/end are measured in.
+    notes:
+      - This enum (unlike StrandEnum) is this schema's own invention, not a value taken
+        verbatim from a source format, so there is no fidelity reason to deviate from
+        LinkML's uppersnake naming convention here. Named CONTIG/PROTEIN accordingly.
     permissible_values:
-      contig:
+      CONTIG:
         description: start/end are nucleotide positions on the referenced Contig.
-      protein:
+      PROTEIN:
         description: >-
           start/end are amino-acid positions within the parent feature's translated
           sequence, not nucleotide positions on any contig.
