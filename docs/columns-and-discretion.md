@@ -69,6 +69,20 @@ GFF3, with the specification's own words.
 | 8 phase | 366 zeros and 2 ones among CDS and codon rows |
 | 9 attributes | 63 distinct keys across the two formats |
 
+**Narrowed to just the 14 real NMDC files, 2026-09-18** (a sibling session's measurement,
+independently reconfirmed here): 35 distinct keys, only 3 of GFF3's 11 reserved tags in use (ID,
+Name, Parent). Both `e-value` and `evalue` occur, in one pipeline's own output. Source-code
+confirmation of why: the actual script that writes these files,
+`assign_product_names_and_create_fa_gff.py`, builds column 9 by string concatenation, appending
+`;product=`, `;product_source=`, `;ko=`, `;ec_number=`, and a dynamic `;<fa_type>=` (`pfam`, `cog`,
+`tigrfam`, `smart`, `supfam`, or `cath_funfam`), with no vocabulary check anywhere in that code
+path. A public copy is at
+[kellyrowland/img-omics-wdl](https://github.com/kellyrowland/img-omics-wdl), but that is a 2021
+snapshot; `microbiomedata/mg_annotation`'s own Dockerfile pins `IMG_annotation_pipeline_ver=5.3.0`,
+several versions ahead of it, and the canonical, current source is
+[code.jgi.doe.gov/img/img-pipelines/img-annotation-pipeline](https://code.jgi.doe.gov/img/img-pipelines/img-annotation-pipeline)
+(JGI GitLab, LBNL, GPL-3.0), not read directly for this finding.
+
 Two of those rows deserve attention. Column 2 is the most variable column in the corpus and its
 values are unparseable by design, so a model cannot use it to identify the producing tool without a
 lookup table it has to maintain itself. And the phase distribution is so skewed toward zero that a
