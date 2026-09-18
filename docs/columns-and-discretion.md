@@ -97,15 +97,24 @@ curl -sL https://raw.githubusercontent.com/tseemann/prokka/v1.15.6/bin/prokka -o
 ```
 Result: `ID Name Note note Parent product inference gene locus_tag EC_number db_xref protein_id accession rpt_family rpt_type`.
 
-Bakta v1.12.1's count is an open item, not a citable number yet. Its keys are split between
-literal assignments in `bakta/io/gff.py` and a set of `bc.INSDC_*` constants resolved against
-`bakta/constants.py`, which makes a single reproducible one-shot extractor harder to write than
-Prokka's. Two independent attempts at this (2026-09-18, a sibling session and this one) produced
-different counts, the second pass here found several double-quoted key assignments the first
-pass's grep pattern missed, and over-matched on the constants side via prefix collisions
-(`INSDC_FEATURE_PSEUDOGENE` vs `INSDC_FEATURE_PSEUDOGENE_TYPE_UNITARY`, for one). Neither pass is
-trusted enough to publish a number here; a clean extractor for Bakta is a fair follow-up, not
-attempted further today.
+**Bakta v1.12.1, 25 keys, resolved and confirmed 2026-09-18.** Two regex-based attempts at this
+(one from a sibling session, one from this one) disagreed with each other; regex patterns missed
+key assignments in different styles (dict-literal, subscript, tuple-unpacking) and, on the
+constants side, over-matched on prefix collisions like `INSDC_FEATURE_PSEUDOGENE` against its own
+`_TYPE_UNITARY` sibling. An AST-based extractor,
+[`scripts/extract_bakta_keys.py`](../scripts/extract_bakta_keys.py), resolves this structurally:
+every `bc.CONSTANT` key expression is an exact dict lookup against `bakta/constants.py`'s 124
+string constants, not a pattern match, so a prefix collision can't happen. Run independently in
+this repository and confirmed against the sibling session's own run: same 124 constants parsed,
+same 25 keys, zero unresolved. Two keys that look like mistakes were read by hand and are real:
+`sequence` (a PILER-CR CRISPR spacer feature's nucleotide sequence, written into column 9) and
+`score` (a legacy `# <1.10.0 compatibility` code path that writes the same value into both column
+6 and column 9 in one row).
+
+**The three-way comparison, computed from all three verified lists.** NMDC 35 keys, Prokka 15,
+Bakta 25; union 60; shared by all three, exactly: `ID`, `Name`, `Parent`, `product`. Folding case
+(`EC_number`/`ec_number`, `Note`/`note`) shrinks the union to 58 but doesn't change which four
+keys are common to all three.
 
 Two of those rows deserve attention. Column 2 is the most variable column in the corpus and its
 values are unparseable by design, so a model cannot use it to identify the producing tool without a
