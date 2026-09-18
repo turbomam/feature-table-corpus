@@ -321,13 +321,18 @@ enums:
     title: Coordinate system
     description: Which coordinate space a Feature's start/end are measured in.
     notes:
-      - This enum (unlike StrandEnum) is this schema's own invention, not a value taken
-        verbatim from a source format, so there is no fidelity reason to deviate from
-        LinkML's uppersnake naming convention here. Named CONTIG/PROTEIN accordingly.
+      - "Named contig/protein, lowercase, not CONTIG/PROTEIN. An earlier revision tried
+        uppersnake to satisfy linkml-lint's permissible_values_format rule, which suggests
+        uppersnake by default, without checking it against standard_naming, whose own
+        default (as used in LinkML's bundled recommended.yaml) expects lowercase snake_case
+        and would then flag the uppercase form instead. schema/strict-lint-config.yaml sets
+        both rules to the same snake-case convention so they agree, and this enum's values
+        match it; unlike StrandEnum, this enum is the schema's own invention so there was no
+        format-fidelity reason to pick uppersnake in the first place."
     permissible_values:
-      CONTIG:
+      contig:
         description: start/end are nucleotide positions on the referenced Contig.
-      PROTEIN:
+      protein:
         description: >-
           start/end are amino-acid positions within the parent feature's translated
           sequence, not nucleotide positions on any contig.
