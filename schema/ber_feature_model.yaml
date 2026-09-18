@@ -166,6 +166,7 @@ slots:
         on); do not compare scores across different `source` values.
   strand:
     range: StrandEnum
+    description: GFF3 column 7.
   phase:
     range: integer
     description: GFF3 column 8. One of 0, 1, 2; only meaningful when type is CDS.
@@ -246,6 +247,13 @@ slots:
 
 enums:
   StrandEnum:
+    description: GFF3 column-7 strand values.
+    notes:
+      - "Permissible value names are the literal GFF3 symbols (+, -, ., ?), not word forms
+        (Plus, Minus, ...), so a value here round-trips to a real GFF3 file unchanged.
+        linkml-lint's standard_naming check flags all four as non-conforming; that is a
+        deliberate exception to the check, not an oversight, since word forms would be less
+        faithful to the source format this schema exists to represent."
     permissible_values:
       "+":
         description: Plus/forward strand.
@@ -256,6 +264,7 @@ enums:
       "?":
         description: Strand is relevant but unknown (GFF3 allowance).
   CoordinateSystemEnum:
+    description: Which coordinate space a Feature's start/end are measured in.
     permissible_values:
       contig:
         description: start/end are nucleotide positions on the referenced Contig.
