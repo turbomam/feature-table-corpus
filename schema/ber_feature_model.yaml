@@ -23,12 +23,19 @@ notes:
   - Open questions from the 2026-09-11 kickoff this draft does NOT resolve, predicted-vs-sequenced
     metagenome disambiguation, whether CURIEs are required more broadly than the one
     column-3 finding above, and where this schema's permanent home is.
+  - "No Directive or pragma class, on purpose so far, not by oversight: measured 2026-09-18
+    across all 14 real NMDC GFF files, only 1 carries any `##` directive at all
+    (`##gff-version  3`, two spaces, in the Prodigal file); the other 13 open straight into
+    data rows. The 2 vendored NCBI RefSeq files carry 4 each (gff-version, sequence-region,
+    species, and a closing `###`). GFF3's `##sequence-region` and `##species` directives would
+    otherwise be a natural source for Contig.length_bp and Contig.taxonomic_lineage, but real
+    NMDC data mostly doesn't carry them, which is why both those slots are populated from other
+    sidecar files here instead (see their own notes)."
 license: CC BY 4.0
 
 prefixes:
   linkml: https://w3id.org/linkml/
   bfm: https://w3id.org/ber-data/gff-feature-model/
-  SO: http://purl.obolibrary.org/obo/SO_
 
 default_prefix: bfm
 default_range: string
@@ -308,6 +315,12 @@ enums:
         four as non-conforming (not uppersnake-case); that is a deliberate exception, not an
         oversight, since a word form would be less faithful to the source format this schema
         exists to represent."
+      - "Consequence, confirmed 2026-09-18 by running gen-pydantic against this schema: the
+        generated Python Enum member for the minus strand is named `_`
+        (StrandEnum('-') is StrandEnum._), Python's conventional throwaway name, because
+        pydantic generation can't turn a bare '-' into a valid identifier. Anyone writing code
+        against a generated model will hit this; it's a consequence of the choice above, not a
+        new problem, but worth knowing before it surprises someone."
     permissible_values:
       "+":
         description: Plus/forward strand.

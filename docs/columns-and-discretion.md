@@ -83,6 +83,30 @@ several versions ahead of it, and the canonical, current source is
 [code.jgi.doe.gov/img/img-pipelines/img-annotation-pipeline](https://code.jgi.doe.gov/img/img-pipelines/img-annotation-pipeline)
 (JGI GitLab, LBNL, GPL-3.0), not read directly for this finding.
 
+**How NMDC's column 9 compares to two other annotation tools' column 9, 2026-09-18.** NMDC's 35
+keys are what one production pipeline's run actually emitted; the two counts below are what each
+tool's source *can* emit, a ceiling rather than a floor, and are not the same kind of measurement.
+
+Prokka v1.15.6, 15 keys, reproduced directly from its own source:
+
+```bash
+curl -sL https://raw.githubusercontent.com/tseemann/prokka/v1.15.6/bin/prokka -o /tmp/_prokka.pl
+{ grep -oE "add_tag_value\('[A-Za-z_]+'" /tmp/_prokka.pl | sed "s/.*('//;s/'//"
+  awk '/-tag *=> *\{/,/\}/' /tmp/_prokka.pl | grep -oE "^[[:space:]]*'?[A-Za-z_]+'?[[:space:]]*=>" | tr -d " \t'=>"
+} | sort -u
+```
+Result: `ID Name Note note Parent product inference gene locus_tag EC_number db_xref protein_id accession rpt_family rpt_type`.
+
+Bakta v1.12.1's count is an open item, not a citable number yet. Its keys are split between
+literal assignments in `bakta/io/gff.py` and a set of `bc.INSDC_*` constants resolved against
+`bakta/constants.py`, which makes a single reproducible one-shot extractor harder to write than
+Prokka's. Two independent attempts at this (2026-09-18, a sibling session and this one) produced
+different counts, the second pass here found several double-quoted key assignments the first
+pass's grep pattern missed, and over-matched on the constants side via prefix collisions
+(`INSDC_FEATURE_PSEUDOGENE` vs `INSDC_FEATURE_PSEUDOGENE_TYPE_UNITARY`, for one). Neither pass is
+trusted enough to publish a number here; a clean extractor for Bakta is a fair follow-up, not
+attempted further today.
+
 Two of those rows deserve attention. Column 2 is the most variable column in the corpus and its
 values are unparseable by design, so a model cannot use it to identify the producing tool without a
 lookup table it has to maintain itself. And the phase distribution is so skewed toward zero that a
