@@ -1,0 +1,182 @@
+id: https://w3id.org/ber-data/source-document
+name: source-document
+title: Feature source documents (draft)
+description: Ordered source records and scoped metadata from individual GFF3 or GTF artifacts.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  bfsd: https://w3id.org/ber-data/source-document/
+default_prefix: bfsd
+default_range: string
+imports:
+  - linkml:types
+  - attributes
+
+classes:
+  SourceDocument:
+    tree_root: true
+    description: A parsed view of one physical artifact, distinct from a harmonized Dataset.
+    notes:
+      - Records retain all original UTF-8 text and line endings, including comments and unknown syntax.
+      - scripts/source_document.py validates checksums and the interpreted projection by re-parsing.
+        JSON Schema alone does not enforce record ordering, context references, or source integrity.
+      - This model does not import Feature or NMDC DataObject. A source feature row is not necessarily
+        one biological feature; GFF3 can describe a discontinuous feature with multiple rows.
+    slots:
+      - artifact
+      - format
+      - profile
+      - records
+  SourceArtifact:
+    description: Location and content identity of the uncompressed UTF-8 artifact read by the parser.
+    slots:
+      - uri
+      - sha256
+      - byte_size
+  SourceRecord:
+    description: One physical source line with an optional, explicitly scoped interpretation.
+    notes:
+      - raw_text is authoritative. Parsed fields are a read-only projection, not instructions to rewrite it.
+      - Feature columns remain lexical strings. No feature identifiers, coordinates, parents, or GFF/GTF
+        attribute semantics are inferred or normalized by this layer.
+      - Sequence contexts are identified by the declaring record, not just the sequence name, so repeated
+        Prodigal blocks and FASTA headers remain distinguishable.
+    slots:
+      - record_id
+      - line_number
+      - raw_text
+      - kind
+      - scope
+      - sequence_id
+      - context_record
+      - metadata_type
+      - metadata
+      - feature_columns
+      - sequence_text
+      - warnings
+
+slots:
+  artifact:
+    description: The physical source represented by this document.
+    required: true
+    range: SourceArtifact
+    inlined: true
+  format:
+    description: Explicitly selected source format; never guessed from a headerless file.
+    required: true
+    range: SourceFormatEnum
+  profile:
+    description: Explicit producer metadata interpretation applied in addition to the selected format.
+    required: true
+    range: MetadataProfileEnum
+  records:
+    description: Every physical line, in original order, including blank lines and unrecognized content.
+    required: true
+    multivalued: true
+    inlined_as_list: true
+    list_elements_ordered: true
+    range: SourceRecord
+  uri:
+    description: Supplied provenance URI or the local file URI; the parser never fetches it.
+    required: true
+    range: uri
+  sha256:
+    description: SHA-256 digest of the original uncompressed source bytes.
+    required: true
+    pattern: '^[0-9a-f]{64}$'
+  byte_size:
+    description: Size of the original source in bytes, including all line endings.
+    required: true
+    range: integer
+    minimum_value: 0
+  record_id:
+    description: Document-local record identity derived from the physical line number.
+    identifier: true
+  line_number:
+    description: One-based physical line number; CRLF counts as one line ending.
+    required: true
+    range: integer
+    minimum_value: 1
+  raw_text:
+    description: Original line including its exact CR, LF, or CRLF ending, if present.
+    required: true
+  kind:
+    description: Lexical role of this record in the source stream.
+    required: true
+    range: SourceRecordKindEnum
+  scope:
+    description: Scope justified by the format or producer profile; stream means position only.
+    required: true
+    range: MetadataScopeEnum
+  sequence_id:
+    description: Source sequence name, present only when explicit or established by a recognized context.
+  context_record:
+    description: Prodigal Sequence Data or FASTA header record establishing this sequence context.
+    range: SourceRecord
+  metadata_type:
+    description: Directive name or recognized producer metadata form.
+  metadata:
+    description: Ordered source values interpreted from a recognized metadata form; repeated keys survive.
+    multivalued: true
+    inlined_as_list: true
+    list_elements_ordered: true
+    range: Attribute
+  feature_columns:
+    description: Exactly nine tab-separated source fields, with column 9 and all lexical spellings intact.
+    multivalued: true
+    list_elements_ordered: true
+    minimum_cardinality: 9
+    maximum_cardinality: 9
+  sequence_text:
+    description: Sequence letters from a FASTA body line, with whitespace removed; raw_text retains it.
+  warnings:
+    description: Interpretation problems; the corresponding source line is still retained.
+    multivalued: true
+
+enums:
+  SourceFormatEnum:
+    description: Source syntax selected explicitly by the caller.
+    permissible_values:
+      gff3:
+        description: GFF3 lexical structure and standard directives, including headerless producer output.
+      gtf:
+        description: GTF nine-column records and comments; GFF3 section markers are not interpreted.
+  MetadataProfileEnum:
+    description: Producer-specific metadata interpretation, or generic format behavior.
+    permissible_values:
+      generic:
+        description: Standard format behavior only; producer comments remain uninterpreted.
+      prodigal:
+        description: GFF3 Sequence Data and Model Data comments, with explicit sequence context.
+      ncbi:
+        description: Recognized NCBI hash-bang metadata and GTF version comments.
+  SourceRecordKindEnum:
+    description: Lexical roles preserved in the ordered document stream.
+    permissible_values:
+      feature:
+        description: A nine-column source feature row, before any biological harmonization.
+      comment:
+        description: A single-hash comment, including producer hash-bang conventions.
+      directive:
+        description: A double-hash directive other than a recognized stream control marker.
+      boundary:
+        description: GFF3 triple-hash feature-group boundary.
+      fasta_start:
+        description: Explicit GFF3 FASTA section transition.
+      fasta_header:
+        description: A FASTA sequence header; it can imply the GFF3 FASTA transition.
+      fasta_sequence:
+        description: A sequence body line linked to its FASTA header.
+      blank:
+        description: An empty or whitespace-only physical line.
+      unparsed:
+        description: Unrecognized content retained with a diagnostic.
+  MetadataScopeEnum:
+    description: Extent of applicability established by the format or selected producer profile.
+    permissible_values:
+      document:
+        description: Applies to this source document according to a recognized format or producer convention.
+      sequence:
+        description: Explicitly applies to a named sequence or sequence context.
+      stream:
+        description: Only source position is known or applicable; no document-wide or sequence scope is guessed.

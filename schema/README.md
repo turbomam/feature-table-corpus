@@ -6,6 +6,12 @@ generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
 [the attribute contract](../docs/attributes.md). The schema remains a draft, not a
 complete GFF3 interchange standard.
 
+[`source_document.yaml`](source_document.yaml) separately defines a physical source
+document and its ordered records. It imports the same generic attribute module for
+scoped comment metadata, without depending on Feature or NMDC DataObject. See the
+[source-document parser contract](../docs/source-documents.md) and
+[reproducible example](../examples/source-documents/README.md).
+
 `strict-lint-config.yaml` is a lint configuration, not a data model. Its documented
 exception is the four literal GFF3 strand symbols, which are preserved despite naming rules.
 
@@ -14,12 +20,13 @@ exception is the four literal GFF3 strand symbols, which are preserved despite n
 | Command | Coverage |
 |---|---|
 | `just verify` | Corpus index integrity and checksums |
-| `just validate-schema` | Both schema modules against the LinkML metamodel |
+| `just validate-schema` | All three schema modules against the LinkML metamodel |
 | `just lint-schema` | LinkML's default lint rules |
 | `just lint-schema-recommended` | Recommended lint, allowing only the four documented strand-name warnings |
 | `just lint-schema-strict` | Additional audit; intentionally reports the strand-name exception |
 | `just validate-example` | Open generated JSON Schema for the default example |
 | `just validate-example-closed` | Closed shape plus Dataset semantic checks |
+| `just validate-source-example` | Closed SourceDocument shape plus exact-source/projection integrity |
 | `just test` | Both real examples, invalid mutations, database preservation, and query controls |
 | `just check` | Corpus, schema, recommended lint, example validation, and tests; also run by CI |
 | `just diagram` | Regenerate the Mermaid diagram |
@@ -78,10 +85,10 @@ genomic and protein intervals and generic attribute lookup, informed by the BERI
 The Python overlap helper, like its CLI, requires integer endpoints and rejects booleans,
 floats (including NaN and infinity), and strings before executing SQL.
 
-Source-document metadata and parsing of comments/directives are tracked separately in
-[issue #13](https://github.com/turbomam/feature-table-corpus/issues/13). The real Prodigal
-example includes sequence-specific `#` comments between feature rows; a future parser
-must preserve their scope as well as file-level directives.
+The source-document reader preserves comments/directives and their justified scope.
+It keeps feature columns lexical; converting them into harmonized Features remains
+a separate step. The real Prodigal example includes sequence-specific `#` comments
+between feature rows, in addition to document-level directives.
 
 Generated databases and test scratch files live under gitignored `local/`. No database
 binary is committed: the YAML examples and scripts are the reviewable, reproducible artifacts.
