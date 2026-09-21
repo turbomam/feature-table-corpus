@@ -55,10 +55,10 @@ returns 404, which is how the first attempt failed.
 Feature class is in that module, not in `cdm_components.yaml`; the first attempt fetched the wrong
 file and a grep for `Feature:` matched an enum value inside it, which looked like success.
 
-## The 8 derived files
+## The 9 derived files
 
 Built by `scripts/make_malformed.py` from the vendored phiX174 GFF3, six in
-`corpus/fixtures/malformed/` and two in `corpus/fixtures/edge-cases/`. Each output is that source
+`corpus/fixtures/malformed/` and three in `corpus/fixtures/edge-cases/`. Each output is that source
 preserved line for line with one change to one data row, plus provenance comments, which are
 ordinary single-hash lines appended after the source's own `###` terminator. They are not pragmas
 and they are not in the header, and earlier wording in this file called them header pragmas, which
@@ -67,12 +67,17 @@ was wrong.
 `no_version_pragma` is the one exception to both halves of that: its single change removes a header
 directive, so its change is not to a data row and its header is deliberately not byte-identical.
 
-The two files in `derived-edge-cases/` are valid GFF3 rather than malformed. `multiple_parents` is
+The three files in `corpus/fixtures/edge-cases/` are valid GFF3 rather than malformed. `multiple_parents` is
 permitted by the specification and refused by many tools. `cds_phase_biologically_wrong` carries a
 legal phase value that is biologically wrong, so a syntax-only validator passes it while the
-translated protein changes.
+translated protein changes. `unescaped_semicolon_silent` demonstrates a legal extra key/value
+pair created by an unescaped separator, silently changing the intended annotation.
 
-All eight are labeled `derived` in the index and are not evidence about any real producer.
+All nine are labeled `derived` in the index and are not evidence about any real producer.
+The earlier eight-file account preceded the addition of `unescaped_semicolon_silent` in
+[commit c41ba55](https://github.com/turbomam/feature-table-corpus/commit/c41ba55f606feae1ab83cb182543ca56e6b0ef31)
+on 2026-09-11. The [current index](index.yaml) records all nine; dated correction notes
+below describe intermediate states in that acquisition history.
 
 ## EMSL, searched and not found
 
