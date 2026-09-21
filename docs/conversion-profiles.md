@@ -126,7 +126,8 @@ Unexpected rejection **or** unexpected acceptance fails. Unit tests also cover
 120 deterministically generated positive cases, wrong/conflicting representations,
 malformed values, boundaries, metadata scopes, literal arguments and refused edits.
 Common interval and attribute queries run on both converted profiles. Query
-performance and independent full-format validity are separate, unmeasured claims.
+performance remains unmeasured. [Independent GFF3 validation](../analyses/format-validation/README.md)
+records separate GenomeTools verdicts; other formats have no independent validator yet.
 
 ## Evidence for the next model changes
 

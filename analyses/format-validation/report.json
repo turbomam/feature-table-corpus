@@ -1,0 +1,350 @@
+{
+  "report_version": 1,
+  "validator": {
+    "name": "GenomeTools",
+    "version": "1.6.6",
+    "arguments": [
+      "gff3validator"
+    ],
+    "ontology_typecheck": false,
+    "biological_correctness": "not_measured"
+  },
+  "summary": {
+    "accepted": 6,
+    "not_checked": 9,
+    "rejected": 19
+  },
+  "records": [
+    {
+      "id": "nmdc-cath-funfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff",
+      "format": "GFF3",
+      "sha256": "388b3d16bad8ff4732fa7ec2d51a5b1ed206d70bbb73111c969e84791827e90e",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-crt",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff",
+      "format": "GFF3",
+      "sha256": "19e836a28bd0f5dc9975a30ee12a290b019b525ff8480870ea8927e5273d509c",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-cog",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff",
+      "format": "GFF3",
+      "sha256": "42027b8f56c875c497644d4fc6b0356d4a40acd2bc1294d8426fba25d6b4e08f",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-functional-annotation",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff",
+      "format": "GFF3",
+      "sha256": "c51da0e40ecc7d972b08cfbdf4d90011a92a989cfc7558e93f3bbf87e8dc9ce9",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-genemark",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff",
+      "format": "GFF3",
+      "sha256": "3e0a7296e873924080bb1e850dd6160ac0c4692115f7f87712619b550270c218",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-ko-ec",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff",
+      "format": "GFF3",
+      "sha256": "7d6d67e1362a81a3ccbc48e4366421c82a90dc79228b6a3aab9de25b2cd799ab",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-pfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff",
+      "format": "GFF3",
+      "sha256": "6f5169770fe29313d5448f74ea0354a8d54169e181afea30ca420985b624511c",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-prodigal",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
+      "format": "GFF3",
+      "sha256": "ee015a12d640e9f1468f8f264574a55d97432f81eddc27f62effc96123d77a35",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "warning: seqid \"nmdc:wfmgan-11-9ya9xh30.1_01\" on line 4 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"nmdc:wfmgan-11-9ya9xh30.1_02\" on line 7 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"nmdc:wfmgan-11-9ya9xh30.1_03\" on line 10 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"nmdc:wfmgan-11-9ya9xh30.1_04\" on line 14 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"nmdc:wfmgan-11-9ya9xh30.1_05\" on line 17 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically"
+    },
+    {
+      "id": "nmdc-rfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff",
+      "format": "GFF3",
+      "sha256": "07e17ff18f67e6602c6e8a74382e5b6b937e8fc7b035722ac9f9b46099b5742c",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-smart",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff",
+      "format": "GFF3",
+      "sha256": "e4c9c736dc2b50877f6b1f4006f0c7b7811e58e722895369138e2424e8b69ec3",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-superfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff",
+      "format": "GFF3",
+      "sha256": "f7781867dcec850433026931c538f5873ef4498818de9ef578a10d86857fa969",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-structural-annotation",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff",
+      "format": "GFF3",
+      "sha256": "b80f799456401f217d6a0531a7891cf4d79d50681ea7e474e185a70eb39c67bf",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-tigrfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff",
+      "format": "GFF3",
+      "sha256": "283070345c8006ff66c33994fc38dcf4c4fa2ea372face8275144c1dffc6bab1",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-trna",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff",
+      "format": "GFF3",
+      "sha256": "11f1866cf7bc19a4acf3a6e90f3a66929421f6a1934588e8cbfed7a0b6ff0e5b",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-ec",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-6kajck87.1_ec.tsv",
+      "format": "TSV",
+      "sha256": "ed3d70d6f915c42e5f5f2ece05945c96b38c69922bfb69ab98df067de66e8e26",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "nmdc-ko",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-vc2g4r14.1_ko.tsv",
+      "format": "TSV",
+      "sha256": "b32f00d5370737541f088d45f3b099ade04f0c5967d19c52b45c05bf9f7edf5c",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "nmdc-crispr-terms",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-vypv6e87.1_crt.crisprs",
+      "format": "CRT",
+      "sha256": "a0a893ec1d1ef6ff73a55147a924c83d11e75545e5a1fdde4b2590e9c8d24d8a",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "ncbi-refseq-GCF_000819615-1",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff",
+      "format": "GFF3",
+      "sha256": "bdf7fffd02143906ac82a88f4d8e1723af03d57d70d59d0b30ffcd02e599f9b6",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": ""
+    },
+    {
+      "id": "ncbi-refseq-GCF_000840245-1",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff",
+      "format": "GFF3",
+      "sha256": "768fc26e30d6137497216cf289eb53cef1302bfd5fff456b82552526085199e2",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": ""
+    },
+    {
+      "id": "ncbi-refseq-gtf-GCF_000819615-1",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gtf",
+      "format": "GTF",
+      "sha256": "a9145c8f705c917ae846fc91ac7ee3f57e5c9f757e3a8797b0282a49a915aded",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "ncbi-refseq-gtf-GCF_000840245-1",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf",
+      "format": "GTF",
+      "sha256": "cb3acfed86b7a868f23da639016dd66d69062e0c5c3bd1ca2ace07159d081f92",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "spec-chado-feature",
+      "path": "corpus/specifications/chado_1.4_feature_tables.sql",
+      "format": "PostgreSQL DDL",
+      "sha256": "fea47862ec158c16e1aa3b39388434ed25a23b21fad88ef77fc70862e235b779",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "spec-kbase-cdm-feature",
+      "path": "corpus/specifications/kbase_cdm_bioentity.yaml",
+      "format": "LinkML",
+      "sha256": "62bf457c0498c739c49473b097ea0c89f736eb6280f42546d0142e46707526fb",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "derived-cds-phase-illegal",
+      "path": "corpus/fixtures/malformed/cds_phase_illegal.gff3",
+      "format": "GFF3 (invalid)",
+      "sha256": "8547bbf71cc99241abaf6787156af30c84a820eb61526675ab6ba0109c60be56",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: phase '3' on line 10 in file 'corpus/fixtures/malformed/cds_phase_illegal.gff3' not a valid character from the set '012.'",
+      "expected_from_validity": "rejected"
+    },
+    {
+      "id": "derived-dangling-parent",
+      "path": "corpus/fixtures/malformed/dangling_parent.gff3",
+      "format": "GFF3 (invalid)",
+      "sha256": "e6818ae4e41b043fa38d350f83edd244a1b45bc9e19c01da47449762fa99a3a0",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: Parent \"gene-DOES-NOT-EXIST\" on line 10 in file \"corpus/fixtures/malformed/dangling_parent.gff3\" was not defined (via \"ID=\")",
+      "expected_from_validity": "rejected"
+    },
+    {
+      "id": "derived-duplicate-id",
+      "path": "corpus/fixtures/malformed/duplicate_id.gff3",
+      "format": "GFF3 (invalid)",
+      "sha256": "5d5164d4ec7287d331313294af06e7732c564d0b00de52a3009c281466424d99",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: the multi-feature with ID \"gene-phiX174p04\" on line 11 in file \"corpus/fixtures/malformed/duplicate_id.gff3\" has a different type than its counterpart on line 9",
+      "expected_from_validity": "rejected"
+    },
+    {
+      "id": "derived-no-version-pragma",
+      "path": "corpus/fixtures/malformed/no_version_pragma.gff3",
+      "format": "GFF3 (invalid)",
+      "sha256": "8e97d9d6ae28b4f91f855a1974a35ac5cfba4dc9d297c945d6b36f49216e7c63",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/fixtures/malformed/no_version_pragma.gff3\" does not begin with \"##gff-version\" or \"##gff-version\"",
+      "expected_from_validity": "rejected"
+    },
+    {
+      "id": "derived-start-after-end",
+      "path": "corpus/fixtures/malformed/start_after_end.gff3",
+      "format": "GFF3 (invalid)",
+      "sha256": "7701ee86336fd65af740af502bfa18d91a63966a2b02199565913fed8ff770af",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: start '221' is larger then end '51' on line 9 in file 'corpus/fixtures/malformed/start_after_end.gff3'",
+      "expected_from_validity": "rejected"
+    },
+    {
+      "id": "derived-unescaped-semicolon",
+      "path": "corpus/fixtures/malformed/unescaped_semicolon.gff3",
+      "format": "GFF3 (invalid)",
+      "sha256": "1d0b78b3209a59f905c5e3e52c75ed4a02ee8e77d01b2126c6f25dbda34aa373",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: token \" putative\" on line 10 in file \"corpus/fixtures/malformed/unescaped_semicolon.gff3\" does not contain exactly one '='",
+      "expected_from_validity": "rejected"
+    },
+    {
+      "id": "derived-cds-phase-biologically-wrong",
+      "path": "corpus/fixtures/edge-cases/cds_phase_biologically_wrong.gff3",
+      "format": "GFF3 (valid; wrong or refused in practice)",
+      "sha256": "c3f358689024ce5931653eb0238c793390b90aac03b40e03dbf1511ff00f7107",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "",
+      "expected_from_validity": "accepted"
+    },
+    {
+      "id": "derived-multiple-parents",
+      "path": "corpus/fixtures/edge-cases/multiple_parents.gff3",
+      "format": "GFF3 (valid; wrong or refused in practice)",
+      "sha256": "ef9a46d5716ba4a73039a8759ddefb6385b05e615be38ddb38801d23fbc3b9aa",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "",
+      "expected_from_validity": "accepted"
+    },
+    {
+      "id": "derived-unescaped-semicolon-silent",
+      "path": "corpus/fixtures/edge-cases/unescaped_semicolon_silent.gff3",
+      "format": "GFF3 (valid; wrong or refused in practice)",
+      "sha256": "416ba3fa5c1eb9e06a0a780c35f5ccf86b60a073fc23edd107f0c25b152df1e1",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "",
+      "expected_from_validity": "accepted"
+    },
+    {
+      "id": "biopython-blat-bed12",
+      "path": "corpus/sources/biopython/blat_34_hg19.bed",
+      "format": "BED12",
+      "sha256": "c845389ca7e71cd9c3940275ef01730c6ed6805e8944a86898224aec909afc52",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "biopython-insdc-plant-records",
+      "path": "corpus/sources/biopython/cor6_6.gb",
+      "format": "GenBank",
+      "sha256": "01b4e193b71344752a96e2b37e886118a33c07b16c3684741c31eb3efeaf60b8",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    }
+  ]
+}
