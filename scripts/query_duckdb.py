@@ -32,6 +32,8 @@ def multiple_pfams(con, accessions=()):
 
 def interval_overlap(con, sequence_id, start, end, coordinate_system="contig"):
     """Inclusive overlap: sequence_id is a contig ID or a parent CDS ID, respectively."""
+    if type(start) is not int or type(end) is not int:
+        raise ValueError("Interval endpoints must be integers (not booleans or floats)")
     if start < 1 or end < start:
         raise ValueError("Interval must be 1-based inclusive with start <= end")
     if coordinate_system not in ("contig", "protein"):

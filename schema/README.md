@@ -25,6 +25,10 @@ exception is the four literal GFF3 strand symbols, which are preserved despite n
 | `just diagram` | Regenerate the Mermaid diagram |
 | `just flat-profile-audit` | Audit scalar-table compatibility through SchemaView |
 
+The closed validator requires an object at the document root and rejects unknown root
+fields. An empty object is a valid empty Dataset because both collections are optional;
+absent or null collections are treated as empty. These cases have regression coverage.
+
 The harmonized Dataset profile requires a contig reference, coordinate system, and positive
 1-based inclusive endpoints on every Feature; phase, when supplied, is 0, 1, or 2.
 `scripts/validate_closed.py` additionally enforces start ≤ end, unique IDs within each entity
@@ -67,6 +71,13 @@ LinkML's integer type. The tests exercise rollback for an out-of-range value.
 example correctly produces no matches. Build [the real three-Pfam example](../examples/multiple-pfams/README.md)
 for a positive result. [Query requirements](../docs/query-requirements.md) also cover explicit
 genomic and protein intervals and generic attribute lookup, informed by the BERIL census.
+The Python overlap helper, like its CLI, requires integer endpoints and rejects booleans,
+floats (including NaN and infinity), and strings before executing SQL.
+
+Source-document metadata and parsing of comments/directives are tracked separately in
+[issue #13](https://github.com/turbomam/feature-table-corpus/issues/13). The real Prodigal
+example includes sequence-specific `#` comments between feature rows; a future parser
+must preserve their scope as well as file-level directives.
 
 Generated databases and test scratch files live under gitignored `local/`. No database
 binary is committed: the YAML examples and scripts are the reviewable, reproducible artifacts.

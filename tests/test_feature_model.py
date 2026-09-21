@@ -58,6 +58,10 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(cited, set(artifacts))
 
     def test_shape_constraints(self):
+        for value in (None, [], "dataset", 1, True):
+            with self.subTest(root=value):
+                self.assertTrue(validation_errors(value, self.validator))
+        self.reject(lambda d: d.update(unknown_root_field=[]), "Additional properties")
         for field, value, expected in (
             ("start", 0, "minimum"), ("end", 0, "minimum"),
             ("phase", -1, "minimum"), ("phase", 3, "maximum"),
@@ -99,7 +103,9 @@ class ValidationTests(unittest.TestCase):
             self.assertEqual(validation_errors(data, self.validator), [])
         data["features"][0].update(start=1, end=1)
         self.assertEqual(validation_errors(data, self.validator), [])
-        self.assertEqual(validation_errors({}, self.validator), [])
+        for empty in ({}, {"contigs": [], "features": []}, {"contigs": None, "features": None}):
+            with self.subTest(empty=empty):
+                self.assertEqual(validation_errors(empty, self.validator), [])
 
     def test_standalone_generic_attribute_module(self):
         validator = make_validator(ROOT / "schema/attributes.yaml", "Attribute")
@@ -232,7 +238,8 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(interval_overlap(con, contig, 13, 13, "protein"), [])
         self.assertEqual(interval_overlap(con, gene, 13, 13, "contig"), [])
         self.assertEqual(interval_overlap(con, gene, 250, 250, "protein"), [])
-        for start, end in ((0, 1), (2, 1)):
+        for start, end in ((0, 1), (2, 1), (True, 2), (1, False), (1.5, 2),
+                           (1, 2.0), (float("nan"), 2), (1, float("inf")), ("1", 2), (1, None)):
             with self.assertRaises(ValueError):
                 interval_overlap(con, contig, start, end)
 
