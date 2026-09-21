@@ -236,7 +236,7 @@ def render(work, output):
     dump_json(output / "catalogue.json", {"schema": provenance, **categories})
     dump_json(output / "counts.json", {"provenance": provenance, **counts})
     with (output / "categorical-values.csv").open("w", newline="") as target:
-        writer = csv.writer(target)
+        writer = csv.writer(target, lineterminator="\n")
         writer.writerow(["slot", "value", "data_objects", "schema_permitted"])
         for slot in categories["slots"]:
             values = counts["slots"][slot["name"]]["values"]
@@ -245,7 +245,7 @@ def render(work, output):
                 writer.writerow([slot["name"], value, values.get(value, 0),
                                  "not_enumerated" if allowed is None else str(value in allowed).lower()])
     with (output / "url-hosts.csv").open("w", newline="") as target:
-        writer = csv.writer(target)
+        writer = csv.writer(target, lineterminator="\n")
         writer.writerow(["hostname", "data_objects"])
         writer.writerows(counts["url"]["hosts"].items())
     lines = ["# NMDC DataObject profile", "",
