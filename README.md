@@ -4,7 +4,7 @@ Real, traceable examples of GFF and other genome feature table content.
 
 ## Start here
 
-Four files, in this order, if you have twenty minutes:
+Suggested reading, in this order:
 
 1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
    first: is Chado maintained, and what should a feature table be expected to cover. Short answers:
@@ -16,6 +16,13 @@ Four files, in this order, if you have twenty minutes:
    format has, which columns leave the writer discretion, and which get populated incorrectly in
    real data.
 4. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
+5. **[schema/README.md](schema/README.md)** and
+   **[examples/one-biosample-sequencing/README.md](examples/one-biosample-sequencing/README.md)**
+   cover a separate, later addition: a draft unified LinkML feature model
+   (`schema/ber_feature_model.yaml`) and a worked example harmonizing one real biosample's
+   sequencing against it. These have no relationship to `corpus.yaml` or `data/nmdc/`; they're a
+   different part of the repository, staged here because
+   [ber-data/gff-schema](https://github.com/ber-data/gff-schema) doesn't exist yet.
 
 Five findings, each with how it is known:
 
@@ -45,12 +52,12 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-55 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+58 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 20 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 23 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
@@ -88,6 +95,12 @@ evidence streams that all describe the same features:
 
 All are outputs of the JGI IMG annotation pipeline, reachable openly through NMDC. Licensed CC BY
 4.0 under the [NMDC data use policy](https://microbiomedata.org/nmdc-data-use-policy/).
+
+**NMDC, 3 additional non-GFF files.** Enzyme Commission TSV, KEGG Orthology TSV, and CRT
+`.crisprs` text extend the corpus to other feature-bearing formats. The EC and KO files
+carry hits; the selected `.crisprs` file contains three populated, six-field records.
+These bring the NMDC vendored total
+to 17; the 14-file GFF measurements above remain specifically about GFF.
 
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the
@@ -250,7 +263,7 @@ it blank.
 ```shell
 uv run --with pyyaml python scripts/verify.py             # index invariants and checksums
 uv run --with pyyaml python scripts/verify.py --links     # also check every URL
-uv run --with pyyaml python scripts/flat_profile_audit.py # the flat-profile figures
+uv run --with linkml-runtime python scripts/flat_profile_audit.py # the flat-profile figures
 uv run --with pyyaml python scripts/pr_validation_block.py # a pull request validation block
 ```
 

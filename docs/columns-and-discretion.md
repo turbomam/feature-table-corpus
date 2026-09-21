@@ -69,6 +69,53 @@ GFF3, with the specification's own words.
 | 8 phase | 366 zeros and 2 ones among CDS and codon rows |
 | 9 attributes | 63 distinct keys across the two formats |
 
+**Narrowed to just the 14 real NMDC files, 2026-09-18** (a sibling session's measurement,
+independently reconfirmed here): 35 distinct keys, only 3 of GFF3's 11 reserved tags in use (ID,
+Name, Parent). Both `e-value` and `evalue` occur, in one pipeline's own output. Source-code
+confirmation of why: the actual script that writes these files,
+`assign_product_names_and_create_fa_gff.py`, builds column 9 by string concatenation, appending
+`;product=`, `;product_source=`, `;ko=`, `;ec_number=`, and a dynamic `;<fa_type>=` (`pfam`, `cog`,
+`tigrfam`, `smart`, `supfam`, or `cath_funfam`), with no vocabulary check anywhere in that code
+path. A public copy is at
+[kellyrowland/img-omics-wdl](https://github.com/kellyrowland/img-omics-wdl), but that is a 2021
+snapshot; `microbiomedata/mg_annotation`'s own Dockerfile pins `IMG_annotation_pipeline_ver=5.3.0`,
+several versions ahead of it, and the canonical, current source is
+[code.jgi.doe.gov/img/img-pipelines/img-annotation-pipeline](https://code.jgi.doe.gov/img/img-pipelines/img-annotation-pipeline)
+(JGI GitLab, LBNL, GPL-3.0), not read directly for this finding.
+
+**How NMDC's column 9 compares to two other annotation tools' column 9, 2026-09-18.** NMDC's 35
+keys are what one production pipeline's run actually emitted; the two counts below are what each
+tool's source *can* emit, a ceiling rather than a floor, and are not the same kind of measurement.
+
+Prokka v1.15.6, 15 keys, reproduced directly from its own source:
+
+```bash
+curl -sL https://raw.githubusercontent.com/tseemann/prokka/v1.15.6/bin/prokka -o /tmp/_prokka.pl
+{ grep -oE "add_tag_value\('[A-Za-z_]+'" /tmp/_prokka.pl | sed "s/.*('//;s/'//"
+  awk '/-tag *=> *\{/,/\}/' /tmp/_prokka.pl | grep -oE "^[[:space:]]*'?[A-Za-z_]+'?[[:space:]]*=>" | tr -d " \t'=>"
+} | sort -u
+```
+Result: `ID Name Note note Parent product inference gene locus_tag EC_number db_xref protein_id accession rpt_family rpt_type`.
+
+**Bakta v1.12.1, 25 keys, resolved and confirmed 2026-09-18.** Two regex-based attempts at this
+(one from a sibling session, one from this one) disagreed with each other; regex patterns missed
+key assignments in different styles (dict-literal, subscript, tuple-unpacking) and, on the
+constants side, over-matched on prefix collisions like `INSDC_FEATURE_PSEUDOGENE` against its own
+`_TYPE_UNITARY` sibling. An AST-based extractor,
+[`scripts/extract_bakta_keys.py`](../scripts/extract_bakta_keys.py), resolves this structurally:
+every `bc.CONSTANT` key expression is an exact dict lookup against `bakta/constants.py`'s 124
+string constants, not a pattern match, so a prefix collision can't happen. Run independently in
+this repository and confirmed against the sibling session's own run: same 124 constants parsed,
+same 25 keys, zero unresolved. Two keys that look like mistakes were read by hand and are real:
+`sequence` (a PILER-CR CRISPR spacer feature's nucleotide sequence, written into column 9) and
+`score` (a legacy `# <1.10.0 compatibility` code path that writes the same value into both column
+6 and column 9 in one row).
+
+**The three-way comparison, computed from all three verified lists.** NMDC 35 keys, Prokka 15,
+Bakta 25; union 60; shared by all three, exactly: `ID`, `Name`, `Parent`, `product`. Folding case
+(`EC_number`/`ec_number`, `Note`/`note`) shrinks the union to 58 but doesn't change which four
+keys are common to all three.
+
 Two of those rows deserve attention. Column 2 is the most variable column in the corpus and its
 values are unparseable by design, so a model cannot use it to identify the producing tool without a
 lookup table it has to maintain itself. And the phase distribution is so skewed toward zero that a
@@ -231,6 +278,32 @@ They are the real malformed content the README previously listed as a gap.
   `data/derived-malformed/duplicate_id.gff3`, which collides an ID across two different types.
 - **Multiple parents refused.** Legal, and many tools reject it. See
   `data/derived-edge-cases/multiple_parents.gff3`.
+
+## 5. Feature sources beyond GFF, added 2026-09-17
+
+Everything above is about the nine-column GFF/GTF family. NMDC's own `FileTypeEnum` (106 permissible
+values, in `microbiomedata/nmdc-schema` `src/schema/basic_slots.yaml`) names at least three more
+`data_object_type` values that are one-row-per-feature tables in their own, non-GFF formats. None of
+these were in this corpus before 2026-09-17; the fourteen-GFF-file counts elsewhere in this document
+are unaffected and still describe only the GFF/GTF family.
+
+| `data_object_type` | Format here | Fields | Header | Corpus entry |
+|---|---|---|---|---|
+| Annotation Enzyme Commission | TSV | 11 | None | `nmdc-ec` |
+| Annotation KEGG Orthology | TSV | 11 | None | `nmdc-ko` |
+| Crispr Terms | CRT's own format | 6 | None | `nmdc-crispr-terms` |
+
+**Column meanings for all three are unverified.** No header row exists in any sampled file, and no
+IMG/JGI pipeline documentation for these exact outputs has been read yet. The two TSVs' fields 4 and 9
+are shaped like a percent and a small exponential number respectively, consistent with a BLAST- or
+HMMER-style hit record, but that is a shape observation from one sample each, not a confirmed schema.
+Do not assert column names for these three without reading the producing tool's own source or docs
+first.
+
+**Why they matter more than their sample size suggests.** `nmdc-ec` and `nmdc-ko` correspond to
+`annotation_enzyme_commission` and `annotation_kegg_orthology` in BERDL's `nmdc.results` namespace,
+1.23 billion and 1.83 billion rows respectively at production scale, the two largest tables in the
+lakehouse. A unified feature model that only covers the GFF family would miss both of them.
 
 ## Sources
 

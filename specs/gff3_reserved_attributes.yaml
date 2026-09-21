@@ -1,0 +1,68 @@
+# Machine-readable transcription of GFF3's eleven reserved column-9 attribute tags.
+#
+# Authored here 2026-09-18, not vendored from elsewhere: the GFF3 spec itself
+# (https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md) states this list
+# only as prose. A sibling session working the same BER feature model thread (mam-98) found that
+# docs/columns-and-discretion.md:93 was, until now, the only place in this repository naming the
+# eleven tags, also as prose, and that its own three-way column-9 vocabulary comparison
+# (Prokka/Bakta/NMDC) had to be done against a hand-typed list for lack of anything better. This
+# file exists so that comparison, and any future one, has something to parse instead.
+#
+# `cardinality` and `description` are transcribed verbatim or near-verbatim from the spec's own
+# column-9 attribute definitions and its statement "In addition to Parent, the Alias, Note,
+# Dbxref and Ontology_term attributes can have multiple values." Fetched and checked against the
+# raw spec text 2026-09-18, not from memory.
+
+source: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md
+retrieved: '2026-09-18'
+note: >-
+  "All attributes that begin with an uppercase letter are reserved for later use. Attributes
+  that begin with a lowercase letter can be used freely by applications." Attribute names are
+  case sensitive; "Parent" is not the same as "parent".
+
+reserved_attributes:
+  - tag: ID
+    cardinality: single per line, though the same ID may repeat across multiple lines for one discontinuous feature
+    description: >-
+      Indicates the ID of the feature. Required for features that have children or that span
+      multiple lines; optional otherwise. Must be unique within the GFF file's scope, except for
+      the discontinuous-feature case above.
+  - tag: Name
+    cardinality: single
+    description: Display name for the feature. Not required to be unique within the file.
+  - tag: Alias
+    cardinality: multiple
+    description: >-
+      A secondary name for the feature, e.g. a locus name or accession number. Not required to
+      be unique.
+  - tag: Parent
+    cardinality: multiple
+    description: >-
+      Indicates the parent(s) of the feature (part_of relationship only). A feature may have
+      multiple parents; used to group exons into transcripts, transcripts into genes, and so on.
+  - tag: Target
+    cardinality: single
+    description: >-
+      Target of a nucleotide-to-nucleotide or protein-to-nucleotide alignment. Value format is
+      "target_id start end [strand]"; strand is optional.
+  - tag: Gap
+    cardinality: single
+    description: >-
+      The alignment of the feature to its Target when not collinear, in a CIGAR-like format.
+  - tag: Derives_from
+    cardinality: single
+    description: >-
+      Disambiguates a temporal (not purely structural part_of) relationship between features;
+      needed for polycistronic genes.
+  - tag: Note
+    cardinality: multiple
+    description: A free text note.
+  - tag: Dbxref
+    cardinality: multiple
+    description: A database cross reference.
+  - tag: Ontology_term
+    cardinality: multiple
+    description: A cross reference to an ontology term.
+  - tag: Is_circular
+    cardinality: single
+    description: A flag indicating whether a feature is circular.

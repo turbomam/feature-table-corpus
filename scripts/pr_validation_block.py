@@ -10,12 +10,18 @@ So the claim is now generated. Run this, paste the output, push. It reads the
 index rather than anything I remember.
 
 Usage:
-    uv run --with pyyaml python scripts/pr_validation_block.py [base-ref]
+    uv run --with pyyaml python scripts/pr_validation_block.py [base-ref] [--audit-source path-or-url]
 
 `base-ref` defaults to origin/main and is used only to report how many entries
 the branch adds.
 """
-import os, subprocess, sys, yaml
+import argparse
+import os
+import shlex
+import subprocess
+import sys
+
+import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +43,11 @@ def counts(doc):
 
 
 def main():
-    base = sys.argv[1] if len(sys.argv) > 1 else "origin/main"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('base_ref', nargs='?', default='origin/main')
+    parser.add_argument('--audit-source', help='Local schema or URL; default is the pinned upstream GFF schema')
+    args = parser.parse_args()
+    base = args.base_ref
     now = load()
     n, tiers, ids = counts(now)
     before = load(base)
@@ -45,20 +55,24 @@ def main():
     # Run everything this block claims to have run. Listing a command without
     # executing it is how a generated artifact starts lying, which is the
     # failure this whole script was added to prevent.
-    def run(rel):
-        r = subprocess.run(["uv", "run", "--quiet", "--with", "pyyaml", "python",
-                            os.path.join(ROOT, rel)],
+    def run(command):
+        r = subprocess.run(command,
                            capture_output=True, text=True, cwd=ROOT)
-        last = [l for l in r.stdout.splitlines() if l.strip()][-1:]
+        output = r.stderr if r.returncode and r.stderr.strip() else r.stdout
+        last = [l for l in output.splitlines() if l.strip()][-1:]
         return r.returncode, (last[0].strip() if last else "no output")
 
-    verify_rc, verify_tail = run("scripts/verify.py")
-    audit_rc, audit_tail = run("scripts/flat_profile_audit.py")
+    verify_command = ["uv", "run", "--with", "pyyaml", "python", "scripts/verify.py"]
+    audit_command = ["uv", "run", "--with", "linkml-runtime", "python", "scripts/flat_profile_audit.py"]
+    if args.audit_source:
+        audit_command.append(args.audit_source)
+    verify_rc, verify_tail = run(verify_command)
+    audit_rc, audit_tail = run(audit_command)
 
     print("## Validation\n")
     print("```")
-    print("uv run --with pyyaml python scripts/verify.py")
-    print("uv run --with pyyaml python scripts/flat_profile_audit.py")
+    print(shlex.join(verify_command))
+    print(shlex.join(audit_command))
     print("```\n")
     print(f"| command | exit | last line |")
     print(f"|---|---|---|")
@@ -86,7 +100,8 @@ def main():
             print("\nNo index entries added or removed.")
     else:
         print(f"\nCould not read corpus.yaml at `{base}`, so no comparison.")
+    return 1 if verify_rc or audit_rc else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -140,3 +140,27 @@ jobs:
       - name: Origin URLs (reported, never fatal)
         continue-on-error: true
         run: uv run --with pyyaml python scripts/verify.py --links
+
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+      - uses: extractions/setup-just@v3
+
+      # Fetch for testing, without redistributing the unlicensed upstream schema.
+      - name: Fetch pinned comparison schema
+        run: |
+          mkdir -p local
+          curl --fail --location --retry 3 https://raw.githubusercontent.com/biodatamodels/gff-schema/cb31263471ab3855c3622c3be3d3f908db8be654/src/schema/gff.yaml -o local/pinned-gff.yaml
+
+      # Separate job, not a step in `verify`: that job mutates corpus.yaml in
+      # place to test scripts/verify.py itself, and this has nothing to do
+      # with that. `just check` runs scripts/verify.py again as its first
+      # recipe (harmless, cheap) plus every schema/example check added
+      # 2026-09-18: metamodel validation, the recommended lint profile, and
+      # example-data validation, semantic negative controls, and DuckDB query tests.
+      - name: Schema, examples, and query regression tests
+        env:
+          PINNED_GFF_SCHEMA: local/pinned-gff.yaml
+        run: just check

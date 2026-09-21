@@ -1,0 +1,104 @@
+# Real source records; see README.md and ../source-artifacts.yaml.
+contigs:
+- contig_id: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1
+  length_bp: 1173
+  generated_by: nmdc:wfmgas-11-19jh9v28.1
+  source_files:
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgas-11-19jh9v28.1/nmdc_wfmgas-11-19jh9v28.1_contigs.fna
+features:
+- feature_id: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091
+  seqid: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1
+  source: Prodigal v2.6.3_patched
+  type: CDS
+  start: 63
+  end: 1091
+  coordinate_system: contig
+  score: 76.5
+  strand: '-'
+  phase: 0
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  source_files:
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_prodigal.gff
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_functional_annotation.gff
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_proteins.faa
+  product: transposase
+  product_source: COG3415/COG3335
+  translated_sequence: MRQNDARQLSHDMLEDMRRRAVTAVQEGQSPEAVGKAFGLNRTTIYDWLAQYRRGGWGALKAKPLAGRPPKLNGKQMKWIYNTVTQKNPLQMKFEFALWTRAMVAKLIKDKFGIRLATNSVGRLLAQLGITPQRPLYQALERDPSLVKKWLKTEFPKIKKAAETLGADIYFGDAAHIRSDHHAGRTWGKKGETPIVVTTGARHGMSLLSAITSKGHMRFMIKEKGGVNSDVFIEFLKRLLVGAKRPVFLIVDRGPAHISKKTKAFVATLGSRLKLFYLPAYSPDRNPDELVWKHLKADTVGRMVTTSKADFKSKVVSSMRSLQKTPEKIRSFFQKPSLQYAA
+- feature_id: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091_168_312
+  seqid: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1
+  source: HMMER 3.1b2 (February 2015)
+  type: PF13358
+  start: 168
+  end: 312
+  coordinate_system: protein
+  score: 94.0
+  parent:
+  - nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  source_files:
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
+  attributes:
+  - key: Name
+    value: DDE_3
+  - key: fake_percent_id
+    value: '25.23'
+  - key: alignment_length
+    value: '145'
+  - key: e-value
+    value: '3.4e-28'
+  - key: model_start
+    value: '2'
+  - key: model_end
+    value: '135'
+- feature_id: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091_95_154
+  seqid: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1
+  source: HMMER 3.1b2 (February 2015)
+  type: PF13592
+  start: 95
+  end: 154
+  coordinate_system: protein
+  score: 64.0
+  parent:
+  - nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  source_files:
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
+  attributes:
+  - key: Name
+    value: HTH_33
+  - key: fake_percent_id
+    value: '25.23'
+  - key: alignment_length
+    value: '60'
+  - key: e-value
+    value: '3.4e-19'
+  - key: model_start
+    value: '1'
+  - key: model_end
+    value: '59'
+- feature_id: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091_17_70
+  seqid: nmdc:wfmgas-11-19jh9v28.1_scf_10_c1
+  source: HMMER 3.1b2 (February 2015)
+  type: PF13518
+  start: 17
+  end: 70
+  coordinate_system: protein
+  score: 42.5
+  parent:
+  - nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  source_files:
+  - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
+  attributes:
+  - key: Name
+    value: HTH_28
+  - key: fake_percent_id
+    value: '25.23'
+  - key: alignment_length
+    value: '54'
+  - key: e-value
+    value: '2.4e-12'
+  - key: model_start
+    value: '2'
+  - key: model_end
+    value: '51'
