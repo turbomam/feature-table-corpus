@@ -1,0 +1,165 @@
+{
+  "provenance": {
+    "scope": "Only the public NMDC data_object_set collection; one inspiration for broader modeling",
+    "api": "https://api.microbiomedata.org",
+    "collection": "data_object_set",
+    "filter": {},
+    "projection": [
+      "compression_type",
+      "data_category",
+      "data_object_type",
+      "type",
+      "url"
+    ],
+    "started_at": "2026-09-21T15:33:26+00:00",
+    "completed_at": "2026-09-21T15:34:56+00:00",
+    "pages": 304,
+    "records": 303977,
+    "collection_count_before": 303977,
+    "collection_count_after": 303977,
+    "schema_release": "11.23.0",
+    "schema_commit": "84651fe32b2e2f783f5d38ef5b8757d90c5ab768",
+    "schema_url": "https://raw.githubusercontent.com/microbiomedata/nmdc-schema/84651fe32b2e2f783f5d38ef5b8757d90c5ab768/nmdc_schema/nmdc_materialized_patterns.yaml",
+    "schema_sha256": "b5b3ea5a1f9b019b873f80a0131c2ba2f450b657a175640ef3b81791d4d7134c",
+    "projection_sha256": "9e2da1e2355f47143e0d37e45ce7b5e8678089b1cb45a7323efee7c3071ec0d9",
+    "coverage": "Pagination exhausted; unique IDs and counts agree before/after; not a transactional snapshot"
+  },
+  "records": 303977,
+  "slots": {
+    "compression_type": {
+      "states": {
+        "missing": 303977
+      },
+      "distinct_observed_values": 0,
+      "values": {},
+      "observed_outside_enum": null
+    },
+    "data_category": {
+      "states": {
+        "present": 303977
+      },
+      "distinct_observed_values": 3,
+      "values": {
+        "processed_data": 270990,
+        "instrument_data": 26856,
+        "workflow_parameter_data": 6131
+      },
+      "observed_outside_enum": []
+    },
+    "data_object_type": {
+      "states": {
+        "present": 303977
+      },
+      "distinct_observed_values": 82,
+      "values": {
+        "SRA toolkit-accessible sequence data": 11995,
+        "Assembly Contigs": 7726,
+        "Metagenome HQMQ Bins Compression File": 6545,
+        "Metagenome Bins Barplot": 5896,
+        "Metagenome Bins Heatmap": 5896,
+        "Metagenome Bins Info File": 5896,
+        "Metagenome Bins Krona Plot": 5896,
+        "Metagenome LQ Bins Compression File": 5896,
+        "Direct Infusion FT-ICR MS Analysis Results": 5722,
+        "Annotation Amino Acid FASTA": 5210,
+        "Functional Annotation GFF": 5210,
+        "Annotation KEGG Orthology": 5155,
+        "CATH FunFams (Functional Families) Annotation GFF": 5155,
+        "Clusters of Orthologous Groups (COG) Annotation GFF": 5155,
+        "Gene Phylogeny tsv": 5155,
+        "Pfam Annotation GFF": 5155,
+        "Product Names": 5155,
+        "SMART Annotation GFF": 5155,
+        "SUPERFam Annotation GFF": 5155,
+        "TIGRFam Annotation GFF": 5155,
+        "Annotation Enzyme Commission": 5154,
+        "Annotation Info File": 5154,
+        "Crispr Terms": 5154,
+        "KO_EC Annotation GFF": 5154,
+        "Structural Annotation GFF": 5154,
+        "Annotation Statistics": 5132,
+        "CRT Annotation GFF": 5043,
+        "Genemark Annotation GFF": 5043,
+        "Prodigal Annotation GFF": 5043,
+        "RFAM Annotation GFF": 5043,
+        "TRNA Annotation GFF": 5043,
+        "Filtered Sequencing Reads": 4725,
+        "Assembly Coverage BAM": 4697,
+        "QC Statistics": 4659,
+        "Assembly Coverage Stats": 4609,
+        "Scaffold Lineage tsv": 4405,
+        "Centrifuge Krona Plot": 4368,
+        "Centrifuge Taxonomic Classification": 4368,
+        "Centrifuge output report file": 4368,
+        "GOTTCHA2 Classification Report": 4368,
+        "GOTTCHA2 Krona Plot": 4368,
+        "GOTTCHA2 Report Full": 4368,
+        "Kraken2 Classification Report": 4368,
+        "Kraken2 Krona Plot": 4368,
+        "Kraken2 Taxonomic Classification": 4368,
+        "Assembly Info File": 4283,
+        "CheckM Statistics": 4005,
+        "Read Based Analysis Info File": 3968,
+        "Contig Mapping File": 3774,
+        "Assembly Scaffolds": 3540,
+        "Assembly AGP": 3273,
+        "GTDBTK Archaeal Summary": 3234,
+        "GTDBTK Bacterial Summary": 3234,
+        "Analysis Tool Parameter File": 3178,
+        "Direct Infusion FT ICR-MS Raw Data": 3152,
+        "Direct Infusion FT-ICR MS QC Plots": 3139,
+        "Error Corrected Reads": 3091,
+        "LC-DDA-MS/MS Raw Data": 3021,
+        "Configuration toml": 2948,
+        "Read Filtering Info File": 2917,
+        "Metagenome Raw Read 1": 2908,
+        "Metagenome Raw Read 2": 2908,
+        "LC-MS Metabolomics Processed Data": 2749,
+        "LC-MS Metabolomics Results": 2749,
+        "Metagenome Raw Reads": 1978,
+        "GC-MS Raw Data": 776,
+        "GC-MS Metabolomics Results": 573,
+        "GTDBTK Summary JSON": 303,
+        "LC-MS Lipidomics Processed Data": 198,
+        "LC-MS Lipidomics Results": 198,
+        "Metaproteomics Workflow Statistics": 168,
+        "Peptide Report": 168,
+        "Protein Report": 168,
+        "Unfiltered Metaproteomics Results": 168,
+        "Metatranscriptome Raw Reads": 118,
+        "rRNA Filtered Sequencing Reads": 71,
+        "BAI File": 69,
+        "Metatranscriptome Expression": 69,
+        "Metatranscriptome Expression Info File": 69,
+        "Reference Calibration File": 2,
+        "Virus Summary": 2,
+        "Contaminants Amino Acid FASTA": 1
+      },
+      "observed_outside_enum": []
+    },
+    "type": {
+      "states": {
+        "present": 303977
+      },
+      "distinct_observed_values": 1,
+      "values": {
+        "nmdc:DataObject": 303977
+      },
+      "observed_outside_enum": null
+    }
+  },
+  "url": {
+    "states": {
+      "missing": 12585,
+      "present": 291392
+    },
+    "distinct_hosts": 5,
+    "hosts": {
+      "data.microbiomedata.org": 256359,
+      "nmdcdemo.emsl.pnnl.gov": 26423,
+      "storage.neonscience.org": 5646,
+      "massive.ucsd.edu": 2733,
+      "portal.nersc.gov": 231
+    }
+  }
+}
