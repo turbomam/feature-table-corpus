@@ -273,6 +273,12 @@ injects a duplicate id and fails the build if the check passes anyway.
 
 ## Reproducing the NMDC selection
 
+The separate [NMDC DataObject profile](profiles/nmdc-data-objects/README.md) catalogues
+categorical slots, allowed and observed values, record frequencies, and URL hosts across
+the public NMDC DataObject collection. It includes metadata for all file types, not just
+the GFF files selected below. This is an NMDC-specific source profile, one inspiration for
+the broader model; its vocabularies and frequencies are not general modeling requirements.
+
 ```shell
 python3 scripts/harvest_nmdc.py
 ```
