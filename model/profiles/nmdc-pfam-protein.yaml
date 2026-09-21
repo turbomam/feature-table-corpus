@@ -15,7 +15,7 @@ mapping:
 round_trip:
   exact: byte-identical source recovery after projection and independent-original checks
   reconstruct: model fields plus semantic protein identity/attribute grouping mappings
-  context: supporting CDS/protein evidence is preserved in the bundle but is not exported as extra annotation rows
+  context: validation and export require the independent original context; supporting CDS/protein evidence is not exported as extra annotation rows
 limitations:
   - requires explicit profile selection; never inferred from nine columns or identifier spelling
   - requires ID, HMMER source, PF accession, strand '.', phase '.', and no source Parent tag

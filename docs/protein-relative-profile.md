@@ -42,8 +42,10 @@ just conversion-import \
   nmdc-pfam-protein/1.0.0 nmdc:wfmgas-11-19jh9v28.1 \
   local/protein-demo/bundle.json \
   --protein-context model/examples/conversions/nmdc-pfam-context.json
-just conversion-export local/protein-demo/bundle.json local/protein-demo/exact.gff exact
-just conversion-export local/protein-demo/bundle.json local/protein-demo/reconstructed.gff reconstruct
+just conversion-export local/protein-demo/bundle.json local/protein-demo/exact.gff exact \
+  --protein-context model/examples/conversions/nmdc-pfam-context.json
+just conversion-export local/protein-demo/bundle.json local/protein-demo/reconstructed.gff reconstruct \
+  --protein-context model/examples/conversions/nmdc-pfam-context.json
 python3 -c 'import json; from pathlib import Path; p=Path("local/protein-demo"); (p/"dataset.json").write_text(json.dumps(json.loads((p/"bundle.json").read_text())["dataset"]))'
 just build-duckdb local/protein-demo/dataset.json local/protein-demo/features.duckdb
 just query-overlap protein nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091 17 70 local/protein-demo/features.duckdb
@@ -57,7 +59,11 @@ kind of reference to each coordinate-space query and require no matches.
 
 Exact export recovers original bytes. Reconstruction uses modeled fields and
 semantic reference/attribute-group mappings without source feature text. Both
-check consistency first. Supporting CDSs are not emitted as extra Pfam rows, and
+check consistency against the separately supplied original context first.
+Validation and export require `--protein-context`; passing the bundle's own copy
+would not provide independent evidence. Coordinated edits to context bindings,
+translations or provenance and their Dataset copies are rejected against the
+original. Supporting CDSs are not emitted as extra Pfam rows, and
 the contextual relationship is not fabricated as a source Parent tag. Unknown,
 repeated, and empty attributes preserve their ordering and grouping; SourceDocument
 keeps comments and lexical details.

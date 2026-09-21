@@ -75,8 +75,8 @@ def make_report():
             bundle = import_source(content, profile=case["profile"], reference_context=case["reference_context"],
                                    source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"),
                                    protein_context=context)
-            exact = export_source(bundle, mode="exact", original_bytes=content)
-            reconstructed = export_source(bundle, mode="reconstruct", original_bytes=content)
+            exact = export_source(bundle, mode="exact", original_bytes=content, protein_context=context)
+            reconstructed = export_source(bundle, mode="reconstruct", original_bytes=content, protein_context=context)
             again = import_source(reconstructed, profile=case["profile"], reference_context=case["reference_context"],
                                   source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"),
                                   protein_context=context)
