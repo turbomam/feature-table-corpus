@@ -27,6 +27,13 @@ Dimonaco paper. The **July 2025** interval benchmark is the strongest recent
 comparative measurement in this selection, but answers a different question.
 Neither is an exhaustive, independent GFF/GTF/BED/INSDC conversion benchmark.
 
+Read the Dimonaco paper with its
+[supplementary Table S1](https://pmc-oa-opendata.s3.amazonaws.com/PMC13331350.1/supplementary_file_1_bbag357.pdf).
+It compares sequence, annotation, interval, graph, variant, and other representations
+from a version-control perspective. The table also includes a toolkit, GFFx, explicitly
+labeled as such. Its judgments about future adoption are the authors' qualitative
+assessments, not measured market trends or experimental rankings.
+
 ## Current operational documentation
 
 These sources complement the papers. Producer and maintainer documentation is
@@ -39,7 +46,8 @@ independent evidence about how well that syntax works across implementations.
   for a simple start/end table. It is maintained by the participating archives,
   not an external evaluation.
 - **[Bioconductor rtracklayer](https://bioconductor.org/packages/release/bioc/html/rtracklayer.html),
-  released version 1.72.0 in Bioconductor 3.23 when checked.** Its reference manual
+  released version 1.72.0 in Bioconductor 3.23 when checked; PDF header dated
+  September 18, 2026.** Its reference manual
   describes import/export across multiple track formats. This is a consumer/tool
   perspective rather than one feature format's specification; supported import/export
   does not itself establish lossless interchange. Check behavior against the installed
