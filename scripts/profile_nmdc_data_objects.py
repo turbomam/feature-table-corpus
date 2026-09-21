@@ -2,7 +2,7 @@
 """Collect and report NMDC DataObject categories and URL hosts, independently of the draft model.
 
 uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py collect
-uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
+uv run --offline --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
 
 Only public NMDC metadata is read. Source projection and schema stay in local/;
 the publishable outputs contain schema definitions and aggregate counts.
@@ -37,10 +37,12 @@ def utc_now():
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def get_bytes(url):
+def get_bytes(url, accept="*/*"):
     for attempt in range(4):
         try:
-            with urlopen(Request(url, headers={"User-Agent": "feature-table-corpus-nmdc-profile/1"}), timeout=60) as response:
+            # Match the existing NMDC harvester's compatibility convention.
+            headers = {"User-Agent": "curl/8.7.1 feature-table-corpus-nmdc-profile/1", "Accept": accept}
+            with urlopen(Request(url, headers=headers), timeout=60) as response:
                 return response.read()
         except (HTTPError, URLError, TimeoutError):
             if attempt == 3:
@@ -49,7 +51,7 @@ def get_bytes(url):
 
 
 def get_json(url):
-    return json.loads(get_bytes(url))
+    return json.loads(get_bytes(url, accept="application/json"))
 
 
 def dump_json(path, value):
@@ -298,7 +300,7 @@ def render(work, output):
               "## Reproduction and interpretation", "",
               "Run from the repository root:", "", "```sh",
               "uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py collect",
-              "uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py render",
+              "uv run --offline --with linkml-runtime python scripts/profile_nmdc_data_objects.py render",
               "```", "",
               "`collect` refreshes the public metadata projection and verifies completeness before",
               "publishing aggregates. `render` recreates them offline from the checksum-verified",
@@ -306,6 +308,9 @@ def render(work, output):
               "are downloaded. The script is pinned to the API schema release above and refuses",
               "a different release until its schema source is updated. A later collection may have",
               "different counts; each report carries its own timestamps and content hashes.", "",
+              "Python 3.11 or later is required. Run `collect` online once to obtain the projection",
+              "and schema and populate uv's dependency cache. The documented `render` command uses",
+              "uv's `--offline` mode as well as making no API calls; it needs those cached dependencies.", "",
               "The catalogue is derived from the [NMDC schema source](" + provenance['schema_url'] + "),",
               "licensed CC0. [NMDC's data use policy](https://microbiomedata.org/nmdc-data-use-policy/)",
               "applies to the source metadata. This is descriptive source profiling, not validation",

@@ -66,7 +66,7 @@ Run from the repository root:
 
 ```sh
 uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py collect
-uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
+uv run --offline --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
 ```
 
 `collect` refreshes the public metadata projection and verifies completeness before
@@ -75,6 +75,10 @@ files under gitignored `local/nmdc-profile/`. No data files referenced by the UR
 are downloaded. The script is pinned to the API schema release above and refuses
 a different release until its schema source is updated. A later collection may have
 different counts; each report carries its own timestamps and content hashes.
+
+Python 3.11 or later is required. Run `collect` online once to obtain the projection
+and schema and populate uv's dependency cache. The documented `render` command uses
+uv's `--offline` mode as well as making no API calls; it needs those cached dependencies.
 
 The catalogue is derived from the [NMDC schema source](https://raw.githubusercontent.com/microbiomedata/nmdc-schema/84651fe32b2e2f783f5d38ef5b8757d90c5ab768/nmdc_schema/nmdc_materialized_patterns.yaml),
 licensed CC0. [NMDC's data use policy](https://microbiomedata.org/nmdc-data-use-policy/)
