@@ -313,6 +313,31 @@ class ValidationBlockTests(unittest.TestCase):
         self.assertEqual(sum(row[5] == 'admissible' for row in rows), 19)
         self.assertEqual(sum(row[5] != 'admissible' for row in rows), 13)
 
+    def test_bakta_extractor_preserves_literal_and_constant_keys(self):
+        scratch = ROOT / 'local/test-tmp'
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as work:
+            constants = Path(work) / 'constants.py'
+            source = Path(work) / 'gff.py'
+            constants.write_text('KNOWN = "gene"\nKNOWN_EXTRA = "other"\n')
+            for target in ('annotations', 'gene_annotations'):
+                cases = (
+                    (f'{target}["Name"] = value', ['Name']),
+                    (f'{target}[bc.KNOWN] = value', ['gene']),
+                    (f'{target}["Name"] += value', ['Name']),
+                    (f'{target}[bc.KNOWN] += value', ['gene']),
+                    (f'{target} = {{"Name": value, bc.KNOWN: value}}', ['gene', 'Name']),
+                )
+                for expression, expected in cases:
+                    with self.subTest(expression=expression):
+                        source.write_text(expression + '\n')
+                        result = subprocess.run([sys.executable, str(ROOT / 'scripts/extract_bakta_keys.py'),
+                                                 str(source), str(constants)], capture_output=True, text=True)
+                        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                        self.assertEqual(result.stderr, '')
+                        self.assertIn(f'distinct GFF column-9 keys: {len(expected)}', result.stdout)
+                        self.assertEqual([line.strip() for line in result.stdout.splitlines()[2:]], expected)
+
     def test_bakta_extractor_rejects_unresolved_assignment_styles(self):
         scratch = ROOT / 'local/test-tmp'
         scratch.mkdir(parents=True, exist_ok=True)
