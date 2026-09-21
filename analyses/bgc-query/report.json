@@ -1,0 +1,100 @@
+{
+  "report_version": 1,
+  "profile": "gff3-contig/1.0.0",
+  "reference_context": "refseq:NC_003888.3",
+  "seqid": "NC_003888.3",
+  "source_sha256": "e49de7213e25d075e0b79541f8a49288a055ae87bdd355931d129c0573026858",
+  "excerpt_sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
+  "source_feature_rows": 44,
+  "exact_export": "byte-identical excerpt",
+  "reconstructed_export": "same mapped fields and relationships",
+  "source_evidence": [
+    {
+      "line": 10309,
+      "old_locus_tag": "SCO5087",
+      "start": 5529801,
+      "end": 5531204,
+      "strand": "+"
+    },
+    {
+      "line": 10311,
+      "old_locus_tag": "SCO5088",
+      "start": 5531201,
+      "end": 5532424,
+      "strand": "+"
+    },
+    {
+      "line": 10313,
+      "old_locus_tag": "SCO5089",
+      "start": 5532449,
+      "end": 5532709,
+      "strand": "+"
+    }
+  ],
+  "query_results": {
+    "focus": [
+      {
+        "gene_id": "gene-SC_RS27595",
+        "old_locus_tag": "SCO5087",
+        "cds_id": "cds-WP_003973891.1",
+        "start": 5529801,
+        "end": 5531204,
+        "strand": "+",
+        "product": "beta-ketoacyl-[acyl-carrier-protein] synthase family protein"
+      },
+      {
+        "gene_id": "gene-SC_RS27600",
+        "old_locus_tag": "SCO5088",
+        "cds_id": "cds-WP_011030048.1",
+        "start": 5531201,
+        "end": 5532424,
+        "strand": "+",
+        "product": "ketosynthase chain-length factor"
+      },
+      {
+        "gene_id": "gene-SC_RS27605",
+        "old_locus_tag": "SCO5089",
+        "cds_id": "cds-WP_003973889.1",
+        "start": 5532449,
+        "end": 5532709,
+        "strand": "+",
+        "product": "acyl carrier protein"
+      }
+    ],
+    "signed_gaps_bp": [
+      -4,
+      24
+    ],
+    "cluster_gene_order": [
+      "SCO5071",
+      "SCO5072",
+      "SCO5073",
+      "SCO5074",
+      "SCO5075",
+      "SCO5076",
+      "SCO5077",
+      "SCO5078",
+      "SCO5079",
+      "SCO5080",
+      "SCO5081",
+      "SCO5082",
+      "SCO5083",
+      "SCO5084",
+      "SCO5085",
+      "SCO5086",
+      "SCO5087",
+      "SCO5088",
+      "SCO5089",
+      "SCO5090",
+      "SCO5091",
+      "SCO5092"
+    ],
+    "negative_controls": {
+      "out_of_range": [],
+      "absent_product": [],
+      "wrong_sequence": [],
+      "wrong_reference": "reference-context",
+      "protein_space": "coordinate-space"
+    }
+  }
+}

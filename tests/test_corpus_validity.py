@@ -29,7 +29,7 @@ class CorpusValidityTests(unittest.TestCase):
         index = yaml.safe_load((validity.ROOT / "corpus/index.yaml").read_text())
         report = validity.measure(index, validity.binary_path())
         self.assertEqual(report, json.loads(validity.REPORT.read_text()))
-        fixtures = [r for r in report["records"] if "expected_from_validity" in r]
+        fixtures = [r for r in report["records"] if r["path"].startswith("corpus/fixtures/")]
         self.assertEqual(len(fixtures), 9)
         self.assertEqual(sum(r["verdict"] == "rejected" for r in fixtures), 6)
         self.assertEqual(sum(r["verdict"] == "accepted" for r in fixtures), 3)
@@ -37,6 +37,9 @@ class CorpusValidityTests(unittest.TestCase):
         accepted = {r["id"] for r in fixtures if r["verdict"] == "accepted"}
         self.assertIn("derived-cds-phase-biologically-wrong", accepted)
         self.assertIn("derived-unescaped-semicolon-silent", accepted)
+        selected = next(r for r in report["records"] if r["id"] == "derived-actinorhodin-excerpt")
+        self.assertEqual(selected["verdict"], "accepted")
+        self.assertEqual(selected["expected_from_validity"], "accepted")
 
     def test_flipped_label_is_rejected(self):
         index = yaml.safe_load((validity.ROOT / "corpus/index.yaml").read_text())

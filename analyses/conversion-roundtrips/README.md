@@ -9,6 +9,7 @@ See the [profile contract and worked commands](../../docs/conversion-profiles.md
 
 | Case | Adapter outcome | Source recovery | Mapped-field reconstruction |
 |---|---|---|---|
+| RefSeq actinorhodin excerpt, 44 rows | Supported | Exact excerpt bytes | Same gene/CDS relationships, genomic coordinates and attributes |
 | NMDC Pfam, 416 hits / 397 proteins | Supported with explicit CDS/protein context | Exact bytes | Same protein offsets, reference bindings and attributes; contextual CDSs are not emitted |
 | NMDC Prodigal, six rows | Supported | Exact bytes | Same fields; escape/numeric spelling may normalize |
 | NMDC CRT, four rows | Supported | Exact bytes | Same fields and parent links; escape spelling may normalize |

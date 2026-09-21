@@ -10,6 +10,7 @@ corpus/                         Evidence collected from producers and prior art
   sources/{nmdc,ncbi-refseq,biopython}/  Preserved upstream source text
   specifications/               Prior-art schemas and specification extracts
   fixtures/{malformed,edge-cases}/  Deliberately altered, indexed test cases
+  derived-examples/              Explicit selections of unchanged real source rows
 model/                          This project's proposed contracts and instances
   schema/                       LinkML schemas and validation guide
   profiles/                     Versioned, executable source conversion contracts
@@ -18,6 +19,7 @@ analyses/                       Source-specific measurements and selection repor
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts
   nmdc-selection/                Saved sampling report for the original GFF files
   conversion-roundtrips/         Case manifest and reproducible preservation outcomes
+  bgc-query/                     Source-grounded actinorhodin order/proximity exercise
   format-validation/             Independent GFF3 verdicts and retained diagnostics
 docs/                           Comparisons, interpretation, and design decisions
 scripts/                        Acquisition, generation, and validation code
@@ -44,6 +46,7 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Corpus | `verify`, `verify-links`, `fixtures-generate`, `pr-validation` | Link checks and the default PR audit use the network; fixture generation rewrites tracked derived files |
 | Model | `diagram`, `flat-profile-audit [schema]` | Print results; a schema URL may require network access |
 | Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap` | Build/update a database, then query it read-only |
+| Queries | `bgc-check`, `bgc-report` | Check the real BGC exercise offline, or explicitly regenerate its selected excerpt and query report |
 | Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
 | NMDC | `nmdc-collect`, `nmdc-render`, `nmdc-sample` | Explicit live collection/sampling or offline regeneration of source-specific reports |
 | Documentation | `docs-build`, `docs-check`, `docs-serve [port]` | Stage tracked public files, render and check the site, or preview on loopback |

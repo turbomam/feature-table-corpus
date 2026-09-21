@@ -24,6 +24,36 @@
   "lossy_export": "not-implemented",
   "cases": [
     {
+      "id": "refseq-actinorhodin-excerpt",
+      "path": "corpus/derived-examples/actinorhodin.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
+      "case_kind": "selected-real-source-rows",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 2,
+          "changed_records": 22
+        },
+        {
+          "column": 9,
+          "changed_records": 22
+        }
+      ],
+      "source_feature_rows": 44,
+      "model_features": 44,
+      "nonfeature_records": 8,
+      "reconstructed_sha256": "01bb6f5679c3fbea17fa24852aa6dc5b81128a87189c4bda074cf9bcff8c87b8",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
       "id": "nmdc-biosample-pfam",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
       "format": "gff3",

@@ -19,7 +19,7 @@ default:
 
 [doc("Run corpus, schema, example, and regression checks.")]
 [group("Validation")]
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check bgc-check
     @echo "all checks passed"
 
 [doc("Check all three LinkML schemas against the metamodel.")]
@@ -107,6 +107,16 @@ pr-validation base="origin/main" audit_source="":
     fi
 
 # ---- Model analysis and databases -------------------------------------------
+
+[doc("Regenerate the real BGC excerpt and gene-order query report.")]
+[group("Queries")]
+bgc-report:
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/bgc_example.py
+
+[doc("Reproduce BGC source selection, round trips, and query results.")]
+[group("Queries")]
+bgc-check:
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/bgc_example.py --check
 
 # This recipe prints Mermaid; the checked-in diagram also contains maintained prose.
 [doc("Print the feature model's Mermaid ER diagram.")]

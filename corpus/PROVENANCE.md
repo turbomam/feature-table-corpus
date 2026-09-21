@@ -187,3 +187,20 @@ relationships reproducible for 416 Pfam hits on 397 proteins. The generated
 context retains only participating CDSs; this selection does not alter the three
 source files or imply that other CDSs were biologically filtered. The corpus now
 contains 63 entries, 28 vendored.
+
+## September 21, 2026: a reproducible BGC query example
+
+Retained the complete NCBI annotwriter response for `NC_003888.3`, retrieved through
+the indexed sviewer URL. Despite from/to parameters, that response contains the
+whole linear chromosome annotation (4,691,954 bytes). The original is unchanged;
+the date and checksums identify the annotation snapshot separately from sequence
+accession version. NCBI's data availability policy is linked in the index.
+
+`scripts/bgc_example.py` selects the actinorhodin genes SCO5071–SCO5092, identified
+by the original genome publication, and their direct CDS children. The generated
+44-row excerpt is indexed as derived and stored under `corpus/derived-examples/`,
+with explicit selection provenance. Row bytes, order and absolute coordinates are
+preserved. The selection does not claim that omitted genes were biologically
+filtered. Both original and excerpt pass GenomeTools 1.6.6. The corpus now has
+65 entries, 29 vendored and 10 derived; nine derived artifacts remain deliberately
+altered fixtures. See the [query exercise](../analyses/bgc-query/README.md).
