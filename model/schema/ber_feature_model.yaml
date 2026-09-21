@@ -65,7 +65,7 @@ classes:
 
   Contig:
     title: Contig
-    description: A single assembled sequence (scaffold or contig) that features are located on.
+    description: A reference sequence, chromosome, scaffold, or contig that features are located on.
     slots:
       - contig_id
       - length_bp
@@ -76,7 +76,7 @@ classes:
 
   Feature:
     title: Feature
-    description: One row per feature, matching GFF3's nine columns as closely as real data allows.
+    description: An annotated sequence interval; explicit conversion profiles define its source representation.
     notes:
       - Used for both gene/CDS-level calls and for finer-grained per-database evidence hits
         (Pfam, COG, CATH-FunFam, SUPERFAMILY, KO, EC) that a functional annotation pipeline
@@ -152,12 +152,12 @@ slots:
 
   feature_id:
     title: Feature ID
-    description: GFF3 column-9 ID equivalent, unique within this Dataset.
+    description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
   seqid:
     title: Sequence ID
     range: Contig
     required: true
-    description: GFF3 column 1.
+    description: Reference sequence identity, such as GFF3 column 1 or BED chrom; interpreted within its assembly context.
   source:
     title: Source
     description: GFF3 column 2, the producing tool and version, e.g. "Prodigal v2.6.3_patched".
@@ -244,6 +244,7 @@ slots:
     title: Attributes
     multivalued: true
     inlined_as_list: true
+    list_elements_ordered: true
     range: Attribute
     description: Additional source annotations, metadata, and evidence, including GFF tags not given their own slots.
     notes:

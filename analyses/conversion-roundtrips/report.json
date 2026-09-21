@@ -1,0 +1,226 @@
+{
+  "report_version": 1,
+  "implementation": "scripts/convert_features.py",
+  "toolchain": {
+    "linkml": "1.11.1",
+    "jsonschema": "4.26.0",
+    "PyYAML": "6.0.3"
+  },
+  "profiles": {
+    "bed12-blocks/1.0.0": {
+      "path": "model/profiles/bed12-blocks.yaml",
+      "sha256": "b20a579e641d99d1a36a6fdd8cc8e203d0b6fe38ae432feb9710211153dd622d"
+    },
+    "gff3-contig/1.0.0": {
+      "path": "model/profiles/gff3-contig.yaml",
+      "sha256": "555395d6c89eeb2da52006c119186df594272d1eab55cc3b84e14032781d0cef"
+    }
+  },
+  "query_performance": "not-measured",
+  "lossy_export": "not-implemented",
+  "cases": [
+    {
+      "id": "nmdc-prodigal",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "ee015a12d640e9f1468f8f264574a55d97432f81eddc27f62effc96123d77a35",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 2,
+          "changed_records": 6
+        },
+        {
+          "column": 9,
+          "changed_records": 6
+        }
+      ],
+      "source_feature_rows": 6,
+      "model_features": 6,
+      "nonfeature_records": 11,
+      "reconstructed_sha256": "7a1f4512a2fac5522d44751efa543510d2b9416f056bf370bdb4593a16abd870",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "nmdc-crt",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "19e836a28bd0f5dc9975a30ee12a290b019b525ff8480870ea8927e5273d509c",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 2,
+          "changed_records": 4
+        }
+      ],
+      "source_feature_rows": 4,
+      "model_features": 4,
+      "nonfeature_records": 0,
+      "reconstructed_sha256": "dd0f09bdc476fe94243f80cef3a90a821c9b0faf4ea06fc3fec813a6bf0bdd04",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "refseq-lambda",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "768fc26e30d6137497216cf289eb53cef1302bfd5fff456b82552526085199e2",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 9,
+          "changed_records": 206
+        }
+      ],
+      "source_feature_rows": 308,
+      "model_features": 308,
+      "nonfeature_records": 8,
+      "reconstructed_sha256": "277dea670f114246fd23c6c3ec32da5faa2e3bdd22466290591a024e3ce05888",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "refseq-phix-circular",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "bdf7fffd02143906ac82a88f4d8e1723af03d57d70d59d0b30ffcd02e599f9b6",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "circular-location",
+        "message": "line-8: circular reference semantics require a different location profile"
+      }
+    },
+    {
+      "id": "refseq-lambda-gtf",
+      "path": "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf",
+      "format": "gtf",
+      "profile": null,
+      "source_sha256": "cb3acfed86b7a868f23da639016dd66d69062e0c5c3bd1ca2ace07159d081f92",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "unsupported-format",
+        "message": "no gtf conversion adapter implemented; source is retained as corpus evidence"
+      }
+    },
+    {
+      "id": "biopython-blat-bed12",
+      "path": "corpus/sources/biopython/blat_34_hg19.bed",
+      "format": "bed12",
+      "profile": "bed12-blocks/1.0.0",
+      "source_sha256": "c845389ca7e71cd9c3940275ef01730c6ed6805e8944a86898224aec909afc52",
+      "case_kind": "upstream-alignment-example",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": true,
+      "normalization": "none observed",
+      "normalized_columns": [],
+      "source_feature_rows": 19,
+      "model_features": 42,
+      "nonfeature_records": 0,
+      "reconstructed_sha256": "c845389ca7e71cd9c3940275ef01730c6ed6805e8944a86898224aec909afc52",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "insdc-plant-locations",
+      "path": "corpus/sources/biopython/cor6_6.gb",
+      "format": "genbank",
+      "profile": null,
+      "source_sha256": "01b4e193b71344752a96e2b37e886118a33c07b16c3684741c31eb3efeaf60b8",
+      "case_kind": "upstream-sequence-records",
+      "losses": [],
+      "edited_export": "unsupported",
+      "observations": {
+        "method": "fixed-column source-text inspection, not format validation",
+        "accession_versions": [
+          "X55053.1",
+          "X62281.1",
+          "M81224.1",
+          "AJ237582.1",
+          "L31939.1",
+          "AF297471.1"
+        ],
+        "feature_location_lines": 38,
+        "join_location_lines": 6,
+        "partial_location_lines": 7,
+        "repeated_qualifier_keys_within_features": 2
+      },
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "unsupported-format",
+        "message": "no genbank conversion adapter implemented; source is retained as corpus evidence"
+      }
+    },
+    {
+      "id": "constructed-discontinuous-gff",
+      "path": "tests/fixtures/conversions/discontinuous.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "3ef4bec2a897282d5b7b3948700a680f6608f37869b8f7e504ae2755391f54b3",
+      "case_kind": "constructed-negative-control",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "dataset-invalid",
+        "message": "features: duplicate feature_id 'compound'"
+      }
+    },
+    {
+      "id": "constructed-empty-bed",
+      "path": "tests/fixtures/conversions/empty.bed",
+      "format": "bed12",
+      "profile": "bed12-blocks/1.0.0",
+      "source_sha256": "78fdb72a8d92cf3347a0c9772dcc70c543e0546da7eed223377b184553785fc0",
+      "case_kind": "constructed-negative-control",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "empty-interval",
+        "message": "line-2: zero-length or reversed BED intervals are outside this profile"
+      }
+    }
+  ]
+}

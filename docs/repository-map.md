@@ -7,15 +7,17 @@ actual layout; the model remains a draft, regardless of its directory name.
 corpus/                         Evidence collected from producers and prior art
   index.yaml                    Inventory, provenance, licenses, and checksums
   PROVENANCE.md                 Dated acquisition and correction history
-  sources/{nmdc,ncbi-refseq}/    Preserved upstream source text
+  sources/{nmdc,ncbi-refseq,biopython}/  Preserved upstream source text
   specifications/               Prior-art schemas and specification extracts
   fixtures/{malformed,edge-cases}/  Deliberately altered, indexed test cases
 model/                          This project's proposed contracts and instances
   schema/                       LinkML schemas and validation guide
+  profiles/                     Versioned, executable source conversion contracts
   examples/                     Worked examples and their source-artifact manifest
 analyses/                       Source-specific measurements and selection reports
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts
   nmdc-selection/                Saved sampling report for the original GFF files
+  conversion-roundtrips/         Case manifest and reproducible preservation outcomes
 docs/                           Comparisons, interpretation, and design decisions
 scripts/                        Acquisition, generation, and validation code
 tests/                          Executable checks and small test-only fixtures
@@ -37,6 +39,7 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Group | Main tasks | Effect |
 |---|---|---|
 | Validation | `check`, `test`, schema lint and example validation | Check retained artifacts; test scratch goes under `local/` |
+| Conversions | `conversion-import`, `conversion-export`, `conversion-validate`, `conversion-check`, `conversion-report` | Create new conversion outputs, check preserved fields/bytes, or explicitly regenerate the tracked report |
 | Corpus | `verify`, `verify-links`, `fixtures-generate`, `pr-validation` | Link checks and the default PR audit use the network; fixture generation rewrites tracked derived files |
 | Model | `diagram`, `flat-profile-audit [schema]` | Print results; a schema URL may require network access |
 | Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap` | Build/update a database, then query it read-only |
@@ -48,6 +51,9 @@ files, regenerate corpus fixtures, or publish reports. `uv` can still need the n
 to obtain dependencies; `UV_OFFLINE=1` uses cached dependencies when available.
 The optional pinned-upstream audit regression requires a retained schema supplied
 through `PINNED_GFF_SCHEMA`; otherwise that test reports a skip.
+Conversion commands and regression tests use `requirements-conversion.txt` to pin
+the measured toolchain. `conversion-check` is read-only; `conversion-report` is the
+explicit report-writing task.
 
 The [source-document guide](source-documents.md), [query examples](query-requirements.md),
 and nearby NMDC reports document task arguments. Recipe arguments are forwarded as
@@ -73,6 +79,7 @@ requirement. Add concise help and a task group when introducing a new public rec
 | How do prior models differ? | [Comparison](model-comparison.md), [columns and producer discretion](columns-and-discretion.md), and [specification evidence](../corpus/specifications/) | Chado SQL is an extracted subset under Artistic-2.0; the KBase YAML is an upstream module under MIT. Their indexed bytes and acquisition scope are recorded. The reserved-attribute YAML is a repository-authored transcription, with its source and date in the file header. These files are evidence for comparison. |
 | What model are we proposing? | [Schema guide](../model/schema/README.md), [attribute semantics](attributes.md), and [source-document guide](source-documents.md) | Reusable draft LinkML contracts live in `model/schema/`. Generic attributes are shared by biological records and source records. `just check` runs schema, semantic, corpus, and regression checks. |
 | Which instances demonstrate those contracts? | [Example crosswalk](#examples-and-their-contracts) below | Harmonized examples are curated transformations; the parsed source-document example is generated. Their guides identify exact sources and validation commands. |
+| Which conversions can round-trip? | [Profile contracts](conversion-profiles.md) and [measured outcomes](../analyses/conversion-roundtrips/README.md) | GFF3/BED12 adapters require explicit profiles and reference context; exact byte recovery and mapped-field reconstruction are tested separately. Unsupported INSDC/GTF and compound/circular cases remain visible. |
 | What do the NMDC counts measure? | [DataObject analysis](../analyses/nmdc-data-objects/README.md) | A generated catalogue and counts of NMDC metadata records only. The report identifies pinned schema inputs, collection timestamps, hashes, and data-use terms. Refresh all report/JSON/CSV outputs together using the commands below. |
 | How were the original NMDC GFF files selected? | [Selection report guide](../analyses/nmdc-selection/README.md) and [saved selection](../analyses/nmdc-selection/selection.json) | This sampled selection is distinct from the full DataObject analysis. `just nmdc-sample` writes a new live sample to `local/nmdc-selection/selection.json`; inspect errors and changed selections before replacing the saved report. |
 | What should I read beyond one format's advocates? | [Cross-format reading guide](feature-format-reading.md) | Sources are dated and their perspectives identified. Literature and tool documentation motivate tests; they do not establish conversion fidelity. |
@@ -87,6 +94,7 @@ observation, not automatically a reproduction of an earlier snapshot.
 |---|---|---|
 | [One biosample's sequencing](../model/examples/one-biosample-sequencing/harmonized.yaml) | [Harmonized feature model](../model/schema/ber_feature_model.yaml), importing [generic attributes](../model/schema/attributes.yaml) | [Guide](../model/examples/one-biosample-sequencing/README.md), [transformation notes](../model/examples/one-biosample-sequencing/notes.md), and [source manifest](../model/examples/source-artifacts.yaml). The curated selection uses a different biosample from the standalone NMDC corpus files. `just validate-example-closed` validates the instance. |
 | [One CDS with three Pfams](../model/examples/multiple-pfams/harmonized.yaml) | The same harmonized feature and attribute schemas | [Guide](../model/examples/multiple-pfams/README.md) and the same source manifest identify rows, FASTA records, attribution, and checksums. `just validate-example-closed model/examples/multiple-pfams/harmonized.yaml` validates the instance. |
+| [Converted BED12 document](../model/examples/conversions/blat-bed12.json) | Versioned BED12 conversion bundle combining Dataset, SourceDocument and mapping records | [Guide](../model/examples/conversions/README.md) reproduces and validates the generated instance from the pinned BED source; tests require byte agreement and reconstruction of ordered blocks. |
 | [Parsed Prodigal document](../model/examples/source-documents/prodigal.json) | [Source-document model](../model/schema/source_document.yaml), importing generic attributes | [Guide](../model/examples/source-documents/README.md) supplies the exact parse command for the unchanged `nmdc-prodigal` corpus entry. `just validate-source-example` checks shape, internal consistency, and byte agreement with the retained corpus source. |
 
 The first two represent biological records. The third preserves ordered source text,

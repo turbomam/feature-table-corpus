@@ -1,0 +1,31 @@
+id: gff3-contig/1.0.0
+kind: source-dialect
+source_format: gff3
+implementation: scripts/convert_features.py
+model: model/schema/ber_feature_model.yaml
+coordinates: One-based inclusive intervals on an explicitly identified reference context.
+metadata: Explicit generic, prodigal, or ncbi interpretation through SourceDocument; unknown content keeps stream scope.
+supported:
+  - One row per feature with a unique ID, or a synthetic document-local ID when absent.
+  - Forward references and multiple parents on the same reference; no parent cycles.
+  - Ordered, repeated, unknown, empty and comma-grouped key/value attributes; UTF-8 percent escaping.
+  - Document and sequence metadata, comments, group boundaries and embedded FASTA retained in source order.
+  - Declared sequence-region bounds and explicit Prodigal sequence-context lengths checked without inferring contig lengths.
+  - Lexical numeric forms, missing versus empty source/attributes, BOM, CR/LF/CRLF and absent final newline.
+mapping:
+  core: seqid, source and type decode percent escapes; start/end become integers; finite decimal score becomes float.
+  typed_attributes: ID -> feature_id; Parent -> parent; product -> product.
+  generic_attributes: All occurrences, including promoted ones, remain ordered key/value pairs; comma groups retain indices.
+  missing_id: Assign urn:ftc:line-N; never insert an ID on reverse export; collision with a real ID is rejected.
+reverse:
+  authority: Imported instances are immutable. Generic and typed copies must agree; inconsistent copies are rejected.
+  exact: Validate the full imported projection; reconstruct semantics before restoring lexical cells and original record endings.
+  reconstruct: Emit feature columns from Dataset and grouping indices, without reading source feature text or columns.
+  normalization: Percent-escape spelling, numeric spelling, empty column 9 and trailing semicolon may normalize in reconstructed output.
+  metadata: Nonfeature records remain byte-preserved; this is not a reverse mapper of metadata into biological Dataset slots.
+unsupported:
+  - Discontinuous features with repeated IDs, circular references, cross-reference parents and protein-relative coordinates.
+  - Missing or malformed CDS phase, phase on non-CDS rows, invalid percent escapes and unrepresentable decimal scores.
+  - Partial locations as typed endpoints, alignment semantics of Target/Gap, inferred sequence lengths or identifier aliases.
+  - Bare attributes, duplicate or empty IDs, empty Parent, multiple product values, lossy export and edited-instance export.
+guarantees: [exact-source-bytes, reconstructed-feature-fields]

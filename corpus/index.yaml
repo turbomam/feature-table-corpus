@@ -1,5 +1,5 @@
 corpus: feature-table-corpus
-generated: '2026-09-11'
+generated: '2026-09-21'
 description: Real, traceable examples of GFF and other genome feature table content, for testing and for
   modeling work on a unified feature schema.
 tiers:
@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 58
+entry_count: 60
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -963,8 +963,48 @@ entries:
   retrieved: '2026-09-11'
   notes: Named at the 2026-09-11 kickoff as an existing GFF parsing library. Recorded as an example of
     what consumers run, not as a recommendation; not evaluated here.
+- id: biopython-blat-bed12
+  label: BLAT v34 genomic alignments in BED12
+  tier: vendored
+  path: corpus/sources/biopython/blat_34_hg19.bed
+  format: BED12
+  source: Biopython pinned test corpus
+  producer: BLAT v34 alignments distributed as BED12 by Biopython
+  producer_kind: upstream example archive
+  source_version: Biopython 1.85; query label hg19_dna; target assembly not declared in BED
+  bytes: 1313
+  md5: 314b31a371e6ab878b2a6285b597aa61
+  sha256: c845389ca7e71cd9c3940275ef01730c6ed6805e8944a86898224aec909afc52
+  origin_url: https://raw.githubusercontent.com/biopython/biopython/668de08f73fca7f8336049dfd78716d7dd095f21/Tests/Blat/psl_34_004.bed
+  retrieved: '2026-09-21'
+  license: Biopython License Agreement
+  license_file: corpus/sources/biopython/LICENSE.rst
+  license_url: https://github.com/biopython/biopython/blob/668de08f73fca7f8336049dfd78716d7dd095f21/LICENSE.rst
+  vendored_form: Unmodified bytes from the pinned upstream file
+  observation: Nineteen real-sequence alignment records with names, scores, both strands, thick spans
+    and ordered blocks. The target assembly is not inferred from the query name.
+- id: biopython-insdc-plant-records
+  label: INSDC plant gene and transcript annotations in GenBank flat files
+  tier: vendored
+  path: corpus/sources/biopython/cor6_6.gb
+  format: GenBank
+  source: Biopython pinned test corpus
+  producer: Original INSDC submitters identified in each record; retained by Biopython
+  producer_kind: upstream example archive
+  source_version: Biopython 1.85; X55053.1, X62281.1, M81224.1, AJ237582.1, L31939.1, AF297471.1
+  bytes: 14967
+  md5: 220a4da99e1150cd5e941856133a2627
+  sha256: 01b4e193b71344752a96e2b37e886118a33c07b16c3684741c31eb3efeaf60b8
+  origin_url: https://raw.githubusercontent.com/biopython/biopython/668de08f73fca7f8336049dfd78716d7dd095f21/Tests/GenBank/cor6_6.gb
+  retrieved: '2026-09-21'
+  license: Biopython License Agreement
+  license_file: corpus/sources/biopython/LICENSE.rst
+  license_url: https://github.com/biopython/biopython/blob/668de08f73fca7f8336049dfd78716d7dd095f21/LICENSE.rst
+  vendored_form: Unmodified bytes from the pinned upstream file
+  observation: Six deposited sequence records, including joined and partial locations and repeated qualifiers.
+    This is GenBank Location/Qualifiers syntax, not an NCBI five-column submission table.
 tier_counts:
-  vendored: 23
+  vendored: 25
   linked: 22
   restricted: 3
   not located: 1

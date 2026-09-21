@@ -7,3 +7,7 @@ The indexed corpus files keep their own licenses, recorded per entry in
 corpus/index.yaml. The NMDC files are CC BY 4.0 and require attribution to the
 National Microbiome Data Collaborative. The NCBI RefSeq files are public
 domain as United States Government works.
+
+The pinned Biopython BED and GenBank examples retain the Biopython License
+Agreement, reproduced in corpus/sources/biopython/LICENSE.rst, with source
+attribution in the adjacent README and corpus/index.yaml.

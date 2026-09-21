@@ -1,7 +1,7 @@
 # Source documents, comments, and directives
 
 [`model/schema/source_document.yaml`](../model/schema/source_document.yaml) represents one
-GFF3 or GTF source file as a `SourceDocument` instance with ordered `SourceRecord`
+GFF3, GTF or BED12 source file as a `SourceDocument` instance with ordered `SourceRecord`
 instances. [`scripts/source_document.py`](../scripts/source_document.py) preserves
 every UTF-8 source byte and adds an explicitly scoped interpretation where the
 format or selected producer profile supports one. This implements the preservation
@@ -18,8 +18,8 @@ and metadata layer requested in [issue #13](https://github.com/turbomam/feature-
 | Harmonized `Dataset`, `Contig`, `Feature` | Separate biological model in `ber_feature_model.yaml`. This reader does not convert source rows into those entities. |
 | NMDC `DataObject` | External source catalogue used by one contributing project. This schema does not import it or require NMDC identifiers, slots, or categories. |
 
-Feature fields remain nine lexical strings in `feature_columns`; column 9 is
-preserved without applying GFF or GTF attribute parsing. Likewise, metadata extracted
+Feature fields remain lexical strings in `feature_columns`: nine for GFF3/GTF,
+twelve for BED12. GFF/GTF column 9 is preserved without attribute parsing. Likewise, metadata extracted
 from a Prodigal comment does not acquire GFF column-9 escaping rules. Control markers
 (`###`, `##FASTA`) have their own record kinds rather than becoming generic attributes.
 
@@ -41,9 +41,11 @@ specifications and tool authors' evaluations.
 
 ## Scope and producer profiles
 
-The caller must choose `--format gff3` or `--format gtf`. A filename or absent header
+The caller must choose `--format gff3`, `--format gtf` or `--format bed12`. A filename or absent header
 never supplies an inferred format. `--profile generic` is the default; producer
 interpretation requires explicitly selecting `prodigal` or `ncbi`.
+BED12 accepts only `generic`; comments and `track`/`browser` commands retain stream
+scope without inferred biological metadata. The BED reader requires tab separation.
 
 | Source construct | Interpretation |
 |---|---|
@@ -146,5 +148,8 @@ and a missing final newline are preserved. Compression, streaming very large fil
 and other encodings are not implemented. The reader does not fully validate GFF/GTF
 grammar, feature coordinates, phase, relationships, sequence alphabets or declared
 lengths; it does not normalize, repair, or export harmonized biological features.
-Byte replay is a separate claim from semantic round-trip conversion. BED, INSDC,
-and other formats remain future adapters for a broader feature model.
+Byte replay is a separate claim from semantic round-trip conversion. The separate
+[conversion profiles](conversion-profiles.md) now map constrained GFF3 and BED12
+inputs into Dataset instances and reconstruct feature fields. INSDC and GTF semantic
+conversion remain unsupported; that limitation does not prevent corpus observation
+or the existing GTF source-byte preservation.

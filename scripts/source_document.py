@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preserve a UTF-8 GFF3/GTF document and interpret scoped metadata.
+"""Preserve a UTF-8 GFF3/GTF/BED12 document and interpret scoped metadata.
 
 This is a source-document reader, not a biological feature converter or full GFF
 validator. Feature columns remain lexical strings; column 9 is not interpreted.
@@ -12,7 +12,7 @@ from pathlib import Path
 import re
 import sys
 
-FORMATS = ("gff3", "gtf")
+FORMATS = ("gff3", "gtf", "bed12")
 PROFILES = ("generic", "prodigal", "ncbi")
 GFF_DOCUMENT_DIRECTIVES = {
     "gff-version", "feature-ontology", "attribute-ontology", "source-ontology",
@@ -99,6 +99,8 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
         raise ValueError("unsupported format or metadata profile")
     if profile == "prodigal" and format != "gff3":
         raise ValueError("the Prodigal profile requires GFF3")
+    if format == "bed12" and profile != "generic":
+        raise ValueError("BED12 requires the generic metadata profile")
     if not isinstance(source_uri, str) or not source_uri:
         raise ValueError("a source URI is required")
     try:
@@ -133,6 +135,24 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
             record.update(scope="sequence", sequence_id=sequence_id)
             if anchor is not None:
                 record["context_record"] = anchor
+
+        if format == "bed12":
+            # Track/browser commands affect the following stream. Their options
+            # are retained, not mistaken for biological sequence metadata.
+            columns = body.split("\t")
+            if not body.strip():
+                record["kind"] = "blank"
+            elif body.startswith("#"):
+                record["kind"] = "comment"
+            elif len(columns) != 12 and re.match(r"^(track|browser)(?:\s|$)", body):
+                record.update(kind="directive", metadata_type="bed-" + body.split()[0])
+            else:
+                if len(columns) == 12:
+                    record.update(kind="feature", feature_columns=columns)
+                    scoped(columns[0])
+                else:
+                    warn("BED12 profile requires exactly 12 tab-separated columns")
+            continue
 
         # GFF3 also permits an implied FASTA transition at the first > header.
         if format == "gff3" and body.startswith(">"):

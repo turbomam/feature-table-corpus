@@ -154,3 +154,20 @@ the generic text.
 
 **Wording.** The provenance lines were called header pragmas. They are single-hash comments
 appended after the source's `###` terminator, outside the header and not pragmas at all.
+## September 21, 2026: cross-format conversion evidence
+
+Added two unchanged, redistributable examples from Biopython 1.85, commit
+`668de08f73fca7f8336049dfd78716d7dd095f21`: `Tests/Blat/psl_34_004.bed` and
+`Tests/GenBank/cor6_6.gb`, under `corpus/sources/biopython/`. The upstream license
+is retained there. The index records source versions, retrieval date, URLs,
+MD5/SHA-256 and attribution; its total is now 60 entries, 25 vendored.
+
+The BED12 artifact supplies optional display fields, strand and ordered blocks
+from BLAT v34 real-sequence alignments. It does not declare the target assembly;
+the query label `hg19_dna` is not treated as an assembly declaration. The GenBank
+artifact supplies six accession-versioned plant records, with joined and partial
+locations and repeated qualifiers. It is not a five-column submission table.
+
+The [conversion report](../analyses/conversion-roundtrips/README.md) distinguishes
+supported GFF3/BED12 mappings from unsupported INSDC/GTF or location constructs.
+Existing source and derived fixture bytes were not changed.
