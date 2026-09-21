@@ -96,6 +96,11 @@ evidence streams that all describe the same features:
 All are outputs of the JGI IMG annotation pipeline, reachable openly through NMDC. Licensed CC BY
 4.0 under the [NMDC data use policy](https://microbiomedata.org/nmdc-data-use-policy/).
 
+**NMDC, 3 additional non-GFF files.** Enzyme Commission TSV, KEGG Orthology TSV, and CRT
+`.crisprs` text extend the corpus to other feature-bearing formats. The EC and KO files
+carry hits; the selected `.crisprs` file reports none. These bring the NMDC vendored total
+to 17; the 14-file GFF measurements above remain specifically about GFF.
+
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the
 gzip the FTP site serves, because this repository carries no binary files. These give a clean baseline: a well formed GFF3 with
@@ -257,7 +262,7 @@ it blank.
 ```shell
 uv run --with pyyaml python scripts/verify.py             # index invariants and checksums
 uv run --with pyyaml python scripts/verify.py --links     # also check every URL
-uv run --with pyyaml python scripts/flat_profile_audit.py # the flat-profile figures
+uv run --with linkml-runtime python scripts/flat_profile_audit.py # the flat-profile figures
 uv run --with pyyaml python scripts/pr_validation_block.py # a pull request validation block
 ```
 

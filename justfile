@@ -12,6 +12,7 @@ verify:
 # Validate the schema file itself against the LinkML metamodel.
 validate-schema:
     uv run --with linkml linkml-validate schema/ber_feature_model.yaml
+    uv run --with linkml linkml-validate schema/attributes.yaml
 
 # Lint with LinkML's own default rules (a handful of "recommended"-level checks).
 lint-schema:
@@ -41,10 +42,7 @@ lint-schema-strict:
 validate-example example="examples/one-biosample-sequencing/harmonized.yaml":
     uv run --with linkml linkml-validate --schema schema/ber_feature_model.yaml -C Dataset {{example}}
 
-# Same, but against a CLOSED schema (additionalProperties: false), which
-# catches an undeclared or typo'd field the open validation above lets
-# through silently. scripts/validate_closed.py is verified with a negative
-# control (an injected bogus field), not just assumed to work.
+# Closed shape validation plus cross-field, reference, and coordinate-space checks.
 validate-example-closed example="examples/one-biosample-sequencing/harmonized.yaml":
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py schema/ber_feature_model.yaml {{example}} Dataset
 
@@ -67,17 +65,19 @@ flat-profile-audit:
 # recipe regenerates it, nothing here is meant to be committed as a binary.
 build-duckdb example="examples/one-biosample-sequencing/harmonized.yaml" out="local/build/ber_feature_model.duckdb":
     mkdir -p $(dirname {{out}})
-    uv run --with duckdb --with pyyaml python3 scripts/build_duckdb.py schema/ber_feature_model.yaml {{example}} {{out}}
+    uv run --with linkml --with jsonschema --with duckdb python3 scripts/build_duckdb.py schema/ber_feature_model.yaml {{example}} {{out}}
 
-# Run the kickoff doc's own named use case against the DuckDB build: genes
-# with more than one functional-evidence hit (the "multiple Pfams in one
-# gene" pattern), plus whatever else has multiple children via `parent`.
+# CDS genes with multiple distinct Pfams; see examples/multiple-pfams/ for a positive example.
 query-duckdb db="local/build/ber_feature_model.duckdb":
-    duckdb {{db}} -c "SELECT p.feature_id AS gene_id, p.product, count(*) AS n_evidence_hits, list(DISTINCT c.type) AS evidence_types FROM feature c JOIN feature p ON list_contains(c.parent, p.feature_id) GROUP BY p.feature_id, p.product HAVING count(*) > 1 ORDER BY n_evidence_hits DESC;"
+    uv run --with duckdb python3 scripts/query_duckdb.py {{db}} pfams
+
+# Real examples plus negative controls for validation, safe loading, and queries.
+test:
+    uv run --with linkml --with jsonschema --with duckdb python3 -m unittest discover -s tests -v
 
 # Everything expected to pass cleanly: corpus integrity, metamodel validation,
 # the recommended lint profile, and example-data validation (open and closed
 # schema). This is the target to run before pushing a schema change. Run
 # `lint-schema-strict` separately for an occasional deeper audit.
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed test
     @echo "all checks passed"

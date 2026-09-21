@@ -1,60 +1,67 @@
-# schema/
+# Draft feature schema
 
-Two YAML files here, easy to confuse with each other:
+[`ber_feature_model.yaml`](ber_feature_model.yaml) defines `Dataset`, `Contig`, and
+`Feature`. It imports the standalone [attribute module](attributes.yaml), which defines
+generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
+[the attribute contract](../docs/attributes.md). The schema remains a draft, not a
+complete GFF3 interchange standard.
 
-- **`ber_feature_model.yaml`** is the actual draft LinkML model: `Dataset`, `Contig`, `Feature`,
-  `Attribute`. This is the thing being designed. Every non-obvious field has a `notes` entry
-  citing the measurement it's based on; `description` is kept to one clause per slot.
-- **`strict-lint-config.yaml`** is not a schema, it's a `linkml-lint` configuration: every
-  available lint rule turned to `error`, including several `linkml-lint`'s own bundled
-  `recommended.yaml` leaves disabled. It exists to run one occasional, exhaustive audit; see
-  `just lint-schema-strict` below. It documents one permanent, deliberate exception: `StrandEnum`'s
-  permissible values are the literal GFF3 symbols (`+`, `-`, `.`, `?`), which no naming convention
-  accepts, kept because a word form would round-trip less faithfully to a real GFF3 file.
+`strict-lint-config.yaml` is a lint configuration, not a data model. Its documented
+exception is the four literal GFF3 strand symbols, which are preserved despite naming rules.
 
-## Checking this schema
+## Validation
 
-Everything below is a `just` recipe (run from the repo root); see the `justfile` there for the
-exact commands.
-
-| Command | What it checks |
+| Command | Coverage |
 |---|---|
-| `just validate-schema` | The schema file itself against the LinkML metamodel |
-| `just lint-schema` | LinkML's own default lint rules |
-| `just lint-schema-recommended` | LinkML's bundled `recommended.yaml`: undeclared slots/ranges, invalid slot usage, and more, promoted to error |
-| `just lint-schema-strict` | Every available rule at error, via `strict-lint-config.yaml`. Not part of `just check`; run by hand |
-| `just validate-example` | One example data file, as a whole `Dataset` instance, against the open schema |
-| `just validate-example-closed` | Same, against a CLOSED schema (`additionalProperties: false`), which catches an undeclared or typo'd field the open check lets through |
-| `just flat-profile-audit` | Whether this schema survives a flat, scalar-only publishing profile (see below) |
-| `just diagram` | Prints a Mermaid ER diagram; see `docs/schema-diagram.md` for the current one, rendered |
-| `just build-duckdb` / `just query-duckdb` | Loads an example into a real DuckDB database and runs a demo query; see below |
-| `just check` | The subset expected to always pass cleanly: `verify`, `validate-schema`, `lint-schema-recommended`, `validate-example`, `validate-example-closed` |
+| `just verify` | Corpus index integrity and checksums |
+| `just validate-schema` | Both schema modules against the LinkML metamodel |
+| `just lint-schema` | LinkML's default lint rules |
+| `just lint-schema-recommended` | Recommended lint, allowing only the four documented strand-name warnings |
+| `just lint-schema-strict` | Additional audit; intentionally reports the strand-name exception |
+| `just validate-example` | Open generated JSON Schema for the default example |
+| `just validate-example-closed` | Closed shape plus Dataset semantic checks |
+| `just test` | Both real examples, invalid mutations, database preservation, and query controls |
+| `just check` | Corpus, schema, recommended lint, example validation, and tests; also run by CI |
+| `just diagram` | Regenerate the Mermaid diagram |
+| `just flat-profile-audit` | Audit scalar-table compatibility through SchemaView |
 
-## Does this schema require a flat, relational table?
+The harmonized Dataset profile requires a contig reference, coordinate system, and positive
+1-based inclusive endpoints on every Feature; phase, when supplied, is 0, 1, or 2.
+`scripts/validate_closed.py` additionally enforces start ≤ end, unique IDs within each entity
+collection, resolved references, no parent cycles, and compatible parent coordinate spaces.
+Contig intervals cannot exceed a known contig length. Protein intervals need a contig-relative
+CDS parent and cannot exceed a supplied translation. Missing translations are allowed; their
+upper bounds cannot be checked. Multiple parents must each be compatible with the child.
 
-No, and it doesn't need to. Georg Rath (`gbrath-lbl`) confirmed 2026-09-17 that the scalar-only,
-flat-table profile in `ber-data/bridge-catalog-mvp`'s `docs/architecture.md` is an early-prototype
-decision, not a BRIDGE-wide requirement, so `parent` and `attributes` are genuinely multivalued
-slots here rather than decomposed into join tables.
+These cross-record checks run for `Dataset`, not when validating an isolated Feature.
+Plain `linkml-validate` and exported JSON Schema alone do not enforce them. The profile
+currently assumes linear sequences; circular wraparound GFF3 coordinates need an explicit
+future representation. It does not validate biological CDS phase correctness, ontology terms,
+or all GFF3 grammar.
 
-`just flat-profile-audit` runs the same tool used on Chris Mungall's `gff-schema` in
-`docs/model-comparison.md`, against this schema instead. Run 2026-09-18: of 25 class/slot pairs,
-19 are admissible under a scalar-only profile as written; the 6 that aren't split into 5 mechanical
-cases (multivalued class references needing a child or junction table, and one identified class
-reference needing a scalar id plus a foreign key) and exactly 1 real decision
-(`Contig.taxonomic_lineage`, a multivalued scalar: array column or junction table).
+Both Contig and Feature expose `generated_by` and `source_files`. These remain optional
+for sources lacking workflow metadata, but every supplied example populates them.
+`generated_by` replaces the earlier Feature-only `predicted_by` field. The
+[source manifest](../examples/source-artifacts.yaml) records IDs and checksums for cited
+artifacts. Record-level source lists may include sidecars from a different workflow than
+the record's producer; they are not field-level provenance.
 
-`just build-duckdb` answers that one decision concretely rather than just describing it: it loads
-an example into a real DuckDB database using DuckDB's native `LIST` and `STRUCT` types for
-`taxonomic_lineage`, `parent`, and `attributes`, no junction tables. `just query-duckdb` then runs
-the kickoff doc's own named use case, genes with more than one functional-evidence hit, directly
-against those nested columns. The built `.duckdb` file is not committed (see "Why no committed
-database file" below); the script that builds it, `scripts/build_duckdb.py`, is.
+## DuckDB mapping and queries
 
-## Why no committed database file
+BRIDGE's scalar-only prototype profile is not a requirement of this model. The loader uses
+native LIST columns for parents, lineages, and source files, and LIST of STRUCT for attributes.
+`Feature.seqid` becomes a foreign key to Contig. The physical mapping is explicit Python/SQL;
+it is not a general LinkML database generator.
 
-A build of the one example in `examples/one-biosample-sequencing/` is about 2 MB, almost entirely
-DuckDB's own fixed file-format overhead, for 3 contigs and 15 features. This repository's own
-README states its content is plain text and reviewable in a diff; a 2 MB binary for 18 rows of
-data that regenerates in under a second from files already here doesn't meet that bar. Build it
-locally with `just build-duckdb` instead.
+`just build-duckdb` validates its supplied schema and Dataset before opening the output.
+It replaces the two model tables in one transaction, so validation or insertion failure
+preserves an existing database. DuckDB BIGINT columns impose a 64-bit storage limit beyond
+LinkML's integer type. The tests exercise rollback for an out-of-range value.
+
+`just query-duckdb` selects CDS parents with multiple distinct Pfams. The default mixed-evidence
+example correctly produces no matches. Build [the real three-Pfam example](../examples/multiple-pfams/README.md)
+for a positive result. [Query requirements](../docs/query-requirements.md) also cover explicit
+genomic and protein intervals and generic attribute lookup, informed by the BERIL census.
+
+Generated databases and test scratch files live under gitignored `local/`. No database
+binary is committed: the YAML examples and scripts are the reviewable, reproducible artifacts.

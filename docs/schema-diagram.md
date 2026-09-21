@@ -1,19 +1,21 @@
 # Schema diagram
 
-Generated 2026-09-18 from `schema/ber_feature_model.yaml` with LinkML's `erdiagramgen`
+Generated 2026-09-21 from `schema/ber_feature_model.yaml` with LinkML's `erdiagramgen`
 (`uv run --with linkml python3 -m linkml.generators.erdiagramgen schema/ber_feature_model.yaml -f mermaid --no-metadata`).
 Regenerate after any schema change; this file is not auto-updated.
 
 ```mermaid
 erDiagram
 Attribute {
-    string tag
+    string key
     string value
 }
 Contig {
     string contig_id
+    string generated_by
     integer length_bp
     float lineage_confidence
+    uriList source_files
     stringList taxonomic_lineage
 }
 Dataset {
@@ -23,13 +25,14 @@ Feature {
     CoordinateSystemEnum coordinate_system
     integer end
     string feature_id
+    string generated_by
     boolean is_selected
     integer phase
-    string predicted_by
     string product
     string product_source
     float score
     string source
+    uriList source_files
     integer start
     StrandEnum strand
     string translated_sequence
@@ -38,7 +41,7 @@ Feature {
 
 Dataset ||--}o Contig : "contigs"
 Dataset ||--}o Feature : "features"
-Feature ||--|o Contig : "seqid"
+Feature ||--|| Contig : "seqid"
 Feature ||--}o Attribute : "attributes"
 Feature ||--}o Feature : "parent"
 ```

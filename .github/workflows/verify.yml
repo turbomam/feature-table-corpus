@@ -153,6 +153,6 @@ jobs:
       # with that. `just check` runs scripts/verify.py again as its first
       # recipe (harmless, cheap) plus every schema/example check added
       # 2026-09-18: metamodel validation, the recommended lint profile, and
-      # example-data validation against both an open and a closed schema.
-      - name: Schema and example validation
+      # example-data validation, semantic negative controls, and DuckDB query tests.
+      - name: Schema, examples, and query regression tests
         run: just check

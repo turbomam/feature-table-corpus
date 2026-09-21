@@ -133,7 +133,9 @@ graphs. Tracked at https://github.com/microbiomedata/nmdc-lakehouse/issues/342 .
 looks fatal for `gff-schema`, which is an object graph by design.
 
 **These numbers are computed, not counted.** Reproduce them with
-`uv run --with pyyaml python scripts/flat_profile_audit.py`. Two earlier hand counts were wrong: the
+`uv run --with linkml-runtime python scripts/flat_profile_audit.py`. The 2026-09-21
+SchemaView-based implementation reproduces the pinned schema's 19 admissible / 13 rejected
+counts, including inheritance on inline attributes. Two earlier hand counts were wrong: the
 first read only each class's `slots` list and missed the classes that declare `attributes` inline,
 and the second did not follow `is_a` slot inheritance, so it treated three multivalued slots as
 single-valued. Both produced a clean-looking table.

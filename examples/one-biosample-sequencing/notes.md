@@ -30,19 +30,22 @@ size and recorded by metadata only: a 1.18GB assembly coverage BAM, a 1.03GB Cen
 classification, an 804MB Kraken2 classification, and a 1.13GB filtered-reads FASTQ. None of the
 four skipped files are feature tables.
 
-**Of the seven workflow types, exactly one produces feature-table content**: metagenome annotation
+**Of the five workflow types, exactly one produces feature-table content**: metagenome annotation
 (`wfmgan`). Assembly (`wfmgas`) is upstream and adjacent, it produces the `Contig` this schema's
 features sit on, plus the AGP format (a tabular, positional description of how contigs join into
 scaffolds, worth noting as GFF-adjacent but not covered here). Read QC, read-based taxonomy, and
 MAG binning produce read-level, taxon-level, and bin-level data respectively, none of it shaped
 like a feature table. This matters for anyone extending fetch tooling in this repo: point it at
-`wfmgan` DataObjects, not at the other five workflow types.
+`wfmgan` DataObjects, not at the other four workflow types.
 
 **A workflow execution id does not name both a Contig and its Features.** `seqid` values in every
 GFF file from the annotation workflow reference the ASSEMBLY workflow's id
 (`nmdc:wfmgas-11-19jh9v28.1_scf_N_cM`), not the annotation workflow's own id
 (`wfmgan-11-5xxrm214.2`). A Contig and the Features on it come from two different workflow
-executions. `schema/ber_feature_model.yaml`'s `predicted_by` slot now says this explicitly.
+executions. Both classes now carry `generated_by`; every record in this example populates it.
+The former Feature-only `predicted_by` name was replaced to cover assembly as well as annotation.
+`source_files` lists the artifact URLs used for the record, including lineage and other sidecars.
+These are record-level sources, not a claim that every field came from `generated_by`.
 
 **This run has two annotation versions, `.1` and `.2`, and they are not identical.** Their Product
 Names outputs differ by a few bytes (104,223 vs 104,195). This example uses only `.2`, so as not to
@@ -57,7 +60,7 @@ would not make any clearer.
 - **`scf_1_c1_104_853`**: a gene where Prodigal and GeneMark called the identical 104-853 boundary
   independently. Recorded once, from Prodigal (the roll-up's choice), with GeneMark's agreement
   noted as an attribute rather than a second, redundant Feature row, since the coordinates are
-  identical, not a competing claim. Carries six real functional-evidence hits: COG, CATH-FunFam,
+  identical, not a competing claim. Carries five real functional-evidence hits: COG, CATH-FunFam,
   Pfam, SUPERFAMILY, and a combined KO/EC hit.
 - **The KO/EC hit is one row, not three.** `ec.tsv`, `ko.tsv`, and `KO_EC Annotation GFF` all
   report the same 252 underlying `lastal` alignments for this run; `ec.tsv` (88 rows) is a filtered
@@ -82,7 +85,9 @@ would not make any clearer.
 - **The CRISPR array, `scf_344_c1_76_183`**, plus its three `repeat_unit` children linked by
   `parent`. This is the run's only real, populated example of the `Crispr Terms` /
   `CRT Annotation GFF` pair added to `corpus.yaml` on 2026-09-17; the corpus's own vendored
-  examples of these two types are empty (no hits) in every file sampled for them so far.
+  `.crisprs` example has no hits, but the older vendored `CRT Annotation GFF`
+  (`nmdc_wfmgan-11-bvg4py20.1_crt.gff`) contains four feature rows. These are different runs;
+  they do not show that both formats are always empty.
 
 **None of these three contigs are MAG scaffolds.** Confirmed 2026-09-18 by unzipping both MAG
 binning outputs for this biosample (`nmdc:wfmag-11-n2d0ma07.2` and `.3`): every one of the four
@@ -109,7 +114,14 @@ filter = {"url": {"$regex": "omprc-11-2t8ft192"}}
 Raw files are not committed here (76 files, ~4.7MB, disproportionate for one worked example); they
 were downloaded into this worktree's gitignored `local/` directory, one subdirectory per workflow
 execution id, and are reproducible from the query above plus the DataObject urls cited inline in
-`harmonized.yaml`.
+`harmonized.yaml`. [The source manifest](../source-artifacts.yaml) records their DataObject IDs,
+workflow executions, and NMDC-reported MD5 checksums. On 2026-09-21 each cited local source
+was checked against that checksum before adding the URLs. CI checks the manifest's coverage;
+it does not download or re-hash the upstream files on every run.
+
+The separate [multiple-Pfam example](../multiple-pfams/README.md) uses another gene from the
+same annotation version to exercise the actual multiple-Pfam query. This example's five
+evidence databases are not five Pfams, and its CRISPR repeat children are not protein domains.
 
 ## Status
 

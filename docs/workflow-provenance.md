@@ -5,9 +5,10 @@ Established 2026-09-18 by fetching every DataObject for one real biosample's ful
 produced, rather than assuming from workflow names. See
 `examples/one-biosample-sequencing/notes.md` for the full inventory this is based on.
 
-## The seven workflow types, and which one matters here
+## Five workflow types across seven executions
 
-One sequencing of one biosample runs through seven distinct workflow execution types. Of these,
+This sequencing has seven workflow executions across five distinct types (two versions each
+of annotation and MAG binning). Of these types,
 exactly one produces feature-table content in the sense this repository cares about, one row per
 sequence feature.
 
@@ -32,8 +33,9 @@ references the assembly workflow's id, not the annotation workflow's own id: for
 in `nmdc:wfmgan-11-5xxrm214.2_prodigal.gff` are all `seqid`-tagged
 `nmdc:wfmgas-11-19jh9v28.1_scf_N_cM`, an entirely different workflow execution. A `Contig` and the
 `Feature` rows on it come from two different pipeline stages, connected only by the fact that one
-ran against the other's output. `schema/ber_feature_model.yaml`'s `predicted_by` slot documents
-this; anything that resolves provenance by parsing a `Feature.seqid` and expecting to find the
+ran against the other's output. `schema/ber_feature_model.yaml`'s `generated_by` slot records
+the producer separately on each Contig and Feature; `source_files` also lists contributing
+artifacts, including sidecars from other workflows. Anything that parses a `Feature.seqid` to find the
 producing annotation workflow there will be wrong.
 
 ## AGP: a related, uncovered format
