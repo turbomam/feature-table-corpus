@@ -1,6 +1,6 @@
 # One biosample's full sequencing, harmonized against model/schema/ber_feature_model.yaml
 
-Built 2026-09-18. Replaces an earlier worked example (`model/examples/one-workflow-run/`, removed) that
+Built 2026-09-18. Replaces an earlier worked example (`examples/one-workflow-run/`, removed before the layout migration) that
 turned out to be a poor choice: it was built on a run selected only because two of its files
 happened to already be vendored in `corpus/index.yaml`, and those had been picked by that file's own
 stated method, "the smallest real file of its kind out of roughly 600 sampled." A 2-contig,
