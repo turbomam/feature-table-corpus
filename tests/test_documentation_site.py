@@ -39,6 +39,10 @@ class DocumentationTests(unittest.TestCase):
                 stale.write_text("old")
                 prepare_docs.prepare()
                 self.assertFalse(stale.exists())
+                # A tracked file deleted locally must disappear from the preview.
+                (root / "corpus/example.gff3").unlink()
+                prepare_docs.prepare()
+                self.assertFalse((dest / "corpus/example.gff3").exists())
 
     def test_external_symlink_is_rejected(self):
         with tempfile.TemporaryDirectory(dir=prepare_docs.ROOT / "local") as directory:
