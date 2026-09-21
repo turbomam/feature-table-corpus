@@ -4,7 +4,7 @@ Real, traceable examples of GFF and other genome feature table content.
 
 ## Start here
 
-Four files, in this order, if you have twenty minutes:
+Suggested reading, in this order:
 
 1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
    first: is Chado maintained, and what should a feature table be expected to cover. Short answers:
@@ -98,7 +98,8 @@ All are outputs of the JGI IMG annotation pipeline, reachable openly through NMD
 
 **NMDC, 3 additional non-GFF files.** Enzyme Commission TSV, KEGG Orthology TSV, and CRT
 `.crisprs` text extend the corpus to other feature-bearing formats. The EC and KO files
-carry hits; the selected `.crisprs` file reports none. These bring the NMDC vendored total
+carry hits; the selected `.crisprs` file contains three populated, six-field records.
+These bring the NMDC vendored total
 to 17; the 14-file GFF measurements above remain specifically about GFF.
 
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,

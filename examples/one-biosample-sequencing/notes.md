@@ -84,9 +84,12 @@ would not make any clearer.
   positional column holds a placeholder.
 - **The CRISPR array, `scf_344_c1_76_183`**, plus its three `repeat_unit` children linked by
   `parent`. This is the run's populated `CRT Annotation GFF` array. The corpus's newly
-  added `Crispr Terms` (`.crisprs`) example has no hits, but the older vendored `CRT Annotation GFF`
-  (`nmdc_wfmgan-11-bvg4py20.1_crt.gff`) contains four feature rows. These are different runs;
-  they do not show that both formats are always empty.
+  added `Crispr Terms` (`nmdc_wfmgan-11-vypv6e87.1_crt.crisprs`) example contains three
+  populated, six-field records: each has a sequence identifier, numeric fields, a repeated
+  sequence, a variable sequence (absent on the last row), and a final `c` field. The exact
+  column meanings remain unverified, as recorded in `corpus.yaml`. The older vendored
+  `CRT Annotation GFF` (`nmdc_wfmgan-11-bvg4py20.1_crt.gff`) contains four feature rows.
+  These are different runs and different formats; neither artifact is empty.
 
 **None of these three contigs are MAG scaffolds.** Confirmed 2026-09-18 by unzipping both MAG
 binning outputs for this biosample (`nmdc:wfmag-11-n2d0ma07.2` and `.3`): every one of the four
