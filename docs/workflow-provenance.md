@@ -47,5 +47,5 @@ structure rather than a biological feature, and nothing in this repository's sch
 covers it as of 2026-09-18. Noted here so it isn't silently forgotten if the model's scope ever
 grows to include assembly-level structure.
 
-Related: [[project-ber-gff-feature-model]] in Claude memory, `docs/columns-and-discretion.md`
-section 5 in this repository.
+Related: [non-GFF annotation tables](columns-and-discretion.md#5-feature-sources-beyond-gff-added-2026-09-17)
+and the [worked biosample's workflow inventory](../examples/one-biosample-sequencing/notes.md).

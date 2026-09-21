@@ -47,7 +47,7 @@ validate-example-closed example="examples/one-biosample-sequencing/harmonized.ya
 # docs/schema-diagram.md by hand; this recipe does not write the file, since
 # that file also carries prose that a straight overwrite would destroy.
 diagram:
-    uv run --with linkml python3 -m linkml.generators.erdiagramgen schema/ber_feature_model.yaml -f mermaid --no-metadata
+    uv run --with linkml python3 scripts/schema_diagram.py
 
 # --- relational / lakehouse shape --------------------------------------
 
