@@ -44,10 +44,11 @@ validate-example example="model/examples/one-biosample-sequencing/harmonized.yam
 validate-example-closed example="model/examples/one-biosample-sequencing/harmonized.yaml":
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py model/schema/ber_feature_model.yaml {{example}} Dataset
 
-# Source-document shape plus checksum, record order, scope, and parsed metadata.
-validate-source-example example="model/examples/source-documents/prodigal.json":
+# Source-document shape, internal consistency, and agreement with its retained source.
+# For another example, supply its matching original as the second argument.
+validate-source-example example="model/examples/source-documents/prodigal.json" original="corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff":
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py model/schema/source_document.yaml {{example}} SourceDocument
-    python3 scripts/source_document.py validate {{example}}
+    python3 scripts/source_document.py validate {{example}} --original {{original}}
 
 # Print a Mermaid ER diagram for the schema. Paste the erDiagram block into
 # docs/schema-diagram.md by hand; this recipe does not write the file, since

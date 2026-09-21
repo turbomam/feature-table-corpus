@@ -188,6 +188,19 @@ same\ttest\tCDS\t1\t6\t.\t+\t0\tID=second
         bad_shape["records"][3]["feature_columns"].pop()
         self.assertTrue(list(self.validator.iter_errors(bad_shape)))
 
+    def test_independent_original_rejects_consistent_rewrites(self):
+        original = b"# original annotation\n"
+        changed = b"# changed annotation\n"
+        document = self.parse(original, format="gff3")
+        rewritten = self.parse(changed, format="gff3")
+        self.assertEqual(replay_bytes(document, original_bytes=original), original)
+        # Updating raw text, digest, size, and projection together stays internally consistent.
+        self.assertEqual(replay_bytes(rewritten), changed)
+        for retained in (original, b""):
+            with self.subTest(retained=retained), self.assertRaisesRegex(ValueError, "supplied original"):
+                replay_bytes(rewritten, original_bytes=retained)
+        self.assertEqual(replay_bytes(self.parse(b"", format="gff3"), original_bytes=b""), b"")
+
     def test_cli_round_trip_strict_diagnostics_and_refusal_to_overwrite(self):
         scratch = ROOT / "local/test-tmp"
         scratch.mkdir(parents=True, exist_ok=True)
@@ -200,7 +213,14 @@ same\ttest\tCDS\t1\t6\t.\t+\t0\tID=second
             result = run("parse", PRODIGAL, "--format", "gff3", "--profile", "prodigal", "--output", instance)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(run("validate", instance).returncode, 0)
-            result = run("replay", instance, "--output", replay)
+            self.assertEqual(run("validate", instance, "--original", PRODIGAL).returncode, 0)
+            self.assertEqual(run("validate", instance, "--original", REFSEQ).returncode, 2)
+            rejected = work / "rejected.gff"
+            result = run("replay", instance, "--original", REFSEQ, "--output", rejected)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertIn("supplied original", result.stderr)
+            self.assertFalse(rejected.exists())
+            result = run("replay", instance, "--original", PRODIGAL, "--output", replay)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(replay.read_bytes(), PRODIGAL.read_bytes())
             self.assertEqual(run("replay", instance, "--output", replay).returncode, 2)

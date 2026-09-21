@@ -81,8 +81,10 @@ Run from the repository root, choosing new output filenames:
 python3 scripts/source_document.py parse \
   corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
   --format gff3 --profile prodigal --output local/source-documents/prodigal.json
-python3 scripts/source_document.py validate local/source-documents/prodigal.json
+python3 scripts/source_document.py validate local/source-documents/prodigal.json \
+  --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
 python3 scripts/source_document.py replay local/source-documents/prodigal.json \
+  --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
   --output local/source-documents/prodigal-replayed.gff
 just validate-source-example
 just test
@@ -101,17 +103,25 @@ because their semantics are unknown. File, decoding, and integrity errors return
 LinkML/closed JSON Schema checks the document's shape. The `validate` and `replay`
 commands reconstruct the bytes, verify size/digest, reparse with the recorded profile,
 and compare the whole projection, including record order, scope, metadata, and context
-references. This detects editing a parsed field without updating the source. It is
-internal consistency checking, not proof that the claimed provenance URI hosted those
-bytes. `just validate-source-example` runs both shape and integrity checks; `just check`
-and CI include it.
+references. This detects editing a parsed field without updating the stored source text.
+Without `--original`, this checks internal consistency only: changing raw text, digest,
+size, and parsed fields together can produce another internally consistent document.
+
+Pass `--original PATH` to either command to additionally require byte-for-byte agreement
+with an independently retained source file. A mismatch exits 2 before replay writes an
+output. This comparison depends on the caller selecting a trusted original; neither
+mode proves that the claimed provenance URI hosted those bytes or fetches that URI.
+`just validate-source-example` runs shape, consistency, and original-file checks for the
+checked-in Prodigal example; for another instance, pass its JSON and matching source as
+the recipe's two arguments. `just check` and CI include this comparison.
 
 All eighteen vendored GFF/GTF files are tested for exact byte replay, retained feature
 rows, and warning-free parsing under their selected profiles. A separately labeled
 [derived parser fixture](../tests/fixtures/source-documents/README.md) exercises
 repeated and unknown directives, a mid-file comment, a subinterval sequence-region,
 `###`, and embedded FASTA. Additional controls cover malformed metadata, duplicate
-sequence names, mixed line endings, and corrupted projections. Raw corpus files are
+sequence names, mixed line endings, corrupted projections, and consistent rewrites that
+fail an independent original-file comparison. Raw corpus files are
 unchanged. Scratch files remain under gitignored `local/`.
 
 ## Relation to Chris's model and the word “metaobject”

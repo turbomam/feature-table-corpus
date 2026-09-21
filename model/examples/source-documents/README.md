@@ -19,6 +19,10 @@ cmp model/examples/source-documents/prodigal.json local/source-documents/prodiga
 just validate-source-example
 ```
 
+The validation recipe also compares the replayed bytes against the independently
+retained corpus source. For a different example, supply both paths with
+`just validate-source-example your-document.json your-original.gff`.
+
 There are five Sequence Data / Model Data blocks around six feature rows. The
 sequence lengths are 359, 303, 298, 298, and 295 bases. The first block uses translation
 table 4; the others use table 11. These are sequence-scoped settings, not one file-wide

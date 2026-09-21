@@ -234,11 +234,12 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
     return document
 
 
-def replay_bytes(document):
-    """Validate the stored projection and reproduce exactly the original bytes.
+def replay_bytes(document, *, original_bytes=None):
+    """Check internal consistency, replay stored bytes, and optionally match an original.
 
     Re-parsing checks scopes, references, order, line numbers, and parsed values as
-    well as the checksum. Editing a parsed field cannot silently change a source.
+    well as the stored checksum. A consistent rewrite can pass those checks;
+    original_bytes provides an independent comparison when the caller retains it.
     """
     try:
         content = "".join(r["raw_text"] for r in document["records"]).encode("utf-8")
@@ -246,6 +247,8 @@ def replay_bytes(document):
                                format=document["format"], profile=document["profile"])
         if json.dumps(document, sort_keys=True) != json.dumps(expected, sort_keys=True):
             raise ValueError("source document differs from its checksum or re-parsed records")
+        if original_bytes is not None and content != original_bytes:
+            raise ValueError("replayed bytes do not match the independently supplied original")
         return content
     except (KeyError, TypeError, UnicodeError) as error:
         raise ValueError("invalid source document structure") from error
@@ -268,11 +271,14 @@ def main():
     read.add_argument("--source-uri", help="provenance only; no URL is fetched")
     read.add_argument("--output", type=Path, help="new JSON path; default stdout")
     read.add_argument("--strict", action="store_true", help="emit the document but exit 1 if parsing warned")
-    replay = commands.add_parser("replay", help="validate JSON and reconstruct the original source bytes")
+    replay = commands.add_parser("replay", help="check consistency and reconstruct the stored source bytes")
     replay.add_argument("input", type=Path)
     replay.add_argument("--output", type=Path, required=True, help="new path; existing files are never overwritten")
-    validate = commands.add_parser("validate", help="check JSON integrity, scopes, and parsed metadata")
+    validate = commands.add_parser("validate", help="check JSON consistency, scopes, and parsed metadata")
     validate.add_argument("input", type=Path)
+    for check_command in (replay, validate):
+        check_command.add_argument("--original", type=Path,
+                                   help="also require exact agreement with an independently retained source file")
     args = parser.parse_args()
     try:
         if args.command == "parse":
@@ -288,11 +294,13 @@ def main():
                 print(f"line {line}: {warning}", file=sys.stderr)
             return 1 if args.strict and warnings else 0
         document = json.loads(args.input.read_text(encoding="utf-8"))
-        content = replay_bytes(document)
+        original = args.original.read_bytes() if args.original is not None else None
+        content = replay_bytes(document, original_bytes=original)
         if args.command == "replay":
             write_new(args.output, content)
         else:
-            print(f"SourceDocument integrity verified: {len(content)} source bytes")
+            comparison = "; matches supplied original" if original is not None else ""
+            print(f"SourceDocument internally consistent: {len(content)} source bytes{comparison}")
         return 0
     except (OSError, ValueError) as error:
         parser.exit(2, f"error: {error}\n")
