@@ -83,9 +83,8 @@ would not make any clearer.
   repository, here the specific identity is in `attributes` (`model`, `accession`) and the
   positional column holds a placeholder.
 - **The CRISPR array, `scf_344_c1_76_183`**, plus its three `repeat_unit` children linked by
-  `parent`. This is the run's only real, populated example of the `Crispr Terms` /
-  `CRT Annotation GFF` pair added to `corpus.yaml` on 2026-09-17; the corpus's own vendored
-  `.crisprs` example has no hits, but the older vendored `CRT Annotation GFF`
+  `parent`. This is the run's populated `CRT Annotation GFF` array. The corpus's newly
+  added `Crispr Terms` (`.crisprs`) example has no hits, but the older vendored `CRT Annotation GFF`
   (`nmdc_wfmgan-11-bvg4py20.1_crt.gff`) contains four feature rows. These are different runs;
   they do not show that both formats are always empty.
 

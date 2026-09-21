@@ -282,5 +282,21 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(con.execute("SELECT length_bp FROM contig ORDER BY contig_id LIMIT 1").fetchone(), (1754,))
 
 
+class ValidationBlockTests(unittest.TestCase):
+    def test_wrapper_dependencies_and_failure_exit(self):
+        for source, status in ((SCHEMA, 0), (ROOT / 'missing-schema.yaml', 1)):
+            with self.subTest(source=source):
+                result = subprocess.run([sys.executable, str(ROOT / 'scripts/pr_validation_block.py'),
+                                         '--audit-source', str(source)],
+                                        capture_output=True, text=True, cwd=ROOT)
+                self.assertEqual(result.returncode, status, result.stdout + result.stderr)
+                self.assertIn('uv run --with linkml-runtime python scripts/flat_profile_audit.py', result.stdout)
+                self.assertIn('| `verify.py` | 0 |', result.stdout)
+                if status == 0:
+                    self.assertIn('| `flat_profile_audit.py` | 0 |', result.stdout)
+                else:
+                    self.assertIn('REFUSING to audit', result.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
