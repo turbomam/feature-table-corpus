@@ -26,10 +26,14 @@ need to be specified before claiming support.
 after `just build-duckdb`:
 
 ```sh
-uv run --with duckdb python scripts/query_duckdb.py local/build/ber_feature_model.duckdb overlap contig nmdc:wfmgas-11-19jh9v28.1_scf_1_c1 104 104
-uv run --with duckdb python scripts/query_duckdb.py local/build/ber_feature_model.duckdb overlap protein nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 13 13
-uv run --with duckdb python scripts/query_duckdb.py local/build/ber_feature_model.duckdb attribute Name adh_short_C2
+just query-overlap contig nmdc:wfmgas-11-19jh9v28.1_scf_1_c1 104 104
+just query-overlap protein nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 13 13
+just query-attribute Name adh_short_C2
 ```
+
+Both new query recipes accept an optional database path as their last argument.
+The default is `local/build/ber_feature_model.duckdb`. Quote attribute values and paths
+containing spaces; they are passed literally to the read-only query script.
 
 The genomic query returns the CDS alone. The protein query returns its five overlapping
 evidence hits. The attribute query returns the one Pfam hit. See

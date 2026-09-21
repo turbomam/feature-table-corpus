@@ -132,8 +132,14 @@ columns only," rejecting multivalued slots, class-valued slots, nested structure
 graphs. Tracked at https://github.com/microbiomedata/nmdc-lakehouse/issues/342 . On its face that
 looks fatal for `gff-schema`, which is an object graph by design.
 
-**These numbers are computed, not counted.** Reproduce them with
-`uv run --with linkml-runtime python scripts/flat_profile_audit.py`. The 2026-09-21
+**These numbers are computed, not counted.** Reproduce them with the pinned upstream
+input (omitting it would audit this repository's different model):
+
+```sh
+just flat-profile-audit https://raw.githubusercontent.com/biodatamodels/gff-schema/cb31263471ab3855c3622c3be3d3f908db8be654/src/schema/gff.yaml
+```
+
+The 2026-09-21
 SchemaView-based implementation reproduces the pinned schema's 19 admissible / 13 rejected
 counts, including inheritance on inline attributes. Two earlier hand counts were wrong: the
 first read only each class's `slots` list and missed the classes that declare `attributes` inline,

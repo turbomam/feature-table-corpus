@@ -65,19 +65,23 @@ URL states: missing: 12,585, present: 291,392.
 Run from the repository root:
 
 ```sh
-uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py collect
-uv run --offline --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
+just nmdc-collect
+just nmdc-render
 ```
 
-`collect` refreshes the public metadata projection and verifies completeness before
-publishing aggregates. `render` recreates them offline from the checksum-verified
+`nmdc-collect` refreshes the public metadata projection and verifies completeness before
+publishing aggregates. `nmdc-render` recreates them offline from the checksum-verified
 files under gitignored `local/nmdc-profile/`. No data files referenced by the URLs
 are downloaded. The script is pinned to the API schema release above and refuses
 a different release until its schema source is updated. A later collection may have
 different counts; each report carries its own timestamps and content hashes.
 
-Python 3.11 or later is required. Run `collect` online once to obtain the projection
-and schema and populate uv's dependency cache. The documented `render` command uses
+These recipes require Python 3.11+, uv, and just 1.27+. Both accept optional work
+and output directories: `just nmdc-render WORK_DIR OUTPUT_DIR`. Use a separate
+output directory when inspecting a retained snapshot before updating this report.
+
+Run `just nmdc-collect` online once to obtain the projection
+and schema and populate uv's dependency cache. The `just nmdc-render` recipe uses
 uv's `--offline` mode as well as making no API calls; it needs those cached dependencies.
 
 The catalogue is derived from the [NMDC schema source](https://raw.githubusercontent.com/microbiomedata/nmdc-schema/84651fe32b2e2f783f5d38ef5b8757d90c5ab768/nmdc_schema/nmdc_materialized_patterns.yaml),

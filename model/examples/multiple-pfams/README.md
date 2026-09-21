@@ -25,7 +25,7 @@ All source attributes except ID (promoted to `feature_id`) are retained on the t
 ```sh
 just build-duckdb model/examples/multiple-pfams/harmonized.yaml local/build/multiple-pfams.duckdb
 just query-duckdb local/build/multiple-pfams.duckdb
-uv run --with duckdb python scripts/query_duckdb.py local/build/multiple-pfams.duckdb pfams PF13358 PF13592
+just query-duckdb local/build/multiple-pfams.duckdb PF13358 PF13592
 ```
 
 The first query returns this gene with three distinct Pfams. The second returns it with

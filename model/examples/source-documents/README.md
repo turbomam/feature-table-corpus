@@ -10,11 +10,10 @@ the JSON also records its SHA-256 digest.
 Reproduce it from the repository root into a **new** scratch path:
 
 ```shell
-python3 scripts/source_document.py parse \
-  corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
-  --format gff3 --profile prodigal \
-  --source-uri 'https://data.microbiomedata.org/data/nmdc:omprc-11-cfaemn69/nmdc:wfmgan-11-9ya9xh30.1/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff' \
-  --output local/source-documents/prodigal-reproduced.json
+just source-parse \
+  corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff gff3 \
+  local/source-documents/prodigal-reproduced.json --profile prodigal \
+  --source-uri 'https://data.microbiomedata.org/data/nmdc:omprc-11-cfaemn69/nmdc:wfmgan-11-9ya9xh30.1/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff'
 cmp model/examples/source-documents/prodigal.json local/source-documents/prodigal-reproduced.json
 just validate-source-example
 ```
