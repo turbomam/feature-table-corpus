@@ -11,6 +11,10 @@ import check_site
 
 
 class DocumentationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        (prepare_docs.ROOT / "local").mkdir(exist_ok=True)
+
     def test_only_tracked_allowed_artifacts_are_staged(self):
         with tempfile.TemporaryDirectory(dir=prepare_docs.ROOT / "local") as directory:
             root = Path(directory)
@@ -44,6 +48,19 @@ class DocumentationTests(unittest.TestCase):
             with patch.object(prepare_docs, "ROOT", root), patch.object(prepare_docs, "DEST", root / "local/site-src"), patch.object(prepare_docs.subprocess, "check_output", return_value=b"docs/example.md\0"):
                 with self.assertRaisesRegex(ValueError, "Refusing linked"):
                     prepare_docs.prepare()
+
+    def test_symlinked_scratch_parent_is_rejected_before_deletion(self):
+        with tempfile.TemporaryDirectory(dir=prepare_docs.ROOT / "local") as directory:
+            outer = Path(directory)
+            root = outer / "repo"; root.mkdir()
+            elsewhere = outer / "elsewhere"; elsewhere.mkdir()
+            (elsewhere / "site-src").mkdir()
+            sentinel = elsewhere / "site-src/keep.txt"; sentinel.write_text("keep")
+            (root / "local").symlink_to(elsewhere, target_is_directory=True)
+            with patch.object(prepare_docs, "ROOT", root), patch.object(prepare_docs, "DEST", root / "local/site-src"), patch.object(prepare_docs.subprocess, "check_output", return_value=b""):
+                with self.assertRaisesRegex(ValueError, "Refusing a symlink"):
+                    prepare_docs.prepare()
+            self.assertEqual(sentinel.read_text(), "keep")
 
     def test_broken_links_and_fragments_fail(self):
         with tempfile.TemporaryDirectory(dir=prepare_docs.ROOT / "local") as directory:

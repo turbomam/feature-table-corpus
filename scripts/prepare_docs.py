@@ -23,8 +23,8 @@ def publishable(path):
 def prepare():
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\0")
     # DEST is fixed and exclusively generated; no caller-supplied deletion target.
-    if DEST.is_symlink():
-        raise ValueError("Refusing a symlink at local/site-src")
+    if (ROOT / "local").is_symlink() or DEST.is_symlink() or not DEST.resolve().is_relative_to(ROOT.resolve()):
+        raise ValueError("Refusing a symlink or external destination at local/site-src")
     if DEST.exists():
         shutil.rmtree(DEST)
     DEST.mkdir(parents=True)
