@@ -65,7 +65,10 @@ it is not a general LinkML database generator.
 `just build-duckdb` validates its supplied schema and Dataset before opening the output.
 It replaces the two model tables in one transaction, so validation or insertion failure
 preserves an existing database. DuckDB BIGINT columns impose a 64-bit storage limit beyond
-LinkML's integer type. The tests exercise rollback for an out-of-range value.
+LinkML's integer type. New databases are staged beside their destination and published
+after success; insertion failures leave no output or staging directory. Publication
+refuses to overwrite a destination created concurrently. The tests exercise rollback
+and fresh-path cleanup for an out-of-range value.
 
 `just query-duckdb` selects CDS parents with multiple distinct Pfams. The default mixed-evidence
 example correctly produces no matches. Build [the real three-Pfam example](../examples/multiple-pfams/README.md)

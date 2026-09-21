@@ -210,6 +210,30 @@ classes:
         with self.assertRaisesRegex(ValueError, 'range expressions'):
             audit(SchemaView(view.schema))
 
+    def test_attribute_import_does_not_reserve_consumer_slots(self):
+        scratch = ROOT / 'local/test-tmp'
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as work:
+            consumer = Path(work) / 'consumer.yaml'
+            consumer.write_text(yaml.safe_dump({
+                'id': 'https://example.org/consumer', 'name': 'consumer',
+                'prefixes': {'example': 'https://example.org/'},
+                'default_prefix': 'example', 'default_range': 'integer',
+                'imports': [str(ROOT / 'schema/attributes')],
+                'slots': {'key': {'range': 'integer', 'multivalued': True},
+                          'value': {'range': 'boolean'}},
+                'classes': {'Counter': {'slots': ['key', 'value']}},
+            }))
+            attribute = make_validator(consumer, 'Attribute')
+            counter = make_validator(consumer, 'Counter')
+            self.assertEqual(validation_errors({'key': 'instrument', 'value': 'NovaSeq'},
+                                               attribute, 'Attribute'), [])
+            self.assertEqual(validation_errors({'key': [1, 2], 'value': True},
+                                               counter, 'Counter'), [])
+            for data in ({'key': [1], 'value': 'text'}, {'key': 'name', 'value': True}):
+                self.assertTrue(validation_errors(data, attribute, 'Attribute'))
+            self.assertTrue(validation_errors({'key': 'name', 'value': 'text'}, counter, 'Counter'))
+
     def test_missing_import_is_reported_without_traceback(self):
         scratch = ROOT / 'local/test-tmp'
         scratch.mkdir(parents=True, exist_ok=True)
@@ -318,6 +342,25 @@ class DatabaseTests(unittest.TestCase):
         con = self.connect()
         self.assertEqual(con.execute("SELECT count(*) FROM feature").fetchone(), (15,))
         self.assertEqual(con.execute("SELECT length_bp FROM contig ORDER BY contig_id LIMIT 1").fetchone(), (1754,))
+
+    def test_failed_fresh_database_build_leaves_no_output(self):
+        data = yaml.safe_load(EXAMPLE.read_text())
+        data['contigs'][0]['length_bp'] = 2**100
+        oversized = self.work / 'oversized.yaml'
+        oversized.write_text(yaml.safe_dump(data))
+        fresh = self.work / 'failed.duckdb'
+        before = set(self.work.iterdir())
+        with self.assertRaises(duckdb.Error):
+            build_database(SCHEMA, oversized, fresh)
+        self.assertEqual(set(self.work.iterdir()), before)
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/build_duckdb.py'),
+                                 str(SCHEMA), str(oversized), str(fresh)],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+        self.assertEqual(set(self.work.iterdir()), before)
+        self.assertEqual(build_database(SCHEMA, EXAMPLE, fresh), (3, 15))
+        self.assertEqual(set(self.work.iterdir()), before | {fresh})
 
 
 class ValidationBlockTests(unittest.TestCase):

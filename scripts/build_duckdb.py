@@ -5,10 +5,14 @@ Usage: python scripts/build_duckdb.py SCHEMA_YAML DATA_YAML OUTPUT_DUCKDB
 
 This is an explicit physical mapping of the draft model, not a general LinkML DDL
 generator. Multivalued fields use native LIST/STRUCT columns. Validation precedes
-opening the output, and table replacement is transactional.
+opening the output, and table replacement is transactional. A new database is
+published only after a successful build; temporary files stay beside its destination.
 """
 import json
+import os
+from pathlib import Path
 import sys
+import tempfile
 
 import duckdb
 
@@ -28,6 +32,19 @@ FEATURE_COLUMNS = (
 
 def build_database(schema_path, data_path, db_path):
     data = load_validated(schema_path, data_path)
+    destination = Path(db_path)
+    if str(db_path) == ':memory:' or destination.exists():
+        return _populate_database(data, db_path)
+    with tempfile.TemporaryDirectory(prefix=f'.{destination.name}.', dir=destination.parent) as work:
+        staged = Path(work) / 'build.duckdb'
+        counts = _populate_database(data, staged)
+        # Atomic publication without overwriting a destination created meanwhile.
+        # The connection is closed before publication, including its WAL checkpoint.
+        os.link(staged, destination)
+        return counts
+
+
+def _populate_database(data, db_path):
     con = duckdb.connect(str(db_path))
     try:
         con.execute("BEGIN TRANSACTION")
@@ -99,7 +116,7 @@ def main():
         return 2
     try:
         n_contigs, n_features = build_database(*sys.argv[1:])
-    except ValueError as error:
+    except (ValueError, duckdb.Error, OSError) as error:
         print(error, file=sys.stderr)
         return 1
     print(f"Wrote {sys.argv[3]}: {n_contigs} contigs, {n_features} features")

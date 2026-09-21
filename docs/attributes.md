@@ -11,6 +11,8 @@ value: NovaSeq
 ```
 
 The initial contract is deliberately small: both `key` and `value` are required strings.
+They are class-local attributes with explicit ranges, so importing this module does not
+reserve these common names as schema-wide slots or depend on the consumer's default range.
 A key preserves the source spelling and is not a globally unique identifier. Repeated
 keys can be represented as separate entries in an ordered list. Empty strings are
 allowed; absent values are not silently converted to empty strings.
@@ -28,4 +30,5 @@ in the consuming model. Generic attributes should not replace those slots.
 The feature model imports this module and attaches a list through `Feature.attributes`.
 Its draft instances now use `key`, replacing the earlier GFF-oriented `tag` spelling.
 `just test` validates the module independently with metadata and evidence examples,
-and checks repeated keys in a feature's attribute list.
+checks repeated keys in a feature's attribute list, and imports it into a consumer
+with incompatible global `key`/`value` slots to verify that both classes retain their contracts.

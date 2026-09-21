@@ -23,17 +23,16 @@ classes:
       - Values retain their source string form in this initial profile. Typed values, units,
         nested structures, and per-attribute provenance are extension questions; this module
         does not define a parser, escaping rules, or a lossless serialization for any source format.
-    slots:
-      - key
-      - value
-slots:
-  key:
-    title: Key
-    slot_uri: battr:key
-    required: true
-    description: Source-reported attribute name, unnormalized (for example a GFF tag or metadata key).
-  value:
-    title: Value
-    slot_uri: battr:value
-    required: true
-    description: Attribute value, stored as its original string form.
+    attributes:
+      key:
+        title: Key
+        slot_uri: battr:key
+        range: string
+        required: true
+        description: Source-reported attribute name, unnormalized (for example a GFF tag or metadata key).
+      value:
+        title: Value
+        slot_uri: battr:value
+        range: string
+        required: true
+        description: Attribute value, stored as its original string form.
