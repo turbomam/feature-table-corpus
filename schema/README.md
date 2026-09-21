@@ -25,8 +25,9 @@ exception is the four literal GFF3 strand symbols, which are preserved despite n
 | `just diagram` | Regenerate the Mermaid diagram |
 | `just flat-profile-audit` | Audit scalar-table compatibility through SchemaView |
 
-The closed validator requires an object at the document root and rejects unknown root
-fields. An empty object is a valid empty Dataset because both collections are optional;
+The closed validator requires an object at the document root, rejects unknown root
+fields, and checks JSON Schema formats, including `source_files` URIs. An empty object
+is a valid empty Dataset because both collections are optional;
 absent or null collections are treated as empty. These cases have regression coverage.
 
 The harmonized Dataset profile requires a contig reference, coordinate system, and positive
@@ -67,8 +68,8 @@ It replaces the two model tables in one transaction, so validation or insertion 
 preserves an existing database. DuckDB BIGINT columns impose a 64-bit storage limit beyond
 LinkML's integer type. New databases are staged beside their destination and published
 after success; insertion failures leave no output or staging directory. Publication
-refuses to overwrite a destination created concurrently. The tests exercise rollback
-and fresh-path cleanup for an out-of-range value.
+refuses to overwrite a destination created concurrently, including during validation.
+The tests exercise that race, rollback, and fresh-path cleanup for an out-of-range value.
 
 `just query-duckdb` selects CDS parents with multiple distinct Pfams. The default mixed-evidence
 example correctly produces no matches. Build [the real three-Pfam example](../examples/multiple-pfams/README.md)

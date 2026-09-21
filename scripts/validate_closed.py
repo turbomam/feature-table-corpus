@@ -19,7 +19,7 @@ from linkml.generators.jsonschemagen import JsonSchemaGenerator
 def make_validator(schema_path, class_name="Dataset"):
     schema = JsonSchemaGenerator(str(schema_path), not_closed=False).generate()
     selected = {"$defs": schema["$defs"], "$ref": f"#/$defs/{class_name}"}
-    return jsonschema.Draft202012Validator(selected)
+    return jsonschema.Draft202012Validator(selected, format_checker=jsonschema.FormatChecker())
 
 
 def dataset_errors(data):

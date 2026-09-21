@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import duckdb
 import yaml
@@ -17,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_duckdb import build_database
 from flat_profile_audit import audit
 from query_duckdb import by_attribute, interval_overlap, multiple_pfams
-from validate_closed import make_validator, validation_errors
+from validate_closed import load_validated, make_validator, validation_errors
 
 SCHEMA = ROOT / "schema/ber_feature_model.yaml"
 EXAMPLE = ROOT / "examples/one-biosample-sequencing/harmonized.yaml"
@@ -104,6 +105,18 @@ class ValidationTests(unittest.TestCase):
         for change, expected in cases:
             with self.subTest(expected=expected):
                 self.reject(change, expected)
+
+    def test_source_uris_are_validated(self):
+        for collection in ('contigs', 'features'):
+            for value in ('not-a-url', 'https://example.org/file name.gff'):
+                with self.subTest(collection=collection, value=value):
+                    data = copy.deepcopy(self.example)
+                    data[collection][0]['source_files'] = [value]
+                    errors = validation_errors(data, self.validator)
+                    self.assertTrue(any("is not a 'uri'" in error for error in errors), errors)
+            data = copy.deepcopy(self.example)
+            data[collection][0]['source_files'] = ['urn:example:artifact']
+            self.assertEqual(validation_errors(data, self.validator), [])
 
     def test_legitimate_absence_and_boundary_values(self):
         data = copy.deepcopy(self.example)
@@ -360,6 +373,22 @@ class DatabaseTests(unittest.TestCase):
         self.assertNotIn('Traceback', result.stderr)
         self.assertEqual(set(self.work.iterdir()), before)
         self.assertEqual(build_database(SCHEMA, EXAMPLE, fresh), (3, 15))
+        self.assertEqual(set(self.work.iterdir()), before | {fresh})
+
+    def test_destination_created_during_validation_is_preserved(self):
+        fresh = self.work / 'concurrent.duckdb'
+        original = self.db.read_bytes()
+        before = set(self.work.iterdir())
+
+        def validate_then_create(schema_path, data_path):
+            data = load_validated(schema_path, data_path)
+            fresh.write_bytes(original)
+            return data
+
+        with patch('build_duckdb.load_validated', side_effect=validate_then_create):
+            with self.assertRaises(FileExistsError):
+                build_database(SCHEMA, PFAMS, fresh)
+        self.assertEqual(fresh.read_bytes(), original)
         self.assertEqual(set(self.work.iterdir()), before | {fresh})
 
 

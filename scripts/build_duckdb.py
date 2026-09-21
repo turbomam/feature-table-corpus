@@ -31,9 +31,10 @@ FEATURE_COLUMNS = (
 
 
 def build_database(schema_path, data_path, db_path):
-    data = load_validated(schema_path, data_path)
     destination = Path(db_path)
-    if str(db_path) == ':memory:' or destination.exists():
+    existed_at_start = destination.exists()
+    data = load_validated(schema_path, data_path)
+    if str(db_path) == ':memory:' or existed_at_start:
         return _populate_database(data, db_path)
     with tempfile.TemporaryDirectory(prefix=f'.{destination.name}.', dir=destination.parent) as work:
         staged = Path(work) / 'build.duckdb'
