@@ -1,0 +1,440 @@
+{
+  "artifact": {
+    "uri": "https://data.microbiomedata.org/data/nmdc:omprc-11-cfaemn69/nmdc:wfmgan-11-9ya9xh30.1/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
+    "sha256": "ee015a12d640e9f1468f8f264574a55d97432f81eddc27f62effc96123d77a35",
+    "byte_size": 2033
+  },
+  "format": "gff3",
+  "profile": "prodigal",
+  "records": [
+    {
+      "record_id": "line-1",
+      "line_number": 1,
+      "raw_text": "##gff-version  3\n",
+      "kind": "directive",
+      "scope": "document",
+      "metadata_type": "gff-version",
+      "metadata": [
+        {
+          "key": "gff-version",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "record_id": "line-2",
+      "line_number": 2,
+      "raw_text": "# Sequence Data: seqnum=1;seqlen=359;seqhdr=\"nmdc:wfmgan-11-9ya9xh30.1_01\"\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-sequence",
+      "metadata": [
+        {
+          "key": "seqnum",
+          "value": "1"
+        },
+        {
+          "key": "seqlen",
+          "value": "359"
+        },
+        {
+          "key": "seqhdr",
+          "value": "\"nmdc:wfmgan-11-9ya9xh30.1_01\""
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_01"
+    },
+    {
+      "record_id": "line-3",
+      "line_number": 3,
+      "raw_text": "# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model=\"1|Mycoplasma_pneumoniae_M129|B|40.0|4|0\";gc_cont=40.00;transl_table=4;uses_sd=0\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-model",
+      "metadata": [
+        {
+          "key": "version",
+          "value": "Prodigal.v2.6.3_patched"
+        },
+        {
+          "key": "run_type",
+          "value": "Metagenomic"
+        },
+        {
+          "key": "model",
+          "value": "\"1|Mycoplasma_pneumoniae_M129|B|40.0|4|0\""
+        },
+        {
+          "key": "gc_cont",
+          "value": "40.00"
+        },
+        {
+          "key": "transl_table",
+          "value": "4"
+        },
+        {
+          "key": "uses_sd",
+          "value": "0"
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_01",
+      "context_record": "line-2"
+    },
+    {
+      "record_id": "line-4",
+      "line_number": 4,
+      "raw_text": "nmdc:wfmgan-11-9ya9xh30.1_01\tProdigal v2.6.3_patched\tCDS\t3\t359\t3.1\t-\t0\tID=nmdc:wfmgan-11-9ya9xh30.1_01_3_359;translation_table=4;partial=5',3'\n",
+      "kind": "feature",
+      "scope": "sequence",
+      "feature_columns": [
+        "nmdc:wfmgan-11-9ya9xh30.1_01",
+        "Prodigal v2.6.3_patched",
+        "CDS",
+        "3",
+        "359",
+        "3.1",
+        "-",
+        "0",
+        "ID=nmdc:wfmgan-11-9ya9xh30.1_01_3_359;translation_table=4;partial=5',3'"
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_01",
+      "context_record": "line-2"
+    },
+    {
+      "record_id": "line-5",
+      "line_number": 5,
+      "raw_text": "# Sequence Data: seqnum=2;seqlen=303;seqhdr=\"nmdc:wfmgan-11-9ya9xh30.1_02\"\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-sequence",
+      "metadata": [
+        {
+          "key": "seqnum",
+          "value": "2"
+        },
+        {
+          "key": "seqlen",
+          "value": "303"
+        },
+        {
+          "key": "seqhdr",
+          "value": "\"nmdc:wfmgan-11-9ya9xh30.1_02\""
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_02"
+    },
+    {
+      "record_id": "line-6",
+      "line_number": 6,
+      "raw_text": "# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model=\"19|Erythrobacter_litoralis_HTCC2594|B|63.1|11|1\";gc_cont=63.10;transl_table=11;uses_sd=1\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-model",
+      "metadata": [
+        {
+          "key": "version",
+          "value": "Prodigal.v2.6.3_patched"
+        },
+        {
+          "key": "run_type",
+          "value": "Metagenomic"
+        },
+        {
+          "key": "model",
+          "value": "\"19|Erythrobacter_litoralis_HTCC2594|B|63.1|11|1\""
+        },
+        {
+          "key": "gc_cont",
+          "value": "63.10"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        },
+        {
+          "key": "uses_sd",
+          "value": "1"
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_02",
+      "context_record": "line-5"
+    },
+    {
+      "record_id": "line-7",
+      "line_number": 7,
+      "raw_text": "nmdc:wfmgan-11-9ya9xh30.1_02\tProdigal v2.6.3_patched\tCDS\t100\t303\t31.9\t+\t0\tID=nmdc:wfmgan-11-9ya9xh30.1_02_100_303;translation_table=11;partial=3'\n",
+      "kind": "feature",
+      "scope": "sequence",
+      "feature_columns": [
+        "nmdc:wfmgan-11-9ya9xh30.1_02",
+        "Prodigal v2.6.3_patched",
+        "CDS",
+        "100",
+        "303",
+        "31.9",
+        "+",
+        "0",
+        "ID=nmdc:wfmgan-11-9ya9xh30.1_02_100_303;translation_table=11;partial=3'"
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_02",
+      "context_record": "line-5"
+    },
+    {
+      "record_id": "line-8",
+      "line_number": 8,
+      "raw_text": "# Sequence Data: seqnum=3;seqlen=298;seqhdr=\"nmdc:wfmgan-11-9ya9xh30.1_03\"\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-sequence",
+      "metadata": [
+        {
+          "key": "seqnum",
+          "value": "3"
+        },
+        {
+          "key": "seqlen",
+          "value": "298"
+        },
+        {
+          "key": "seqhdr",
+          "value": "\"nmdc:wfmgan-11-9ya9xh30.1_03\""
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_03"
+    },
+    {
+      "record_id": "line-9",
+      "line_number": 9,
+      "raw_text": "# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model=\"38|Rhodococcus_jostii_RHA1|B|65.0|11|1\";gc_cont=65.10;transl_table=11;uses_sd=1\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-model",
+      "metadata": [
+        {
+          "key": "version",
+          "value": "Prodigal.v2.6.3_patched"
+        },
+        {
+          "key": "run_type",
+          "value": "Metagenomic"
+        },
+        {
+          "key": "model",
+          "value": "\"38|Rhodococcus_jostii_RHA1|B|65.0|11|1\""
+        },
+        {
+          "key": "gc_cont",
+          "value": "65.10"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        },
+        {
+          "key": "uses_sd",
+          "value": "1"
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_03",
+      "context_record": "line-8"
+    },
+    {
+      "record_id": "line-10",
+      "line_number": 10,
+      "raw_text": "nmdc:wfmgan-11-9ya9xh30.1_03\tProdigal v2.6.3_patched\tCDS\t1\t78\t8.5\t-\t0\tID=nmdc:wfmgan-11-9ya9xh30.1_03_1_78;translation_table=11;partial=3'\n",
+      "kind": "feature",
+      "scope": "sequence",
+      "feature_columns": [
+        "nmdc:wfmgan-11-9ya9xh30.1_03",
+        "Prodigal v2.6.3_patched",
+        "CDS",
+        "1",
+        "78",
+        "8.5",
+        "-",
+        "0",
+        "ID=nmdc:wfmgan-11-9ya9xh30.1_03_1_78;translation_table=11;partial=3'"
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_03",
+      "context_record": "line-8"
+    },
+    {
+      "record_id": "line-11",
+      "line_number": 11,
+      "raw_text": "nmdc:wfmgan-11-9ya9xh30.1_03\tProdigal v2.6.3_patched\tCDS\t179\t298\t24.8\t+\t0\tID=nmdc:wfmgan-11-9ya9xh30.1_03_179_298;translation_table=11;partial=3'\n",
+      "kind": "feature",
+      "scope": "sequence",
+      "feature_columns": [
+        "nmdc:wfmgan-11-9ya9xh30.1_03",
+        "Prodigal v2.6.3_patched",
+        "CDS",
+        "179",
+        "298",
+        "24.8",
+        "+",
+        "0",
+        "ID=nmdc:wfmgan-11-9ya9xh30.1_03_179_298;translation_table=11;partial=3'"
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_03",
+      "context_record": "line-8"
+    },
+    {
+      "record_id": "line-12",
+      "line_number": 12,
+      "raw_text": "# Sequence Data: seqnum=4;seqlen=298;seqhdr=\"nmdc:wfmgan-11-9ya9xh30.1_04\"\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-sequence",
+      "metadata": [
+        {
+          "key": "seqnum",
+          "value": "4"
+        },
+        {
+          "key": "seqlen",
+          "value": "298"
+        },
+        {
+          "key": "seqhdr",
+          "value": "\"nmdc:wfmgan-11-9ya9xh30.1_04\""
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_04"
+    },
+    {
+      "record_id": "line-13",
+      "line_number": 13,
+      "raw_text": "# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model=\"3|Aeropyrum_pernix_K1|A|56.3|11|0\";gc_cont=56.30;transl_table=11;uses_sd=0\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-model",
+      "metadata": [
+        {
+          "key": "version",
+          "value": "Prodigal.v2.6.3_patched"
+        },
+        {
+          "key": "run_type",
+          "value": "Metagenomic"
+        },
+        {
+          "key": "model",
+          "value": "\"3|Aeropyrum_pernix_K1|A|56.3|11|0\""
+        },
+        {
+          "key": "gc_cont",
+          "value": "56.30"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        },
+        {
+          "key": "uses_sd",
+          "value": "0"
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_04",
+      "context_record": "line-12"
+    },
+    {
+      "record_id": "line-14",
+      "line_number": 14,
+      "raw_text": "nmdc:wfmgan-11-9ya9xh30.1_04\tProdigal v2.6.3_patched\tCDS\t2\t298\t17.7\t-\t0\tID=nmdc:wfmgan-11-9ya9xh30.1_04_2_298;translation_table=11;partial=5',3'\n",
+      "kind": "feature",
+      "scope": "sequence",
+      "feature_columns": [
+        "nmdc:wfmgan-11-9ya9xh30.1_04",
+        "Prodigal v2.6.3_patched",
+        "CDS",
+        "2",
+        "298",
+        "17.7",
+        "-",
+        "0",
+        "ID=nmdc:wfmgan-11-9ya9xh30.1_04_2_298;translation_table=11;partial=5',3'"
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_04",
+      "context_record": "line-12"
+    },
+    {
+      "record_id": "line-15",
+      "line_number": 15,
+      "raw_text": "# Sequence Data: seqnum=5;seqlen=295;seqhdr=\"nmdc:wfmgan-11-9ya9xh30.1_05\"\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-sequence",
+      "metadata": [
+        {
+          "key": "seqnum",
+          "value": "5"
+        },
+        {
+          "key": "seqlen",
+          "value": "295"
+        },
+        {
+          "key": "seqhdr",
+          "value": "\"nmdc:wfmgan-11-9ya9xh30.1_05\""
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_05"
+    },
+    {
+      "record_id": "line-16",
+      "line_number": 16,
+      "raw_text": "# Model Data: version=Prodigal.v2.6.3_patched;run_type=Metagenomic;model=\"26|Methanopyrus_kandleri_AV19|A|61.2|11|0\";gc_cont=61.20;transl_table=11;uses_sd=0\n",
+      "kind": "comment",
+      "scope": "sequence",
+      "metadata_type": "prodigal-model",
+      "metadata": [
+        {
+          "key": "version",
+          "value": "Prodigal.v2.6.3_patched"
+        },
+        {
+          "key": "run_type",
+          "value": "Metagenomic"
+        },
+        {
+          "key": "model",
+          "value": "\"26|Methanopyrus_kandleri_AV19|A|61.2|11|0\""
+        },
+        {
+          "key": "gc_cont",
+          "value": "61.20"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        },
+        {
+          "key": "uses_sd",
+          "value": "0"
+        }
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_05",
+      "context_record": "line-15"
+    },
+    {
+      "record_id": "line-17",
+      "line_number": 17,
+      "raw_text": "nmdc:wfmgan-11-9ya9xh30.1_05\tProdigal v2.6.3_patched\tCDS\t2\t295\t31.3\t+\t0\tID=nmdc:wfmgan-11-9ya9xh30.1_05_2_295;translation_table=11;partial=5',3'\n",
+      "kind": "feature",
+      "scope": "sequence",
+      "feature_columns": [
+        "nmdc:wfmgan-11-9ya9xh30.1_05",
+        "Prodigal v2.6.3_patched",
+        "CDS",
+        "2",
+        "295",
+        "31.3",
+        "+",
+        "0",
+        "ID=nmdc:wfmgan-11-9ya9xh30.1_05_2_295;translation_table=11;partial=5',3'"
+      ],
+      "sequence_id": "nmdc:wfmgan-11-9ya9xh30.1_05",
+      "context_record": "line-15"
+    }
+  ]
+}

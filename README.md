@@ -6,6 +6,11 @@ Real, traceable examples of GFF and other genome feature table content.
 
 Suggested reading, in this order:
 
+For literature beyond GFF-focused projects, start with the
+[annotated reading list](docs/feature-format-reading.md), checked September 2026.
+It distinguishes reviews, comparative measurements, community recommendations,
+consumer documentation, and format/tool authors' claims.
+
 1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
    first: is Chado maintained, and what should a feature table be expected to cover. Short answers:
    no, and metagenomics but not much else.
@@ -172,6 +177,11 @@ declared foreign key, a child or junction table, or a value object whose slots e
 parent row. The remaining four are multivalued scalars and share one representation decision.
 
 ## Prior art
+
+[Source documents](docs/source-documents.md) describes the parser and separate
+document model for scoped comments, directives, feature rows, and FASTA sections.
+The [Prodigal example](examples/source-documents/README.md) preserves sequence-level
+settings interleaved among feature rows, with exact byte replay.
 
 [docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
 building was still the right call: four models of a genome feature, three of them dormant; seven

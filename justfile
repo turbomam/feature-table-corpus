@@ -13,6 +13,7 @@ verify:
 validate-schema:
     uv run --with linkml linkml-validate schema/ber_feature_model.yaml
     uv run --with linkml linkml-validate schema/attributes.yaml
+    uv run --with linkml linkml-validate schema/source_document.yaml
 
 # Lint with LinkML's own default rules (a handful of "recommended"-level checks).
 lint-schema:
@@ -23,7 +24,7 @@ lint-schema:
 # Allow only the exact standard_naming diagnostics for StrandEnum's four GFF3
 # symbols, checking schema name, rule, severity, and message rather than a count.
 lint-schema-recommended:
-    uv run --with linkml python3 scripts/lint_schema.py schema/ber_feature_model.yaml schema/attributes.yaml
+    uv run --with linkml python3 scripts/lint_schema.py schema/ber_feature_model.yaml schema/attributes.yaml schema/source_document.yaml
 
 # Every available lint rule at error level, including several recommended.yaml
 # leaves disabled. NOT part of `just check`: schema/strict-lint-config.yaml
@@ -42,6 +43,11 @@ validate-example example="examples/one-biosample-sequencing/harmonized.yaml":
 # Closed shape validation plus cross-field, reference, and coordinate-space checks.
 validate-example-closed example="examples/one-biosample-sequencing/harmonized.yaml":
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py schema/ber_feature_model.yaml {{example}} Dataset
+
+# Source-document shape plus checksum, record order, scope, and parsed metadata.
+validate-source-example example="examples/source-documents/prodigal.json":
+    uv run --with linkml --with jsonschema python3 scripts/validate_closed.py schema/source_document.yaml {{example}} SourceDocument
+    python3 scripts/source_document.py validate {{example}}
 
 # Print a Mermaid ER diagram for the schema. Paste the erDiagram block into
 # docs/schema-diagram.md by hand; this recipe does not write the file, since
@@ -76,5 +82,5 @@ test:
 # the recommended lint profile, and example-data validation (open and closed
 # schema). This is the target to run before pushing a schema change. Run
 # `lint-schema-strict` separately for an occasional deeper audit.
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed test
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test
     @echo "all checks passed"
