@@ -20,13 +20,10 @@ lint-schema:
 
 # Lint with LinkML's bundled recommended.yaml: undeclared slots/ranges, invalid
 # slot usage, one-identifier-per-class, and more, all promoted to error.
-# --max-warnings 4 tolerates exactly the one documented, permanent exception
-# (StrandEnum's 4 literal GFF3 symbols); any other warning still fails.
+# Allow only the exact standard_naming diagnostics for StrandEnum's four GFF3
+# symbols, checking schema name, rule, severity, and message rather than a count.
 lint-schema-recommended:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cfg=$(uv run --with linkml python3 -c "import linkml.linter, os; print(os.path.dirname(linkml.linter.__file__))")/config/recommended.yaml
-    uv run --with linkml linkml-lint --config "$cfg" --max-warnings 4 schema/ber_feature_model.yaml
+    uv run --with linkml python3 scripts/lint_schema.py schema/ber_feature_model.yaml schema/attributes.yaml
 
 # Every available lint rule at error level, including several recommended.yaml
 # leaves disabled. NOT part of `just check`: schema/strict-lint-config.yaml
