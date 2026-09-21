@@ -38,6 +38,8 @@ def prepare():
         source = ROOT / relative
         if source.is_symlink() or not source.resolve().is_relative_to(ROOT):
             raise ValueError(f"Refusing linked public artifact: {relative}")
+        if not source.exists():
+            continue  # Unstaged deletion: publish current worktree contents.
         target = DEST / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
