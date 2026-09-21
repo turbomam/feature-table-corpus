@@ -6,6 +6,8 @@ Real, traceable examples of GFF and other genome feature table content.
 
 The [repository map](docs/repository-map.md) explains artifact roles and reproduction,
 and the [layout decision](docs/decisions/001-artifact-layout.md) records the directory reorganization.
+Run `just` or `just --list` for grouped tasks; see [running tasks](docs/repository-map.md#running-tasks)
+for requirements, defaults, and the operations that change files or use the network.
 
 | Directory | Contents |
 |---|---|
@@ -223,7 +225,7 @@ real feature-table formats; and NCBI's own statement of what it emits.
 Nine files are built here from the vendored phiX174 GFF3. Each is that source preserved line for
 line with **one change to one data row**, plus provenance comments, single-hash lines appended after
 the source's own `###` terminator, so the header region stays byte-identical. Rebuild them with
-`python3 scripts/make_malformed.py`.
+`just fixtures-generate`.
 
 `no_version_pragma` is the documented exception to both halves of that sentence. Its one change
 removes a header directive, so its change is not to a data row and its header is deliberately not
@@ -279,13 +281,24 @@ it blank.
 ## Verifying it
 
 ```shell
-uv run --with pyyaml python scripts/verify.py             # index invariants and checksums
-uv run --with pyyaml python scripts/verify.py --links     # also check every URL
-uv run --with linkml-runtime python scripts/flat_profile_audit.py # the flat-profile figures
-uv run --with pyyaml python scripts/pr_validation_block.py # a pull request validation block
+just verify                   # index invariants and checksums
+just verify-links             # also check upstream URLs (network)
+just flat-profile-audit       # our feature model's flat-profile figures
+just pr-validation            # PR report, auditing the pinned upstream GFF schema
 ```
 
-The last one exists because a pull request description drifted from its own diff four times: entry
+The audit and report accept alternate schema paths or URLs. To audit the historical
+upstream schema explicitly, use:
+
+```sh
+just flat-profile-audit https://raw.githubusercontent.com/biodatamodels/gff-schema/cb31263471ab3855c3622c3be3d3f908db8be654/src/schema/gff.yaml
+just pr-validation origin/main model/schema/ber_feature_model.yaml
+```
+
+The first command fetches the pinned upstream schema; the second produces a report using
+our local model instead. They measure different schemas and need not have matching totals.
+
+The PR report exists because a pull request description drifted from its own diff four times: entry
 counts, tier counts, generated-file counts, and a claim about which change moved the total. Every
 one was updating the change and not the claim about it, so the claim is generated now.
 
@@ -311,7 +324,7 @@ the GFF files selected below. This is an NMDC-specific source profile, one inspi
 the broader model; its vocabularies and frequencies are not general modeling requirements.
 
 ```shell
-python3 scripts/harvest_nmdc.py
+just nmdc-sample
 ```
 
 This re-runs the sampling query and writes `local/nmdc-selection/selection.json`.

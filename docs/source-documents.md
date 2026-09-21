@@ -78,22 +78,24 @@ or reinterpreting those conventions.
 Run from the repository root, choosing new output filenames:
 
 ```shell
-python3 scripts/source_document.py parse \
-  corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
-  --format gff3 --profile prodigal --output local/source-documents/prodigal.json
-python3 scripts/source_document.py validate local/source-documents/prodigal.json \
+just source-parse \
+  corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff gff3 \
+  local/source-documents/prodigal.json --profile prodigal
+just source-validate local/source-documents/prodigal.json \
   --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
-python3 scripts/source_document.py replay local/source-documents/prodigal.json \
-  --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
-  --output local/source-documents/prodigal-replayed.gff
+just source-replay local/source-documents/prodigal.json \
+  local/source-documents/prodigal-replayed.gff \
+  --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
 just validate-source-example
 just test
 ```
 
 Without `--source-uri`, parsing records an absolute local file URI. Supply a public
 provenance URI for portable examples. The checked-in example uses its corpus origin
-URL, as documented beside it. Parsing defaults to JSON on stdout; `--output` and
-replay refuse to overwrite any existing file, including the input.
+URL, as documented beside it. The parse and replay recipes require a new output path
+and refuse to overwrite existing files, including the input. Direct invocation of
+`scripts/source_document.py parse` can also emit JSON on stdout when `--output` is omitted.
+The recipes forward trailing options unchanged, including the explicit producer profile.
 
 Ordinary parsing retains unknown syntax and reports interpretation warnings to stderr.
 `--strict` still emits the document but returns status 1 when warnings occurred.

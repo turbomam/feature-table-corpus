@@ -6,7 +6,7 @@ It records the smallest file found for each sampled type, with its URL, checksum
 workflow, and number of records sampled. It is not a complete DataObject census;
 the separate [DataObject analysis](../nmdc-data-objects/README.md) has that scope.
 
-Run `python3 scripts/harvest_nmdc.py` from the repository root for a new live sampling.
+Run `just nmdc-sample` from the repository root for a new live sampling.
 It writes `local/nmdc-selection/selection.json` and reports missing types or request
 errors to stderr. Review the result before replacing this dated report or changing
 the corpus index. A later sample may select different files and does not recreate

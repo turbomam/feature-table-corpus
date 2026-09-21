@@ -26,17 +26,55 @@ The [layout decision](decisions/001-artifact-layout.md) records the old-to-new p
 mapping. Each artifact has one maintained location; there are no compatibility copies
 at the old paths. Commands below run from the repository root.
 
+## Running tasks
+
+Use Python 3.11 or later, `uv`, and `just` 1.27 or later. The justfile uses
+[groups and explicit help descriptions](https://just.systems/man/en/attributes.html)
+to keep the command list readable. Run `just` or `just --list` from the repository
+root; `just --show RECIPE` displays a task's implementation. Named defaults such as
+`feature_example` keep long paths out of the list; `just --evaluate` displays them.
+
+| Group | Main tasks | Effect |
+|---|---|---|
+| Validation | `check`, `test`, schema lint and example validation | Check retained artifacts; test scratch goes under `local/` |
+| Corpus | `verify`, `verify-links`, `fixtures-generate`, `pr-validation` | Link checks and the default PR audit use the network; fixture generation rewrites tracked derived files |
+| Model | `diagram`, `flat-profile-audit [schema]` | Print results; a schema URL may require network access |
+| Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap` | Build/update a database, then query it read-only |
+| Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
+| NMDC | `nmdc-collect`, `nmdc-render`, `nmdc-sample` | Explicit live collection/sampling or offline regeneration of source-specific reports |
+
+`just check` keeps its validation scope: it does not collect live NMDC records, sample
+files, regenerate corpus fixtures, or publish reports. `uv` can still need the network
+to obtain dependencies; `UV_OFFLINE=1` uses cached dependencies when available.
+The optional pinned-upstream audit regression requires a retained schema supplied
+through `PINNED_GFF_SCHEMA`; otherwise that test reports a skip.
+
+The [source-document guide](source-documents.md), [query examples](query-requirements.md),
+and nearby NMDC reports document task arguments. Recipe arguments are forwarded as
+quoted shell positional parameters: quote values with spaces at the command line.
+Source-document recipes accept trailing CLI options such as `--profile prodigal`,
+`--source-uri URI`, `--strict`, and `--original PATH` where the underlying operation
+supports them. Their errors and exit statuses are preserved.
+
+Recurring user and contributor operations get recipes. A recipe's existence does not
+make it a dependency of `check`. The specialized
+[Bakta key extractor](../scripts/extract_bakta_keys.py) intentionally remains a direct
+command taking the two chosen Bakta source files; its module documentation gives the
+pinned retrieval and invocation commands. Individual test modules are reached through
+`just test` rather than separate recipes. There is no blanket one-recipe-per-script
+requirement. Add concise help and a task group when introducing a new public recipe.
+
 ## Choose an artifact
 
 | Question | Start here | Authority and reproduction |
 |---|---|---|
-| Which real files can I reuse? | [Corpus index](../corpus/index.yaml), [acquisition history](../corpus/PROVENANCE.md), then [source files](../corpus/sources/) | The index governs the corpus inventory. Each entry records provenance and license; paths are repository-root-relative. `uv run --with pyyaml python scripts/verify.py` checks inventory invariants and stored checksums. RefSeq gzip downloads are stored decompressed. |
-| Which cases were constructed here? | [Malformed](../corpus/fixtures/malformed/) and [edge-case](../corpus/fixtures/edge-cases/) fixtures | Nine indexed mutations of the public-domain phiX174 source, each with a mutation description and appended provenance. `python3 scripts/make_malformed.py` regenerates them; CI checks exact reproduction. Independent measurement of validity labels remains [#2](https://github.com/turbomam/feature-table-corpus/issues/2). |
+| Which real files can I reuse? | [Corpus index](../corpus/index.yaml), [acquisition history](../corpus/PROVENANCE.md), then [source files](../corpus/sources/) | The index governs the corpus inventory. Each entry records provenance and license; paths are repository-root-relative. `just verify` checks inventory invariants and stored checksums. RefSeq gzip downloads are stored decompressed. |
+| Which cases were constructed here? | [Malformed](../corpus/fixtures/malformed/) and [edge-case](../corpus/fixtures/edge-cases/) fixtures | Nine indexed mutations of the public-domain phiX174 source, each with a mutation description and appended provenance. `just fixtures-generate` regenerates them; CI checks exact reproduction. Independent measurement of validity labels remains [#2](https://github.com/turbomam/feature-table-corpus/issues/2). |
 | How do prior models differ? | [Comparison](model-comparison.md), [columns and producer discretion](columns-and-discretion.md), and [specification evidence](../corpus/specifications/) | Chado SQL is an extracted subset under Artistic-2.0; the KBase YAML is an upstream module under MIT. Their indexed bytes and acquisition scope are recorded. The reserved-attribute YAML is a repository-authored transcription, with its source and date in the file header. These files are evidence for comparison. |
 | What model are we proposing? | [Schema guide](../model/schema/README.md), [attribute semantics](attributes.md), and [source-document guide](source-documents.md) | Reusable draft LinkML contracts live in `model/schema/`. Generic attributes are shared by biological records and source records. `just check` runs schema, semantic, corpus, and regression checks. |
 | Which instances demonstrate those contracts? | [Example crosswalk](#examples-and-their-contracts) below | Harmonized examples are curated transformations; the parsed source-document example is generated. Their guides identify exact sources and validation commands. |
 | What do the NMDC counts measure? | [DataObject analysis](../analyses/nmdc-data-objects/README.md) | A generated catalogue and counts of NMDC metadata records only. The report identifies pinned schema inputs, collection timestamps, hashes, and data-use terms. Refresh all report/JSON/CSV outputs together using the commands below. |
-| How were the original NMDC GFF files selected? | [Selection report guide](../analyses/nmdc-selection/README.md) and [saved selection](../analyses/nmdc-selection/selection.json) | This sampled selection is distinct from the full DataObject analysis. `python3 scripts/harvest_nmdc.py` writes a new live sample to `local/nmdc-selection/selection.json`; inspect errors and changed selections before replacing the saved report. |
+| How were the original NMDC GFF files selected? | [Selection report guide](../analyses/nmdc-selection/README.md) and [saved selection](../analyses/nmdc-selection/selection.json) | This sampled selection is distinct from the full DataObject analysis. `just nmdc-sample` writes a new live sample to `local/nmdc-selection/selection.json`; inspect errors and changed selections before replacing the saved report. |
 | What should I read beyond one format's advocates? | [Cross-format reading guide](feature-format-reading.md) | Sources are dated and their perspectives identified. Literature and tool documentation motivate tests; they do not establish conversion fidelity. |
 
 `corpus/PROVENANCE.md` is a historical account, so its intermediate counts can differ
@@ -81,12 +119,12 @@ gitignored `local/build/`. Database binaries do not define the model.
 To refresh the NMDC DataObject analysis with Python 3.11 or later:
 
 ```sh
-uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py collect
-uv run --offline --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
+just nmdc-collect
+just nmdc-render
 ```
 
-`collect` traverses the public API and writes local inputs plus published aggregates.
-`render` requires checksum-verified inputs under `local/nmdc-profile/` and cached
+`nmdc-collect` traverses the public API and writes local inputs plus published aggregates.
+`nmdc-render` requires checksum-verified inputs under `local/nmdc-profile/` and cached
 dependencies; a fresh clone cannot reproduce the dated counts offline. An API traversal
 is not a transactional snapshot. See the report's refresh safeguards.
 
