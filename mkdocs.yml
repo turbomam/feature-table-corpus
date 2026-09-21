@@ -57,6 +57,7 @@ nav:
       - Workflow provenance: docs/workflow-provenance.md
   - Conversion and query examples:
       - Versioned profiles: docs/conversion-profiles.md
+      - Protein-relative Pfam profile: docs/protein-relative-profile.md
       - Round-trip evidence: analyses/conversion-roundtrips/README.md
       - Converted BED12: model/examples/conversions/README.md
       - One biosample: model/examples/one-biosample-sequencing/README.md

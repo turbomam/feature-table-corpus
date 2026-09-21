@@ -171,3 +171,19 @@ locations and repeated qualifiers. It is not a five-column submission table.
 The [conversion report](../analyses/conversion-roundtrips/README.md) distinguishes
 supported GFF3/BED12 mappings from unsupported INSDC/GTF or location constructs.
 Existing source and derived fixture bytes were not changed.
+
+## September 21, 2026: protein-relative conversion companions
+
+Retained the full Pfam GFF, structural GFF and protein FASTA for
+`nmdc:wfmgan-11-5xxrm214.2`, previously downloaded for the curated model examples.
+Each file's MD5 was checked against the NMDC DataObject value already recorded in
+`model/examples/source-artifacts.yaml` before copying it into the corpus. This
+reuses that retrieval; it is not a new NMDC-wide sample or API census. The index
+records the original download URLs, DataObject IDs, byte counts, MD5 and SHA-256,
+with NMDC CC BY 4.0 attribution. All three files are unchanged.
+
+These companions make exact protein-ID joins, sequence-length bounds and CDS
+relationships reproducible for 416 Pfam hits on 397 proteins. The generated
+context retains only participating CDSs; this selection does not alter the three
+source files or imply that other CDSs were biologically filtered. The corpus now
+contains 63 entries, 28 vendored.

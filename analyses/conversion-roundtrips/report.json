@@ -14,11 +14,42 @@
     "gff3-contig/1.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
       "sha256": "555395d6c89eeb2da52006c119186df594272d1eab55cc3b84e14032781d0cef"
+    },
+    "nmdc-pfam-protein/1.0.0": {
+      "path": "model/profiles/nmdc-pfam-protein.yaml",
+      "sha256": "8ac82ebb6024a6233e166083f5c58d88cd6d7f560bffec73818f10fec5a8ea84"
     }
   },
   "query_performance": "not-measured",
   "lossy_export": "not-implemented",
   "cases": [
+    {
+      "id": "nmdc-biosample-pfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
+      "format": "gff3",
+      "profile": "nmdc-pfam-protein/1.0.0",
+      "source_sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "protein_context_sha256": "4abd53605d273c068fd3877c8ef595fd4da588cb4fb33c2df8faadc8aff1823a",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 2,
+          "changed_records": 416
+        }
+      ],
+      "source_feature_rows": 416,
+      "model_features": 813,
+      "nonfeature_records": 0,
+      "reconstructed_sha256": "d93fbd4ceb0606c41b437245ecfa8cce75d0e7d7c44f9dbc9ca8659af1b4ef25",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
     {
       "id": "nmdc-prodigal",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",

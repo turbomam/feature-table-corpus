@@ -189,6 +189,12 @@ nmdc-sample:
 
 # ---- Versioned conversions -------------------------------------------------
 
+[doc("Build NMDC protein/CDS context; supply source URI options.")]
+[group("Conversions")]
+protein-context annotation structural fasta reference output *options:
+    context_annotation="$1"; context_structural="$2"; context_fasta="$3"; context_reference="$4"; context_output="$5"; shift 5; \
+        uv run --with-requirements requirements-conversion.txt python3 scripts/protein_context.py "$context_annotation" "$context_structural" "$context_fasta" "$context_output" --reference-context "$context_reference" "$@"
+
 [doc("Import through an explicit profile and reference context.")]
 [group("Conversions")]
 conversion-import input profile reference output *options:

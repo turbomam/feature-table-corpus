@@ -9,6 +9,7 @@ See the [profile contract and worked commands](../../docs/conversion-profiles.md
 
 | Case | Adapter outcome | Source recovery | Mapped-field reconstruction |
 |---|---|---|---|
+| NMDC Pfam, 416 hits / 397 proteins | Supported with explicit CDS/protein context | Exact bytes | Same protein offsets, reference bindings and attributes; contextual CDSs are not emitted |
 | NMDC Prodigal, six rows | Supported | Exact bytes | Same fields; escape/numeric spelling may normalize |
 | NMDC CRT, four rows | Supported | Exact bytes | Same fields and parent links; escape spelling may normalize |
 | RefSeq lambda GFF3, 308 rows | Supported | Exact bytes | Same fields/relationships; escape spelling may normalize |
@@ -34,3 +35,8 @@ Neither byte recovery nor a successful query establishes full biological equival
 Dependency versions and profile-file checksums are recorded in the report. Source
 versions, attribution, licenses and checksums live in the [corpus index](../../corpus/index.yaml).
 Query timing is deliberately not part of this preservation report.
+
+The [protein-relative example](../../docs/protein-relative-profile.md) retains the
+structural GFF and FASTA used to generate its context. The report records that
+context's SHA-256 as a conversion input; tests regenerate it from both companion
+sources. Its amino-acid coordinates remain separate from genomic CDS coordinates.

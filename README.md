@@ -29,7 +29,7 @@ consumer documentation, and format/tool authors' claims.
 
 For executable interchange, see [versioned conversion profiles](docs/conversion-profiles.md)
 and the [per-case preservation report](analyses/conversion-roundtrips/README.md).
-The GFF3 and BED12 profiles separately test exact byte recovery and reconstruction
+The GFF3, BED12 and [NMDC Pfam](docs/protein-relative-profile.md) profiles separately test exact byte recovery and reconstruction
 from mapped fields, with unsupported cases reported explicitly. The corpus now
 also includes [pinned BED12 and INSDC plant examples](corpus/sources/biopython/README.md).
 
@@ -80,12 +80,12 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-60 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+63 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 25 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 28 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
@@ -127,7 +127,13 @@ All are outputs of the JGI IMG annotation pipeline, reachable openly through NMD
 `.crisprs` text extend the corpus to other feature-bearing formats. The EC and KO files
 carry hits; the selected `.crisprs` file contains three populated, six-field records.
 These bring the NMDC vendored total
-to 17; the 14-file GFF measurements above remain specifically about GFF.
+to 17; the 14-file GFF measurements above remain specifically about that original sample.
+
+**NMDC, 3 companion files for protein conversion.** A full Pfam GFF, structural
+GFF and protein FASTA from `nmdc:wfmgan-11-5xxrm214.2` bring the NMDC total to 20.
+They support the [protein-relative conversion example](docs/protein-relative-profile.md):
+416 hits on 397 proteins, with explicit CDS bindings and retained translations.
+These were selected as related evidence, independently of the smallest-file sample.
 
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the

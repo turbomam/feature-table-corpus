@@ -61,6 +61,11 @@ def make_report():
         row = {"id": case["id"], "path": case["path"], "format": case["format"],
                "profile": case.get("profile"), "source_sha256": hashlib.sha256(content).hexdigest(),
                "case_kind": case["case_kind"], "losses": [], "edited_export": "unsupported"}
+        context = None
+        if case.get("protein_context"):
+            context_bytes = (ROOT / case["protein_context"]).read_bytes()
+            context = json.loads(context_bytes)
+            row["protein_context_sha256"] = hashlib.sha256(context_bytes).hexdigest()
         if case["format"] == "genbank":
             row["observations"] = insdc_observations(content)
         try:
@@ -68,11 +73,13 @@ def make_report():
                     f"no {case['format']} conversion adapter implemented; source is retained as corpus evidence")
             source_uri = indexed["origin_url"] if indexed else "urn:ftc:test:" + case["id"]
             bundle = import_source(content, profile=case["profile"], reference_context=case["reference_context"],
-                                   source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"))
+                                   source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"),
+                                   protein_context=context)
             exact = export_source(bundle, mode="exact", original_bytes=content)
             reconstructed = export_source(bundle, mode="reconstruct", original_bytes=content)
             again = import_source(reconstructed, profile=case["profile"], reference_context=case["reference_context"],
-                                  source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"))
+                                  source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"),
+                                  protein_context=context)
             require(exact == content, "byte-mismatch", "exact export differs")
             require(again["dataset"] == bundle["dataset"] and again["mappings"] == bundle["mappings"],
                     "reconstruction-mismatch", "re-imported fields/relationships/grouping differ")

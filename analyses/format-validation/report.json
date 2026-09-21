@@ -11,8 +11,8 @@
   },
   "summary": {
     "accepted": 6,
-    "not_checked": 9,
-    "rejected": 19
+    "not_checked": 10,
+    "rejected": 21
   },
   "records": [
     {
@@ -343,6 +343,34 @@
       "path": "corpus/sources/biopython/cor6_6.gb",
       "format": "GenBank",
       "sha256": "01b4e193b71344752a96e2b37e886118a33c07b16c3684741c31eb3efeaf60b8",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "nmdc-biosample-pfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
+      "format": "GFF3",
+      "sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-biosample-structural",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff",
+      "format": "GFF3",
+      "sha256": "38340ec5f87db113c0c14a98fe58e1d1081a0d7f71d1a85891b59690cb7355ca",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-biosample-proteins",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_proteins.faa",
+      "format": "FASTA (amino acids)",
+      "sha256": "49bd52721ccd054241b866a294cf3121bb04197cc0cd6f8f53fdd8b0ac5ed593",
       "verdict": "not_checked",
       "reason": "No independent validator configured for this format"
     }

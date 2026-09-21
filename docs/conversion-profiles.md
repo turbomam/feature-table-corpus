@@ -1,6 +1,6 @@
 # Executable conversion profiles
 
-Two versioned source profiles now convert complete, supported artifacts into the
+Three versioned source profiles now convert complete, supported artifacts into the
 shared `Dataset` model and back. They implement the first cross-format milestone
 in [#16](https://github.com/turbomam/feature-table-corpus/issues/16).
 The [measured report](../analyses/conversion-roundtrips/README.md) separates exact
@@ -50,10 +50,16 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The GFF profile is a declared **contig-coordinate** contract, not a format detector.
+The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/1.0.0`,
+adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
+original contracts unchanged. Supporting CDSs are not exported as additional
+Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.
+
+The original GFF profile is a declared **contig-coordinate** contract, not a format detector.
 Do not apply it to NMDC protein-domain output just because that output has nine
-columns. The corpus has examples of both coordinate spaces. The existing curated
-protein-relative examples remain separately modeled and validated.
+columns. The corpus has examples of both coordinate spaces. Use the Pfam profile
+and its explicit companion context for the supported protein-relative convention;
+the existing curated protein-relative examples remain separately validated.
 
 The [GFF3 specification](https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md)
 allows richer representations than this first adapter supports. Unknown attributes,

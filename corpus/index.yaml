@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 60
+entry_count: 63
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -1003,8 +1003,59 @@ entries:
   vendored_form: Unmodified bytes from the pinned upstream file
   observation: Six deposited sequence records, including joined and partial locations and repeated qualifiers.
     This is GenBank Location/Qualifiers syntax, not an NCBI five-column submission table.
+- id: nmdc-biosample-pfam
+  label: Worked biosample pfam source
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
+  format: GFF3
+  source: NMDC
+  producer: NMDC IMG annotation workflow nmdc:wfmgan-11-5xxrm214.2
+  bytes: 102820
+  md5: 00201b9a313e41413615b36fe3624fa9
+  sha256: c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
+  origin_record: nmdc:dobj-11-1afz5v98
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  retrieved: '2026-09-21'
+  license: CC BY 4.0
+  selection: Companion evidence for the existing worked biosample; unchanged full artifacts
+- id: nmdc-biosample-structural
+  label: Worked biosample structural source
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff
+  format: GFF3
+  source: NMDC
+  producer: NMDC IMG annotation workflow nmdc:wfmgan-11-5xxrm214.2
+  bytes: 237883
+  md5: 34456b0b386dacef212961f044640229
+  sha256: 38340ec5f87db113c0c14a98fe58e1d1081a0d7f71d1a85891b59690cb7355ca
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff
+  origin_record: nmdc:dobj-11-a1p22v52
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  retrieved: '2026-09-21'
+  license: CC BY 4.0
+  selection: Companion evidence for the existing worked biosample; unchanged full artifacts
+- id: nmdc-biosample-proteins
+  label: Worked biosample proteins source
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_proteins.faa
+  format: FASTA (amino acids)
+  source: NMDC
+  producer: NMDC IMG annotation workflow nmdc:wfmgan-11-5xxrm214.2
+  bytes: 245387
+  md5: cd5df399a4a79f3efb46ab48c66b72af
+  sha256: 49bd52721ccd054241b866a294cf3121bb04197cc0cd6f8f53fdd8b0ac5ed593
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_proteins.faa
+  origin_record: nmdc:dobj-11-5z8x2253
+  generated_by: nmdc:wfmgan-11-5xxrm214.2
+  retrieved: '2026-09-21'
+  license: CC BY 4.0
+  selection: Companion evidence for the existing worked biosample; unchanged full artifacts
 tier_counts:
-  vendored: 25
+  vendored: 28
   linked: 22
   restricted: 3
   not located: 1
