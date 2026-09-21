@@ -3,7 +3,8 @@
 Generated 2026-09-21 from `schema/ber_feature_model.yaml` with `just diagram`, using
 LinkML's `erdiagramgen` and the model-specific cardinality corrections in
 [`scripts/schema_diagram.py`](../scripts/schema_diagram.py).
-Regenerate after any schema change; this file is not auto-updated.
+Regenerate after any schema change; this file is not auto-updated. `just check`
+compares the generated Mermaid block with this committed block in CI.
 
 ```mermaid
 erDiagram

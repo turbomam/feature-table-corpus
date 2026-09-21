@@ -36,6 +36,16 @@ class ValidationTests(unittest.TestCase):
         errors = validation_errors(data, self.validator)
         self.assertTrue(any(expected in e for e in errors), errors)
 
+    def test_schema_diagram_is_current(self):
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/schema_diagram.py')],
+                                capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        document = (ROOT / 'docs/schema-diagram.md').read_text()
+        self.assertEqual(document.count('```mermaid\n'), 1)
+        committed = document.split('```mermaid\n', 1)[1].split('```', 1)[0]
+        self.assertEqual(result.stdout.strip(), committed.strip(),
+                         'Regenerate the Mermaid block with just diagram')
+
     def test_real_examples_and_source_manifest(self):
         manifest = yaml.safe_load((ROOT / "examples/source-artifacts.yaml").read_text())
         artifacts = {a["url"]: a for a in manifest["artifacts"]}
@@ -163,10 +173,22 @@ classes:
         range: Child
       inline_many:
         is_a: many_mixin
+      inline_base:
+        multivalued: true
+      inline_child:
+        is_a: inline_base
+      inline_mixed:
+        mixins: [inline_child]
+  InheritedHolder:
+    is_a: Holder
   Unrelated:
     attributes:
       inline_many:
         range: string
+      inline_base:
+        range: string
+      inline_child:
+        is_a: inline_base
 ''')
         rows = {(r[0], r[1]): r for r in audit(view)}
         self.assertEqual(rows['Child', 'many'][5], 'multivalued scalar')
@@ -174,6 +196,12 @@ classes:
         self.assertEqual(rows['Holder', 'mixed_ref'][5], 'identified class reference')
         self.assertEqual(rows['Holder', 'inline_many'][5], 'multivalued scalar')
         self.assertEqual(rows['Unrelated', 'inline_many'][5], 'admissible')
+        for cls in ('Holder', 'InheritedHolder'):
+            for name in ('inline_base', 'inline_child', 'inline_mixed'):
+                self.assertEqual(rows[cls, name][5], 'multivalued scalar')
+        self.assertEqual(rows['Unrelated', 'inline_child'][5], 'admissible')
+        self.assertIn('inline_base', view.get_class('Holder').attributes)
+        self.assertNotIn('inline_base', view.schema.slots)
         view.get_slot('mixed_ref').range = 'UndefinedClass'
         with self.assertRaisesRegex(ValueError, 'unresolved range'):
             audit(SchemaView(view.schema))

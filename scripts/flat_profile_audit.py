@@ -22,19 +22,36 @@ RANGE_EXPRESSIONS = ("any_of", "exactly_one_of", "none_of", "all_of", "range_exp
 
 
 def effective_slots(view, class_name):
+    attributes = {}
+    for ancestor in view.class_ancestors(class_name):
+        for name, attribute in view.get_class(ancestor).attributes.items():
+            attributes.setdefault(name, attribute)
     for slot in view.class_induced_slots(class_name):
-        attribute = next((view.get_class(c).attributes[slot.name]
-                          for c in view.class_ancestors(class_name)
-                          if slot.name in view.get_class(c).attributes), None)
+        attribute = attributes.get(slot.name)
         if attribute and (attribute.is_a or attribute.mixins):
             # SchemaView currently skips slot inheritance for inline attributes.
-            # Promote only this class's effective declaration in an isolated copy,
-            # then let SchemaView resolve it as a slot (including class slot_usage).
+            # Promote this class's effective declaration and its inline ancestors
+            # in an isolated copy, then resolve them (including class slot_usage).
             # Class-local names must never pick up an unrelated class's declaration.
             scoped = SchemaView(deepcopy(view.schema))
-            for definition in scoped.schema.classes.values():
-                definition.attributes.pop(slot.name, None)
-            scoped.schema.slots[slot.name] = deepcopy(attribute)
+            visited = set()
+
+            def promote(name):
+                if name in visited:
+                    return
+                visited.add(name)
+                definition = attributes.get(name) or view.schema.slots.get(name)
+                if definition is None:
+                    return  # SchemaView will report the unresolved ancestor.
+                if name in attributes:
+                    for cls in scoped.schema.classes.values():
+                        cls.attributes.pop(name, None)
+                    scoped.schema.slots[name] = deepcopy(definition)
+                for parent in [definition.is_a, *definition.mixins]:
+                    if parent:
+                        promote(parent)
+
+            promote(slot.name)
             scoped.set_modified()
             slot = scoped.induced_slot(slot.name, class_name)
         yield slot
