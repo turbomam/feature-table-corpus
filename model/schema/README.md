@@ -3,13 +3,13 @@
 [`ber_feature_model.yaml`](ber_feature_model.yaml) defines `Dataset`, `Contig`, and
 `Feature`. It imports the standalone [attribute module](attributes.yaml), which defines
 generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
-[the attribute contract](../docs/attributes.md). The schema remains a draft, not a
+[the attribute contract](../../docs/attributes.md). The schema remains a draft, not a
 complete GFF3 interchange standard.
 
 [`source_document.yaml`](source_document.yaml) separately defines a physical source
 document and its ordered records. It imports the same generic attribute module for
 scoped comment metadata, without depending on Feature or NMDC DataObject. See the
-[source-document parser contract](../docs/source-documents.md) and
+[source-document parser contract](../../docs/source-documents.md) and
 [reproducible example](../examples/source-documents/README.md).
 
 `strict-lint-config.yaml` is a lint configuration, not a data model. Its documented
@@ -80,7 +80,7 @@ The tests exercise that race, rollback, and fresh-path cleanup for an out-of-ran
 
 `just query-duckdb` selects CDS parents with multiple distinct Pfams. The default mixed-evidence
 example correctly produces no matches. Build [the real three-Pfam example](../examples/multiple-pfams/README.md)
-for a positive result. [Query requirements](../docs/query-requirements.md) also cover explicit
+for a positive result. [Query requirements](../../docs/query-requirements.md) also cover explicit
 genomic and protein intervals and generic attribute lookup, informed by the BERIL census.
 The Python overlap helper, like its CLI, requires integer endpoints and rejects booleans,
 floats (including NaN and infinity), and strings before executing SQL.

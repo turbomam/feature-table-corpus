@@ -1,8 +1,8 @@
-# One biosample's full sequencing, harmonized against schema/ber_feature_model.yaml
+# One biosample's full sequencing, harmonized against model/schema/ber_feature_model.yaml
 
-Built 2026-09-18. Replaces an earlier worked example (`examples/one-workflow-run/`, removed) that
+Built 2026-09-18. Replaces an earlier worked example (`model/examples/one-workflow-run/`, removed) that
 turned out to be a poor choice: it was built on a run selected only because two of its files
-happened to already be vendored in `corpus.yaml`, and those had been picked by that file's own
+happened to already be vendored in `corpus/index.yaml`, and those had been picked by that file's own
 stated method, "the smallest real file of its kind out of roughly 600 sampled." A 2-contig,
 813-bp assembly is not representative of a real metagenome, and using it made every design
 decision look more trivial than it is. Mark caught this by asking whether it was small because the
@@ -87,7 +87,7 @@ would not make any clearer.
   added `Crispr Terms` (`nmdc_wfmgan-11-vypv6e87.1_crt.crisprs`) example contains three
   populated, six-field records: each has a sequence identifier, numeric fields, a repeated
   sequence, a variable sequence (absent on the last row), and a final `c` field. The exact
-  column meanings remain unverified, as recorded in `corpus.yaml`. The older vendored
+  column meanings remain unverified, as recorded in `corpus/index.yaml`. The older vendored
   `CRT Annotation GFF` (`nmdc_wfmgan-11-bvg4py20.1_crt.gff`) contains four feature rows.
   These are different runs and different formats; neither artifact is empty.
 

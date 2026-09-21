@@ -2,7 +2,7 @@
 
 `mixed-records.gff3` is a **derived test fixture**, not an observed production file.
 It borrows the sequence name and region-row shape from the public-domain RefSeq
-phiX174 GFF in `data/ncbi-refseq/`, reduces the region and feature to positions 2–4,
+phiX174 GFF in `corpus/sources/ncbi-refseq/`, reduces the region and feature to positions 2–4,
 and adds explicitly synthetic comment/directive and FASTA content. The six-base
 FASTA sequence is invented for this parser test, not phiX174 sequence evidence.
 

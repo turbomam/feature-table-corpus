@@ -1,73 +1,78 @@
-# Keep artifact roles separate and simplify navigation
+# Group artifacts into corpus, model, and analyses
 
-Decision proposed September 21, 2026, for [issue #11](https://github.com/turbomam/feature-table-corpus/issues/11).
-
-## Problem
-
-The repository contains upstream evidence, extracted prior models, proposed models,
-curated examples, derived fixtures, analytical prose, and generated reports. File
-extensions and names such as "schema" or "example" do not explain those distinctions.
-Merging everything into one examples or schemas directory would conceal provenance
-and make it harder to know which files may be edited or regenerated.
+Implemented in this branch on September 21, 2026, for
+[issue #11](https://github.com/turbomam/feature-table-corpus/issues/11).
 
 ## Decision
 
-Keep the current artifact paths. Add one [repository map](../repository-map.md), linked
-from the root README, as the navigation authority. Use the existing artifact-specific
-guides for detailed methods rather than copying their prose into the map.
+Group collected evidence under `corpus/`, the proposed contracts and their instances
+under `model/`, and source-specific measurements under `analyses/`. This replaces the
+initial proposal to retain all paths and document their roles. The directories now
+express those roles directly, with the [repository map](../repository-map.md) providing
+navigation and reproduction guidance.
 
-The only new documentation locations are `docs/repository-map.md` and `docs/decisions/`.
-No source files, fixtures, schema material, scripts, or reports move in this change:
-
-| Current or proposed area | Destination | Reason |
+| Previous path | Maintained location | Role |
 |---|---|---|
-| `corpus.yaml`, `PROVENANCE.md` | Unchanged | Inventory and acquisition history have different scopes and established links |
-| `data/<producer>/` | Unchanged | Preserves the distinction between upstream bytes and repository-authored material |
-| `data/derived-malformed/`, `data/derived-edge-cases/` | Unchanged | Existing generator, index, and CI encode this separation; validity measurement remains #2 |
-| `specs/` | Unchanged | Prior-art schema/specification evidence stays separate from proposed contracts |
-| `schema/`, `examples/` in #6/#15 | Keep their proposed paths | Reusable contracts and their worked instances remain distinct; example guides identify exact sources |
-| `profiles/<source>/` | Unchanged | A source-specific catalogue does not define universal modeling requirements |
-| `docs/`, `scripts/`, `tests/`, `.github/` | Unchanged | Narrative, implementation, and executable checks retain separate responsibilities |
-| `local/` | Unchanged and gitignored | Downloaded inputs and generated scratch outputs must not become implicit published sources |
+| `corpus.yaml` | `corpus/index.yaml` | Corpus inventory, provenance, licenses, and checksums |
+| `PROVENANCE.md` | `corpus/PROVENANCE.md` | Dated acquisition and correction history |
+| `data/nmdc/`, `data/ncbi-refseq/` | `corpus/sources/nmdc/`, `corpus/sources/ncbi-refseq/` | Preserved upstream source text |
+| `data/derived-malformed/` | `corpus/fixtures/malformed/` | Deliberate specification violations |
+| `data/derived-edge-cases/` | `corpus/fixtures/edge-cases/` | Deliberate semantic and consumer edge cases |
+| `specs/` | `corpus/specifications/` | Prior-art schemas and specification extracts |
+| `schema/` | `model/schema/` | This project's draft LinkML contracts and validation configuration |
+| `examples/` | `model/examples/` | Worked instances, transformation guides, and source manifest |
+| `profiles/nmdc-data-objects/` | `analyses/nmdc-data-objects/` | NMDC-specific catalogue and counts |
+| `scripts/nmdc_selection.json` | `analyses/nmdc-selection/selection.json` | Saved source-selection report |
 
-This identity mapping is intentional. A future move needs evidence that it improves
-navigation enough to justify changing indexed paths, generators, tests, and external
-links together. It must remove the old authoritative copy rather than leave two.
+`docs/`, `scripts/`, `tests/`, `.github/`, and gitignored `local/` retain their roles.
+The NMDC reports use `analyses/` so they are not confused with the model and conversion
+profiles being defined in [#16](https://github.com/turbomam/feature-table-corpus/issues/16).
+NMDC's vocabulary and observed frequencies remain one source of modeling evidence.
 
-## Maintenance rules
+## Migration and compatibility
 
-1. Add real producer outputs through the corpus index with provenance and a known
-   redistribution basis. Keep upstream bytes intact; place mutations in a clearly
-   derived area with source and transformation recorded.
-2. Add a prior model under `specs/` only with its source scope and license; add this
-   project's proposed contract under `schema/`. A configuration file such as a lint
-   rule set is not another biological schema.
-3. Give each worked example a guide that names its exact schema, source artifacts,
-   transformation or generation procedure, and validation command. State when a
-   transformation is curated rather than automatically reproducible.
-4. Keep a generated report's commands, pinned inputs, and data-use terms nearby. Update
-   related CSV, JSON, and prose outputs as one generation result. Do not create a
-   second editable copy of a profile report inside `docs/`.
-5. Put persistent local work under `local/<task>/`, with retained inputs identified by
-   their original URLs and checksums. Do not rely on machine-specific temporary paths
-   as a source of reproducible evidence.
-6. When a pending model/example PR merges, update the map's status and navigation links.
-   Preserve fixed-commit citations where a document discusses a historical measurement.
+The move updates the index, generators, validation commands, tests, CI, and current
+documentation links together. There are no duplicate authoritative copies or symlinks
+at the old paths. Downstream scripts using old filesystem paths must update them.
+Historical fixed-commit citations still point to the artifacts they originally cited.
+
+Index paths, including `derived_from`, remain relative to the repository root even
+though the index itself is now inside `corpus/`. The PR validation-report script reads
+either index location when comparing against a historical Git revision.
+
+The 21 upstream source files and three specification files retain their bytes. The
+nine derived fixtures are regenerated with new provenance paths, and their indexed
+sizes and checksums change accordingly. Their biological mutations are unchanged.
+No corpus entry is added or removed by this migration.
+
+The NMDC harvester now writes a fresh sampling to `local/nmdc-selection/selection.json`.
+Review its errors and changed selections before promoting a new report to `analyses/`;
+running it does not silently replace the dated report used for acquisition history.
+
+## Placement rules
+
+1. Add real producer files through the corpus index, with provenance and a known
+   redistribution basis. Preserve source bytes. Index deliberate corpus mutations
+   under `corpus/fixtures/`, with their source and transformation recorded.
+2. Put prior-art model material in `corpus/specifications/`, with source scope and
+   license. Put proposed contracts in `model/schema/` and their worked instances in
+   `model/examples/`. Each example guide names its schema, sources, transformation,
+   and validation command, including whether the transformation is curated.
+3. Put source-specific measurements in `analyses/<analysis>/`, keeping provenance and
+   regeneration instructions beside the outputs. Regenerate related prose, CSV, and
+   JSON together rather than making independently edited copies in `docs/`.
+4. Keep small inputs used only by unit tests under `tests/fixtures/`. They do not add
+   observed producers to the corpus inventory.
+5. Keep local inputs, caches, and generated experimental output in `local/<task>/`.
+   Record retained inputs' URLs and checksums rather than relying on temporary paths.
 
 ## Documentation-site handoff
 
-[Issue #12](https://github.com/turbomam/feature-table-corpus/issues/12) can publish these
-same Markdown files through a navigation layer: orientation and artifact roles;
-format/model evidence; proposed model and examples; source-specific profiles; and
-contributor/reproduction guidance. Draft status and source scope belong on each page,
-not just on the home page.
+[Issue #12](https://github.com/turbomam/feature-table-corpus/issues/12) can publish the
+maintained Markdown through a navigation layer covering corpus evidence, the draft
+model and examples, source-specific analyses, and contributor guidance. Reuse these
+files as the documentation source; select pages explicitly and exclude `local/`,
+private research, raw trace exports, and database binaries.
 
-The site should select content explicitly. Include the maintained guides, relevant
-source/schema download links, and reviewed generated reports. Exclude `local/`, raw
-trace exports, private research files, unreviewed downloads, and database binaries.
-Do not copy all repository or workspace files into a public site as a shortcut.
-
-This decision creates no second documentation source tree and does not enable Pages.
-The permanent organizational home of the general model remains [issue #9](https://github.com/turbomam/feature-table-corpus/issues/9),
-independent of navigation within this repository. Cross-format expansion and fidelity
-measurement are tracked in [issue #16](https://github.com/turbomam/feature-table-corpus/issues/16).
+This migration does not enable Pages. The eventual organizational home of the general
+model remains [issue #9](https://github.com/turbomam/feature-table-corpus/issues/9).

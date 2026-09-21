@@ -1,6 +1,6 @@
 ##gff-version 3
 # fixture-kind: derived parser fixture, not observed producer output
-# derived-from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+# derived-from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
 # mutations: retain sequence name; shorten region and feature; add comments, repeated unknown directives, ontologies and synthetic FASTA
 ##sequence-region NC_001422.1 2 4
 ##feature-ontology https://example.org/ontology/first

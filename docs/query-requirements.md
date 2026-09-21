@@ -33,6 +33,6 @@ uv run --with duckdb python scripts/query_duckdb.py local/build/ber_feature_mode
 
 The genomic query returns the CDS alone. The protein query returns its five overlapping
 evidence hits. The attribute query returns the one Pfam hit. See
-[the multiple-Pfam example](../examples/multiple-pfams/README.md) for positive and negative
+[the multiple-Pfam example](../model/examples/multiple-pfams/README.md) for positive and negative
 controls of the domain-pair use case. Accession matching uses exact source strings; it does
 not silently normalize database versions or resolve identifiers across namespaces.

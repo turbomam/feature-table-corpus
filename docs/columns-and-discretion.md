@@ -225,9 +225,9 @@ Their recommendation is to validate phase against translation tables rather than
 
 Two fixtures in this corpus isolate the problem:
 
-- `data/derived-malformed/cds_phase_illegal.gff3` sets phase to 3, outside the permitted set. A
+- `corpus/fixtures/malformed/cds_phase_illegal.gff3` sets phase to 3, outside the permitted set. A
   validator catches it.
-- `data/derived-edge-cases/cds_phase_biologically_wrong.gff3` changes phase to another permitted
+- `corpus/fixtures/edge-cases/cds_phase_biologically_wrong.gff3` changes phase to another permitted
   value. **No syntax-only validator can catch it**, because the value is legal. Biological
   validation can: translating the CDS against the reference protein detects the change, which is
   what the AgBioData recommendation to validate phase against translation tables amounts to.
@@ -268,16 +268,16 @@ They are the real malformed content the README previously listed as a gap.
   attribute, which exists to express hierarchy within one file, be kept separate from persistent
   identifiers, which belong in `Dbxref` or `gene_id`.
 - **Attribute values not escaped.** A raw `;` inside a value splits one attribute into two and
-  parses cleanly. See `data/derived-malformed/unescaped_semicolon.gff3`.
+  parses cleanly. See `corpus/fixtures/malformed/unescaped_semicolon.gff3`.
 - **Term-ranged fields taking free text.** A note in the NMDC schema dated 2021-06-23 records that
   `has_function`, declared to range over `FunctionalAnnotationTerm`, takes strings in practice, and
   that those are frequently full text rather than compact identifiers. The declared range and the
   stored values disagree, and nothing rejected the values.
 - **A repeated ID read as an error.** GFF3 permits a discontinuous feature to span several lines
   under one ID, so a repeated ID is only a violation when the lines cannot describe one feature. See
-  `data/derived-malformed/duplicate_id.gff3`, which collides an ID across two different types.
+  `corpus/fixtures/malformed/duplicate_id.gff3`, which collides an ID across two different types.
 - **Multiple parents refused.** Legal, and many tools reject it. See
-  `data/derived-edge-cases/multiple_parents.gff3`.
+  `corpus/fixtures/edge-cases/multiple_parents.gff3`.
 
 ## 5. Feature sources beyond GFF, added 2026-09-17
 
@@ -313,5 +313,5 @@ lakehouse. A unified feature model that only covers the GFF family would miss bo
 - BED and genePred, https://genome.ucsc.edu/FAQ/FAQformat.html
 - AgBioData GFF3 recommendations, https://github.com/NAL-i5K/AgBioData_GFF3_recommendation
 - AGAT format documentation, https://agat.readthedocs.io/en/latest/gxf.html
-- Chado feature tables, vendored at `specs/chado_1.4_feature_tables.sql`
-- KBase Common Data Model, vendored at `specs/kbase_cdm_bioentity.yaml`
+- Chado feature tables, vendored at `corpus/specifications/chado_1.4_feature_tables.sql`
+- KBase Common Data Model, vendored at `corpus/specifications/kbase_cdm_bioentity.yaml`

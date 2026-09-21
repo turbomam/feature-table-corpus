@@ -22,7 +22,7 @@ whether an existing model should be extended instead of creating another one.
 | https://kbase.github.io/cdm-schema/Feature/ | Last push 2026-05-01. Sole human contributor is the handle `ialarmedalien`, 73 commits |
 | https://laceysanderson.github.io/chado-docs/sequence/tables/feature.html | The relational ancestor the others descend from |
 
-Two are vendored here, under `specs/`, because their licenses allow it. See the README.
+Two are vendored here, under `corpus/specifications/`, because their licenses allow it. See the README.
 
 **Chado repays close reading.** It keeps the feature separate from its location, in `featureloc`,
 and expresses parent and child through `feature_relationship`. Nothing is nested. That is the same
@@ -53,7 +53,7 @@ requirements and interoperability tests.
 | GFF3sort | Sorting for tabix indexing, because feature order is underspecified |
 | AEGIS | Toolkit paper published 2026-06-09; the 2025-12 date was manuscript receipt. Its comparative claims are the tool authors' evaluation; see the reading list |
 
-All seven are recorded in `corpus.yaml` with their URLs and licenses.
+All seven are recorded in `corpus/index.yaml` with their URLs and licenses.
 
 *Quoted, the AgBioData recommendations*, which is the diagnosis worth carrying into any discussion:
 curators report that most of their data wrangling time goes to reformatting GFF3 files that model

@@ -1,4 +1,5 @@
 import json, urllib.parse, urllib.request, sys, time
+from pathlib import Path
 
 TYPES = ["Structural Annotation GFF","Functional Annotation GFF","Prodigal Annotation GFF",
  "Genemark Annotation GFF","Pfam Annotation GFF","KO_EC Annotation GFF","CRT Annotation GFF",
@@ -36,5 +37,8 @@ for t in TYPES:
         print(f"ERR\t{t}\t{e}", file=sys.stderr)
     time.sleep(0.3)
 
-json.dump(res, open("nmdc_gff_smallest.json","w"), indent=2)
-print(f"\nwrote {len(res)} types", file=sys.stderr)
+output = Path(__file__).resolve().parents[1] / 'local/nmdc-selection/selection.json'
+output.parent.mkdir(parents=True, exist_ok=True)
+with output.open('w') as handle:
+    json.dump(res, handle, indent=2)
+print(f"\nwrote {len(res)} types to {output}", file=sys.stderr)

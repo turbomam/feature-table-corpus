@@ -78,7 +78,7 @@ def check_index(entries):
     return bad
 
 
-SOURCED_DIRS = ("data/nmdc", "data/ncbi-refseq")
+SOURCED_DIRS = ("corpus/sources/nmdc", "corpus/sources/ncbi-refseq")
 PROVENANCE_TAGS = ("# derived-from: ", "# single-change: ", "# validity: ")
 
 
@@ -262,7 +262,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--links", action="store_true", help="also HEAD every origin_url")
     args = ap.parse_args()
-    doc = yaml.safe_load(open(os.path.join(ROOT, "corpus.yaml")))
+    doc = yaml.safe_load(open(os.path.join(ROOT, "corpus/index.yaml")))
     entries = doc["entries"]
     bad = check_index(entries)
     print()

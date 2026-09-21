@@ -323,7 +323,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("collect", "render"))
     parser.add_argument("--work-dir", type=Path, default=Path("local/nmdc-profile"))
-    parser.add_argument("--output", type=Path, default=Path("profiles/nmdc-data-objects"))
+    parser.add_argument("--output", type=Path, default=Path("analyses/nmdc-data-objects"))
     args = parser.parse_args()
     if args.command == "collect":
         collect(args.work_dir)

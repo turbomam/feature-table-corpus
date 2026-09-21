@@ -10,7 +10,7 @@ Written 2026-09-11. Every step below was run, not planned.
    records. Two returned none, `Misc Annotation GFF` and `TMRNA Annotation GFF`, so those two
    absences are real rather than a broken query.
 3. For each of the 14, paged up to 600 records and selected the smallest by `file_size_bytes`.
-   The selection is recorded per entry in `corpus.yaml` under `selection`, including how many
+   The selection is recorded per entry in `corpus/index.yaml` under `selection`, including how many
    records were sampled.
 4. Downloaded each file and compared its MD5 against the `md5_checksum` field in the NMDC record.
    All 14 matched. That comparison is recorded per entry as `md5_matches_source_record: true`.
@@ -27,13 +27,13 @@ The recorded MD5 is therefore of the decompressed text, not of the gzip the URL 
 A third candidate, tobacco mosaic virus at `GCF_000862205.1`, returned 404 and was
 discarded rather than kept as a 990 byte error page.
 
-NCBI publishes no per-file checksum at those URLs, so the MD5 in `corpus.yaml` is of the bytes as
+NCBI publishes no per-file checksum at those URLs, so the MD5 in `corpus/index.yaml` is of the bytes as
 fetched on 2026-09-11 and establishes only that the file has not changed since, not that it matches
 an upstream record.
 
 ## What was searched and not used
 
-See [docs/prior-art.md](docs/prior-art.md), which records the four existing models and their
+See [docs/prior-art.md](../docs/prior-art.md), which records the four existing models and their
 staleness, the seven normalization efforts and why none of them is a data model, the eleven named
 format flavors with their attributions, and the approaches that were considered and rejected. Also
 the `why_not_vendored` field on each linked entry.
@@ -46,19 +46,19 @@ file's own claim rather than an assumption.
 
 ## The 2 vendored specifications
 
-`specs/chado_1.4_feature_tables.sql`. Downloaded the 2.2 MB `schemas/1.4/default_schema.sql` from
+`corpus/specifications/chado_1.4_feature_tables.sql`. Downloaded the 2.2 MB `schemas/1.4/default_schema.sql` from
 branch `1.4` of GMOD/Chado, then extracted the seven `create table` blocks whose names begin
 `feature`. The repository default branch is `1.4`, not `master`; a raw URL built on `master`
 returns 404, which is how the first attempt failed.
 
-`specs/kbase_cdm_bioentity.yaml`. Taken whole from `src/linkml/cdm_bioentity.yaml` on `main`. The
+`corpus/specifications/kbase_cdm_bioentity.yaml`. Taken whole from `src/linkml/cdm_bioentity.yaml` on `main`. The
 Feature class is in that module, not in `cdm_components.yaml`; the first attempt fetched the wrong
 file and a grep for `Feature:` matched an enum value inside it, which looked like success.
 
 ## The 8 derived files
 
 Built by `scripts/make_malformed.py` from the vendored phiX174 GFF3, six in
-`data/derived-malformed/` and two in `data/derived-edge-cases/`. Each output is that source
+`corpus/fixtures/malformed/` and two in `corpus/fixtures/edge-cases/`. Each output is that source
 preserved line for line with one change to one data row, plus provenance comments, which are
 ordinary single-hash lines appended after the source's own `###` terminator. They are not pragmas
 and they are not in the header, and earlier wording in this file called them header pragmas, which

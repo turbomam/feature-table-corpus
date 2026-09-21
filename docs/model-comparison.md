@@ -7,9 +7,9 @@ than a conclusion.
 
 All claims below are *read* from the sources on 2026-09-11: the schema at
 https://github.com/biodatamodels/gff-schema (`src/schema/gff.yaml`), the KBase Common Data Model
-vendored here at `specs/kbase_cdm_bioentity.yaml`, the NMDC schema at
+vendored here at `corpus/specifications/kbase_cdm_bioentity.yaml`, the NMDC schema at
 `src/schema/annotation.yaml` in `microbiomedata/nmdc-schema`, and the Chado tables vendored here at
-`specs/chado_1.4_feature_tables.sql`.
+`corpus/specifications/chado_1.4_feature_tables.sql`.
 
 ## Three of the four may share a lineage, and one shared string is not evidence
 
@@ -100,7 +100,7 @@ does it as a named `seqid` slot, which is the change NMDC's own schema carries a
 
 **It also already supports the case that breaks tools.** `Parent` is multivalued with a range of
 `genome feature`, so multiple parents are first class. That is the legal-but-widely-refused
-construct in `data/derived-edge-cases/multiple_parents.gff3`.
+construct in `corpus/fixtures/edge-cases/multiple_parents.gff3`.
 
 **Each model carries something the others do not, and the counts are smaller than "only" suggests.**
 Provenance of the assertion is modeled in KBase and in Chado, and absent from the other two. Partial
@@ -185,7 +185,7 @@ that are single-valued by nature, dedicated relation tables for the ones that ar
 catch-all property table for everything unreserved. Three earlier versions of this document got this wrong: first that Chado puts column 9 in one
 property table, then that it uses one table per reserved tag, then that `Alias` and `Name` share
 `feature_synonym`. `Name` is a column on `feature`, not a synonym row. The table above is read
-directly from `specs/chado_1.4_feature_tables.sql` and is the version to trust.
+directly from `corpus/specifications/chado_1.4_feature_tables.sql` and is the version to trust.
 
 A flat scalar-only profile is close to a description of Chado. The question is not whether this
 family of models can be flattened. One member of it has only ever existed flat.

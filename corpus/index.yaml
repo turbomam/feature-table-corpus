@@ -15,7 +15,7 @@ entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
   format: GFF3
   source: NMDC
   producer: CATH functional families database search
@@ -32,7 +32,7 @@ entries:
 - id: nmdc-crt
   label: CRT Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
   format: GFF3
   source: NMDC
   producer: CRISPR Recognition Tool, feature finder
@@ -49,7 +49,7 @@ entries:
 - id: nmdc-cog
   label: Clusters of Orthologous Groups (COG) Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff
   format: GFF3
   source: NMDC
   producer: COG database search
@@ -66,7 +66,7 @@ entries:
 - id: nmdc-functional-annotation
   label: Functional Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
   format: GFF3
   source: NMDC
   producer: JGI IMG annotation pipeline, functional roll-up
@@ -83,7 +83,7 @@ entries:
 - id: nmdc-genemark
   label: Genemark Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff
   format: GFF3
   source: NMDC
   producer: GeneMark, gene caller
@@ -100,7 +100,7 @@ entries:
 - id: nmdc-ko-ec
   label: KO_EC Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
   format: GFF3
   source: NMDC
   producer: KEGG Orthology and Enzyme Commission assignment
@@ -117,7 +117,7 @@ entries:
 - id: nmdc-pfam
   label: Pfam Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff
   format: GFF3
   source: NMDC
   producer: Pfam database search
@@ -134,7 +134,7 @@ entries:
 - id: nmdc-prodigal
   label: Prodigal Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
   format: GFF3
   source: NMDC
   producer: Prodigal, gene caller
@@ -151,7 +151,7 @@ entries:
 - id: nmdc-rfam
   label: RFAM Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff
   format: GFF3
   source: NMDC
   producer: Rfam, feature finder
@@ -168,7 +168,7 @@ entries:
 - id: nmdc-smart
   label: SMART Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff
   format: GFF3
   source: NMDC
   producer: SMART database search
@@ -185,7 +185,7 @@ entries:
 - id: nmdc-superfam
   label: SUPERFam Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
   format: GFF3
   source: NMDC
   producer: SUPERFAMILY database search
@@ -202,7 +202,7 @@ entries:
 - id: nmdc-structural-annotation
   label: Structural Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
   format: GFF3
   source: NMDC
   producer: JGI IMG annotation pipeline, structural roll-up
@@ -219,7 +219,7 @@ entries:
 - id: nmdc-tigrfam
   label: TIGRFam Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff
   format: GFF3
   source: NMDC
   producer: TIGRFAM database search
@@ -236,7 +236,7 @@ entries:
 - id: nmdc-trna
   label: TRNA Annotation GFF
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff
   format: GFF3
   source: NMDC
   producer: tRNAscan, feature finder
@@ -253,7 +253,7 @@ entries:
 - id: nmdc-ec
   label: Annotation Enzyme Commission
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-6kajck87.1_ec.tsv
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-6kajck87.1_ec.tsv
   format: TSV
   source: NMDC
   producer: EC annotation, database search
@@ -281,7 +281,7 @@ entries:
 - id: nmdc-ko
   label: Annotation KEGG Orthology
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-vc2g4r14.1_ko.tsv
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-vc2g4r14.1_ko.tsv
   format: TSV
   source: NMDC
   producer: KO annotation, database search
@@ -302,7 +302,7 @@ entries:
 - id: nmdc-crispr-terms
   label: Crispr Terms
   tier: vendored
-  path: data/nmdc/nmdc_wfmgan-11-vypv6e87.1_crt.crisprs
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-vypv6e87.1_crt.crisprs
   format: CRT
   source: NMDC
   producer: CRT (CRISPR Recognition Tool)
@@ -326,7 +326,7 @@ entries:
 - id: ncbi-refseq-GCF_000819615-1
   label: NCBI RefSeq GFF3, Escherichia phage phiX174
   tier: vendored
-  path: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   format: GFF3
   gff_spec_version: '1.21'
   source: NCBI RefSeq
@@ -344,7 +344,7 @@ entries:
 - id: ncbi-refseq-GCF_000840245-1
   label: NCBI RefSeq GFF3, Escherichia phage lambda
   tier: vendored
-  path: data/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff
   format: GFF3
   gff_spec_version: '1.21'
   source: NCBI RefSeq
@@ -478,7 +478,7 @@ entries:
 - id: ncbi-refseq-gtf-GCF_000819615-1
   label: NCBI RefSeq GTF, Escherichia phage phiX174
   tier: vendored
-  path: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gtf
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gtf
   format: GTF
   gtf_version: '2.2 (declared in the file''s own #gtf-version pragma)'
   source: NCBI RefSeq
@@ -498,7 +498,7 @@ entries:
 - id: ncbi-refseq-gtf-GCF_000840245-1
   label: NCBI RefSeq GTF, Escherichia phage lambda
   tier: vendored
-  path: data/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf
   format: GTF
   gtf_version: '2.2 (declared in the file''s own #gtf-version pragma)'
   source: NCBI RefSeq
@@ -607,7 +607,7 @@ entries:
   label: Chado feature tables, version 1.4
   tier: vendored
   kind: specification
-  path: specs/chado_1.4_feature_tables.sql
+  path: corpus/specifications/chado_1.4_feature_tables.sql
   format: PostgreSQL DDL
   source: GMOD Chado
   license: Artistic-2.0
@@ -624,7 +624,7 @@ entries:
   label: KBase Common Data Model, bioentity module with the Feature class
   tier: vendored
   kind: specification
-  path: specs/kbase_cdm_bioentity.yaml
+  path: corpus/specifications/kbase_cdm_bioentity.yaml
   format: LinkML
   source: KBase
   license: MIT
@@ -707,14 +707,14 @@ entries:
   label: 'Derived malformed GFF3: phase in column 8 of the first CDS set to 3, outside the permitted 0,
     1 and 2'
   tier: derived
-  path: data/derived-malformed/cds_phase_illegal.gff3
+  path: corpus/fixtures/malformed/cds_phase_illegal.gff3
   format: GFF3 (invalid)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6872
-  md5: eb173c30948bdf3f0948baf0bfd32431
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6888
+  md5: 8a878e6455e02ca02069f8562c458b5f
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: phase in column 8 of the first CDS set to 3, outside the permitted 0, 1 and 2
   validity: 'invalid: GFF3 permits only 0, 1 or 2 in the phase column'
   why_it_matters: A validator catches this one. Paired with cds_phase_biologically_wrong, which no syntax-only
@@ -729,14 +729,14 @@ entries:
 - id: derived-dangling-parent
   label: 'Derived malformed GFF3: Parent of the first CDS changed to an ID defined nowhere in the file'
   tier: derived
-  path: data/derived-malformed/dangling_parent.gff3
+  path: corpus/fixtures/malformed/dangling_parent.gff3
   format: GFF3 (invalid)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6873
-  md5: 97cbf6d61ac75774dcbaf15ef40bf3d5
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6889
+  md5: a2803ead53e8e2058e6e208302a2295e
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: Parent of the first CDS changed to an ID defined nowhere in the file
   validity: 'invalid: GFF3 requires every Parent to resolve within the file'
   why_it_matters: Breaks the parent and child graph without breaking the line syntax, so it parses cleanly.
@@ -751,14 +751,14 @@ entries:
   label: 'Derived malformed GFF3: the first sequence_alteration given the first gene''s ID, gene-phiX174p04,
     so one ID names two features of different type'
   tier: derived
-  path: data/derived-malformed/duplicate_id.gff3
+  path: corpus/fixtures/malformed/duplicate_id.gff3
   format: GFF3 (invalid)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6959
-  md5: 25645d2ab3a7ecbd6f2db34089540b15
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6975
+  md5: a6a3044a26dc1715604b2d701f3c3492
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: the first sequence_alteration given the first gene's ID, gene-phiX174p04, so one ID names
     two features of different type
   validity: 'invalid: a repeated ID is only legal across lines describing one feature, and these differ
@@ -776,14 +776,14 @@ entries:
 - id: derived-no-version-pragma
   label: 'Derived malformed GFF3: the ##gff-version 3 line removed; every other header line preserved'
   tier: derived
-  path: data/derived-malformed/no_version_pragma.gff3
+  path: corpus/fixtures/malformed/no_version_pragma.gff3
   format: GFF3 (invalid)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6844
-  md5: 3f44405f00e2dd1ddfffa8c254ac0ffb
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6860
+  md5: 38c97705f13ccdb4f2b486b121c4649f
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: 'the ##gff-version 3 line removed; every other header line preserved'
   validity: 'invalid: GFF3 requires the version directive on line 1'
   why_it_matters: Without the directive a parser cannot tell GFF3 from GFF2, and the column 9 grammar
@@ -799,14 +799,14 @@ entries:
   label: 'Derived malformed GFF3: columns 4 and 5 of the first gene swapped, so start is greater than
     end'
   tier: derived
-  path: data/derived-malformed/start_after_end.gff3
+  path: corpus/fixtures/malformed/start_after_end.gff3
   format: GFF3 (invalid)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6881
-  md5: 41f474923ae543512ba080b3af4849c1
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6897
+  md5: 64d3964fb27e77e73ebaaacadff2ad93
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: columns 4 and 5 of the first gene swapped, so start is greater than end
   validity: 'invalid: GFF3 requires start <= end on every feature, circular included'
   why_it_matters: 'GFF3 requires start no greater than end on every feature. A circular genome does not
@@ -823,14 +823,14 @@ entries:
   label: 'Derived malformed GFF3: a raw semicolon inside a Note value on the first CDS, where GFF3 requires
     %3B'
   tier: derived
-  path: data/derived-malformed/unescaped_semicolon.gff3
+  path: corpus/fixtures/malformed/unescaped_semicolon.gff3
   format: GFF3 (invalid)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6961
-  md5: 09c25bd7d3e10d0500b2873966aa771a
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6977
+  md5: 2f925867ea9489da98d712f4453cf511
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: a raw semicolon inside a Note value on the first CDS, where GFF3 requires %3B
   validity: 'invalid: the text after the separator is a bare segment with no tag=value form, which a conforming
     parser must reject'
@@ -846,14 +846,14 @@ entries:
 - id: derived-cds-phase-biologically-wrong
   label: 'Derived edge case: phase in column 8 of the first CDS changed from 0 to another permitted value'
   tier: derived
-  path: data/derived-edge-cases/cds_phase_biologically_wrong.gff3
+  path: corpus/fixtures/edge-cases/cds_phase_biologically_wrong.gff3
   format: GFF3 (valid; wrong or refused in practice)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 7001
-  md5: 5f60b8984e9975f6144dca06c74e270f
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 7017
+  md5: 45275cca6480591ccb7b64ac2b41a6cb
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: phase in column 8 of the first CDS changed from 0 to another permitted value
   validity: 'VALID GFF3: 0, 1 and 2 are all legal, so no syntax-only validator catches this; translating
     against the reference protein does. The annotation is biologically wrong rather than malformed'
@@ -872,14 +872,14 @@ entries:
   label: 'Derived edge case: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined
     in this file'
   tier: derived
-  path: data/derived-edge-cases/multiple_parents.gff3
+  path: corpus/fixtures/edge-cases/multiple_parents.gff3
   format: GFF3 (valid; wrong or refused in practice)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 6924
-  md5: be468036e4a68af0d467a79061a0dac5
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 6940
+  md5: 998386f8cac265ef8f21a7006802b2e8
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined in this file
   validity: 'VALID GFF3: multiple parents are permitted, and many tools refuse them anyway'
   why_it_matters: Legal GFF3 that many tools refuse. The AgBioData recommendations explicitly ask that
@@ -895,14 +895,14 @@ entries:
   label: 'Derived edge case: an unescaped semicolon in a Note value whose tail is itself a valid lowercase
     tag=value pair'
   tier: derived
-  path: data/derived-edge-cases/unescaped_semicolon_silent.gff3
+  path: corpus/fixtures/edge-cases/unescaped_semicolon_silent.gff3
   format: GFF3 (valid; wrong or refused in practice)
   source: derived in this repository
   producer: scripts/make_malformed.py
   producer_kind: derived test case
-  bytes: 7014
-  md5: b732a0b49c8c7e797b49bdd4abf4d776
-  derived_from: data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  bytes: 7030
+  md5: a2edcb385cca680c823427cf8f54f894
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
   mutation: an unescaped semicolon in a Note value whose tail is itself a valid lowercase tag=value pair
   validity: 'VALID GFF3: the Note is silently truncated and a second attribute appears that nobody wrote;
     no validator reports anything because nothing is malformed'

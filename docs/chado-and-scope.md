@@ -33,7 +33,7 @@ answer costs nothing and takes on no dependency.
 
 ## The blocker is not age. It is one constraint
 
-*Read from* `specs/chado_1.4_feature_tables.sql`, vendored here:
+*Read from* `corpus/specifications/chado_1.4_feature_tables.sql`, vendored here:
 
 ```sql
 organism_id bigint not null,
@@ -159,6 +159,6 @@ are acceptable, noting that NMDC has been using those. That is exactly the measu
 bare database accession in column 3. So the question has an answer about current practice even
 though the policy is undecided.
 
-**Two sources added to the reading list**, both now in `corpus.yaml`: the IMG pipeline
+**Two sources added to the reading list**, both now in `corpus/index.yaml`: the IMG pipeline
 documentation, which specifies the GFF output of the pipeline that produced every NMDC file vendored
 here, and the Blue Collar Bioinformatics parser, as an example of what consumers actually run.

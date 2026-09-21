@@ -1,6 +1,6 @@
 # Schema diagram
 
-Generated 2026-09-21 from `schema/ber_feature_model.yaml` with `just diagram`, using
+Generated 2026-09-21 from `model/schema/ber_feature_model.yaml` with `just diagram`, using
 LinkML's `erdiagramgen` and the model-specific cardinality corrections in
 [`scripts/schema_diagram.py`](../scripts/schema_diagram.py).
 Regenerate after any schema change; this file is not auto-updated. `just check`
@@ -53,7 +53,7 @@ instance of one class instead of a bag of loose Contig and Feature fragments. It
 empty because it has no scalar slots, only the two relationships shown.
 
 `erdiagramgen` lists every scalar and enum slot inside each entity box and draws an arrow only
-for slots whose range is another class (`Contig`, `Feature`, `Attribute`). `schema/ber_feature_model.yaml`
+for slots whose range is another class (`Contig`, `Feature`, `Attribute`). `model/schema/ber_feature_model.yaml`
 itself is the source of truth if this diagram and that file ever disagree.
 
 Each Feature references exactly one Contig, while a Contig may have zero or many

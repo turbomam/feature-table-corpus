@@ -23,7 +23,7 @@ FASTA contig and CDS IDs above, then every `pfam.gff` row whose first column is 
 All source attributes except ID (promoted to `feature_id`) are retained on the three hits.
 
 ```sh
-just build-duckdb examples/multiple-pfams/harmonized.yaml local/build/multiple-pfams.duckdb
+just build-duckdb model/examples/multiple-pfams/harmonized.yaml local/build/multiple-pfams.duckdb
 just query-duckdb local/build/multiple-pfams.duckdb
 uv run --with duckdb python scripts/query_duckdb.py local/build/multiple-pfams.duckdb pfams PF13358 PF13592
 ```

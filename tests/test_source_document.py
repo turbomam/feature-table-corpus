@@ -12,8 +12,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from source_document import parse_bytes, replay_bytes
 from validate_closed import make_validator
 
-PRODIGAL = ROOT / "data/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff"
-REFSEQ = ROOT / "data/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff"
+PRODIGAL = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff"
+REFSEQ = ROOT / "corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff"
 FIXTURE = ROOT / "tests/fixtures/source-documents/mixed-records.gff3"
 SCRIPT = ROOT / "scripts/source_document.py"
 
@@ -25,7 +25,7 @@ def values(record):
 class SourceDocumentTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.validator = make_validator(ROOT / "schema/source_document.yaml", "SourceDocument")
+        cls.validator = make_validator(ROOT / "model/schema/source_document.yaml", "SourceDocument")
 
     def parse(self, content, **options):
         doc = parse_bytes(content, source_uri="https://example.org/input.gff", **options)
@@ -34,9 +34,9 @@ class SourceDocumentTests(unittest.TestCase):
         return doc
 
     def test_all_real_gff_and_gtf_sources_round_trip_and_keep_every_feature(self):
-        paths = list((ROOT / "data/nmdc").glob("*.gff"))
-        paths += list((ROOT / "data/ncbi-refseq").glob("*.gff"))
-        paths += list((ROOT / "data/ncbi-refseq").glob("*.gtf"))
+        paths = list((ROOT / "corpus/sources/nmdc").glob("*.gff"))
+        paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff"))
+        paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gtf"))
         self.assertEqual(len(paths), 18)
         for path in paths:
             with self.subTest(path=path.name):
@@ -99,7 +99,7 @@ class SourceDocumentTests(unittest.TestCase):
         self.assertTrue(all(r["context_record"] == records[-3]["record_id"] for r in records[-2:]))
 
     def test_headerless_files_have_no_invented_metadata(self):
-        path = ROOT / "data/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff"
+        path = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff"
         doc = self.parse(path.read_bytes(), format="gff3")
         self.assertTrue(all(r["kind"] == "feature" for r in doc["records"]))
         self.assertTrue(all("metadata" not in r and "context_record" not in r for r in doc["records"]))
@@ -215,7 +215,7 @@ same\ttest\tCDS\t1\t6\t.\t+\t0\tID=second
             self.assertEqual(malformed.read_bytes(), b"unrecognized data\n")
 
     def test_checked_in_example_reproduces_from_its_vendored_source(self):
-        path = ROOT / "examples/source-documents/prodigal.json"
+        path = ROOT / "model/examples/source-documents/prodigal.json"
         document = json.loads(path.read_text())
         expected = parse_bytes(PRODIGAL.read_bytes(), source_uri=document["artifact"]["uri"],
                                format="gff3", profile="prodigal")

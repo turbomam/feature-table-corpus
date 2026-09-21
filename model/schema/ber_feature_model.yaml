@@ -23,7 +23,7 @@ notes:
   - Open questions from the 2026-09-11 kickoff this draft does NOT resolve, predicted-vs-sequenced
     metagenome disambiguation, whether CURIEs are required more broadly than the one
     column-3 finding above, and where this schema's permanent home is.
-  - "Directives and comments are represented separately in schema/source_document.yaml,
+  - "Directives and comments are represented separately in model/schema/source_document.yaml,
     not imported into this biological Dataset model. Measured 2026-09-18
     across all 14 real NMDC GFF files, only 1 carries any `##` directive at all
     (`##gff-version  3`, two spaces, in the Prodigal file); the other 13 open straight into
@@ -56,7 +56,7 @@ classes:
     description: A document holding every Contig and Feature harmonized from one or more workflow executions.
     notes:
       - Added 2026-09-18 so a whole harmonized data file (e.g.
-        examples/one-biosample-sequencing/harmonized.yaml) can be validated as one instance
+        model/examples/one-biosample-sequencing/harmonized.yaml) can be validated as one instance
         of one class, rather than only validating its Contig and Feature entries one at a
         time. linkml-lint's tree_root_class check caught the absence of this class.
     slots:
@@ -276,7 +276,7 @@ slots:
         boundaries, even though both tools' calls exist as separate DataObjects. Without this
         field, a table holding both calls has no way to say which is canonical, and naively
         adding the roll-up as a third source would silently duplicate the Prodigal rows. See
-        examples/one-biosample-sequencing/ for the worked case.
+        model/examples/one-biosample-sequencing/ for the worked case.
       - "Open question, found 2026-09-18 in that same worked case: is_selected=false does not
         always mean \"a competing caller won\". One real Prodigal call there
         (nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_3_65) had no GeneMark call at all for the same
@@ -342,7 +342,7 @@ enums:
         uppersnake to satisfy linkml-lint's permissible_values_format rule, which suggests
         uppersnake by default, without checking it against standard_naming, whose own
         default (as used in LinkML's bundled recommended.yaml) expects lowercase snake_case
-        and would then flag the uppercase form instead. schema/strict-lint-config.yaml sets
+        and would then flag the uppercase form instead. model/schema/strict-lint-config.yaml sets
         both rules to the same snake-case convention so they agree, and this enum's values
         match it; unlike StrandEnum, this enum is the schema's own invention so there was no
         format-fidelity reason to pick uppersnake in the first place."

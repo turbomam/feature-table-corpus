@@ -7,12 +7,19 @@ Real, traceable examples of GFF and other genome feature table content.
 The [repository map](docs/repository-map.md) explains artifact roles and reproduction,
 and the [layout decision](docs/decisions/001-artifact-layout.md) records the directory reorganization.
 
-Suggested reading, in this order:
+| Directory | Contents |
+|---|---|
+| [`corpus/`](corpus/) | Source files, prior-art specifications, derived fixtures, and their index/provenance |
+| [`model/`](model/) | Proposed schemas and worked examples of their instances |
+| [`analyses/`](analyses/) | Source-specific catalogues, counts, and selection reports |
+| [`docs/`](docs/) | Comparisons, design decisions, and interpretation |
 
 For literature beyond GFF-focused projects, start with the
 [annotated reading list](docs/feature-format-reading.md), checked September 2026.
 It distinguishes reviews, comparative measurements, community recommendations,
 consumer documentation, and format/tool authors' claims.
+
+Suggested reading, in this order:
 
 1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
    first: is Chado maintained, and what should a feature table be expected to cover. Short answers:
@@ -23,14 +30,13 @@ consumer documentation, and format/tool authors' claims.
 3. **[docs/columns-and-discretion.md](docs/columns-and-discretion.md)** says how many fields each
    format has, which columns leave the writer discretion, and which get populated incorrectly in
    real data.
-4. **[corpus.yaml](corpus.yaml)** is the index and source of truth for the corpus inventory.
-5. **[schema/README.md](schema/README.md)** and
-   **[examples/one-biosample-sequencing/README.md](examples/one-biosample-sequencing/README.md)**
+4. **[corpus/index.yaml](corpus/index.yaml)** is the index and source of truth for the corpus inventory.
+5. **[model/schema/README.md](model/schema/README.md)** and
+   **[model/examples/one-biosample-sequencing/README.md](model/examples/one-biosample-sequencing/README.md)**
    cover a separate, later addition: a draft unified LinkML feature model
-   (`schema/ber_feature_model.yaml`) and a worked example harmonizing one real biosample's
-   sequencing against it. These have no relationship to `corpus.yaml` or `data/nmdc/`; they're a
-   different part of the repository, staged here because
-   [ber-data/gff-schema](https://github.com/ber-data/gff-schema) doesn't exist yet.
+   (`model/schema/ber_feature_model.yaml`) and a worked example harmonizing one real biosample's
+   sequencing against it. This curated case study has its own source-artifact manifest
+   and uses a different biosample from the standalone NMDC corpus files.
 
 Five findings, each with how it is known:
 
@@ -60,7 +66,7 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-58 entries in five tiers. The index is [corpus.yaml](corpus.yaml), which is the source of truth;
+58 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
@@ -71,21 +77,20 @@ this README describes it.
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
-**The one promise this corpus makes.** A file under `data/nmdc/` or `data/ncbi-refseq/` is
+**The one promise this corpus makes.** A file under `corpus/sources/nmdc/` or `corpus/sources/ncbi-refseq/` is
 byte-for-byte what its origin served. Nothing in this repository writes into those files, and the
 verifier enforces it two ways: every checksum is compared on each run, and any provenance comment
 appearing in a sourced file is reported as `SOURCED-EDITED`. The nine files under
-`data/derived-malformed/` and `data/derived-edge-cases/` are the only altered content, they live
+`corpus/fixtures/malformed/` and `corpus/fixtures/edge-cases/` are the only altered content, they live
 only in those directories, and each one carries four appended comment lines naming its source and
 the single change made to it. The verifier fails if a derived file lacks them, and CI proves both
 halves of that check can fail by injecting each violation on purpose.
 
 So the derived files are not byte-exact copies plus one change; they are that plus four comment
 lines. The trade is deliberate: a fixture found loose on disk still says where it came from, which
-`corpus.yaml` cannot do once a file is copied out.
+`corpus/index.yaml` cannot do once a file is copied out.
 
-Everything in the repository totals about 260 KB of plain text, so a clone is cheap and every file
-is reviewable in a diff. Nothing here is binary or compressed.
+The checked-in source files are plain text, so their contents are reviewable in a diff.
 
 ## The vendored files
 
@@ -183,7 +188,7 @@ parent row. The remaining four are multivalued scalars and share one representat
 
 [Source documents](docs/source-documents.md) describes the parser and separate
 document model for scoped comments, directives, feature rows, and FASTA sections.
-The [Prodigal example](examples/source-documents/README.md) preserves sequence-level
+The [Prodigal example](model/examples/source-documents/README.md) preserves sequence-level
 settings interleaved among feature rows, with exact byte replay.
 
 [docs/prior-art.md](docs/prior-art.md) records what already existed before this corpus and why
@@ -196,12 +201,12 @@ GPL-3.0 ruled out.
 
 Thirteen specifications are recorded, two of them vendored and eleven linked.
 
-The vendored two are the ones whose licenses allow it. `specs/chado_1.4_feature_tables.sql` holds
+The vendored two are the ones whose licenses allow it. `corpus/specifications/chado_1.4_feature_tables.sql` holds
 the seven Chado feature tables extracted from a 2.2 MB schema, under Artistic-2.0. Chado is worth
 reading closely for this work: it keeps the feature separate from its location and expresses parent
 and child through a relationship table, so nothing is nested. That is the same normalization a
 flat-table profile requires, reached independently twenty years earlier.
-`specs/kbase_cdm_bioentity.yaml` is the KBase Common Data Model module holding the Feature class,
+`corpus/specifications/kbase_cdm_bioentity.yaml` is the KBase Common Data Model module holding the Feature class,
 under MIT. It constrains feature type to Sequence Ontology accessions under `sequence_feature` and
 carries provenance slots for source database and protocol, which the other models do not.
 
@@ -231,7 +236,7 @@ easier to test against than to read about.
 
 The split into two directories is deliberate, and one pair of files is the reason why.
 
-**`data/derived-malformed/`**, six files that violate the specification.
+**`corpus/fixtures/malformed/`**, six files that violate the specification.
 
 | Case | The one change |
 |---|---|
@@ -242,7 +247,7 @@ The split into two directories is deliberate, and one pair of files is the reaso
 | `no_version_pragma` | The `##gff-version 3` line removed and every other header line kept |
 | `duplicate_id` | One ID on a `gene` and a `sequence_alteration`. Repeating an ID is legal when every line describes one discontinuous feature, so duplicating a row would not be a violation; colliding across two types is |
 
-**`data/derived-edge-cases/`**, three files that are valid GFF3 and still wrong in practice.
+**`corpus/fixtures/edge-cases/`**, three files that are valid GFF3 and still wrong in practice.
 
 `cds_phase_biologically_wrong` changes a CDS phase to another permitted value. This is the failure
 the AgBioData group leads with, and **no syntax-only validator can catch it**: 0, 1 and 2 are all legal, so
@@ -268,7 +273,7 @@ suite, and it is GPL-3.0. Linking keeps a copyleft obligation off this corpus. G
 GFF3toolkit carry no determinable license in their repository metadata, so those are linked too
 rather than guessed at. GENCODE is linked because it is tens of megabytes.
 
-Where a license could not be determined, `corpus.yaml` says so in that entry rather than leaving
+Where a license could not be determined, `corpus/index.yaml` says so in that entry rather than leaving
 it blank.
 
 ## Verifying it
@@ -299,7 +304,7 @@ injects a duplicate id and fails the build if the check passes anyway.
 
 ## Reproducing the NMDC selection
 
-The separate [NMDC DataObject profile](profiles/nmdc-data-objects/README.md) catalogues
+The separate [NMDC DataObject profile](analyses/nmdc-data-objects/README.md) catalogues
 categorical slots, allowed and observed values, record frequencies, and URL hosts across
 the public NMDC DataObject collection. It includes metadata for all file types, not just
 the GFF files selected below. This is an NMDC-specific source profile, one inspiration for
@@ -309,8 +314,10 @@ the broader model; its vocabularies and frequencies are not general modeling req
 python3 scripts/harvest_nmdc.py
 ```
 
-This re-runs the query that picked the 14 files and writes `scripts/nmdc_selection.json`. One
-thing to know if you adapt it: a plain `urllib` request to the NMDC API returns 403, and the same
+This re-runs the sampling query and writes `local/nmdc-selection/selection.json`.
+Review request errors and changed selections before replacing the
+[saved acquisition report](analyses/nmdc-selection/README.md); a live sample may choose
+different files. One thing to know if you adapt it: a plain `urllib` request to the NMDC API returns 403, and the same
 URL through `curl` returns 200. The script sends a `curl` user agent for that reason. Without it
 the API looks down when it is not.
 
@@ -344,7 +351,7 @@ Pull requests adding entries should fill in every field the existing entries car
 
 ## Licensing
 
-Per entry, recorded in `corpus.yaml`. The NMDC files are CC BY 4.0 and require attribution to NMDC.
+Per entry, recorded in `corpus/index.yaml`. The NMDC files are CC BY 4.0 and require attribution to NMDC.
 The NCBI files are public domain. This repository's own contributions, meaning the index, the
 scripts and this README, are CC0.
 

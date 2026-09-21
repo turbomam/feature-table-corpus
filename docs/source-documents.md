@@ -1,6 +1,6 @@
 # Source documents, comments, and directives
 
-[`schema/source_document.yaml`](../schema/source_document.yaml) represents one
+[`model/schema/source_document.yaml`](../model/schema/source_document.yaml) represents one
 GFF3 or GTF source file as a `SourceDocument` instance with ordered `SourceRecord`
 instances. [`scripts/source_document.py`](../scripts/source_document.py) preserves
 every UTF-8 source byte and adds an explicitly scoped interpretation where the
@@ -62,7 +62,7 @@ A malformed new Prodigal sequence declaration clears the previous context. A fea
 with a mismatching sequence ID warns and clears it too. A Model Data comment without
 a valid context is retained with a warning and stream scope.
 
-The checked-in [Prodigal example](../examples/source-documents/README.md) demonstrates
+The checked-in [Prodigal example](../model/examples/source-documents/README.md) demonstrates
 five sequence blocks with comments interleaved among six feature rows. Its first
 translation table is 4 and the other four are 11. The fourteen NMDC GFF files also
 include headerless examples; those do not gain fabricated metadata.
@@ -79,7 +79,7 @@ Run from the repository root, choosing new output filenames:
 
 ```shell
 python3 scripts/source_document.py parse \
-  data/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
+  corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
   --format gff3 --profile prodigal --output local/source-documents/prodigal.json
 python3 scripts/source_document.py validate local/source-documents/prodigal.json
 python3 scripts/source_document.py replay local/source-documents/prodigal.json \

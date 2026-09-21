@@ -4,6 +4,6 @@ The index, scripts and prose in this repository are dedicated to the
 public domain under CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
 
 The data files under data/ keep their own licenses, recorded per entry in
-corpus.yaml. The NMDC files are CC BY 4.0 and require attribution to the
+corpus/index.yaml. The NMDC files are CC BY 4.0 and require attribution to the
 National Microbiome Data Collaborative. The NCBI RefSeq files are public
 domain as United States Government works.
