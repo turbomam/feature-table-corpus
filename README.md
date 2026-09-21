@@ -4,6 +4,9 @@ Real, traceable examples of GFF and other genome feature table content.
 
 ## Start here
 
+The [repository map](docs/repository-map.md) explains artifact roles and reproduction,
+and the [layout decision](docs/decisions/001-artifact-layout.md) records the directory reorganization.
+
 Suggested reading, in this order:
 
 For literature beyond GFF-focused projects, start with the
@@ -20,7 +23,7 @@ consumer documentation, and format/tool authors' claims.
 3. **[docs/columns-and-discretion.md](docs/columns-and-discretion.md)** says how many fields each
    format has, which columns leave the writer discretion, and which get populated incorrectly in
    real data.
-4. **[corpus.yaml](corpus.yaml)** is the index, and the source of truth for everything else here.
+4. **[corpus.yaml](corpus.yaml)** is the index and source of truth for the corpus inventory.
 5. **[schema/README.md](schema/README.md)** and
    **[examples/one-biosample-sequencing/README.md](examples/one-biosample-sequencing/README.md)**
    cover a separate, later addition: a draft unified LinkML feature model
