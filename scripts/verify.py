@@ -78,7 +78,7 @@ def check_index(entries):
     return bad
 
 
-SOURCED_DIRS = ("corpus/sources/nmdc", "corpus/sources/ncbi-refseq")
+SOURCED_DIRS = ("corpus/sources/",)
 PROVENANCE_TAGS = ("# derived-from: ", "# single-change: ", "# validity: ")
 
 

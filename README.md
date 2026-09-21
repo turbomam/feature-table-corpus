@@ -21,6 +21,12 @@ For literature beyond GFF-focused projects, start with the
 It distinguishes reviews, comparative measurements, community recommendations,
 consumer documentation, and format/tool authors' claims.
 
+For executable interchange, see [versioned conversion profiles](docs/conversion-profiles.md)
+and the [per-case preservation report](analyses/conversion-roundtrips/README.md).
+The GFF3 and BED12 profiles separately test exact byte recovery and reconstruction
+from mapped fields, with unsupported cases reported explicitly. The corpus now
+also includes [pinned BED12 and INSDC plant examples](corpus/sources/biopython/README.md).
+
 Suggested reading, in this order:
 
 1. **[docs/chado-and-scope.md](docs/chado-and-scope.md)** answers the two questions a reviewer asks
@@ -68,12 +74,12 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-58 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+60 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 23 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 25 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |

@@ -1,0 +1,2 @@
+# Constructed here to test refusal of a zero-length BED interval, not observed data.
+c	0	0	insertion	0	+	0	0	0	1	0	0

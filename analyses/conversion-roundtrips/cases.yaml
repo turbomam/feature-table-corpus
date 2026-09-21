@@ -1,0 +1,70 @@
+cases:
+  - id: nmdc-prodigal
+    path: corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/1.0.0
+    metadata_profile: prodigal
+    reference_context: nmdc:wfmgan-11-9ya9xh30.1 source-scoped scaffold identifiers
+    expected: supported
+  - id: nmdc-crt
+    path: corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/1.0.0
+    reference_context: nmdc:wfmgan-11-bvg4py20.1 source-scoped scaffold identifiers
+    expected: supported
+  - id: refseq-lambda
+    path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/1.0.0
+    metadata_profile: ncbi
+    reference_context: NCBI_Assembly:GCF_000840245.1
+    expected: supported
+  - id: refseq-phix-circular
+    path: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/1.0.0
+    metadata_profile: ncbi
+    reference_context: NCBI_Assembly:GCF_000819615.1
+    expected: unsupported
+    expected_code: circular-location
+  - id: refseq-lambda-gtf
+    path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf
+    case_kind: observed
+    format: gtf
+    reference_context: NCBI_Assembly:GCF_000840245.1
+    expected: unsupported
+    expected_code: unsupported-format
+  - id: biopython-blat-bed12
+    path: corpus/sources/biopython/blat_34_hg19.bed
+    case_kind: upstream-alignment-example
+    format: bed12
+    profile: bed12-blocks/1.0.0
+    reference_context: biopython-1.85:Tests/Blat/psl_34_004 (hg19_dna query; assembly not encoded in BED)
+    expected: supported
+  - id: insdc-plant-locations
+    path: corpus/sources/biopython/cor6_6.gb
+    case_kind: upstream-sequence-records
+    format: genbank
+    reference_context: X55053.1,X62281.1,M81224.1,AJ237582.1,L31939.1,AF297471.1
+    expected: unsupported
+    expected_code: unsupported-format
+  - id: constructed-discontinuous-gff
+    path: tests/fixtures/conversions/discontinuous.gff3
+    case_kind: constructed-negative-control
+    format: gff3
+    profile: gff3-contig/1.0.0
+    reference_context: synthetic:c
+    expected: unsupported
+    expected_code: dataset-invalid
+  - id: constructed-empty-bed
+    path: tests/fixtures/conversions/empty.bed
+    case_kind: constructed-negative-control
+    format: bed12
+    profile: bed12-blocks/1.0.0
+    reference_context: synthetic:c
+    expected: unsupported
+    expected_code: empty-interval

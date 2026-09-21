@@ -12,6 +12,12 @@ scoped comment metadata, without depending on Feature or NMDC DataObject. See th
 [source-document parser contract](../../docs/source-documents.md) and
 [reproducible example](../examples/source-documents/README.md).
 
+[Versioned source profiles](../../docs/conversion-profiles.md) compose these two
+contracts with preservation/mapping records. GFF3 and BED12 use the same Dataset
+and generic Attribute classes; the latter also uses ordinary parent/child features
+for ordered blocks. The surrounding conversion bundle is validated by its executable
+profile contract, not by treating Dataset alone as a complete lossless serialization.
+
 `strict-lint-config.yaml` is a lint configuration, not a data model. Its documented
 exception is the four literal GFF3 strand symbols, which are preserved despite naming rules.
 
@@ -27,8 +33,9 @@ exception is the four literal GFF3 strand symbols, which are preserved despite n
 | `just validate-example` | Open generated JSON Schema for the default example |
 | `just validate-example-closed` | Closed shape plus Dataset semantic checks |
 | `just validate-source-example` | Closed SourceDocument shape plus exact-source/projection integrity |
+| `just conversion-check` | Reproducible source-byte and mapped-field preservation report, including expected refusals |
 | `just test` | Both real examples, invalid mutations, database preservation, and query controls |
-| `just check` | Corpus, schema, recommended lint, example validation, and tests; also run by CI |
+| `just check` | Corpus, schema, recommended lint, examples, regression tests, and conversion report; also run by CI |
 | `just diagram` | Regenerate the Mermaid diagram |
 | `just flat-profile-audit` | Audit scalar-table compatibility through SchemaView |
 

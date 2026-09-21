@@ -1,0 +1,1631 @@
+{
+  "conversion_version": 1,
+  "profile": "bed12-blocks/1.0.0",
+  "reference_context": "biopython-1.85:Tests/Blat/psl_34_004 (hg19_dna query; assembly not encoded in BED)",
+  "source": {
+    "artifact": {
+      "uri": "https://raw.githubusercontent.com/biopython/biopython/668de08f73fca7f8336049dfd78716d7dd095f21/Tests/Blat/psl_34_004.bed",
+      "sha256": "c845389ca7e71cd9c3940275ef01730c6ed6805e8944a86898224aec909afc52",
+      "byte_size": 1313
+    },
+    "format": "bed12",
+    "profile": "generic",
+    "records": [
+      {
+        "record_id": "line-1",
+        "line_number": 1,
+        "raw_text": "chr9\t85737865\t85737906\thg19_dna\t854\t+\t85737865\t85737906\t0\t1\t41,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr9",
+          "85737865",
+          "85737906",
+          "hg19_dna",
+          "854",
+          "+",
+          "85737865",
+          "85737906",
+          "0",
+          "1",
+          "41,",
+          "0,"
+        ],
+        "sequence_id": "chr9"
+      },
+      {
+        "record_id": "line-2",
+        "line_number": 2,
+        "raw_text": "chr8\t95160479\t95160520\thg19_dna\t1000\t+\t95160479\t95160520\t0\t1\t41,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr8",
+          "95160479",
+          "95160520",
+          "hg19_dna",
+          "1000",
+          "+",
+          "95160479",
+          "95160520",
+          "0",
+          "1",
+          "41,",
+          "0,"
+        ],
+        "sequence_id": "chr8"
+      },
+      {
+        "record_id": "line-3",
+        "line_number": 3,
+        "raw_text": "chr22\t42144400\t42144436\thg19_dna\t834\t+\t42144400\t42144436\t0\t1\t36,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr22",
+          "42144400",
+          "42144436",
+          "hg19_dna",
+          "834",
+          "+",
+          "42144400",
+          "42144436",
+          "0",
+          "1",
+          "36,",
+          "0,"
+        ],
+        "sequence_id": "chr22"
+      },
+      {
+        "record_id": "line-4",
+        "line_number": 4,
+        "raw_text": "chr2\t183925984\t183926028\thg19_dna\t682\t+\t183925984\t183926028\t0\t2\t6,38,\t0,6,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr2",
+          "183925984",
+          "183926028",
+          "hg19_dna",
+          "682",
+          "+",
+          "183925984",
+          "183926028",
+          "0",
+          "2",
+          "6,38,",
+          "0,6,"
+        ],
+        "sequence_id": "chr2"
+      },
+      {
+        "record_id": "line-5",
+        "line_number": 5,
+        "raw_text": "chr19\t35483340\t35483510\thg19_dna\t890\t+\t35483340\t35483510\t0\t2\t25,11,\t0,159,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr19",
+          "35483340",
+          "35483510",
+          "hg19_dna",
+          "890",
+          "+",
+          "35483340",
+          "35483510",
+          "0",
+          "2",
+          "25,11,",
+          "0,159,"
+        ],
+        "sequence_id": "chr19"
+      },
+      {
+        "record_id": "line-6",
+        "line_number": 6,
+        "raw_text": "chr18\t23891310\t23891349\thg19_dna\t1000\t+\t23891310\t23891349\t0\t1\t39,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr18",
+          "23891310",
+          "23891349",
+          "hg19_dna",
+          "1000",
+          "+",
+          "23891310",
+          "23891349",
+          "0",
+          "1",
+          "39,",
+          "0,"
+        ],
+        "sequence_id": "chr18"
+      },
+      {
+        "record_id": "line-7",
+        "line_number": 7,
+        "raw_text": "chr18\t43252217\t43252245\thg19_dna\t930\t+\t43252217\t43252245\t0\t1\t28,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr18",
+          "43252217",
+          "43252245",
+          "hg19_dna",
+          "930",
+          "+",
+          "43252217",
+          "43252245",
+          "0",
+          "1",
+          "28,",
+          "0,"
+        ],
+        "sequence_id": "chr18"
+      },
+      {
+        "record_id": "line-8",
+        "line_number": 8,
+        "raw_text": "chr13\t52759147\t52759198\thg19_dna\t912\t+\t52759147\t52759198\t0\t2\t7,38,\t0,13,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr13",
+          "52759147",
+          "52759198",
+          "hg19_dna",
+          "912",
+          "+",
+          "52759147",
+          "52759198",
+          "0",
+          "2",
+          "7,38,",
+          "0,13,"
+        ],
+        "sequence_id": "chr13"
+      },
+      {
+        "record_id": "line-9",
+        "line_number": 9,
+        "raw_text": "chr1\t1207056\t1207106\thg19_dna\t1000\t+\t1207056\t1207106\t0\t1\t50,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr1",
+          "1207056",
+          "1207106",
+          "hg19_dna",
+          "1000",
+          "+",
+          "1207056",
+          "1207106",
+          "0",
+          "1",
+          "50,",
+          "0,"
+        ],
+        "sequence_id": "chr1"
+      },
+      {
+        "record_id": "line-10",
+        "line_number": 10,
+        "raw_text": "chr1\t61700837\t61700871\thg19_dna\t824\t+\t61700837\t61700871\t0\t1\t34,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr1",
+          "61700837",
+          "61700871",
+          "hg19_dna",
+          "824",
+          "+",
+          "61700837",
+          "61700871",
+          "0",
+          "1",
+          "34,",
+          "0,"
+        ],
+        "sequence_id": "chr1"
+      },
+      {
+        "record_id": "line-11",
+        "line_number": 11,
+        "raw_text": "chr4\t37558157\t37558191\thg19_dna\t572\t-\t37558157\t37558191\t0\t2\t10,18,\t0,16,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr4",
+          "37558157",
+          "37558191",
+          "hg19_dna",
+          "572",
+          "-",
+          "37558157",
+          "37558191",
+          "0",
+          "2",
+          "10,18,",
+          "0,16,"
+        ],
+        "sequence_id": "chr4"
+      },
+      {
+        "record_id": "line-12",
+        "line_number": 12,
+        "raw_text": "chr22\t48997405\t48997442\thg19_dna\t892\t-\t48997405\t48997442\t0\t1\t37,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr22",
+          "48997405",
+          "48997442",
+          "hg19_dna",
+          "892",
+          "-",
+          "48997405",
+          "48997442",
+          "0",
+          "1",
+          "37,",
+          "0,"
+        ],
+        "sequence_id": "chr22"
+      },
+      {
+        "record_id": "line-13",
+        "line_number": 13,
+        "raw_text": "chr2\t120641740\t120641776\thg19_dna\t946\t-\t120641740\t120641776\t0\t1\t36,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr2",
+          "120641740",
+          "120641776",
+          "hg19_dna",
+          "946",
+          "-",
+          "120641740",
+          "120641776",
+          "0",
+          "1",
+          "36,",
+          "0,"
+        ],
+        "sequence_id": "chr2"
+      },
+      {
+        "record_id": "line-14",
+        "line_number": 14,
+        "raw_text": "chr19\t54017130\t54017169\thg19_dna\t1000\t-\t54017130\t54017169\t0\t1\t39,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr19",
+          "54017130",
+          "54017169",
+          "hg19_dna",
+          "1000",
+          "-",
+          "54017130",
+          "54017169",
+          "0",
+          "1",
+          "39,",
+          "0,"
+        ],
+        "sequence_id": "chr19"
+      },
+      {
+        "record_id": "line-15",
+        "line_number": 15,
+        "raw_text": "chr19\t553742\t553781\thg19_dna\t848\t-\t553742\t553781\t0\t1\t39,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr19",
+          "553742",
+          "553781",
+          "hg19_dna",
+          "848",
+          "-",
+          "553742",
+          "553781",
+          "0",
+          "1",
+          "39,",
+          "0,"
+        ],
+        "sequence_id": "chr19"
+      },
+      {
+        "record_id": "line-16",
+        "line_number": 16,
+        "raw_text": "chr10\t99388555\t99388591\thg19_dna\t834\t-\t99388555\t99388591\t0\t1\t36,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr10",
+          "99388555",
+          "99388591",
+          "hg19_dna",
+          "834",
+          "-",
+          "99388555",
+          "99388591",
+          "0",
+          "1",
+          "36,",
+          "0,"
+        ],
+        "sequence_id": "chr10"
+      },
+      {
+        "record_id": "line-17",
+        "line_number": 17,
+        "raw_text": "chr10\t112178171\t112178196\thg19_dna\t920\t-\t112178171\t112178196\t0\t1\t25,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr10",
+          "112178171",
+          "112178196",
+          "hg19_dna",
+          "920",
+          "-",
+          "112178171",
+          "112178196",
+          "0",
+          "1",
+          "25,",
+          "0,"
+        ],
+        "sequence_id": "chr10"
+      },
+      {
+        "record_id": "line-18",
+        "line_number": 18,
+        "raw_text": "chr1\t39368490\t39368526\thg19_dna\t946\t-\t39368490\t39368526\t0\t1\t36,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr1",
+          "39368490",
+          "39368526",
+          "hg19_dna",
+          "946",
+          "-",
+          "39368490",
+          "39368526",
+          "0",
+          "1",
+          "36,",
+          "0,"
+        ],
+        "sequence_id": "chr1"
+      },
+      {
+        "record_id": "line-19",
+        "line_number": 19,
+        "raw_text": "chr1\t220325687\t220325721\thg19_dna\t942\t-\t220325687\t220325721\t0\t1\t34,\t0,\n",
+        "kind": "feature",
+        "scope": "sequence",
+        "feature_columns": [
+          "chr1",
+          "220325687",
+          "220325721",
+          "hg19_dna",
+          "942",
+          "-",
+          "220325687",
+          "220325721",
+          "0",
+          "1",
+          "34,",
+          "0,"
+        ],
+        "sequence_id": "chr1"
+      }
+    ]
+  },
+  "dataset": {
+    "contigs": [
+      {
+        "contig_id": "chr9"
+      },
+      {
+        "contig_id": "chr8"
+      },
+      {
+        "contig_id": "chr22"
+      },
+      {
+        "contig_id": "chr2"
+      },
+      {
+        "contig_id": "chr19"
+      },
+      {
+        "contig_id": "chr18"
+      },
+      {
+        "contig_id": "chr13"
+      },
+      {
+        "contig_id": "chr1"
+      },
+      {
+        "contig_id": "chr4"
+      },
+      {
+        "contig_id": "chr10"
+      }
+    ],
+    "features": [
+      {
+        "feature_id": "bed:line-1",
+        "seqid": "chr9",
+        "type": "sequence_feature",
+        "start": 85737866,
+        "end": 85737906,
+        "coordinate_system": "contig",
+        "score": 854,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "85737865"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "85737906"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-1:block-1",
+        "seqid": "chr9",
+        "type": "sequence_feature",
+        "start": 85737866,
+        "end": 85737906,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-1"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-2",
+        "seqid": "chr8",
+        "type": "sequence_feature",
+        "start": 95160480,
+        "end": 95160520,
+        "coordinate_system": "contig",
+        "score": 1000,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "95160479"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "95160520"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-2:block-1",
+        "seqid": "chr8",
+        "type": "sequence_feature",
+        "start": 95160480,
+        "end": 95160520,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-2"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-3",
+        "seqid": "chr22",
+        "type": "sequence_feature",
+        "start": 42144401,
+        "end": 42144436,
+        "coordinate_system": "contig",
+        "score": 834,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "42144400"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "42144436"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-3:block-1",
+        "seqid": "chr22",
+        "type": "sequence_feature",
+        "start": 42144401,
+        "end": 42144436,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-3"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-4",
+        "seqid": "chr2",
+        "type": "sequence_feature",
+        "start": 183925985,
+        "end": 183926028,
+        "coordinate_system": "contig",
+        "score": 682,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "183925984"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "183926028"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-4:block-1",
+        "seqid": "chr2",
+        "type": "sequence_feature",
+        "start": 183925985,
+        "end": 183925990,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-4"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-4:block-2",
+        "seqid": "chr2",
+        "type": "sequence_feature",
+        "start": 183925991,
+        "end": 183926028,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-4"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-5",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 35483341,
+        "end": 35483510,
+        "coordinate_system": "contig",
+        "score": 890,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "35483340"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "35483510"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-5:block-1",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 35483341,
+        "end": 35483365,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-5"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-5:block-2",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 35483500,
+        "end": 35483510,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-5"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-6",
+        "seqid": "chr18",
+        "type": "sequence_feature",
+        "start": 23891311,
+        "end": 23891349,
+        "coordinate_system": "contig",
+        "score": 1000,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "23891310"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "23891349"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-6:block-1",
+        "seqid": "chr18",
+        "type": "sequence_feature",
+        "start": 23891311,
+        "end": 23891349,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-6"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-7",
+        "seqid": "chr18",
+        "type": "sequence_feature",
+        "start": 43252218,
+        "end": 43252245,
+        "coordinate_system": "contig",
+        "score": 930,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "43252217"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "43252245"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-7:block-1",
+        "seqid": "chr18",
+        "type": "sequence_feature",
+        "start": 43252218,
+        "end": 43252245,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-7"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-8",
+        "seqid": "chr13",
+        "type": "sequence_feature",
+        "start": 52759148,
+        "end": 52759198,
+        "coordinate_system": "contig",
+        "score": 912,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "52759147"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "52759198"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-8:block-1",
+        "seqid": "chr13",
+        "type": "sequence_feature",
+        "start": 52759148,
+        "end": 52759154,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-8"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-8:block-2",
+        "seqid": "chr13",
+        "type": "sequence_feature",
+        "start": 52759161,
+        "end": 52759198,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-8"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-9",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 1207057,
+        "end": 1207106,
+        "coordinate_system": "contig",
+        "score": 1000,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "1207056"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "1207106"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-9:block-1",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 1207057,
+        "end": 1207106,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-9"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-10",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 61700838,
+        "end": 61700871,
+        "coordinate_system": "contig",
+        "score": 824,
+        "strand": "+",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "61700837"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "61700871"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-10:block-1",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 61700838,
+        "end": 61700871,
+        "coordinate_system": "contig",
+        "strand": "+",
+        "parent": [
+          "bed:line-10"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-11",
+        "seqid": "chr4",
+        "type": "sequence_feature",
+        "start": 37558158,
+        "end": 37558191,
+        "coordinate_system": "contig",
+        "score": 572,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "37558157"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "37558191"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-11:block-1",
+        "seqid": "chr4",
+        "type": "sequence_feature",
+        "start": 37558158,
+        "end": 37558167,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-11"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-11:block-2",
+        "seqid": "chr4",
+        "type": "sequence_feature",
+        "start": 37558174,
+        "end": 37558191,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-11"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-12",
+        "seqid": "chr22",
+        "type": "sequence_feature",
+        "start": 48997406,
+        "end": 48997442,
+        "coordinate_system": "contig",
+        "score": 892,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "48997405"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "48997442"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-12:block-1",
+        "seqid": "chr22",
+        "type": "sequence_feature",
+        "start": 48997406,
+        "end": 48997442,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-12"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-13",
+        "seqid": "chr2",
+        "type": "sequence_feature",
+        "start": 120641741,
+        "end": 120641776,
+        "coordinate_system": "contig",
+        "score": 946,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "120641740"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "120641776"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-13:block-1",
+        "seqid": "chr2",
+        "type": "sequence_feature",
+        "start": 120641741,
+        "end": 120641776,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-13"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-14",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 54017131,
+        "end": 54017169,
+        "coordinate_system": "contig",
+        "score": 1000,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "54017130"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "54017169"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-14:block-1",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 54017131,
+        "end": 54017169,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-14"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-15",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 553743,
+        "end": 553781,
+        "coordinate_system": "contig",
+        "score": 848,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "553742"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "553781"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-15:block-1",
+        "seqid": "chr19",
+        "type": "sequence_feature",
+        "start": 553743,
+        "end": 553781,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-15"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-16",
+        "seqid": "chr10",
+        "type": "sequence_feature",
+        "start": 99388556,
+        "end": 99388591,
+        "coordinate_system": "contig",
+        "score": 834,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "99388555"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "99388591"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-16:block-1",
+        "seqid": "chr10",
+        "type": "sequence_feature",
+        "start": 99388556,
+        "end": 99388591,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-16"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-17",
+        "seqid": "chr10",
+        "type": "sequence_feature",
+        "start": 112178172,
+        "end": 112178196,
+        "coordinate_system": "contig",
+        "score": 920,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "112178171"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "112178196"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-17:block-1",
+        "seqid": "chr10",
+        "type": "sequence_feature",
+        "start": 112178172,
+        "end": 112178196,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-17"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-18",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 39368491,
+        "end": 39368526,
+        "coordinate_system": "contig",
+        "score": 946,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "39368490"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "39368526"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-18:block-1",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 39368491,
+        "end": 39368526,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-18"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-19",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 220325688,
+        "end": 220325721,
+        "coordinate_system": "contig",
+        "score": 942,
+        "strand": "-",
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "record"
+          },
+          {
+            "key": "bed:name",
+            "value": "hg19_dna"
+          },
+          {
+            "key": "bed:thickStart",
+            "value": "220325687"
+          },
+          {
+            "key": "bed:thickEnd",
+            "value": "220325721"
+          },
+          {
+            "key": "bed:itemRgb",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "feature_id": "bed:line-19:block-1",
+        "seqid": "chr1",
+        "type": "sequence_feature",
+        "start": 220325688,
+        "end": 220325721,
+        "coordinate_system": "contig",
+        "strand": "-",
+        "parent": [
+          "bed:line-19"
+        ],
+        "attributes": [
+          {
+            "key": "bed:role",
+            "value": "block"
+          }
+        ]
+      }
+    ]
+  },
+  "mappings": [
+    {
+      "record_id": "line-1",
+      "feature_ids": [
+        "bed:line-1",
+        "bed:line-1:block-1"
+      ]
+    },
+    {
+      "record_id": "line-2",
+      "feature_ids": [
+        "bed:line-2",
+        "bed:line-2:block-1"
+      ]
+    },
+    {
+      "record_id": "line-3",
+      "feature_ids": [
+        "bed:line-3",
+        "bed:line-3:block-1"
+      ]
+    },
+    {
+      "record_id": "line-4",
+      "feature_ids": [
+        "bed:line-4",
+        "bed:line-4:block-1",
+        "bed:line-4:block-2"
+      ]
+    },
+    {
+      "record_id": "line-5",
+      "feature_ids": [
+        "bed:line-5",
+        "bed:line-5:block-1",
+        "bed:line-5:block-2"
+      ]
+    },
+    {
+      "record_id": "line-6",
+      "feature_ids": [
+        "bed:line-6",
+        "bed:line-6:block-1"
+      ]
+    },
+    {
+      "record_id": "line-7",
+      "feature_ids": [
+        "bed:line-7",
+        "bed:line-7:block-1"
+      ]
+    },
+    {
+      "record_id": "line-8",
+      "feature_ids": [
+        "bed:line-8",
+        "bed:line-8:block-1",
+        "bed:line-8:block-2"
+      ]
+    },
+    {
+      "record_id": "line-9",
+      "feature_ids": [
+        "bed:line-9",
+        "bed:line-9:block-1"
+      ]
+    },
+    {
+      "record_id": "line-10",
+      "feature_ids": [
+        "bed:line-10",
+        "bed:line-10:block-1"
+      ]
+    },
+    {
+      "record_id": "line-11",
+      "feature_ids": [
+        "bed:line-11",
+        "bed:line-11:block-1",
+        "bed:line-11:block-2"
+      ]
+    },
+    {
+      "record_id": "line-12",
+      "feature_ids": [
+        "bed:line-12",
+        "bed:line-12:block-1"
+      ]
+    },
+    {
+      "record_id": "line-13",
+      "feature_ids": [
+        "bed:line-13",
+        "bed:line-13:block-1"
+      ]
+    },
+    {
+      "record_id": "line-14",
+      "feature_ids": [
+        "bed:line-14",
+        "bed:line-14:block-1"
+      ]
+    },
+    {
+      "record_id": "line-15",
+      "feature_ids": [
+        "bed:line-15",
+        "bed:line-15:block-1"
+      ]
+    },
+    {
+      "record_id": "line-16",
+      "feature_ids": [
+        "bed:line-16",
+        "bed:line-16:block-1"
+      ]
+    },
+    {
+      "record_id": "line-17",
+      "feature_ids": [
+        "bed:line-17",
+        "bed:line-17:block-1"
+      ]
+    },
+    {
+      "record_id": "line-18",
+      "feature_ids": [
+        "bed:line-18",
+        "bed:line-18:block-1"
+      ]
+    },
+    {
+      "record_id": "line-19",
+      "feature_ids": [
+        "bed:line-19",
+        "bed:line-19:block-1"
+      ]
+    }
+  ]
+}

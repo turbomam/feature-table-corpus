@@ -19,7 +19,7 @@ default:
 
 [doc("Run corpus, schema, example, and regression checks.")]
 [group("Validation")]
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check
     @echo "all checks passed"
 
 [doc("Check all three LinkML schemas against the metamodel.")]
@@ -59,7 +59,7 @@ validate-example-closed example=feature_example:
 [doc("Run regression tests on real examples and negative controls.")]
 [group("Validation")]
 test:
-    uv run --with linkml --with jsonschema --with duckdb python3 -m unittest discover -s tests -v
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 -m unittest discover -s tests -v
 
 # ---- Corpus maintenance -----------------------------------------------------
 
@@ -130,7 +130,7 @@ query-overlap space seqid start end db=duckdb_path:
 # ---- Source documents -------------------------------------------------------
 
 # Additional options go to the existing parser: --profile, --source-uri, --strict.
-[doc("Parse a GFF3/GTF file into a new source-document JSON file.")]
+[doc("Parse GFF3/GTF/BED12 into a new source-document JSON file.")]
 [group("Source documents")]
 source-parse input format output *options:
     source_input="$1"; source_format="$2"; source_output="$3"; shift 3; \
@@ -171,3 +171,32 @@ nmdc-render work=nmdc_work output=nmdc_report:
 [group("NMDC")]
 nmdc-sample:
     python3 scripts/harvest_nmdc.py
+
+# ---- Versioned conversions -------------------------------------------------
+
+[doc("Import through an explicit profile and reference context.")]
+[group("Conversions")]
+conversion-import input profile reference output *options:
+    conversion_input="$1"; conversion_profile="$2"; conversion_reference="$3"; conversion_output="$4"; shift 4; \
+        uv run --with-requirements requirements-conversion.txt python3 scripts/convert_features.py import "$conversion_input" --profile "$conversion_profile" --reference-context "$conversion_reference" --output "$conversion_output" "$@"
+
+[doc("Export exact bytes or reconstruct fields; refuse edited bundles.")]
+[group("Conversions")]
+conversion-export input output mode="exact" *options:
+    conversion_input="$1"; conversion_output="$2"; conversion_mode="$3"; shift 3; \
+        uv run --with-requirements requirements-conversion.txt python3 scripts/convert_features.py export "$conversion_input" --output "$conversion_output" --mode "$conversion_mode" "$@"
+
+[doc("Check a conversion bundle, optionally against --original PATH.")]
+[group("Conversions")]
+conversion-validate input *options:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/convert_features.py validate "$@"
+
+[doc("Regenerate the tracked per-case conversion preservation report.")]
+[group("Conversions")]
+conversion-report:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/conversion_report.py
+
+[doc("Require the retained conversion report to reproduce exactly.")]
+[group("Conversions")]
+conversion-check:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/conversion_report.py --check

@@ -1,7 +1,7 @@
 id: https://w3id.org/ber-data/source-document
 name: source-document
 title: Feature source documents (draft)
-description: Ordered source records and scoped metadata from individual GFF3 or GTF artifacts.
+description: Ordered source records and scoped metadata from individual GFF3, GTF, or BED12 artifacts.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -122,11 +122,11 @@ slots:
     list_elements_ordered: true
     range: Attribute
   feature_columns:
-    description: Exactly nine tab-separated source fields, with column 9 and all lexical spellings intact.
+    description: Lexical source fields; exactly nine for GFF3/GTF or twelve for BED12, enforced by the reader.
     multivalued: true
     list_elements_ordered: true
     minimum_cardinality: 9
-    maximum_cardinality: 9
+    maximum_cardinality: 12
   sequence_text:
     description: Sequence letters from a FASTA body line, with whitespace removed; raw_text retains it.
   warnings:
@@ -141,6 +141,8 @@ enums:
         description: GFF3 lexical structure and standard directives, including headerless producer output.
       gtf:
         description: GTF nine-column records and comments; GFF3 section markers are not interpreted.
+      bed12:
+        description: Twelve tab-separated BED columns; comments and browser/track commands retain stream scope.
   MetadataProfileEnum:
     description: Producer-specific metadata interpretation, or generic format behavior.
     permissible_values:

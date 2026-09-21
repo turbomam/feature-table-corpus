@@ -1,0 +1,26 @@
+id: bed12-blocks/1.0.0
+kind: source-dialect
+source_format: bed12
+implementation: scripts/convert_features.py
+model: model/schema/ber_feature_model.yaml
+coordinates: Zero-based half-open source intervals become one-based inclusive model intervals (start + 1, end unchanged).
+metadata: Generic SourceDocument; comments and track/browser commands retain stream position without inferred biological scope.
+supported:
+  - Exactly twelve tab-separated fields, nonempty intervals, ordered nonoverlapping positive-size blocks.
+  - Names (including repeats), scores 0..1000, plus/minus/unstranded values, thick intervals and itemRgb.
+  - Block lists with or without trailing commas, lexical integers, BOM, CR/LF/CRLF and absent final newline.
+mapping:
+  record: One sequence_feature spanning the BED interval, with bed:role=record and a document-local bed:line-N ID.
+  blocks: Ordered sequence_feature children with bed:role=block, absolute one-based coordinates and the record as parent.
+  optional_fields: name, thickStart, thickEnd and itemRgb use bed-prefixed generic attributes; score and strand use core slots.
+  thick_interval: Preserve its zero-based drawing coordinates without inventing a CDS or asserting a protein-coding region.
+  reference: Keep chrom literally; require explicit assembly/source context, never infer assembly from a chromosome label.
+reverse:
+  authority: Imported instances are immutable. All core fields, generic attributes and block relationships are validated.
+  exact: Validate the imported projection and block reconstruction before restoring lexical cells and record endings.
+  reconstruct: Emit all twelve columns from Dataset fields and ordered child identities; no source feature text or columns.
+  normalization: Integer spelling and block-list trailing commas may normalize in reconstructed output.
+unsupported:
+  - BED3..11, BED12+ extensions, whitespace-delimited variants, zero-length intervals and overlapping/out-of-order blocks.
+  - Inferred transcript/exon/CDS biology, query sequence coordinates, reference aliases, lossy export and edited-instance export.
+guarantees: [exact-source-bytes, reconstructed-feature-fields]
