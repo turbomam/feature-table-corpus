@@ -15,6 +15,15 @@ import validate_corpus as validity
 
 
 class CorpusValidityTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        try:
+            available = validity.binary_path().is_file()
+        except ValueError:
+            available = False
+        if not available:
+            raise unittest.SkipTest("Install GenomeTools with just validity-install for real-tool tests; validity-check still requires it")
+
     def test_real_files_and_retained_report(self):
         index = yaml.safe_load((validity.ROOT / "corpus/index.yaml").read_text())
         report = validity.measure(index, validity.binary_path())
@@ -51,6 +60,7 @@ class CorpusValidityTests(unittest.TestCase):
             with patch.object(validity, "REPORT", bad_report), patch.object(sys, "argv", ["validate_corpus", "--check"]):
                 self.assertEqual(validity.main(), 1)
 
+class ValidatorExecutionTests(unittest.TestCase):
     def test_tool_failures_are_not_invalid_verdicts(self):
         for code, stdout, stderr in [(1, "", "missing library"), (-11, "", "crash"), (0, "", "")]:
             with self.subTest(code=code, stderr=stderr), patch.object(validity.subprocess, "run",

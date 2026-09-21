@@ -23,6 +23,10 @@ def default_binary():
 
 
 def install():
+    # Extraction filters were backported to Python 3.11.4. The launcher requests
+    # >=3.11.8; also fail clearly when this file is invoked with an older Python.
+    if not hasattr(tarfile, "data_filter"):
+        raise SystemExit("Safe extraction filters unavailable; run just validity-install (Python 3.11.8+)")
     binary = default_binary()
     directory = ROOT / "local" / "tools"
     directory.mkdir(parents=True, exist_ok=True)

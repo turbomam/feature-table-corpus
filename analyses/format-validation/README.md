@@ -24,6 +24,12 @@ the version and normalizes only the executable path in diagnostics; source
 paths, warning/error text, and verdicts are preserved. A timeout, crash,
 unexpected output, or tool startup failure fails the check rather than counting
 as rejection. CI runs the same real validator and compares the retained report.
+`just test` reports an explicit skip for the three real-tool regression methods
+if GenomeTools is not installed; the mock execution-failure test still runs.
+`just validity-check` and therefore `just check` always require the real binary.
+Extraction filters are available in Python 3.11 through the
+[3.11.4 backport](https://docs.python.org/3.11/library/tarfile.html#extraction-filters);
+direct invocation with a Python lacking that feature fails before downloading.
 
 ## What the result means
 
