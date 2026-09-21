@@ -30,7 +30,11 @@ notes:
     species, and a closing `###`). GFF3's `##sequence-region` and `##species` directives would
     otherwise be a natural source for Contig.length_bp and Contig.taxonomic_lineage, but real
     NMDC data mostly doesn't carry them, which is why both those slots are populated from other
-    sidecar files here instead (see their own notes)."
+    sidecar files here instead (see their own notes). This directive count excludes single-#
+    comments: the Prodigal example has 5 Sequence Data and 5 Model Data comments interleaved
+    with feature rows, including sequence lengths and per-sequence prediction settings.
+    These are evidence for a future source-document/comment model with explicit scope;
+    scarcity of ## directives does not imply absence of useful comment metadata."
 license: CC BY 4.0
 
 prefixes:

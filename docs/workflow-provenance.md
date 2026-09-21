@@ -16,7 +16,7 @@ sequence feature.
 |---|---|---|---|
 | Read QC / filtering | `wfrqc-*` | Filtered reads, QC statistics | No. No positional structure below the whole-read level. |
 | Metagenome assembly | `wfmgas-*` | Contigs, scaffolds, an AGP file, per-contig coverage stats | No, but adjacent. Produces the `Contig` a feature table's features sit on. |
-| **Metagenome annotation** | **`wfmgan-*`** | **All 19 feature-bearing `data_object_type` values this repo tracks** | **Yes. This is the only source.** |
+| **Metagenome annotation** | **`wfmgan-*`** | **The 17 vendored feature-bearing types: 14 GFF and 3 non-GFF** | **Yes. This is the only source in the sampled workflow chain.** |
 | Read-based taxonomic classification | `wfrbt-*` | Kraken2, Centrifuge, GOTTCHA2 classification and reports | No. One row per read or per taxon, bypasses assembly and annotation entirely. |
 | MAG binning | `wfmag-*` | CheckM quality stats, GTDB-Tk taxonomy, bin compression files | No. One row per genome bin, a different granularity from a feature table. |
 

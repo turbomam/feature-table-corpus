@@ -39,6 +39,11 @@ currently assumes linear sequences; circular wraparound GFF3 coordinates need an
 future representation. It does not validate biological CDS phase correctness, ontology terms,
 or all GFF3 grammar.
 
+CI also downloads the pinned, unvendored prior-art GFF schema and asserts its published
+19-admissible/13-rejected audit totals. Locally, set `PINNED_GFF_SCHEMA` to that downloaded
+schema's path to include this test; otherwise it is explicitly skipped. The current draft
+model's separate 20-admissible/8-rejected totals are tested without network access.
+
 Both Contig and Feature expose `generated_by` and `source_files`. These remain optional
 for sources lacking workflow metadata, but every supplied example populates them.
 `generated_by` replaces the earlier Feature-only `predicted_by` field. The

@@ -20,9 +20,10 @@ one-shot shell extractor; Bakta's key assignment is spread across a dict-literal
 tuple-unpacking style that a single regex pass reliably misses part of.
 
 Usage:
-    curl -sL https://raw.githubusercontent.com/oschwengers/bakta/v1.12.1/bakta/io/gff.py -o /tmp/bk_gff.py
-    curl -sL https://raw.githubusercontent.com/oschwengers/bakta/v1.12.1/bakta/constants.py -o /tmp/bk_const.py
-    python3 scripts/extract_bakta_keys.py /tmp/bk_gff.py /tmp/bk_const.py
+    mkdir -p local/bakta
+    curl -sL https://raw.githubusercontent.com/oschwengers/bakta/v1.12.1/bakta/io/gff.py -o local/bakta/gff.py
+    curl -sL https://raw.githubusercontent.com/oschwengers/bakta/v1.12.1/bakta/constants.py -o local/bakta/constants.py
+    python3 scripts/extract_bakta_keys.py local/bakta/gff.py local/bakta/constants.py
 """
 import ast
 import sys
@@ -73,7 +74,7 @@ def main():
                             if k:
                                 keys.add(k)
                             else:
-                                unresolved.append(ast.dump(kexpr)[:60])
+                                unresolved.append(ast.dump(kexpr)[:60] if kexpr is not None else "dict unpacking")
         if isinstance(node, ast.Assign):
             for t in node.targets:
                 if isinstance(t, ast.Tuple):
@@ -82,6 +83,8 @@ def main():
                             k = keyname(el.slice)
                             if k:
                                 keys.add(k)
+                            else:
+                                unresolved.append(ast.dump(el.slice)[:60])
 
     print(f"constants parsed: {len(consts)}")
     print(f"distinct GFF column-9 keys: {len(keys)}")

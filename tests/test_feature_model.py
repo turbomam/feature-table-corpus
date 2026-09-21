@@ -1,6 +1,7 @@
 """Semantic regressions and real-data query controls for the harmonized profile."""
 import copy
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -113,6 +114,8 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
+        self.assertEqual(len(rows), 28)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 20)
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
         self.assertIn(('Attribute', 'key'), rows)
@@ -296,6 +299,38 @@ class ValidationBlockTests(unittest.TestCase):
                     self.assertIn('| `flat_profile_audit.py` | 0 |', result.stdout)
                 else:
                     self.assertIn('REFUSING to audit', result.stdout)
+
+    @unittest.skipUnless(os.environ.get('PINNED_GFF_SCHEMA'), 'CI supplies the unvendored pinned upstream schema')
+    def test_pinned_upstream_totals(self):
+        rows = audit(SchemaView(os.environ['PINNED_GFF_SCHEMA']))
+        self.assertEqual(sum(row[5] == 'admissible' for row in rows), 19)
+        self.assertEqual(sum(row[5] != 'admissible' for row in rows), 13)
+
+    def test_bakta_extractor_rejects_unresolved_assignment_styles(self):
+        scratch = ROOT / 'local/test-tmp'
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as work:
+            constants = Path(work) / 'constants.py'
+            source = Path(work) / 'gff.py'
+            constants.write_text('KNOWN = "gene"\n')
+            for expression in (
+                'annotations[dynamic] = value',
+                'annotations = {dynamic: value}',
+                'annotations = {**dynamic}',
+                '(annotations[dynamic], gene_annotations[bc.KNOWN]) = values',
+                '(annotations[bc.MISSING], other) = values',
+            ):
+                with self.subTest(expression=expression):
+                    source.write_text(expression + '\n')
+                    result = subprocess.run([sys.executable, str(ROOT / 'scripts/extract_bakta_keys.py'),
+                                             str(source), str(constants)], capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 1, result.stderr)
+                    self.assertIn('UNRESOLVED KEY EXPRESSIONS', result.stdout)
+            source.write_text('(annotations["Name"], gene_annotations[bc.KNOWN]) = values\n')
+            result = subprocess.run([sys.executable, str(ROOT / 'scripts/extract_bakta_keys.py'),
+                                     str(source), str(constants)], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('distinct GFF column-9 keys: 2', result.stdout)
 
 
 if __name__ == "__main__":
