@@ -23,6 +23,7 @@ class CorpusValidityTests(unittest.TestCase):
             available = False
         if not available:
             raise unittest.SkipTest("Install GenomeTools with just validity-install for real-tool tests; validity-check still requires it")
+        (validity.ROOT / "local").mkdir(exist_ok=True)
 
     def test_real_files_and_retained_report(self):
         index = yaml.safe_load((validity.ROOT / "corpus/index.yaml").read_text())
