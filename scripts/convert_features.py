@@ -337,13 +337,20 @@ def reconstruct_record(profile, by_id, mapping):
             ",".join(str(b["start"] - feature["start"]) for b in blocks) + ","]
 
 
-def validate_bundle(bundle, original_bytes=None):
+def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
     try:
+        if bundle["profile"] == PROTEIN:
+            require(protein_context is not None, "protein-context-original",
+                    "supply the independent original protein context for validation/export")
+            require(protein_context == bundle.get("protein_context"), "protein-context-edited",
+                    "bundle protein context differs from the supplied original context")
+        else:
+            require(protein_context is None, "protein-context", "this profile does not use protein context")
         source = bundle["source"]
         content = replay_bytes(source, original_bytes=original_bytes)
         expected = import_source(content, profile=bundle["profile"], reference_context=bundle["reference_context"],
                                  source_uri=source["artifact"]["uri"], metadata_profile=source["profile"],
-                                 protein_context=bundle.get("protein_context"))
+                                 protein_context=protein_context)
         require(json.dumps(bundle, sort_keys=True) == json.dumps(expected, sort_keys=True),
                 "edited-bundle", "bundle differs from its imported projection; edited-instance export is not supported")
         return content
@@ -351,9 +358,9 @@ def validate_bundle(bundle, original_bytes=None):
         raise ConversionError("bundle-shape", "invalid conversion bundle structure") from error
 
 
-def export_source(bundle, *, mode, original_bytes=None):
+def export_source(bundle, *, mode, original_bytes=None, protein_context=None):
     require(mode in ("exact", "reconstruct"), "export-mode", "choose exact or reconstruct explicitly")
-    content = validate_bundle(bundle, original_bytes)
+    content = validate_bundle(bundle, original_bytes, protein_context=protein_context)
     by_id = {f["feature_id"]: f for f in bundle["dataset"]["features"]}
     mappings = {m["record_id"]: m for m in bundle["mappings"]}
     bindings = protein_bindings(bundle["protein_context"], bundle["reference_context"]) if bundle["profile"] == PROTEIN else None
@@ -403,6 +410,7 @@ def main():
     validate.add_argument("input", type=Path)
     for command in (dump, validate):
         command.add_argument("--original", type=Path)
+        command.add_argument("--protein-context", type=Path, help="Independent original context; required for the protein profile")
     args = parser.parse_args()
     try:
         if args.command == "import":
@@ -414,10 +422,11 @@ def main():
         else:
             bundle = json.loads(args.input.read_text(encoding="utf-8"))
             original = args.original.read_bytes() if args.original else None
+            context = json.loads(args.protein_context.read_text()) if args.protein_context else None
             if args.command == "export":
-                write_new(args.output, export_source(bundle, mode=args.mode, original_bytes=original))
+                write_new(args.output, export_source(bundle, mode=args.mode, original_bytes=original, protein_context=context))
             else:
-                validate_bundle(bundle, original)
+                validate_bundle(bundle, original, protein_context=context)
                 print(json.dumps({"profile": bundle["profile"], "valid": True, "edited_export": "unsupported"}))
     except (OSError, ValueError, KeyError, TypeError) as error:
         print(json.dumps({"status": "rejected", "code": getattr(error, "code", "input-error"),

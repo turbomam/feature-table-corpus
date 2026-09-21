@@ -56,8 +56,8 @@ class ProteinProfileTests(unittest.TestCase):
 
     def test_real_roundtrips_and_reconstruction_without_source_text(self):
         b = self.bundle
-        self.assertEqual(export_source(b, mode="exact", original_bytes=PFAM.read_bytes()), PFAM.read_bytes())
-        canonical = export_source(b, mode="reconstruct")
+        self.assertEqual(export_source(b, mode="exact", original_bytes=PFAM.read_bytes(), protein_context=self.context), PFAM.read_bytes())
+        canonical = export_source(b, mode="reconstruct", protein_context=self.context)
         again = imported(canonical, self.context)
         self.assertEqual(again["dataset"], b["dataset"])
         self.assertEqual(again["mappings"], b["mappings"])
@@ -102,7 +102,7 @@ class ProteinProfileTests(unittest.TestCase):
             b = deepcopy(self.bundle); b["dataset"]["features"][-1][key] = value
             for mode in ("exact", "reconstruct"):
                 with self.subTest(key=key, mode=mode), self.assertRaises(ConversionError):
-                    export_source(b, mode=mode)
+                    export_source(b, mode=mode, protein_context=self.context)
 
     def test_generated_attributes_and_nontrivial_reference_mapping(self):
         rng = random.Random(25)
@@ -115,8 +115,8 @@ class ProteinProfileTests(unittest.TestCase):
             content = (f"# observed metadata\r\nprotein%20alias\tHMMER 3.1b2\tPF13358\t{start:05}\t{end}\t1e1\t.\t.\t"
                        "ID=hit;unknown=x%3By;unknown=;Note=a%2Cb,,c;\r\n").encode()
             b = imported(content, c)
-            self.assertEqual(export_source(b, mode="exact"), content)
-            again = imported(export_source(b, mode="reconstruct"), c)
+            self.assertEqual(export_source(b, mode="exact", protein_context=c), content)
+            again = imported(export_source(b, mode="reconstruct", protein_context=c), c)
             self.assertEqual(again["dataset"], b["dataset"])
             self.assertEqual(b["dataset"]["features"][-1]["parent"], [GENE])
 
@@ -146,9 +146,50 @@ class ProteinProfileTests(unittest.TestCase):
             self.assertEqual(subprocess.run(command, capture_output=True).returncode, 2)
             self.assertEqual(before, bundle.read_bytes())
             result = subprocess.run([sys.executable, str(ROOT / "scripts/convert_features.py"), "export", str(bundle),
-                                     "--mode", "exact", "--original", str(PFAM), "--output", str(restored)], capture_output=True)
+                                     "--mode", "exact", "--original", str(PFAM), "--protein-context", str(CONTEXT),
+                                     "--output", str(restored)], capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(restored.read_bytes(), PFAM.read_bytes())
+
+    def test_coordinated_context_edits_require_independent_original(self):
+        for mutation in ("translation", "binding", "provenance"):
+            changed = deepcopy(self.context)
+            parent = changed["dataset"]["features"][0]
+            if mutation == "translation":
+                parent["translated_sequence"] = "V" + parent["translated_sequence"][1:]
+            elif mutation == "binding":
+                old = parent["feature_id"]
+                parent["feature_id"] += ":changed"
+                next(b for b in changed["bindings"] if b["cds_id"] == old)["cds_id"] = parent["feature_id"]
+            else:
+                changed["artifacts"][0]["sha256"] = "0" * 64
+            # Reimport constructs a consistent bundle from the edited input.
+            edited = imported(PFAM.read_bytes(), changed)
+            for mode in ("exact", "reconstruct"):
+                with self.subTest(mutation=mutation, mode=mode), self.assertRaises(ConversionError) as caught:
+                    export_source(edited, mode=mode, original_bytes=PFAM.read_bytes(), protein_context=self.context)
+                self.assertEqual(caught.exception.code, "protein-context-edited")
+        for mode in ("exact", "reconstruct"):
+            with self.assertRaises(ConversionError) as caught:
+                export_source(self.bundle, mode=mode)
+            self.assertEqual(caught.exception.code, "protein-context-original")
+
+    def test_context_launcher_reproduces_json_and_preserves_failure_status(self):
+        entries = {e["id"]: e for e in yaml.safe_load((ROOT / "corpus/index.yaml").read_text())["entries"]}
+        p, s, f = (entries["nmdc-biosample-" + name] for name in ("pfam", "structural", "proteins"))
+        with tempfile.TemporaryDirectory(dir=ROOT / "local") as directory:
+            output = Path(directory) / "context with spaces.json"
+            command = ["just", "protein-context", str(ROOT / p["path"]), str(ROOT / s["path"]),
+                       str(ROOT / f["path"]), REFERENCE, str(output), "--annotation-uri", p["origin_url"],
+                       "--structural-uri", s["origin_url"], "--fasta-uri", f["origin_url"]]
+            result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(output.read_text()), self.context)
+            before = output.read_bytes()
+            self.assertNotEqual(subprocess.run(command, cwd=ROOT, capture_output=True).returncode, 0)
+            self.assertEqual(output.read_bytes(), before)
+            command[3] = str(Path(directory) / "missing structural.gff")
+            self.assertNotEqual(subprocess.run(command, cwd=ROOT, capture_output=True).returncode, 0)
 
 
 if __name__ == "__main__":
