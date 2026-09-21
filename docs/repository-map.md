@@ -1,0 +1,95 @@
+# Repository map
+
+The repository groups artifacts by their role. Paths below describe this branch's
+actual layout; the model remains a draft, regardless of its directory name.
+
+```text
+corpus/                         Evidence collected from producers and prior art
+  index.yaml                    Inventory, provenance, licenses, and checksums
+  PROVENANCE.md                 Dated acquisition and correction history
+  sources/{nmdc,ncbi-refseq}/    Preserved upstream source text
+  specifications/               Prior-art schemas and specification extracts
+  fixtures/{malformed,edge-cases}/  Deliberately altered, indexed test cases
+model/                          This project's proposed contracts and instances
+  schema/                       LinkML schemas and validation guide
+  examples/                     Worked examples and their source-artifact manifest
+analyses/                       Source-specific measurements and selection reports
+  nmdc-data-objects/             NMDC categorical-slot and URL-host counts
+  nmdc-selection/                Saved sampling report for the original GFF files
+docs/                           Comparisons, interpretation, and design decisions
+scripts/                        Acquisition, generation, and validation code
+tests/                          Executable checks and small test-only fixtures
+local/                          Gitignored inputs, caches, and generated outputs
+```
+
+The [layout decision](decisions/001-artifact-layout.md) records the old-to-new path
+mapping. Each artifact has one maintained location; there are no compatibility copies
+at the old paths. Commands below run from the repository root.
+
+## Choose an artifact
+
+| Question | Start here | Authority and reproduction |
+|---|---|---|
+| Which real files can I reuse? | [Corpus index](../corpus/index.yaml), [acquisition history](../corpus/PROVENANCE.md), then [source files](../corpus/sources/) | The index governs the corpus inventory. Each entry records provenance and license; paths are repository-root-relative. `uv run --with pyyaml python scripts/verify.py` checks inventory invariants and stored checksums. RefSeq gzip downloads are stored decompressed. |
+| Which cases were constructed here? | [Malformed](../corpus/fixtures/malformed/) and [edge-case](../corpus/fixtures/edge-cases/) fixtures | Nine indexed mutations of the public-domain phiX174 source, each with a mutation description and appended provenance. `python3 scripts/make_malformed.py` regenerates them; CI checks exact reproduction. Independent measurement of validity labels remains [#2](https://github.com/turbomam/feature-table-corpus/issues/2). |
+| How do prior models differ? | [Comparison](model-comparison.md), [columns and producer discretion](columns-and-discretion.md), and [specification evidence](../corpus/specifications/) | Chado SQL is an extracted subset under Artistic-2.0; the KBase YAML is an upstream module under MIT. Their indexed bytes and acquisition scope are recorded. The reserved-attribute YAML is a repository-authored transcription, with its source and date in the file header. These files are evidence for comparison. |
+| What model are we proposing? | [Schema guide](../model/schema/README.md), [attribute semantics](attributes.md), and [source-document guide](source-documents.md) | Reusable draft LinkML contracts live in `model/schema/`. Generic attributes are shared by biological records and source records. `just check` runs schema, semantic, corpus, and regression checks. |
+| Which instances demonstrate those contracts? | [Example crosswalk](#examples-and-their-contracts) below | Harmonized examples are curated transformations; the parsed source-document example is generated. Their guides identify exact sources and validation commands. |
+| What do the NMDC counts measure? | [DataObject analysis](../analyses/nmdc-data-objects/README.md) | A generated catalogue and counts of NMDC metadata records only. The report identifies pinned schema inputs, collection timestamps, hashes, and data-use terms. Refresh all report/JSON/CSV outputs together using the commands below. |
+| How were the original NMDC GFF files selected? | [Selection report guide](../analyses/nmdc-selection/README.md) and [saved selection](../analyses/nmdc-selection/selection.json) | This sampled selection is distinct from the full DataObject analysis. `python3 scripts/harvest_nmdc.py` writes a new live sample to `local/nmdc-selection/selection.json`; inspect errors and changed selections before replacing the saved report. |
+| What should I read beyond one format's advocates? | [Cross-format reading guide](feature-format-reading.md) | Sources are dated and their perspectives identified. Literature and tool documentation motivate tests; they do not establish conversion fidelity. |
+
+`corpus/PROVENANCE.md` is a historical account, so its intermediate counts can differ
+from the current index. Likewise, a fresh upstream download or API traversal is a new
+observation, not automatically a reproduction of an earlier snapshot.
+
+## Examples and their contracts
+
+| Example | Contract | Source and reproduction |
+|---|---|---|
+| [One biosample's sequencing](../model/examples/one-biosample-sequencing/harmonized.yaml) | [Harmonized feature model](../model/schema/ber_feature_model.yaml), importing [generic attributes](../model/schema/attributes.yaml) | [Guide](../model/examples/one-biosample-sequencing/README.md), [transformation notes](../model/examples/one-biosample-sequencing/notes.md), and [source manifest](../model/examples/source-artifacts.yaml). The curated selection uses a different biosample from the standalone NMDC corpus files. `just validate-example-closed` validates the instance. |
+| [One CDS with three Pfams](../model/examples/multiple-pfams/harmonized.yaml) | The same harmonized feature and attribute schemas | [Guide](../model/examples/multiple-pfams/README.md) and the same source manifest identify rows, FASTA records, attribution, and checksums. `just validate-example-closed model/examples/multiple-pfams/harmonized.yaml` validates the instance. |
+| [Parsed Prodigal document](../model/examples/source-documents/prodigal.json) | [Source-document model](../model/schema/source_document.yaml), importing generic attributes | [Guide](../model/examples/source-documents/README.md) supplies the exact parse command for the unchanged `nmdc-prodigal` corpus entry. `just validate-source-example` checks shape, internal consistency, and byte agreement with the retained corpus source. |
+
+The first two represent biological records. The third preserves ordered source text,
+including comments, directives, and feature rows. Source replay alone is not evidence
+of a reversible conversion through the harmonized model; executable conversion-profile
+guarantees are tracked in [#16](https://github.com/turbomam/feature-table-corpus/issues/16).
+
+[Parser test fixtures](../tests/fixtures/source-documents/README.md) stay under `tests/`
+because they are small constructed inputs for unit tests, not additional observed
+producer outputs. Corpus fixtures are separately indexed evidence for validator
+comparisons and remain under `corpus/fixtures/`.
+
+## Record granularity
+
+- An **NMDC DataObject** describes an artifact. Its category and URL-host frequencies
+  count NMDC metadata records, not genomic features or format use across genomics.
+- A **source artifact** identifies bytes and provenance. A **source document** represents
+  the ordered contents of one physical text artifact.
+- A **harmonized Dataset** can combine several artifacts and workflow executions.
+  Contig and Feature instances are biological/model records.
+- An **Attribute** is an attached key/value entry. The containing object supplies its
+  scope; GFF column 9 is one use case.
+
+## Generated outputs and local work
+
+The [schema diagram](schema-diagram.md) is regenerated by `just diagram`, with freshness
+checked by CI. `just build-duckdb` writes an experimental physical mapping under
+gitignored `local/build/`. Database binaries do not define the model.
+
+To refresh the NMDC DataObject analysis with Python 3.11 or later:
+
+```sh
+uv run --with linkml-runtime python scripts/profile_nmdc_data_objects.py collect
+uv run --offline --with linkml-runtime python scripts/profile_nmdc_data_objects.py render
+```
+
+`collect` traverses the public API and writes local inputs plus published aggregates.
+`render` requires checksum-verified inputs under `local/nmdc-profile/` and cached
+dependencies; a fresh clone cannot reproduce the dated counts offline. An API traversal
+is not a transactional snapshot. See the report's refresh safeguards.
+
+Keep task inputs, retained downloads, and scratch output under `local/<task>/`, with
+source URLs and checksums where needed. These gitignored files are excluded from the
+future [GitHub Pages site](https://github.com/turbomam/feature-table-corpus/issues/12).

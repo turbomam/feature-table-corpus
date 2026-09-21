@@ -1,0 +1,16 @@
+##gff-version 3
+# fixture-kind: derived parser fixture, not observed producer output
+# derived-from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+# mutations: retain sequence name; shorten region and feature; add comments, repeated unknown directives, ontologies and synthetic FASTA
+##sequence-region NC_001422.1 2 4
+##feature-ontology https://example.org/ontology/first
+##feature-ontology https://example.org/ontology/second
+##unknown-producer-setting first value
+NC_001422.1	RefSeq	region	2	4	.	+	.	ID=derived-region
+# an ordinary comment between the feature and its group boundary
+##unknown-producer-setting second value
+###
+##FASTA
+>NC_001422.1 synthetic sequence for a parser test
+ACG
+TNN

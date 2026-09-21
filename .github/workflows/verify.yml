@@ -22,8 +22,8 @@ jobs:
       # written down.
       - name: Prove the invariant check can fail
         run: |
-          cp corpus.yaml /tmp/corpus.good.yaml
-          restore() { cp /tmp/corpus.good.yaml corpus.yaml; }
+          cp corpus/index.yaml /tmp/corpus.good.yaml
+          restore() { cp /tmp/corpus.good.yaml corpus/index.yaml; }
           expect_reject() {
             if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
               echo "FAIL: verifier accepted an index with $1"; cat /tmp/out.txt; restore; exit 1
@@ -37,48 +37,48 @@ jobs:
           # Duplicate id AND duplicate path: copying an entry whole does both.
           uv run --with pyyaml python - <<'PY'
           import yaml, copy
-          d = yaml.safe_load(open("corpus.yaml"))
+          d = yaml.safe_load(open("corpus/index.yaml"))
           d["entries"].append(copy.deepcopy(d["entries"][0]))
-          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          yaml.safe_dump(d, open("corpus/index.yaml", "w"), sort_keys=False)
           PY
           expect_reject "a duplicated entry" "DUPLICATE-ID"
 
           uv run --with pyyaml python - <<'PY'
           import yaml, copy
-          d = yaml.safe_load(open("corpus.yaml"))
+          d = yaml.safe_load(open("corpus/index.yaml"))
           d["entries"].append(copy.deepcopy(d["entries"][0]))
-          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          yaml.safe_dump(d, open("corpus/index.yaml", "w"), sort_keys=False)
           PY
           expect_reject "a duplicated path" "DUPLICATE-PATH"
 
           # Missing required field.
           uv run --with pyyaml python - <<'PY'
           import yaml, copy
-          d = yaml.safe_load(open("corpus.yaml"))
+          d = yaml.safe_load(open("corpus/index.yaml"))
           e = copy.deepcopy(d["entries"][0]); e["id"] = "no-license"; e.pop("license", None)
           d["entries"].append(e)
-          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          yaml.safe_dump(d, open("corpus/index.yaml", "w"), sort_keys=False)
           PY
           expect_reject "a missing license" "MISSING-FIELDS"
 
           # Two identities for one upstream artifact.
           uv run --with pyyaml python - <<'PY'
           import yaml, copy
-          d = yaml.safe_load(open("corpus.yaml"))
+          d = yaml.safe_load(open("corpus/index.yaml"))
           src = next(e for e in d["entries"] if e["tier"] == "linked")
           e = copy.deepcopy(src); e["id"] = src["id"] + "-again"
           d["entries"].append(e)
-          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          yaml.safe_dump(d, open("corpus/index.yaml", "w"), sort_keys=False)
           PY
           expect_reject "a duplicated origin_url" "DUPLICATE-URL"
 
           # An entry the index rejects must not crash the file pass.
           uv run --with pyyaml python - <<'PY'
           import yaml
-          d = yaml.safe_load(open("corpus.yaml"))
+          d = yaml.safe_load(open("corpus/index.yaml"))
           d["entries"].append({"id": "no-tier-no-path", "label": "x", "source": "x",
                                "license": "x", "retrieved": "2026-01-01"})
-          yaml.safe_dump(d, open("corpus.yaml", "w"), sort_keys=False)
+          yaml.safe_dump(d, open("corpus/index.yaml", "w"), sort_keys=False)
           PY
           expect_reject "an entry with no tier" "UNKNOWN-TIER"
 
@@ -86,8 +86,8 @@ jobs:
           # directory is byte-for-byte what its origin served. Prove the check
           # that guards it can fail, by writing into one and by stripping the
           # provenance from a derived one.
-          restore_data() { git checkout -- data; }
-          echo "# derived-from: injected" >> data/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+          restore_data() { git checkout -- corpus/sources corpus/fixtures; }
+          echo "# derived-from: injected" >> corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
           if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
             echo "FAIL: verifier accepted a sourced file that had been written into"
             cat /tmp/out.txt; restore_data; exit 1
@@ -97,8 +97,8 @@ jobs:
           echo "ok: rejected a sourced file that had been written into"
           restore_data
 
-          grep -v "^# single-change: " data/derived-malformed/dangling_parent.gff3 > /tmp/dp
-          cp /tmp/dp data/derived-malformed/dangling_parent.gff3
+          grep -v "^# single-change: " corpus/fixtures/malformed/dangling_parent.gff3 > /tmp/dp
+          cp /tmp/dp corpus/fixtures/malformed/dangling_parent.gff3
           if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
             echo "FAIL: verifier accepted a derived file with no provenance"
             cat /tmp/out.txt; restore_data; exit 1
@@ -132,10 +132,10 @@ jobs:
       - name: Derived fixtures reproduce exactly
         run: |
           python3 scripts/make_malformed.py
-          git add -A -- data/derived-malformed data/derived-edge-cases
-          git diff --cached --exit-code --stat -- data/derived-malformed data/derived-edge-cases
-          test "$(ls data/derived-malformed | wc -l)" -eq 6
-          test "$(ls data/derived-edge-cases | wc -l)" -eq 3
+          git add -A -- corpus/fixtures/malformed corpus/fixtures/edge-cases
+          git diff --cached --exit-code --stat -- corpus/fixtures/malformed corpus/fixtures/edge-cases
+          test "$(ls corpus/fixtures/malformed | wc -l)" -eq 6
+          test "$(ls corpus/fixtures/edge-cases | wc -l)" -eq 3
 
       - name: Origin URLs (reported, never fatal)
         continue-on-error: true
@@ -154,7 +154,7 @@ jobs:
           mkdir -p local
           curl --fail --location --retry 3 https://raw.githubusercontent.com/biodatamodels/gff-schema/cb31263471ab3855c3622c3be3d3f908db8be654/src/schema/gff.yaml -o local/pinned-gff.yaml
 
-      # Separate job, not a step in `verify`: that job mutates corpus.yaml in
+      # Separate job, not a step in `verify`: that job mutates corpus/index.yaml in
       # place to test scripts/verify.py itself, and this has nothing to do
       # with that. `just check` runs scripts/verify.py again as its first
       # recipe (harmless, cheap) plus every schema/example check added

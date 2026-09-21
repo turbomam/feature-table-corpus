@@ -1,6 +1,6 @@
 # Reusable attributes
 
-[`schema/attributes.yaml`](../schema/attributes.yaml) is a standalone LinkML module for
+[`model/schema/attributes.yaml`](../model/schema/attributes.yaml) is a standalone LinkML module for
 named values attached to a record. It has its own draft namespace and no import of GFF,
 the feature model, contigs, or coordinate systems. Consumers choose where attributes
 are attached and whether the collection is multivalued.

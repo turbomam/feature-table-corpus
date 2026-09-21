@@ -28,10 +28,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def load(ref=None):
     if ref is None:
-        return yaml.safe_load(open(os.path.join(ROOT, "corpus.yaml")))
-    out = subprocess.run(["git", "-C", ROOT, "show", f"{ref}:corpus.yaml"],
-                         capture_output=True, text=True)
-    return yaml.safe_load(out.stdout) if out.returncode == 0 else None
+        return yaml.safe_load(open(os.path.join(ROOT, "corpus/index.yaml")))
+    # Comparisons may cross the artifact-layout migration.
+    for path in ('corpus/index.yaml', 'corpus.yaml'):
+        out = subprocess.run(["git", "-C", ROOT, "show", f"{ref}:{path}"],
+                             capture_output=True, text=True)
+        if out.returncode == 0:
+            return yaml.safe_load(out.stdout)
+    return None
 
 
 def counts(doc):
@@ -99,7 +103,7 @@ def main():
         if not added and not removed:
             print("\nNo index entries added or removed.")
     else:
-        print(f"\nCould not read corpus.yaml at `{base}`, so no comparison.")
+        print(f"\nCould not read corpus/index.yaml at `{base}`, so no comparison.")
     return 1 if verify_rc or audit_rc else 0
 
 

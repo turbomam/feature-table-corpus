@@ -6,7 +6,7 @@ from linkml.generators.erdiagramgen import ERDiagramGenerator
 
 
 def main():
-    schema = Path(__file__).resolve().parents[1] / 'schema/ber_feature_model.yaml'
+    schema = Path(__file__).resolve().parents[1] / 'model/schema/ber_feature_model.yaml'
     generator = ERDiagramGenerator(str(schema), format='mermaid', metadata=False)
     seqid = generator.schemaview.induced_slot('seqid', 'Feature')
     parent = generator.schemaview.induced_slot('parent', 'Feature')

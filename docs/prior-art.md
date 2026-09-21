@@ -4,11 +4,16 @@ Written 2026-09-11, before the corpus was built, and kept in the repository so t
 have to be repeated or silently skipped. Claims are marked *measured* with a date, *quoted* from a
 source, or *unverified*.
 
+For a broader and more recent assessment, see the
+[annotated reading list, checked 2026-09-21](feature-format-reading.md). It includes
+cross-format reviews, comparative measurements, and consumer documentation, with
+each source's perspective and limits identified. This older inventory is GFF-focused.
+
 ## Four models of a genome feature already exist
 
 Three of the four have not been touched in months or years, **measured 2026-09-11** against the
-GitHub API. That is the most useful single fact here, because it means a new effort displaces no
-active incumbent.
+GitHub API. Repository activity alone does not establish adoption, suitability, or
+whether an existing model should be extended instead of creating another one.
 
 | Model | State |
 |---|---|
@@ -17,7 +22,7 @@ active incumbent.
 | https://kbase.github.io/cdm-schema/Feature/ | Last push 2026-05-01. Sole human contributor is the handle `ialarmedalien`, 73 commits |
 | https://laceysanderson.github.io/chado-docs/sequence/tables/feature.html | The relational ancestor the others descend from |
 
-Two are vendored here, under `specs/`, because their licenses allow it. See the README.
+Two are vendored here, under `corpus/specifications/`, because their licenses allow it. See the README.
 
 **Chado repays close reading.** It keeps the feature separate from its location, in `featureloc`,
 and expresses parent and child through `feature_relationship`. Nothing is nested. That is the same
@@ -33,8 +38,10 @@ that constraint today.
 
 ## Seven normalization efforts exist, and none of them is a data model
 
-They are parsers and rewriters. Every one takes files in and puts files out. That is the gap a
-schema would fill, and it is why building rather than adopting was the right call.
+These entries mix community recommendations with software for parsing, validation,
+conversion, sorting, and integration. Their existence alone does not settle whether
+to adopt an existing model, extend one, or build another; that requires explicit
+requirements and interoperability tests.
 
 | Effort | What it is |
 |---|---|
@@ -44,9 +51,9 @@ schema would fill, and it is why building rather than adopting was the right cal
 | GenomeTools | Toolkit with a validator and a tidy mode |
 | gffread | GFF3 to GTF conversion |
 | GFF3sort | Sorting for tabix indexing, because feature order is underspecified |
-| AEGIS | Newest, 2025-12. Claims it parses files that defeat the others |
+| AEGIS | Toolkit paper published 2026-06-09; the 2025-12 date was manuscript receipt. Its comparative claims are the tool authors' evaluation; see the reading list |
 
-All seven are recorded in `corpus.yaml` with their URLs and licenses.
+All seven are recorded in `corpus/index.yaml` with their URLs and licenses.
 
 *Quoted, the AgBioData recommendations*, which is the diagnosis worth carrying into any discussion:
 curators report that most of their data wrangling time goes to reformatting GFF3 files that model

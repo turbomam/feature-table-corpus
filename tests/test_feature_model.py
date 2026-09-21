@@ -20,9 +20,9 @@ from flat_profile_audit import audit
 from query_duckdb import by_attribute, interval_overlap, multiple_pfams
 from validate_closed import load_validated, make_validator, validation_errors
 
-SCHEMA = ROOT / "schema/ber_feature_model.yaml"
-EXAMPLE = ROOT / "examples/one-biosample-sequencing/harmonized.yaml"
-PFAMS = ROOT / "examples/multiple-pfams/harmonized.yaml"
+SCHEMA = ROOT / "model/schema/ber_feature_model.yaml"
+EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
+PFAMS = ROOT / "model/examples/multiple-pfams/harmonized.yaml"
 
 
 class ValidationTests(unittest.TestCase):
@@ -48,11 +48,11 @@ class ValidationTests(unittest.TestCase):
                          'Regenerate the Mermaid block with just diagram')
 
     def test_real_examples_and_source_manifest(self):
-        manifest = yaml.safe_load((ROOT / "examples/source-artifacts.yaml").read_text())
+        manifest = yaml.safe_load((ROOT / "model/examples/source-artifacts.yaml").read_text())
         artifacts = {a["url"]: a for a in manifest["artifacts"]}
         self.assertEqual(len(artifacts), len(manifest["artifacts"]))
         cited = set()
-        for path in ROOT.glob("examples/*/harmonized.yaml"):
+        for path in ROOT.glob("model/examples/*/harmonized.yaml"):
             with self.subTest(example=path):
                 data = yaml.safe_load(path.read_text())
                 self.assertEqual(validation_errors(data, self.validator), [])
@@ -131,7 +131,7 @@ class ValidationTests(unittest.TestCase):
                 self.assertEqual(validation_errors(empty, self.validator), [])
 
     def test_standalone_generic_attribute_module(self):
-        validator = make_validator(ROOT / "schema/attributes.yaml", "Attribute")
+        validator = make_validator(ROOT / "model/schema/attributes.yaml", "Attribute")
         for key, value in (("instrument", "NovaSeq"), ("evalue", "1e-42"), ("note", "a=b;c,d")):
             self.assertEqual(validation_errors({"key": key, "value": value}, validator, "Attribute"), [])
         self.assertTrue(validation_errors({"key": "incomplete"}, validator, "Attribute"))
@@ -232,7 +232,7 @@ classes:
                 'id': 'https://example.org/consumer', 'name': 'consumer',
                 'prefixes': {'example': 'https://example.org/'},
                 'default_prefix': 'example', 'default_range': 'integer',
-                'imports': [str(ROOT / 'schema/attributes')],
+                'imports': [str(ROOT / 'model/schema/attributes')],
                 'slots': {'key': {'range': 'integer', 'multivalued': True},
                           'value': {'range': 'boolean'}},
                 'classes': {'Counter': {'slots': ['key', 'value']}},

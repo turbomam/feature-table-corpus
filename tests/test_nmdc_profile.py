@@ -163,7 +163,7 @@ class ProfileTests(unittest.TestCase):
                 self.assertFalse((self.work / "provenance.json").exists())
 
     def test_published_aggregates_reconcile(self):
-        report = ROOT / "profiles/nmdc-data-objects"
+        report = ROOT / "analyses/nmdc-data-objects"
         cat = json.loads((report / "catalogue.json").read_text())
         counts = json.loads((report / "counts.json").read_text())
         self.assertEqual(cat["class"], "nmdc:DataObject")

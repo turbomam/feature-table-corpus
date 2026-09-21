@@ -1,0 +1,971 @@
+corpus: feature-table-corpus
+generated: '2026-09-11'
+description: Real, traceable examples of GFF and other genome feature table content, for testing and for
+  modeling work on a unified feature schema.
+tiers:
+  vendored: the file is in this repository, with its origin URL and a checksum
+  linked: the file is too large or not redistributable; a stable public URL is recorded instead
+  restricted: the content sits behind a login; recorded for completeness and not fetchable here
+  derived: built here from a vendored file by exactly one documented change; traceable, but NOT observed
+    in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
+    refused
+  not located: known to exist, no public URL found; recorded so the gap stays visible
+entry_count: 58
+entries:
+- id: nmdc-cath-funfam
+  label: CATH FunFams (Functional Families) Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
+  format: GFF3
+  source: NMDC
+  producer: CATH functional families database search
+  producer_kind: database search
+  bytes: 295
+  md5: 385ae451b6c19e33abcf3c37f0ae4b69
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-4e682h13/nmdc:wfmgan-11-ghk5e506.1/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff
+  origin_record: nmdc:dobj-11-3pw65847
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-crt
+  label: CRT Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+  format: GFF3
+  source: NMDC
+  producer: CRISPR Recognition Tool, feature finder
+  producer_kind: feature finder
+  bytes: 688
+  md5: e5b1788663cc6c0c7b50a48558cb49bb
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:manif-15-2dqj6n85/nmdc:wfmgan-11-bvg4py20.1/nmdc_wfmgan-11-bvg4py20.1_crt.gff
+  origin_record: nmdc:dobj-11-3cjcxz28
+  generated_by: nmdc:wfmgan-11-bvg4py20.1
+  selection: smallest of 507 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-cog
+  label: Clusters of Orthologous Groups (COG) Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff
+  format: GFF3
+  source: NMDC
+  producer: COG database search
+  producer_kind: database search
+  bytes: 268
+  md5: 9ddb5396a789d11cf01370ebb8daf479
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-4e682h13/nmdc:wfmgan-11-ghk5e506.1/nmdc_wfmgan-11-ghk5e506.1_cog.gff
+  origin_record: nmdc:dobj-11-22ky0702
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-functional-annotation
+  label: Functional Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
+  format: GFF3
+  source: NMDC
+  producer: JGI IMG annotation pipeline, functional roll-up
+  producer_kind: roll-up
+  bytes: 246
+  md5: 778d966552b57f82ece65e6581ce574e
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-q17q2c37/nmdc:wfmgan-11-hrn8ep39.1/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff
+  origin_record: nmdc:dobj-11-16876g28
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-genemark
+  label: Genemark Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff
+  format: GFF3
+  source: NMDC
+  producer: GeneMark, gene caller
+  producer_kind: gene caller
+  bytes: 3333
+  md5: 5121dc1269540aeb5f6b9a9a7dcd914f
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-12-vanwrb64/nmdc:wfmgan-11-prsstp65.1/nmdc_wfmgan-11-prsstp65.1_genemark.gff
+  origin_record: nmdc:dobj-11-0t0kn065
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-ko-ec
+  label: KO_EC Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
+  format: GFF3
+  source: NMDC
+  producer: KEGG Orthology and Enzyme Commission assignment
+  producer_kind: database search
+  bytes: 289
+  md5: 7751226802a1cc5db22c26d5c8956938
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-xpbh2e04/nmdc:wfmgan-11-v44mx103.1/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff
+  origin_record: nmdc:dobj-11-30x39t60
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-pfam
+  label: Pfam Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff
+  format: GFF3
+  source: NMDC
+  producer: Pfam database search
+  producer_kind: database search
+  bytes: 4626
+  md5: 7fdd0333e764c69d87e95094713abf81
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-g54wdz69/nmdc:wfmgan-11-tn3gnf41.1/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff
+  origin_record: nmdc:dobj-11-2cbp5z37
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-prodigal
+  label: Prodigal Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
+  format: GFF3
+  source: NMDC
+  producer: Prodigal, gene caller
+  producer_kind: gene caller
+  bytes: 2033
+  md5: 92d78177f3c3d0c410d0b57c94ebf22c
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-cfaemn69/nmdc:wfmgan-11-9ya9xh30.1/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
+  origin_record: nmdc:dobj-11-2jq65c25
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-rfam
+  label: RFAM Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff
+  format: GFF3
+  source: NMDC
+  producer: Rfam, feature finder
+  producer_kind: feature finder
+  bytes: 735
+  md5: cd367ad9b2445ba7a40049a2fc052739
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-02tp7916/nmdc:wfmgan-11-p2fy8323.1/nmdc_wfmgan-11-p2fy8323.1_rfam.gff
+  origin_record: nmdc:dobj-11-26sjcj43
+  generated_by: null
+  selection: smallest of 597 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-smart
+  label: SMART Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff
+  format: GFF3
+  source: NMDC
+  producer: SMART database search
+  producer_kind: database search
+  bytes: 265
+  md5: 8107e708d5abe55ab2c25fb45c39cf8e
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:dgns-11-dy2n0z32/nmdc:wfmgan-11-1sz9qv06.1/nmdc_wfmgan-11-1sz9qv06.1_smart.gff
+  origin_record: nmdc:dobj-11-03kh9653
+  generated_by: nmdc:wfmgan-11-1sz9qv06.1
+  selection: smallest of 598 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-superfam
+  label: SUPERFam Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
+  format: GFF3
+  source: NMDC
+  producer: SUPERFAMILY database search
+  producer_kind: database search
+  bytes: 603
+  md5: 6460a86d5eab227d644578d0c15bea88
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-12-fmd4p583/nmdc:wfmgan-11-5pdxej61.1/nmdc_wfmgan-11-5pdxej61.1_supfam.gff
+  origin_record: nmdc:dobj-11-10126e89
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-structural-annotation
+  label: Structural Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
+  format: GFF3
+  source: NMDC
+  producer: JGI IMG annotation pipeline, structural roll-up
+  producer_kind: roll-up
+  bytes: 158
+  md5: 4b8627ca236a7d9753185ccdfd6baada
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-q17q2c37/nmdc:wfmgan-11-hrn8ep39.1/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff
+  origin_record: nmdc:dobj-11-25eqc554
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-tigrfam
+  label: TIGRFam Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff
+  format: GFF3
+  source: NMDC
+  producer: TIGRFAM database search
+  producer_kind: database search
+  bytes: 191
+  md5: b6b168f24def6d0d12f238d31cf48f35
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-haha6973/nmdc:wfmgan-11-8qy5m271.1/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff
+  origin_record: nmdc:dobj-11-2j11wr22
+  generated_by: nmdc:wfmgan-11-8qy5m271.1
+  selection: smallest of 595 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-trna
+  label: TRNA Annotation GFF
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff
+  format: GFF3
+  source: NMDC
+  producer: tRNAscan, feature finder
+  producer_kind: feature finder
+  bytes: 183
+  md5: 28ee4b6dda9c66f3c6cf755931725e35
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-02tp7916/nmdc:wfmgan-11-p2fy8323.1/nmdc_wfmgan-11-p2fy8323.1_trna.gff
+  origin_record: nmdc:dobj-11-24g8zk65
+  generated_by: null
+  selection: smallest of 595 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-11'
+  license: CC BY 4.0
+- id: nmdc-ec
+  label: Annotation Enzyme Commission
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-6kajck87.1_ec.tsv
+  format: TSV
+  source: NMDC
+  producer: EC annotation, database search
+  producer_kind: database search
+  bytes: 92
+  md5: 7ff938626fae991f42911f5e19f8d703
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-azzp1136/nmdc:wfmgan-11-6kajck87.1/nmdc_wfmgan-11-6kajck87.1_ec.tsv
+  origin_record: nmdc:dobj-11-3btx1w33
+  generated_by: null
+  selection: smallest of 599 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-17'
+  license: CC BY 4.0
+  notes: Not GFF. A tab-delimited, one-row-per-feature table with no header row, 11 fields, no
+    column labels anywhere in the file. Field 1 is a feature id matching the GFF column-9 ID pattern
+    from the same workflow run; field 3 is an EC CURIE; fields 4 and 9 are floats shaped like a percent
+    (0-100) and a small exponential number respectively, consistent with a BLAST/HMMER-style hit
+    record, but that is a shape observation, not a confirmed column meaning, since there is no header
+    and no IMG/JGI pipeline documentation for this exact file has been checked yet. Column meanings are
+    unverified
+    and should not be asserted without reading the producing tool's own docs or source. This is one of
+    the two largest tables in BERDL's nmdc.results namespace at production scale
+    (annotation_enzyme_commission, 1.23 billion rows per project-nmdc-lakehouse-dump-and-reload), so
+    its schema matters more than its 92-byte sample suggests.
+- id: nmdc-ko
+  label: Annotation KEGG Orthology
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-vc2g4r14.1_ko.tsv
+  format: TSV
+  source: NMDC
+  producer: KO annotation, database search
+  producer_kind: database search
+  bytes: 542
+  md5: 986fa951a1ca5923a0ee297d71142b05
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-nz0hh615/nmdc:wfmgan-11-vc2g4r14.1/nmdc_wfmgan-11-vc2g4r14.1_ko.tsv
+  origin_record: nmdc:dobj-11-0s5bnb64
+  generated_by: null
+  selection: smallest of 600 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-17'
+  license: CC BY 4.0
+  notes: Not GFF. Same 11-field, no-header shape as nmdc-ec, field 3 a KO CURIE in place of EC. Same
+    caveat applies, the numeric fields' meanings are unverified. The other of the two largest BERDL
+    nmdc.results tables (annotation_kegg_orthology, 1.83 billion rows per
+    project-nmdc-lakehouse-dump-and-reload).
+- id: nmdc-crispr-terms
+  label: Crispr Terms
+  tier: vendored
+  path: corpus/sources/nmdc/nmdc_wfmgan-11-vypv6e87.1_crt.crisprs
+  format: CRT
+  source: NMDC
+  producer: CRT (CRISPR Recognition Tool)
+  producer_kind: feature finder
+  bytes: 236
+  md5: 7f0b1a9e4635ef2facfd8aa071a73796
+  md5_matches_source_record: true
+  origin_url: https://data.microbiomedata.org/data/nmdc:omprc-11-bnhaje30/nmdc:wfmgan-11-vypv6e87.1/nmdc_wfmgan-11-vypv6e87.1_crt.crisprs
+  origin_record: nmdc:dobj-11-0bvfgb75
+  generated_by: null
+  selection: smallest of 505 records of this data_object_type sampled from the NMDC public API
+  retrieved: '2026-09-17'
+  license: CC BY 4.0
+  notes: Not GFF, and a different field count from nmdc-ec/nmdc-ko (6 fields here, not 11). No header.
+    Field 1 is a sequence id, field 2 is the constant value 1 across all three rows in this sample,
+    field 3 increases per row (106, 154, 199, plausibly a position but unverified), field 4 is a
+    20-21bp sequence, field 5 is a variable-length sequence that is empty on the last row of the array,
+    and field 6 is the constant letter c on all three rows. Column names are unverified against any
+    CRT documentation; this is CRT's (CRISPR Recognition Tool) own output format and is not
+    standardized anywhere else in this corpus.
+- id: ncbi-refseq-GCF_000819615-1
+  label: NCBI RefSeq GFF3, Escherichia phage phiX174
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 6571
+  md5: 704a57e8aeb9e7c80930a88fad0b1994
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/819/615/GCF_000819615.1_ViralProj14015/GCF_000819615.1_ViralProj14015_genomic.gff.gz
+  origin_record: GCF_000819615.1
+  selection: chosen as a complete, tiny reference annotation from the canonical GFF3 producer
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  vendored_form: decompressed from the gzip the origin URL serves, because this repository does not carry
+    binary files
+- id: ncbi-refseq-GCF_000840245-1
+  label: NCBI RefSeq GFF3, Escherichia phage lambda
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 58152
+  md5: e1c633cadbff78104fae79ab1bee4c0c
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/840/245/GCF_000840245.1_ViralProj14204/GCF_000840245.1_ViralProj14204_genomic.gff.gz
+  origin_record: GCF_000840245.1
+  selection: chosen as a complete, tiny reference annotation from the canonical GFF3 producer
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  vendored_form: decompressed from the gzip the origin URL serves, because this repository does not carry
+    binary files
+- id: agat-flavor-suite
+  label: AGAT flavor and syntax test suite
+  tier: linked
+  format: GFF, GFF1, GFF2, GFF2.5, GFF3, GTF, GTF2, GTF2.1, GTF2.2, GTF2.5, GTF3
+  source: NBIS Sweden
+  producer: hand-built test fixtures
+  producer_kind: test suite
+  origin_url: https://github.com/NBISweden/AGAT/tree/master/t
+  license: GPL-3.0
+  why_not_vendored: GPL-3.0 is copyleft; linking avoids putting a license obligation on this corpus
+  notes: The single best source for the named format flavors. AGAT's own documentation claims more than
+    30 distinct cases. Subdirectories t/gff_version and t/gff_syntax are the relevant ones.
+  retrieved: '2026-09-11'
+- id: genometools-testdata
+  label: GenomeTools GFF3 test data
+  tier: linked
+  format: GFF3
+  source: GenomeTools
+  producer: hand-built test fixtures
+  producer_kind: test suite
+  origin_url: https://github.com/genometools/genometools/tree/master/testdata
+  license: unstated in repository metadata
+  why_not_vendored: license could not be determined; 315 GFF files matched a name filter
+  notes: Largest single pile of GFF3 edge cases found. Includes malformed files used to test the validator.
+  retrieved: '2026-09-11'
+- id: gff3toolkit-examples
+  label: GFF3toolkit example files
+  tier: linked
+  format: GFF3
+  source: USDA i5K
+  producer: arthropod genome projects
+  producer_kind: curated real annotation
+  origin_url: https://github.com/NAL-i5K/GFF3toolkit/tree/master/example_file
+  license: unstated in repository metadata
+  why_not_vendored: license could not be determined
+  notes: Real arthropod annotations with the merge and quality-control problems the AgBioData group describes.
+  retrieved: '2026-09-11'
+- id: so-gff3-spec
+  label: Sequence Ontology GFF3 specification, with canonical examples
+  tier: linked
+  format: GFF3
+  source: Sequence Ontology
+  producer: specification authors
+  producer_kind: specification
+  origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md
+  license: no license file in repository
+  why_not_vendored: no license; and the examples are worth reading in their specification context
+  notes: Normative. Defines the nine columns, the parent and child model, percent-encoding in column 9,
+    and the rule that start <= end on every feature. Its worked examples are the reference for canonical
+    structure.
+  retrieved: '2026-09-11'
+  kind: specification
+- id: nmdc-functional-annotation-gff-large
+  label: NMDC Functional Annotation GFF, full size example
+  tier: linked
+  format: GFF3
+  source: NMDC
+  producer: JGI IMG annotation pipeline, functional roll-up
+  producer_kind: roll-up
+  origin_url: https://api.microbiomedata.org/nmdcschema/data_object_set
+  license: CC BY 4.0
+  why_not_vendored: the collection is about 4,836 files and 1,309 GB, averaging 277 MB each
+  notes: Column 9 carries every annotation system at once, with multivalued pfam, tigrfam, cath_funfam
+    and superfamily keys. Query the API by data_object_type to list them. Tracked in https://github.com/microbiomedata/nmdc-lakehouse/issues/84
+  retrieved: '2026-09-11'
+- id: gencode-human-gtf
+  label: GENCODE human annotation, GTF
+  tier: linked
+  format: GTF
+  source: GENCODE at EMBL-EBI
+  producer: GENCODE
+  producer_kind: reference annotation
+  origin_url: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/latest_release/
+  license: free for academic and commercial use per GENCODE terms
+  why_not_vendored: tens of megabytes compressed
+  notes: The GTF lineage in its most widely consumed form. Directory URL rather than a file URL, because
+    the release number moves.
+  retrieved: '2026-09-11'
+- id: jgi-phytozome
+  label: JGI Phytozome plant annotations
+  tier: restricted
+  format: GFF3
+  source: JGI
+  producer: JGI plant annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://phytozome-next.jgi.doe.gov/
+  license: JGI data use policy
+  barrier: requires a JGI account and accepting a data use policy
+  notes: A BER producer of plant feature tables. Recorded because a unified BER model has to cover it,
+    not because it can be fetched here.
+  retrieved: '2026-09-11'
+- id: jgi-mycocosm
+  label: JGI MycoCosm fungal annotations
+  tier: restricted
+  format: GFF3
+  source: JGI
+  producer: JGI fungal annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://mycocosm.jgi.doe.gov/
+  license: JGI data use policy
+  barrier: requires a JGI account
+  notes: Same reasoning as Phytozome.
+  retrieved: '2026-09-11'
+- id: jgi-img
+  label: JGI IMG annotations
+  tier: restricted
+  format: GFF3
+  source: JGI
+  producer: IMG annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://img.jgi.doe.gov/
+  license: JGI data use policy
+  barrier: requires a JGI account for bulk access
+  notes: This is the pipeline that produced every vendored NMDC file in this corpus. The NMDC copies are
+    the open route to the same output.
+  retrieved: '2026-09-11'
+- id: ncbi-refseq-gtf-GCF_000819615-1
+  label: NCBI RefSeq GTF, Escherichia phage phiX174
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gtf
+  format: GTF
+  gtf_version: '2.2 (declared in the file''s own #gtf-version pragma)'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 14316
+  md5: 83a7c266f67a91d4ac51a4e9b39babab
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/819/615/GCF_000819615.1_ViralProj14015/GCF_000819615.1_ViralProj14015_genomic.gtf.gz
+  origin_record: GCF_000819615.1
+  selection: the GTF NCBI publishes beside the GFF3 already in this corpus, so the same annotation is
+    available in both formats
+  vendored_form: decompressed from the gzip the origin URL serves
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  notes: Pairs with the GFF3 of the same accession. Useful for testing that a model round-trips between
+    the two column-9 grammars.
+- id: ncbi-refseq-gtf-GCF_000840245-1
+  label: NCBI RefSeq GTF, Escherichia phage lambda
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gtf
+  format: GTF
+  gtf_version: '2.2 (declared in the file''s own #gtf-version pragma)'
+  source: NCBI RefSeq
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 96276
+  md5: 149c9381a2267c837dee92f12c191859
+  origin_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/840/245/GCF_000840245.1_ViralProj14204/GCF_000840245.1_ViralProj14204_genomic.gtf.gz
+  origin_record: GCF_000840245.1
+  selection: the GTF NCBI publishes beside the GFF3 already in this corpus, so the same annotation is
+    available in both formats
+  vendored_form: decompressed from the gzip the origin URL serves
+  retrieved: '2026-09-11'
+  license: public domain (US Government work)
+  notes: Pairs with the GFF3 of the same accession. Useful for testing that a model round-trips between
+    the two column-9 grammars.
+- id: spec-insdc-feature-table
+  label: INSDC Feature Table Definition
+  tier: linked
+  kind: specification
+  origin_url: https://www.insdc.org/submitting-standards/feature-table/
+  source: INSDC
+  license: not stated
+  notes: The ancestor of all of this. GenBank, EMBL and DDBJ feature keys and qualifiers. Predates GFF
+    and still governs what a 'feature' means in sequence databases.
+  retrieved: '2026-09-11'
+- id: spec-ddbj-flat-file
+  label: DDBJ flat file and feature table documentation
+  tier: linked
+  kind: specification
+  origin_url: https://www.ddbj.nig.ac.jp/ddbj/flat-file-e.html
+  source: DDBJ
+  license: not stated
+  notes: The most readable rendering of the INSDC feature table.
+  retrieved: '2026-09-11'
+- id: spec-gvf-so
+  label: GVF specification, Sequence Ontology
+  tier: linked
+  kind: specification
+  origin_url: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gvf.md
+  source: Sequence Ontology
+  license: no license file in repository
+  notes: GFF3 with variant-specific attributes. Shows how the format is meant to be extended rather than
+    forked.
+  retrieved: '2026-09-11'
+- id: spec-gtf22
+  label: GTF 2.2 specification
+  tier: linked
+  kind: specification
+  origin_url: http://mblab.wustl.edu/GTF22.html
+  source: Brent Lab, Washington University
+  license: not stated
+  notes: The version the vendored NCBI GTF files declare. The clearest statement of how GTF's column 9
+    differs from GFF3's.
+  retrieved: '2026-09-11'
+- id: spec-gff2-gmod
+  label: GFF2 description, GMOD
+  tier: linked
+  kind: specification
+  origin_url: http://gmod.org/wiki/GFF2
+  source: GMOD
+  license: not stated
+  notes: The Sanger-lineage format Chado and older tools consume. Documents why GFF2 could not express
+    parent and child properly, which is why GFF3 exists.
+  retrieved: '2026-09-11'
+- id: spec-gff3-gmod
+  label: GFF3 description, GMOD
+  tier: linked
+  kind: specification
+  origin_url: http://gmod.org/wiki/GFF3
+  source: GMOD
+  license: not stated
+  notes: Practical companion to the normative specification.
+  retrieved: '2026-09-11'
+- id: spec-bed-hts
+  label: BED specification version 1
+  tier: linked
+  kind: specification
+  origin_url: https://samtools.github.io/hts-specs/BEDv1.pdf
+  source: Samtools and GA4GH
+  license: no license file in repository
+  why_not_vendored: PDF, and this repository carries no binary files
+  notes: Other feature-table content. BED is the minimal interval format and the one most feature tables
+    get reduced to for browsing.
+  retrieved: '2026-09-11'
+- id: spec-ucsc-formats
+  label: UCSC genome browser format reference
+  tier: linked
+  kind: specification
+  origin_url: https://genome.ucsc.edu/FAQ/FAQformat.html
+  source: UCSC
+  license: not stated
+  notes: BED, bigBed, genePred, PSL, narrowPeak and GFF/GTF as UCSC consumes them. The broadest single
+    list of real feature-table formats.
+  retrieved: '2026-09-11'
+- id: spec-ncbi-gff3-guide
+  label: NCBI guidance on GFF3 and GTF
+  tier: linked
+  kind: specification
+  origin_url: https://www.ncbi.nlm.nih.gov/genbank/genomes_gff/
+  source: NCBI
+  license: public domain (US Government work)
+  notes: What the producer of the vendored NCBI files says it emits, including its deviations.
+  retrieved: '2026-09-11'
+- id: spec-chado-feature
+  label: Chado feature tables, version 1.4
+  tier: vendored
+  kind: specification
+  path: corpus/specifications/chado_1.4_feature_tables.sql
+  format: PostgreSQL DDL
+  source: GMOD Chado
+  license: Artistic-2.0
+  bytes: 5336
+  md5: b39f9c0efeef2475c87cc9776f4e6726
+  origin_url: https://github.com/GMOD/Chado/blob/1.4/schemas/1.4/default_schema.sql
+  selection: 'the 7 feature tables extracted from a 2.2 MB schema: feature, featureloc, featureprop, feature_dbxref,
+    feature_relationship, feature_cvterm, feature_synonym'
+  retrieved: '2026-09-11'
+  notes: The relational ancestor, and the fourth artifact in the link list that prompted this corpus.
+    Chado keeps the feature separate from its location and expresses parent and child through a relationship
+    table. Neither is nested, which is the same normalization a flat-table profile requires.
+- id: spec-kbase-cdm-feature
+  label: KBase Common Data Model, bioentity module with the Feature class
+  tier: vendored
+  kind: specification
+  path: corpus/specifications/kbase_cdm_bioentity.yaml
+  format: LinkML
+  source: KBase
+  license: MIT
+  bytes: 22093
+  md5: 2e30ced8ef62e424e8b06bb87d25c5a4
+  origin_url: https://github.com/kbase/cdm-schema/blob/main/src/linkml/cdm_bioentity.yaml
+  selection: the module holding Feature, EncodedFeature, Contig, ContigCollection, Protein and CdsPhaseType
+  retrieved: '2026-09-11'
+  notes: Vendorable because MIT. Constrains feature type to Sequence Ontology accessions under sequence_feature
+    and carries provenance slots for source database and protocol, which the other models do not. No sample
+    feature tables were found in that repository, so this is the model without data.
+- id: emsl-monet
+  label: EMSL MONet soil molecular data
+  tier: linked
+  format: various, not primarily feature tables
+  source: EMSL at PNNL
+  producer: MONet 1000 Soils pilot and later proposal calls
+  producer_kind: observation network
+  origin_url: https://www.emsl.pnnl.gov/monet
+  data_portal_url: https://sc-data.emsl.pnnl.gov/
+  jgi_portal_url: https://genome.jgi.doe.gov/portal/MONSoiUsFacility/MONSoiUsFacility.info.html
+  paper_url: https://www.biorxiv.org/content/10.1101/2022.12.12.520098
+  license: EMSL data policy; published without embargo
+  retrieved: '2026-09-11'
+  notes: Published on EMSL Science Central without embargo. Sequence-derived products route through JGI
+    portals, which need an account. Recorded because BASALT, the LinkML model below, covers MONet.
+- id: emsl-basalt
+  label: EMSL BASALT schema
+  tier: not located
+  format: LinkML, reported
+  source: EMSL at PNNL
+  producer: EMSL
+  producer_kind: schema
+  license: unknown
+  retrieved: '2026-09-11'
+  notes: 'Reported as EMSL''s LinkML for MONet and parts of the analysis database, with a flattened version
+    coming from James Carr. Searched GitHub across the ber-data and microbiomedata organizations and the
+    open web on 2026-09-11 and found nothing public. Every code hit for ''basalt'' in those organizations
+    is the rock, in environmental value sets. This is an open gap, not a dead end: ask EMSL directly.'
+- id: tool-gffread
+  label: gffread, GFF3 to GTF conversion
+  tier: linked
+  kind: tool
+  format: GFF3 and GTF
+  source: Cufflinks and StringTie lineage
+  producer: Geo Pertea
+  producer_kind: converter
+  origin_url: https://github.com/gpertea/gffread
+  license: MIT
+  retrieved: '2026-09-11'
+  notes: The conversion most people actually run between the two column 9 grammars. A parser and rewriter,
+    not a data model.
+- id: tool-gff3sort
+  label: GFF3sort, sorting for tabix indexing
+  tier: linked
+  kind: tool
+  format: GFF3
+  source: billzt
+  producer: billzt
+  producer_kind: sorter
+  origin_url: https://github.com/billzt/gff3sort
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Exists because feature order is underspecified and browsers need a particular one. A parser and
+    rewriter, not a data model.
+- id: tool-aegis
+  label: AEGIS, annotation extraction and genomic integration
+  tier: linked
+  kind: tool
+  format: GFF and GTF
+  source: preprint, 2025-12
+  producer: AEGIS authors
+  producer_kind: parser and normalizer
+  origin_url: https://www.biorxiv.org/content/10.64898/2025.12.04.692274v1.full
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Newest of the normalizers. Claims it parses files that make the other tools fail. Recorded as
+    evidence that the problem is still open in 2025, not as a recommendation; not evaluated here.
+- id: derived-cds-phase-illegal
+  label: 'Derived malformed GFF3: phase in column 8 of the first CDS set to 3, outside the permitted 0,
+    1 and 2'
+  tier: derived
+  path: corpus/fixtures/malformed/cds_phase_illegal.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6888
+  md5: 8a878e6455e02ca02069f8562c458b5f
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: phase in column 8 of the first CDS set to 3, outside the permitted 0, 1 and 2
+  validity: 'invalid: GFF3 permits only 0, 1 or 2 in the phase column'
+  why_it_matters: A validator catches this one. Paired with cds_phase_biologically_wrong, which no syntax-only
+    validator catches, the two show that the AgBioData phase failure is not a syntax problem.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-dangling-parent
+  label: 'Derived malformed GFF3: Parent of the first CDS changed to an ID defined nowhere in the file'
+  tier: derived
+  path: corpus/fixtures/malformed/dangling_parent.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6889
+  md5: a2803ead53e8e2058e6e208302a2295e
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: Parent of the first CDS changed to an ID defined nowhere in the file
+  validity: 'invalid: GFF3 requires every Parent to resolve within the file'
+  why_it_matters: Breaks the parent and child graph without breaking the line syntax, so it parses cleanly.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-duplicate-id
+  label: 'Derived malformed GFF3: the first sequence_alteration given the first gene''s ID, gene-phiX174p04,
+    so one ID names two features of different type'
+  tier: derived
+  path: corpus/fixtures/malformed/duplicate_id.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6975
+  md5: a6a3044a26dc1715604b2d701f3c3492
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: the first sequence_alteration given the first gene's ID, gene-phiX174p04, so one ID names
+    two features of different type
+  validity: 'invalid: a repeated ID is only legal across lines describing one feature, and these differ
+    in type'
+  why_it_matters: A repeated ID is legal when every line describes one discontinuous feature, so a duplicated
+    row would NOT be a violation. Colliding the ID across two different feature types is, which is the
+    distinction this fixture exists to hold.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-no-version-pragma
+  label: 'Derived malformed GFF3: the ##gff-version 3 line removed; every other header line preserved'
+  tier: derived
+  path: corpus/fixtures/malformed/no_version_pragma.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6860
+  md5: 38c97705f13ccdb4f2b486b121c4649f
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: 'the ##gff-version 3 line removed; every other header line preserved'
+  validity: 'invalid: GFF3 requires the version directive on line 1'
+  why_it_matters: Without the directive a parser cannot tell GFF3 from GFF2, and the column 9 grammar
+    differs between them.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    This is the documented exception among the derived files: its one change removes a header directive
+    rather than altering a data row, so its header is deliberately NOT byte-identical to the source. Every
+    other header line is preserved, and provenance comments are appended after the source''s own ### terminator.'
+- id: derived-start-after-end
+  label: 'Derived malformed GFF3: columns 4 and 5 of the first gene swapped, so start is greater than
+    end'
+  tier: derived
+  path: corpus/fixtures/malformed/start_after_end.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6897
+  md5: 64d3964fb27e77e73ebaaacadff2ad93
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: columns 4 and 5 of the first gene swapped, so start is greater than end
+  validity: 'invalid: GFF3 requires start <= end on every feature, circular included'
+  why_it_matters: 'GFF3 requires start no greater than end on every feature. A circular genome does not
+    change that: wraparound is expressed by extending end past the landmark length. phiX174 carries Is_circular=true,
+    which is why the rule is worth stating rather than assuming.'
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-unescaped-semicolon
+  label: 'Derived malformed GFF3: a raw semicolon inside a Note value on the first CDS, where GFF3 requires
+    %3B'
+  tier: derived
+  path: corpus/fixtures/malformed/unescaped_semicolon.gff3
+  format: GFF3 (invalid)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6977
+  md5: 2f925867ea9489da98d712f4453cf511
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a raw semicolon inside a Note value on the first CDS, where GFF3 requires %3B
+  validity: 'invalid: the text after the separator is a bare segment with no tag=value form, which a conforming
+    parser must reject'
+  why_it_matters: The loud version. The text after the unescaped separator has no tag=value form, so a
+    conforming parser must reject the record. Paired with unescaped_semicolon_silent, which a parser accepts.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-cds-phase-biologically-wrong
+  label: 'Derived edge case: phase in column 8 of the first CDS changed from 0 to another permitted value'
+  tier: derived
+  path: corpus/fixtures/edge-cases/cds_phase_biologically_wrong.gff3
+  format: GFF3 (valid; wrong or refused in practice)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 7017
+  md5: 45275cca6480591ccb7b64ac2b41a6cb
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: phase in column 8 of the first CDS changed from 0 to another permitted value
+  validity: 'VALID GFF3: 0, 1 and 2 are all legal, so no syntax-only validator catches this; translating
+    against the reference protein does. The annotation is biologically wrong rather than malformed'
+  why_it_matters: 'The failure the AgBioData group leads with, and no syntax-only validator can catch
+    it: 0, 1 and 2 are all legal phases, so identical coordinates with a different phase translate to
+    a different protein while the file stays valid. Translating against the reference protein does catch
+    it.'
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-multiple-parents
+  label: 'Derived edge case: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined
+    in this file'
+  tier: derived
+  path: corpus/fixtures/edge-cases/multiple_parents.gff3
+  format: GFF3 (valid; wrong or refused in practice)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 6940
+  md5: 998386f8cac265ef8f21a7006802b2e8
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: a second Parent, gene-phiX174p06, added beside rna-phiX174p06; both are defined in this file
+  validity: 'VALID GFF3: multiple parents are permitted, and many tools refuse them anyway'
+  why_it_matters: Legal GFF3 that many tools refuse. The AgBioData recommendations explicitly ask that
+    parsers keep supporting it.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: derived-unescaped-semicolon-silent
+  label: 'Derived edge case: an unescaped semicolon in a Note value whose tail is itself a valid lowercase
+    tag=value pair'
+  tier: derived
+  path: corpus/fixtures/edge-cases/unescaped_semicolon_silent.gff3
+  format: GFF3 (valid; wrong or refused in practice)
+  source: derived in this repository
+  producer: scripts/make_malformed.py
+  producer_kind: derived test case
+  bytes: 7030
+  md5: a2edcb385cca680c823427cf8f54f894
+  derived_from: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
+  mutation: an unescaped semicolon in a Note value whose tail is itself a valid lowercase tag=value pair
+  validity: 'VALID GFF3: the Note is silently truncated and a second attribute appears that nobody wrote;
+    no validator reports anything because nothing is malformed'
+  why_it_matters: The dangerous version of the escaping problem. The tail of the unescaped value is itself
+    a valid lowercase tag=value pair, so the file stays valid, the intended Note is truncated, and an
+    attribute nobody wrote now exists. Nothing reports anything, which is why this sits in edge-cases
+    rather than malformed.
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/make_malformed.py
+  retrieved: '2026-09-11'
+  license: public domain (derived from a US Government work)
+  notes: 'Derived, not observed in the wild, so it is not evidence about what any real producer emits.
+    The file is its source preserved line for line with exactly one change to one data row, plus provenance
+    comments, single-hash lines appended after the source''s own ### terminator, so the header region
+    is byte-identical.'
+- id: model-gff-schema
+  label: GFF3 LinkML schema, biodatamodels
+  tier: linked
+  kind: model
+  format: LinkML
+  source: biodatamodels
+  producer: biodatamodels (single contributor)
+  producer_kind: data model
+  origin_url: https://github.com/biodatamodels/gff-schema
+  license: no license file in the repository
+  why_not_vendored: no license file at all, so the schema cannot be copied here; compared instead in docs/model-comparison.md
+  retrieved: '2026-09-11'
+  notes: 'Self-described DRAFT. Last commit 2021-06-03, ten commits all from a single contributor, one
+    open issue, number 1, from 2021-02-11. The only one of the four models that models a GFF3 file rather
+    than a feature table: a gff document class holds features and sequence entries side by side. Also
+    the only one modeling the header directives and pragmas as data, and the only one with an explicit
+    seqid slot ranged over a model class. Its feature-class description is identical character for character
+    to NMDC''s GenomeFeature, and that string is not in the GFF3 specification. First of the four artifacts
+    in the 2026-09-08 link list that prompted this corpus.'
+- id: spec-img-pipeline
+  label: JGI IMG annotation pipeline documentation, version 5
+  tier: linked
+  kind: specification
+  format: prose specification of GFF output
+  source: JGI IMG
+  producer: IMG annotation pipeline
+  producer_kind: specification
+  origin_url: https://img.jgi.doe.gov/docs/pipelineV5/
+  license: not stated
+  retrieved: '2026-09-11'
+  notes: Specifies the GFF output of the pipeline that produced all 14 NMDC files vendored here, so it
+    is the normative source for what those files are supposed to contain. Added to the reading list at
+    the 2026-09-11 kickoff. Annotation specifics are behind a click-through from that page.
+- id: tool-bcbb
+  label: Blue Collar Bioinformatics, GFF parser
+  tier: linked
+  kind: tool
+  format: GFF3
+  source: chapmanb
+  producer: Brad Chapman
+  producer_kind: parser
+  origin_url: https://github.com/chapmanb/bcbb
+  license: see repository
+  retrieved: '2026-09-11'
+  notes: Named at the 2026-09-11 kickoff as an existing GFF parsing library. Recorded as an example of
+    what consumers run, not as a recommendation; not evaluated here.
+tier_counts:
+  vendored: 23
+  linked: 22
+  restricted: 3
+  not located: 1
+  derived: 9
