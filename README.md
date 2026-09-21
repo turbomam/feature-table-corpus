@@ -2,6 +2,12 @@
 
 Real, traceable examples of GFF and other genome feature table content.
 
+[Documentation website](https://turbomam.github.io/feature-table-corpus/)
+· [Build or preview locally](docs/documentation-site.md)
+
+The model and conversion profiles are drafts; source-specific observations are
+evidence for modeling, not universal requirements.
+
 ## Start here
 
 The [repository map](docs/repository-map.md) explains artifact roles and reproduction,

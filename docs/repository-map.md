@@ -46,6 +46,7 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap` | Build/update a database, then query it read-only |
 | Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
 | NMDC | `nmdc-collect`, `nmdc-render`, `nmdc-sample` | Explicit live collection/sampling or offline regeneration of source-specific reports |
+| Documentation | `docs-build`, `docs-check`, `docs-serve [port]` | Stage tracked public files, render and check the site, or preview on loopback |
 
 `just check` keeps its validation scope: it does not collect live NMDC records, sample
 files, regenerate corpus fixtures, or publish reports. `uv` can still need the network
@@ -142,4 +143,4 @@ is not a transactional snapshot. See the report's refresh safeguards.
 
 Keep task inputs, retained downloads, and scratch output under `local/<task>/`, with
 source URLs and checksums where needed. These gitignored files are excluded from the
-future [GitHub Pages site](https://github.com/turbomam/feature-table-corpus/issues/12).
+[GitHub Pages build](documentation-site.md).

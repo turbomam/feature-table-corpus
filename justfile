@@ -215,3 +215,23 @@ conversion-report:
 [group("Conversions")]
 conversion-check:
     uv run --with-requirements requirements-conversion.txt python3 scripts/conversion_report.py --check
+
+# ---- Documentation ---------------------------------------------------------
+
+[doc("Build the public documentation and check local links.")]
+[group("Documentation")]
+docs-build:
+    uv run --python '>=3.11.8' python scripts/prepare_docs.py
+    uv run --with-requirements requirements-docs.txt mkdocs build --strict
+    uv run --python '>=3.11.8' python scripts/check_site.py
+
+[doc("Check links and fragments in the already built documentation.")]
+[group("Documentation")]
+docs-check:
+    uv run --python '>=3.11.8' python scripts/check_site.py
+
+[doc("Stage and preview documentation on a chosen loopback port.")]
+[group("Documentation")]
+docs-serve port="8765":
+    uv run --python '>=3.11.8' python scripts/prepare_docs.py
+    uv run --with-requirements requirements-docs.txt mkdocs serve --dev-addr "127.0.0.1:$1"
