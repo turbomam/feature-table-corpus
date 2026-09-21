@@ -234,9 +234,11 @@ slots:
     range: Feature
     description: GFF3 column-9 Parent tag(s).
     notes:
-      - Multivalued per the GFF3 spec's own allowance for a discontinuous feature to have
-        more than one Parent, and per the 2026-09-17 confirmation that BRIDGE does not
-        require this to be flattened into a join table.
+      - Multivalued because one feature can belong to several parents, such as an exon
+        shared by multiple transcripts. This differs from a discontinuous feature,
+        which repeats the same ID across multiple GFF3 lines.
+      - The 2026-09-17 BRIDGE discussion confirmed that this relationship does not
+        have to be flattened into a join table.
   attributes:
     title: Attributes
     multivalued: true
