@@ -43,7 +43,7 @@ class BGCExampleTests(unittest.TestCase):
             path.write_text(json.dumps(bundle["dataset"]))
             build_database(ROOT / "model/schema/ber_feature_model.yaml", path, db)
             with duckdb.connect(str(db), read_only=True) as con:
-                opts = dict(actual_reference=bundle["reference_context"], reference_context=REFERENCE,
+                opts = dict(reference_context=REFERENCE,
                             sequence_id=SEQID, start=FIRST, end=LAST)
                 found = query_order(con, **opts, product="acyl carrier protein")
                 self.assertEqual([r["old_locus_tag"] for r in found], ["SCO5089"])
@@ -60,7 +60,7 @@ class BGCExampleTests(unittest.TestCase):
                     self.assertEqual(caught.exception.code, code)
                 for empty in (None, "", "   "):
                     with self.subTest(empty=empty), self.assertRaises(ConversionError) as caught:
-                        query_order(con, **{**opts, "actual_reference": empty, "reference_context": empty})
+                        query_order(con, **{**opts, "reference_context": empty})
                     self.assertEqual(caught.exception.code, "reference-context")
                 self.assertEqual(query_order(con, **opts, product="x' OR true --"), [])
 

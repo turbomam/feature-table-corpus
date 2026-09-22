@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import sys
 import tempfile
 from urllib.parse import unquote
@@ -62,12 +63,16 @@ def derive_source(content):
     return header + provenance + b"".join(selected)
 
 
-def query_order(con, *, actual_reference, reference_context, sequence_id, start, end,
+def query_order(con, *, reference_context, sequence_id, start, end,
                 coordinate_system="contig", product=None, old_locus_tags=()):
-    require(isinstance(actual_reference, str) and actual_reference.strip()
-            and isinstance(reference_context, str) and reference_context.strip()
-            and reference_context == actual_reference,
-            "reference-context", "query requires a nonempty reference matching the imported source context")
+    # This bounded exercise uses one versioned RefSeq sequence. Derive its
+    # qualified context from stored reference identity, never a second caller claim.
+    references = con.execute("SELECT contig_id FROM contig").fetchall()
+    require(len(references) == 1 and re.fullmatch(r"NC_[0-9]+\.[1-9][0-9]*", references[0][0]),
+            "reference-context", "BGC query requires one stored, versioned RefSeq chromosome")
+    trusted_reference = "refseq:" + references[0][0]
+    require(isinstance(reference_context, str) and reference_context == trusted_reference,
+            "reference-context", "query reference differs from the stored database reference")
     require(coordinate_system == "contig", "coordinate-space", "genomic gene order requires contig coordinates")
     require(type(start) is int and type(end) is int and 1 <= start <= end,
             "query-interval", "query bounds must be one-based inclusive integers")
@@ -104,7 +109,7 @@ def make_report():
         data.write_text(json.dumps(bundle["dataset"]))
         build_database(ROOT / "model/schema/ber_feature_model.yaml", data, db)
         with duckdb.connect(str(db), read_only=True) as con:
-            arguments = dict(actual_reference=bundle["reference_context"], reference_context=REFERENCE,
+            arguments = dict(reference_context=REFERENCE,
                              sequence_id=SEQID, start=FOCUS_FIRST, end=FOCUS_LAST)
             focus = query_order(con, **arguments, old_locus_tags=("SCO5087", "SCO5088", "SCO5089"))
             order = query_order(con, **{**arguments, "start": FIRST, "end": LAST})

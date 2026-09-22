@@ -34,6 +34,9 @@ finds SCO5089 for `acyl carrier protein`. Controls give no matches for an absent
 product, an out-of-range interval or a different sequence accession version.
 Queries declaring a different reference context or protein coordinate space fail
 explicitly. SQL parameters preserve literal attribute values.
+The reference guard derives `refseq:ACCESSION.VERSION` from the sole chromosome
+stored in DuckDB. It cannot be bypassed by supplying two matching caller claims.
+This is a bounded single-RefSeq-sequence query, not a multi-assembly join API.
 
 ## Source, selection and limits
 
