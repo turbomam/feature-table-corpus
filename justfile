@@ -19,7 +19,7 @@ default:
 
 [doc("Run corpus, schema, example, and regression checks.")]
 [group("Validation")]
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check
     @echo "all checks passed"
 
 [doc("Check all three LinkML schemas against the metamodel.")]
@@ -79,6 +79,21 @@ verify-links:
 [group("Corpus")]
 fixtures-generate:
     python3 scripts/make_malformed.py
+
+[doc("Install the checksum-pinned GenomeTools validator in local/.")]
+[group("Corpus")]
+validity-install:
+    uv run --python '>=3.11.8' python scripts/install_genometools.py
+
+[doc("Measure retained GFF3 files and regenerate the validity report.")]
+[group("Corpus")]
+validity-report:
+    uv run --with pyyaml python3 scripts/validate_corpus.py
+
+[doc("Check fixture validity labels and reproduce validator results.")]
+[group("Corpus")]
+validity-check:
+    uv run --with pyyaml python3 scripts/validate_corpus.py --check
 
 # Empty audit_source preserves the script's pinned upstream default.
 # Pass a local schema for an offline audit, or a URL for another comparison.

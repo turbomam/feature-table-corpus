@@ -274,6 +274,13 @@ now exists. Nothing reports anything.
 
 Every derived entry carries a `validity` field for exactly these cases.
 
+[Independent validation](analyses/format-validation/README.md) now measures those
+labels with pinned GenomeTools 1.6.6: six malformed fixtures are rejected and
+three valid edge cases accepted. The report also records verdicts for every
+retained producer GFF3 file, including missing-header failures in NMDC sources.
+Run `just validity-install` once, then `just validity-check`; CI checks that the
+report reproduces. Biological correctness and conversion support remain separate.
+
 ## Why some things are only linked
 
 The best single source for the eleven named format flavors, GFF through GTF3, is the AGAT test

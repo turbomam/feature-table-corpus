@@ -156,6 +156,9 @@ jobs:
           just --list
 
       # Fetch for testing, without redistributing the unlicensed upstream schema.
+      - name: Install checksum-pinned independent GFF3 validator
+        run: just validity-install
+
       - name: Fetch pinned comparison schema
         run: |
           mkdir -p local
