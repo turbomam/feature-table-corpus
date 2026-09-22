@@ -108,7 +108,9 @@ The checked-in source files are plain text, so their contents are reviewable in 
 
 ## The vendored files
 
-**NMDC, 14 files, 158 bytes to 4.6 KB.** One per distinct `data_object_type` that carries GFF in
+The NMDC collection contains 20 retained files in the following three groups.
+
+**Original NMDC GFF sample: 14 files, 158 bytes to 4.6 KB.** One per distinct `data_object_type` that carries GFF in
 NMDC production. Each is the smallest real file of its kind out of roughly 600 sampled through the
 public API, and each checksum matches the MD5 recorded in the NMDC record itself. These 14 are the
 useful part of this corpus, because they show that one annotation is not one file. It is a set of
@@ -126,8 +128,8 @@ All are outputs of the JGI IMG annotation pipeline, reachable openly through NMD
 **NMDC, 3 additional non-GFF files.** Enzyme Commission TSV, KEGG Orthology TSV, and CRT
 `.crisprs` text extend the corpus to other feature-bearing formats. The EC and KO files
 carry hits; the selected `.crisprs` file contains three populated, six-field records.
-These bring the NMDC vendored total
-to 17; the 14-file GFF measurements above remain specifically about that original sample.
+Together these first two groups contain 17 files; the 14-file GFF measurements
+above remain specifically about the original sample.
 
 **NMDC, 3 companion files for protein conversion.** A full Pfam GFF, structural
 GFF and protein FASTA from `nmdc:wfmgan-11-5xxrm214.2` bring the NMDC total to 20.

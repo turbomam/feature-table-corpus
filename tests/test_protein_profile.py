@@ -13,7 +13,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from convert_features import ConversionError, PROTEIN, import_source, export_source, reconstruct_record
+from convert_features import ConversionError, PROTEIN, import_source, export_source, reconstruct_record, protein_bindings
 from protein_context import build_context
 from build_duckdb import build_database
 from query_duckdb import interval_overlap, by_attribute, multiple_pfams
@@ -86,6 +86,24 @@ class ProteinProfileTests(unittest.TestCase):
         with self.assertRaises(ConversionError):
             import_source(PFAM.read_bytes(), profile="gff3-contig/1.0.0", reference_context=REFERENCE,
                           source_uri="urn:test", protein_context=self.context)
+
+    def test_provenance_uses_complete_absolute_uris(self):
+        for uri in (None, 42, "relative/file", "https://example.org/bad space",
+                    "https://example.org/%ZZ", "https://example.org/file\n",
+                    "https://", "https:///file", "https://example.org:invalid/file",
+                    "https://example.org:99999/file"):
+            context = deepcopy(self.context)
+            context["artifacts"][0]["uri"] = uri
+            with self.subTest(uri=uri):
+                with self.assertRaises(ConversionError) as caught:
+                    protein_bindings(context, REFERENCE)
+                self.assertEqual(caught.exception.code, "protein-context")
+        for uri in ("urn:ftc:structural", "file:///corpus/structural.gff",
+                    "https://example.org/structural%20annotation.gff?version=1#record"):
+            context = deepcopy(self.context)
+            context["artifacts"][0]["uri"] = uri
+            with self.subTest(uri=uri):
+                self.assertEqual(len(protein_bindings(context, REFERENCE)), 397)
 
     def test_profile_refuses_incompatible_rows_and_edited_bundles(self):
         first = PFAM.read_bytes().splitlines()[0].decode().split("\t")

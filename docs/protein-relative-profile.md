@@ -24,7 +24,9 @@ biosample, distinct from the original smallest-file sampling.
 is generated from structural CDSs, translations, one-to-one protein/CDS bindings,
 and source artifact hashes. Exactly two distinct companion artifacts declare
 `structural_annotation` and `protein_sequence` roles; repeated roles, URIs or
-digests are rejected. The generator joins exact source IDs; it never derives
+digests are rejected. Artifact URIs must be complete absolute URIs; HTTP(S)
+references also require a host and a valid port. Syntax checks do not fetch the
+resource or establish its authenticity. The generator joins exact source IDs; it never derives
 coordinates by splitting identifiers or invents contig lengths from endpoints.
 Missing or ambiguous bindings, missing translations, context/assembly mismatches,
 and hits beyond protein lengths are rejected. Context must cover exactly the
