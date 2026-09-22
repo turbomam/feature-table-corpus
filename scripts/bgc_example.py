@@ -140,7 +140,7 @@ def make_report():
     observed = {"focus": focus, "signed_gaps_bp": gaps,
                 "cluster_gene_order": [row["old_locus_tag"] for row in order], "negative_controls": negatives}
     require(observed == expected, "bgc-query", "query results differ from independently recorded source expectations")
-    evidence = [{"line": number, "old_locus_tag": a["old_locus_tag"][0],
+    evidence = [{"line": number, "gene_id": a["ID"][0], "old_locus_tag": a["old_locus_tag"][0],
                  "start": int(c[3]), "end": int(c[4]), "strand": c[6]}
                 for number, _, c, a in source_rows(content)
                 if c[2] == "gene" and set(a.get("old_locus_tag", ())) & {f"SCO{i}" for i in range(5071, 5093)}]
@@ -151,11 +151,27 @@ def make_report():
     require([(r["old_locus_tag"], r["start"], r["end"], r["strand"]) for r in focus_evidence] ==
             [(r["old_locus_tag"], r["start"], r["end"], r["strand"]) for r in expected["focus"]],
             "bgc-evidence", "direct source inspection differs from checked-in expectations")
+    focus_genes = {r["gene_id"]: r["old_locus_tag"] for r in focus_evidence}
+    cds_evidence = []
+    for number, _, columns, attrs in source_rows(content):
+        if columns[2] != "CDS":
+            continue
+        for parent in attrs.get("Parent", []):
+            if parent not in focus_genes:
+                continue
+            require(len(attrs.get("ID", [])) == 1 and len(attrs.get("product", [])) == 1,
+                    "bgc-evidence", "focus source CDS needs one ID and product")
+            cds_evidence.append({"line": number, "gene_id": parent, "old_locus_tag": focus_genes[parent],
+                                 "cds_id": attrs["ID"][0], "start": int(columns[3]), "end": int(columns[4]),
+                                 "strand": columns[6], "product": attrs["product"][0]})
+    cds_evidence.sort(key=lambda r: (r["start"], r["end"], r["cds_id"]))
+    require([{k: v for k, v in row.items() if k != "line"} for row in cds_evidence] == expected["focus"],
+            "bgc-evidence", "focus CDS source evidence differs from checked-in expectations")
     return {"report_version": 1, "profile": PROFILE, "reference_context": REFERENCE, "seqid": SEQID,
             "source_sha256": SOURCE_SHA, "excerpt_sha256": hashlib.sha256(excerpt).hexdigest(),
             "source_feature_rows": 44, "exact_export": "byte-identical excerpt",
             "reconstructed_export": "same mapped fields and relationships",
-            "source_evidence": evidence, "query_results": observed}
+            "source_evidence": evidence, "source_cds_evidence": cds_evidence, "query_results": observed}
 
 
 def main():
