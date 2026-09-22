@@ -1,4 +1,12 @@
 cases:
+  - id: refseq-actinorhodin-excerpt
+    path: corpus/derived-examples/actinorhodin.gff3
+    case_kind: selected-real-source-rows
+    format: gff3
+    profile: gff3-contig/1.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_003888.3
+    expected: supported
   - id: nmdc-biosample-pfam
     path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
     case_kind: observed

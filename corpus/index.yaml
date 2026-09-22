@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 63
+entry_count: 65
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -1054,9 +1054,38 @@ entries:
   retrieved: '2026-09-21'
   license: CC BY 4.0
   selection: Companion evidence for the existing worked biosample; unchanged full artifacts
+- id: "refseq-coelicolor-chromosome"
+  label: "NCBI RefSeq NC_003888.3 chromosome annotations retrieved 2026-09-21"
+  tier: "vendored"
+  source: "NCBI RefSeq, Streptomyces coelicolor A3(2), NC_003888.3"
+  format: "GFF3"
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  retrieved: "2026-09-21"
+  path: "corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3"
+  bytes: 4691954
+  md5: "d3e40d0d6ddd3f824b4a8b86a40131b3"
+  sha256: "e49de7213e25d075e0b79541f8a49288a055ae87bdd355931d129c0573026858"
+  origin_url: "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_003888.3&db=nuccore&report=gff3&retmode=text&from=5515000&to=5538000"
+  notes: "Endpoint returned the complete chromosome annotation despite the from/to parameters. Retained unchanged; accession-version qualifies the sequence. Annotation snapshot is pinned by retrieval date and content hash, not accession version alone."
+- id: "derived-actinorhodin-excerpt"
+  label: "Actinorhodin SCO5071-SCO5092 gene/CDS excerpt with original coordinates"
+  tier: "derived"
+  source: "NCBI RefSeq, Streptomyces coelicolor A3(2), NC_003888.3"
+  format: "GFF3"
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  retrieved: "2026-09-21"
+  path: "corpus/derived-examples/actinorhodin.gff3"
+  bytes: 13331
+  md5: "ca9dbcdc33bdcba521d785934737c568"
+  sha256: "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c"
+  origin_url: "https://github.com/turbomam/feature-table-corpus/blob/main/scripts/bgc_example.py"
+  derived_from: "refseq-coelicolor-chromosome"
+  mutation: "Select genes with old_locus_tag SCO5071 through SCO5092 and their direct CDS children; retain original header, row bytes and chromosome coordinates; append selection provenance comments."
+  validity: "valid GFF3: selected real rows; checked with GenomeTools 1.6.6"
+  notes: "Biologically observed rows selected here; not a complete chromosome annotation. Both conversion round trips apply to this explicitly derived excerpt."
 tier_counts:
-  vendored: 28
+  vendored: 29
   linked: 22
   restricted: 3
   not located: 1
-  derived: 9
+  derived: 10

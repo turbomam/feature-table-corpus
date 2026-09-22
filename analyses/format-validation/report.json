@@ -10,7 +10,7 @@
     "biological_correctness": "not_measured"
   },
   "summary": {
-    "accepted": 6,
+    "accepted": 8,
     "not_checked": 10,
     "rejected": 21
   },
@@ -373,6 +373,27 @@
       "sha256": "49bd52721ccd054241b866a294cf3121bb04197cc0cd6f8f53fdd8b0ac5ed593",
       "verdict": "not_checked",
       "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "refseq-coelicolor-chromosome",
+      "path": "corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3",
+      "format": "GFF3",
+      "sha256": "e49de7213e25d075e0b79541f8a49288a055ae87bdd355931d129c0573026858",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "warning: skipping blank line 15852 in file \"corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3\""
+    },
+    {
+      "id": "derived-actinorhodin-excerpt",
+      "path": "corpus/derived-examples/actinorhodin.gff3",
+      "format": "GFF3",
+      "sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "",
+      "expected_from_validity": "accepted"
     }
   ]
 }
