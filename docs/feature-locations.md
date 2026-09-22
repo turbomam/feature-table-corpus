@@ -24,8 +24,10 @@ requires the envelope to agree with those parts; it is never substituted for the
 `Contig.topology: circular` requires an explicit positive `length_bp`. Parts stay
 within that reference; an origin-crossing feature uses ordered high- then low-
 coordinate parts on the plus strand, reversed traversal on the minus strand.
-`crosses_origin` must agree with exactly one transition. Linear references reject
-such a transition. This bounded model requires a single qualified reference,
+`crosses_origin` is true exactly when one origin transition occurs. Parts must
+follow their strand's coordinate order within one pass around the reference:
+40 → 70 → 10 is a possible forward traversal, but 40 → 10 → 70 passes the
+starting position again. Linear references reject origin transitions. This bounded model requires a single qualified reference,
 uniform explicit strand, and nonoverlapping parts for each structured location.
 
 Unknown endpoints and alternative-position sets remain unsupported; they are

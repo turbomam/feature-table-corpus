@@ -29,6 +29,10 @@ def location_errors(feature, contig):
     elif any(p["end"] > contig["length_bp"] for p in parts):
         errors.append("part exceeds reference length_bp")
     reverse = feature.get("strand") == "-"
+    traversal = ordered[::-1] if reverse else ordered
+    pivot = traversal.index(parts[0])
+    if parts != traversal[pivot:] + traversal[:pivot]:
+        errors.append("parts must follow coordinate order within one reference circuit")
     crossings = sum((b["start"] > a["start"] if reverse else b["start"] < a["start"])
                     for a, b in zip(parts, parts[1:]))
     if bool(crossings) != location["crosses_origin"] or crossings > 1:

@@ -19,7 +19,7 @@
     },
     "insdc-locations/1.0.0": {
       "path": "model/profiles/insdc-locations.yaml",
-      "sha256": "fd500c8a49a2719ff68eff58731c54ee85d98df12c2c6149f755724fe1b85ca4"
+      "sha256": "812fe071016d23f2a2bdbdfe099ee8bc32037107b4ab0d36e98e1f4a2c986bea"
     },
     "nmdc-pfam-protein/1.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",

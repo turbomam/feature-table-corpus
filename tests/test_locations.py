@@ -169,6 +169,17 @@ class LocationTests(unittest.TestCase):
             with self.assertRaises(ConversionError):
                 export_source(changed, mode=mode)
 
+    def test_circular_parts_cannot_traverse_the_reference_more_than_once(self):
+        for wrapper in ("{}", "complement({})"):
+            valid = wrapper.format("join(40..45,70..75,10..15)")
+            invalid = wrapper.format("join(40..45,10..15,70..75)")
+            with self.subTest(location=valid):
+                bundle = imported(constructed(valid, topology="circular"))
+                self.assertEqual(validation_errors(bundle["dataset"], dataset_validator()), [])
+                self.assertEqual(imported(export_source(bundle, mode="reconstruct"))["dataset"], bundle["dataset"])
+            with self.subTest(location=invalid), self.assertRaisesRegex(ConversionError, "one reference circuit"):
+                imported(constructed(invalid, topology="circular"))
+
     def test_location_cli_launcher_and_read_only_failures(self):
         with tempfile.TemporaryDirectory(dir=ROOT / "local") as work:
             path = Path(work) / "dataset with spaces.json"

@@ -16,7 +16,7 @@ round_trip:
   normalization: Feature wrapping, line endings, equivalent complement syntax and point-versus-unit-span spelling may normalize
 limitations:
   - Requires complete presented sequence matching the declared nucleotide length and alphabet
-  - Same-reference, nonoverlapping parts with one uniform explicit strand; at most one circular origin transition
+  - Same-reference, nonoverlapping parts with one uniform explicit strand; coordinate order within one reference circuit and at most one circular origin transition
   - Remote references, between-base sites, unknown positions, one-of and mixed or nested join/order constructs are refused
   - Import refuses feature values that cannot be reconstructed faithfully within flat-file width
   - Uncertain endpoints require explicit reported-bounds query mode; no exact distance is asserted
