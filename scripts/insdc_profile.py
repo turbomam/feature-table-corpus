@@ -120,7 +120,7 @@ def import_insdc(content, *, reference_context, source_uri):
         length = int(locus[1])
         # Old GenBank records omit the topology field for the linear default.
         topology = "circular" if re.search(r"\bcircular\b", locus[2]) else "linear"
-        while i < len(records) and records[i]["raw_text"].strip() != "//":
+        while i < len(records) and records[i]["raw_text"].rstrip("\r\n") != "//":
             i += 1
         require(i < len(records), "genbank-record", "record lacks // terminator")
         last = i; i += 1

@@ -136,6 +136,9 @@ class LocationTests(unittest.TestCase):
         partial = imported(constructed("<10..20"))["dataset"]["features"][0]
         with self.assertRaisesRegex(ValueError, "uncertain"):
             distance(partial, partial, {"contig_id": partial["seqid"], "length_bp": 100})
+        continued = imported(constructed("1..10", '                     /note="before\n                     //\n                     after"\n'))
+        self.assertEqual(continued["dataset"]["features"][0]["attributes"], [{"key": "note", "value": "before // after"}])
+        self.assertEqual(imported(export_source(continued, mode="reconstruct"))["dataset"], continued["dataset"])
 
     def test_unsupported_locations_and_incomplete_source_are_refused(self):
         for location in ("1^2", "?", "OTHER.1:1..5", "one-of(1,2)..5", "join(1..10,5..20)",
