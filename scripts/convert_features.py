@@ -13,7 +13,9 @@ import math
 from pathlib import Path
 import re
 import sys
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlsplit
+
+import rfc3987
 
 from source_document import parse_bytes, replay_bytes, write_new
 from validate_closed import make_validator, validation_errors
@@ -166,6 +168,22 @@ def source_validator():
     return make_validator(ROOT / "model/schema/source_document.yaml", "SourceDocument")
 
 
+def absolute_artifact_uri(value):
+    """Check the whole URI; HTTP(S) references also need a host and valid port."""
+    if not isinstance(value, str) or re.search(r"[\x00-\x20\x7f]", value):
+        return False
+    try:
+        parsed = rfc3987.parse(value, rule="URI")
+        if parsed["scheme"].lower() in ("http", "https"):
+            url = urlsplit(value)
+            if not url.hostname:
+                return False
+            _ = url.port  # Access validates the port, including its numeric range.
+        return True
+    except ValueError:
+        return False
+
+
 def protein_bindings(context, reference_context):
     """Validate an explicit protein -> CDS map; never parse identity from offsets."""
     require(isinstance(context, dict) and set(context) == {
@@ -205,7 +223,7 @@ def protein_bindings(context, reference_context):
     for artifact in context["artifacts"]:
         require(isinstance(artifact, dict) and set(artifact) == {"role", "uri", "sha256"}
                 and artifact["role"] in ("structural_annotation", "protein_sequence")
-                and isinstance(artifact["uri"], str) and re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", artifact["uri"])
+                and absolute_artifact_uri(artifact["uri"])
                 and isinstance(artifact["sha256"], str) and re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"]),
                 "protein-context", "artifacts require absolute URIs and SHA-256 digests")
     require({a["role"] for a in context["artifacts"]} == {"structural_annotation", "protein_sequence"}

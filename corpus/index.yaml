@@ -947,7 +947,7 @@ entries:
   origin_url: https://img.jgi.doe.gov/docs/pipelineV5/
   license: not stated
   retrieved: '2026-09-11'
-  notes: Specifies the GFF output of the pipeline that produced all 14 NMDC files vendored here, so it
+  notes: Specifies the GFF output of the pipeline that produced the original 14-file NMDC GFF sample, so it
     is the normative source for what those files are supposed to contain. Added to the reading list at
     the 2026-09-11 kickoff. Annotation specifics are behind a click-through from that page.
 - id: tool-bcbb
