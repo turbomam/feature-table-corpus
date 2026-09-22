@@ -194,11 +194,11 @@ def protein_bindings(context, reference_context):
             "protein-context", "protein context version/reference does not match")
     errors = validation_errors(context["dataset"], dataset_validator())
     require(not errors, "protein-context", "; ".join(errors))
-    parents = {f["feature_id"]: f for f in context["dataset"].get("features", [])}
+    parents = {f["feature_id"]: f for f in context["dataset"].get("features") or []}
     require(bool(parents), "protein-context", "protein context requires CDS features")
     for parent in parents.values():
         require(parent.get("type") == "CDS" and parent["coordinate_system"] == "contig"
-                and re.fullmatch(r"[A-Z]+", parent.get("translated_sequence", "")) is not None,
+                and re.fullmatch(r"[A-Z]+", parent.get("translated_sequence") or "") is not None,
                 "protein-context", "each context feature must be a contig CDS with an explicit protein sequence")
         pairs = parent.get("attributes") or []
         for key, typed in (("ID", [parent["feature_id"]]), ("Parent", parent.get("parent") or []),

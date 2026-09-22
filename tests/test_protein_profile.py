@@ -71,10 +71,16 @@ class ProteinProfileTests(unittest.TestCase):
     def test_context_is_required_unambiguous_and_bounded(self):
         bad = []
         bad.append(None)
+        for empty in (None, []):
+            c = deepcopy(self.context); c["dataset"]["features"] = empty; bad.append(c)
+        c = deepcopy(self.context); c["dataset"].pop("features"); bad.append(c)
         c = deepcopy(self.context); c["reference_context"] = "different:assembly"; bad.append(c)
         c = deepcopy(self.context); c["bindings"].append(c["bindings"][0]); bad.append(c)
         c = deepcopy(self.context); c["bindings"][0]["cds_id"] = "absent"; bad.append(c)
         c = deepcopy(self.context); c["dataset"]["features"][0]["translated_sequence"] = "M"; bad.append(c)
+        for empty in (None, ""):
+            c = deepcopy(self.context); c["dataset"]["features"][0]["translated_sequence"] = empty; bad.append(c)
+        c = deepcopy(self.context); c["dataset"]["features"][0].pop("translated_sequence"); bad.append(c)
         c = deepcopy(self.context); c["dataset"]["features"][0]["type"] = "gene"; bad.append(c)
         c = deepcopy(self.context); c["context_version"] = True; bad.append(c)
         for key in ("role", "uri", "sha256"):
