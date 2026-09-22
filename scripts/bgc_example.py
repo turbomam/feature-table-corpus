@@ -64,7 +64,10 @@ def derive_source(content):
 
 def query_order(con, *, actual_reference, reference_context, sequence_id, start, end,
                 coordinate_system="contig", product=None, old_locus_tags=()):
-    require(reference_context == actual_reference, "reference-context", "query reference differs from imported source context")
+    require(isinstance(actual_reference, str) and actual_reference.strip()
+            and isinstance(reference_context, str) and reference_context.strip()
+            and reference_context == actual_reference,
+            "reference-context", "query requires a nonempty reference matching the imported source context")
     require(coordinate_system == "contig", "coordinate-space", "genomic gene order requires contig coordinates")
     require(type(start) is int and type(end) is int and 1 <= start <= end,
             "query-interval", "query bounds must be one-based inclusive integers")

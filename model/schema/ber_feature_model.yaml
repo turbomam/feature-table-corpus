@@ -27,7 +27,7 @@ notes:
     not imported into this biological Dataset model. Measured 2026-09-18
     across all 14 real NMDC GFF files, only 1 carries any `##` directive at all
     (`##gff-version  3`, two spaces, in the Prodigal file); the other 13 open straight into
-    data rows. The 2 vendored NCBI RefSeq files carry 4 each (gff-version, sequence-region,
+    data rows. The original pair of vendored NCBI RefSeq GFF3 files carry 4 each (gff-version, sequence-region,
     species, and a closing `###`). GFF3's `##sequence-region` declares a region, not necessarily
     a full sequence length; `##species` is document-level organism metadata, not a taxonomic
     lineage for each contig. Both Contig.length_bp and Contig.taxonomic_lineage use other

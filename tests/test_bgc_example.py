@@ -58,6 +58,10 @@ class BGCExampleTests(unittest.TestCase):
                     with self.subTest(override=override), self.assertRaises(ConversionError) as caught:
                         query_order(con, **{**opts, **override})
                     self.assertEqual(caught.exception.code, code)
+                for empty in (None, "", "   "):
+                    with self.subTest(empty=empty), self.assertRaises(ConversionError) as caught:
+                        query_order(con, **{**opts, "actual_reference": empty, "reference_context": empty})
+                    self.assertEqual(caught.exception.code, "reference-context")
                 self.assertEqual(query_order(con, **opts, product="x' OR true --"), [])
 
     def test_edited_coordinate_or_annotation_cannot_replay_old_source(self):
