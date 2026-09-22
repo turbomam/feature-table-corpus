@@ -179,7 +179,7 @@ def protein_bindings(context, reference_context):
     parents = {f["feature_id"]: f for f in context["dataset"].get("features", [])}
     require(bool(parents), "protein-context", "protein context requires CDS features")
     for parent in parents.values():
-        require(parent["type"] == "CDS" and parent["coordinate_system"] == "contig"
+        require(parent.get("type") == "CDS" and parent["coordinate_system"] == "contig"
                 and re.fullmatch(r"[A-Z]+", parent.get("translated_sequence", "")) is not None,
                 "protein-context", "each context feature must be a contig CDS with an explicit protein sequence")
         pairs = parent.get("attributes") or []
@@ -200,13 +200,18 @@ def protein_bindings(context, reference_context):
         bindings[protein] = parents[cds]
         used.add(cds)
     require(used == set(parents), "protein-context", "every context CDS must have one protein binding")
-    require(isinstance(context["artifacts"], list) and len(context["artifacts"]) >= 2,
+    require(isinstance(context["artifacts"], list) and len(context["artifacts"]) == 2,
             "protein-context", "record structural annotation and protein FASTA provenance")
     for artifact in context["artifacts"]:
-        require(isinstance(artifact, dict) and set(artifact) == {"uri", "sha256"}
+        require(isinstance(artifact, dict) and set(artifact) == {"role", "uri", "sha256"}
+                and artifact["role"] in ("structural_annotation", "protein_sequence")
                 and isinstance(artifact["uri"], str) and re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", artifact["uri"])
                 and isinstance(artifact["sha256"], str) and re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"]),
                 "protein-context", "artifacts require absolute URIs and SHA-256 digests")
+    require({a["role"] for a in context["artifacts"]} == {"structural_annotation", "protein_sequence"}
+            and len({a["uri"] for a in context["artifacts"]}) == 2
+            and len({a["sha256"] for a in context["artifacts"]}) == 2,
+            "protein-context", "declare distinct structural annotation and protein sequence artifacts")
     return bindings
 
 
