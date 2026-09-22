@@ -367,11 +367,25 @@ def reconstruct_record(profile, by_id, mapping):
             ",".join(str(b["start"] - feature["start"]) for b in blocks) + ","]
 
 
+def mutable_object_ids(value):
+    """Identify shared JSON containers, including shallow copies of a context."""
+    pending, seen = [value], set()
+    while pending:
+        item = pending.pop()
+        if not isinstance(item, (dict, list)) or id(item) in seen:
+            continue
+        seen.add(id(item))
+        pending.extend(item.values() if isinstance(item, dict) else item)
+    return seen
+
+
 def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
     try:
         if bundle["profile"] == PROTEIN:
             require(protein_context is not None, "protein-context-original",
                     "supply the independent original protein context for validation/export")
+            require(not mutable_object_ids(protein_context) & mutable_object_ids(bundle.get("protein_context")),
+                    "protein-context-original", "original context must not share mutable objects with the embedded context")
             require(protein_context == bundle.get("protein_context"), "protein-context-edited",
                     "bundle protein context differs from the supplied original context")
         else:

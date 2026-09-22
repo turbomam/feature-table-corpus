@@ -67,7 +67,11 @@ Exact export recovers original bytes. Reconstruction uses modeled fields and
 semantic reference/attribute-group mappings without source feature text. Both
 check consistency against the separately supplied original context first.
 Validation and export require `--protein-context`; passing the bundle's own copy
-would not provide independent evidence. Coordinated edits to context bindings,
+would not provide independent evidence. The API rejects shared mutable containers,
+including a shallow copy of the embedded context. A separately copied or reloaded
+edited document is still not a trusted original: callers must retain and select
+the original context. Object separation does not authenticate its provenance.
+Coordinated edits to context bindings,
 translations or provenance and their Dataset copies are rejected against the
 original. Supporting CDSs are not emitted as extra Pfam rows, and
 the contextual relationship is not fabricated as a source Parent tag. Unknown,
