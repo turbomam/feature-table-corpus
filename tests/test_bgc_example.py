@@ -29,6 +29,7 @@ class BGCExampleTests(unittest.TestCase):
         self.assertEqual(report["query_results"]["signed_gaps_bp"], [-4, 24])
         self.assertEqual(len(report["query_results"]["cluster_gene_order"]), 22)
         self.assertEqual(len(report["source_evidence"]), 22)
+        self.assertEqual(len(report["source_cds_evidence"]), 3)
         full = SOURCE.read_bytes().splitlines(keepends=True)
         derived_rows = [line for _, line, _, _ in source_rows(EXCERPT.read_bytes())]
         self.assertEqual(len(derived_rows), 44)
@@ -116,3 +117,20 @@ class BGCExampleTests(unittest.TestCase):
             with patch("bgc_example.EXPECTED", path), patch("bgc_example.query_order", wrong_order):
                 with self.assertRaisesRegex(ConversionError, "full source gene order"):
                     make_report()
+
+    def test_source_annotations_reject_coordinated_query_and_expectation_edits(self):
+        for field in ("cds_id", "product"):
+            expected = json.loads(EXPECTED.read_text())
+            expected["focus"][0][field] = "deliberately incorrect"
+            def wrong_projection(con, **kwargs):
+                rows = query_order(con, **kwargs)
+                for row in rows:
+                    if row["old_locus_tag"] == "SCO5087":
+                        row[field] = "deliberately incorrect"
+                return rows
+            with self.subTest(field=field), tempfile.TemporaryDirectory(dir=ROOT / "local") as work:
+                path = Path(work) / "wrong-expectations.json"
+                path.write_text(json.dumps(expected))
+                with patch("bgc_example.EXPECTED", path), patch("bgc_example.query_order", wrong_projection):
+                    with self.assertRaisesRegex(ConversionError, "focus CDS source evidence"):
+                        make_report()

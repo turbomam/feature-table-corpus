@@ -17,6 +17,9 @@ converter or SQL. [expected.json](expected.json) is maintained evidence, not
 generated query output. [report.json](report.json) checks the result against it
 and records full-source line numbers and coordinates for all 22 genes, with a
 separate direct source check of the full order and the three focus intervals.
+The three focus CDS rows are independently inspected for parent gene identity,
+CDS identity, product, strand and coordinates; their source line numbers and
+values are recorded in `source_cds_evidence`.
 
 | Old locus tag | Current gene | CDS product in this snapshot | Inclusive genomic interval | Strand |
 |---|---|---|---|---|

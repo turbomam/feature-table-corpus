@@ -11,6 +11,7 @@
   "source_evidence": [
     {
       "line": 10277,
+      "gene_id": "gene-SC_RS27515",
       "old_locus_tag": "SCO5071",
       "start": 5513809,
       "end": 5514249,
@@ -18,6 +19,7 @@
     },
     {
       "line": 10279,
+      "gene_id": "gene-SC_RS27520",
       "old_locus_tag": "SCO5072",
       "start": 5514323,
       "end": 5515246,
@@ -25,6 +27,7 @@
     },
     {
       "line": 10281,
+      "gene_id": "gene-SC_RS27525",
       "old_locus_tag": "SCO5073",
       "start": 5515246,
       "end": 5516232,
@@ -32,6 +35,7 @@
     },
     {
       "line": 10283,
+      "gene_id": "gene-SC_RS27530",
       "old_locus_tag": "SCO5074",
       "start": 5516299,
       "end": 5516943,
@@ -39,6 +43,7 @@
     },
     {
       "line": 10285,
+      "gene_id": "gene-SC_RS27535",
       "old_locus_tag": "SCO5075",
       "start": 5516977,
       "end": 5517897,
@@ -46,6 +51,7 @@
     },
     {
       "line": 10287,
+      "gene_id": "gene-SC_RS27540",
       "old_locus_tag": "SCO5076",
       "start": 5517894,
       "end": 5519495,
@@ -53,6 +59,7 @@
     },
     {
       "line": 10289,
+      "gene_id": "gene-SC_RS27545",
       "old_locus_tag": "SCO5077",
       "start": 5519497,
       "end": 5519892,
@@ -60,6 +67,7 @@
     },
     {
       "line": 10291,
+      "gene_id": "gene-SC_RS27550",
       "old_locus_tag": "SCO5078",
       "start": 5519987,
       "end": 5520832,
@@ -67,6 +75,7 @@
     },
     {
       "line": 10293,
+      "gene_id": "gene-SC_RS27555",
       "old_locus_tag": "SCO5079",
       "start": 5520857,
       "end": 5521741,
@@ -74,6 +83,7 @@
     },
     {
       "line": 10295,
+      "gene_id": "gene-SC_RS27560",
       "old_locus_tag": "SCO5080",
       "start": 5521738,
       "end": 5522883,
@@ -81,6 +91,7 @@
     },
     {
       "line": 10297,
+      "gene_id": "gene-SC_RS27565",
       "old_locus_tag": "SCO5081",
       "start": 5522876,
       "end": 5523217,
@@ -88,6 +99,7 @@
     },
     {
       "line": 10299,
+      "gene_id": "gene-SC_RS27570",
       "old_locus_tag": "SCO5082",
       "start": 5523183,
       "end": 5523962,
@@ -95,6 +107,7 @@
     },
     {
       "line": 10301,
+      "gene_id": "gene-SC_RS27575",
       "old_locus_tag": "SCO5083",
       "start": 5524073,
       "end": 5525809,
@@ -102,6 +115,7 @@
     },
     {
       "line": 10303,
+      "gene_id": "gene-SC_RS27580",
       "old_locus_tag": "SCO5084",
       "start": 5525809,
       "end": 5527944,
@@ -109,6 +123,7 @@
     },
     {
       "line": 10305,
+      "gene_id": "gene-SC_RS27585",
       "old_locus_tag": "SCO5085",
       "start": 5528094,
       "end": 5528861,
@@ -116,6 +131,7 @@
     },
     {
       "line": 10307,
+      "gene_id": "gene-SC_RS27590",
       "old_locus_tag": "SCO5086",
       "start": 5528935,
       "end": 5529720,
@@ -123,6 +139,7 @@
     },
     {
       "line": 10309,
+      "gene_id": "gene-SC_RS27595",
       "old_locus_tag": "SCO5087",
       "start": 5529801,
       "end": 5531204,
@@ -130,6 +147,7 @@
     },
     {
       "line": 10311,
+      "gene_id": "gene-SC_RS27600",
       "old_locus_tag": "SCO5088",
       "start": 5531201,
       "end": 5532424,
@@ -137,6 +155,7 @@
     },
     {
       "line": 10313,
+      "gene_id": "gene-SC_RS27605",
       "old_locus_tag": "SCO5089",
       "start": 5532449,
       "end": 5532709,
@@ -144,6 +163,7 @@
     },
     {
       "line": 10315,
+      "gene_id": "gene-SC_RS27610",
       "old_locus_tag": "SCO5090",
       "start": 5532706,
       "end": 5533656,
@@ -151,6 +171,7 @@
     },
     {
       "line": 10317,
+      "gene_id": "gene-SC_RS27615",
       "old_locus_tag": "SCO5091",
       "start": 5533653,
       "end": 5534546,
@@ -158,10 +179,43 @@
     },
     {
       "line": 10319,
+      "gene_id": "gene-SC_RS27620",
       "old_locus_tag": "SCO5092",
       "start": 5534558,
       "end": 5535091,
       "strand": "+"
+    }
+  ],
+  "source_cds_evidence": [
+    {
+      "line": 10310,
+      "gene_id": "gene-SC_RS27595",
+      "old_locus_tag": "SCO5087",
+      "cds_id": "cds-WP_003973891.1",
+      "start": 5529801,
+      "end": 5531204,
+      "strand": "+",
+      "product": "beta-ketoacyl-[acyl-carrier-protein] synthase family protein"
+    },
+    {
+      "line": 10312,
+      "gene_id": "gene-SC_RS27600",
+      "old_locus_tag": "SCO5088",
+      "cds_id": "cds-WP_011030048.1",
+      "start": 5531201,
+      "end": 5532424,
+      "strand": "+",
+      "product": "ketosynthase chain-length factor"
+    },
+    {
+      "line": 10314,
+      "gene_id": "gene-SC_RS27605",
+      "old_locus_tag": "SCO5089",
+      "cds_id": "cds-WP_003973889.1",
+      "start": 5532449,
+      "end": 5532709,
+      "strand": "+",
+      "product": "acyl carrier protein"
     }
   ],
   "query_results": {

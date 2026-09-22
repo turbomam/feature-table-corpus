@@ -183,6 +183,11 @@ class ProteinProfileTests(unittest.TestCase):
             self.assertEqual(restored.read_bytes(), PFAM.read_bytes())
 
     def test_coordinated_context_edits_require_independent_original(self):
+        embedded = self.bundle["protein_context"]
+        for aliased in (embedded, dict(embedded)):
+            for mode in ("exact", "reconstruct"):
+                with self.subTest(alias=type(aliased).__name__, mode=mode), self.assertRaisesRegex(ConversionError, "share mutable objects"):
+                    export_source(self.bundle, mode=mode, protein_context=aliased)
         for mutation in ("translation", "binding", "provenance"):
             changed = deepcopy(self.context)
             parent = changed["dataset"]["features"][0]
@@ -197,6 +202,8 @@ class ProteinProfileTests(unittest.TestCase):
                 changed["artifacts"][0]["sha256"] = "0" * 64
             # Reimport constructs a consistent bundle from the edited input.
             edited = imported(PFAM.read_bytes(), changed)
+            with self.assertRaisesRegex(ConversionError, "share mutable objects"):
+                export_source(edited, mode="exact", protein_context=edited["protein_context"])
             for mode in ("exact", "reconstruct"):
                 with self.subTest(mutation=mutation, mode=mode), self.assertRaises(ConversionError) as caught:
                     export_source(edited, mode=mode, original_bytes=PFAM.read_bytes(), protein_context=self.context)
