@@ -161,6 +161,7 @@ class ProteinProfileTests(unittest.TestCase):
                 old = parent["feature_id"]
                 parent["feature_id"] += ":changed"
                 next(b for b in changed["bindings"] if b["cds_id"] == old)["cds_id"] = parent["feature_id"]
+                next(a for a in parent["attributes"] if a["key"] == "ID")["value"] = parent["feature_id"]
             else:
                 changed["artifacts"][0]["sha256"] = "0" * 64
             # Reimport constructs a consistent bundle from the edited input.
@@ -173,6 +174,16 @@ class ProteinProfileTests(unittest.TestCase):
             with self.assertRaises(ConversionError) as caught:
                 export_source(self.bundle, mode=mode)
             self.assertEqual(caught.exception.code, "protein-context-original")
+
+    def test_context_generic_identity_mirrors_must_agree(self):
+        for key in ("ID", "Parent", "product"):
+            changed = deepcopy(self.context)
+            parent = changed["dataset"]["features"][0]
+            parent["attributes"] = [a for a in parent.get("attributes", []) if a["key"] != key]
+            parent["attributes"].append({"key": key, "value": "contradictory context value"})
+            with self.subTest(key=key), self.assertRaises(ConversionError) as caught:
+                imported(PFAM.read_bytes(), changed)
+            self.assertEqual(caught.exception.code, "protein-context")
 
     def test_context_launcher_reproduces_json_and_preserves_failure_status(self):
         entries = {e["id"]: e for e in yaml.safe_load((ROOT / "corpus/index.yaml").read_text())["entries"]}
