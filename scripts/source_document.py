@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Preserve a UTF-8 GFF3/GTF/BED12 document and interpret scoped metadata.
+"""Preserve a UTF-8 GFF3/GTF/BED12/GenBank document and interpret scoped metadata.
 
-This is a source-document reader, not a biological feature converter or full GFF
-validator. Feature columns remain lexical strings; column 9 is not interpreted.
+This is a source-document reader, not a biological feature converter or full format
+validator. Feature columns and GenBank feature blocks remain lexical text;
+GFF column 9 and GenBank qualifiers are not interpreted.
 Only the standard library is needed. See docs/source-documents.md.
 """
 import argparse

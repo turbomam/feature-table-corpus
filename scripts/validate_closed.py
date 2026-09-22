@@ -26,8 +26,10 @@ def make_validator(schema_path, class_name="Dataset"):
 def dataset_errors(data):
     """Check a structurally valid, self-contained harmonized Dataset.
 
-    This profile uses linear, 1-based inclusive intervals. It is not a validator
-    for every legal GFF3 representation (e.g. circular wraparound coordinates).
+    Scalar intervals and structured location parts use 1-based inclusive bounds.
+    Structured parts are checked for order, overlap, envelope agreement and
+    endpoint status; origin crossings require a circular reference of known length.
+    This validates the harmonized model, not every source-format representation.
     Protein positions refer to a direct, contig-relative CDS parent. Translation
     may be absent; then its upper bound cannot be checked and is not guessed.
     """

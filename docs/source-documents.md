@@ -46,7 +46,7 @@ feature starts, feature continuations and other document text. This lexical mode
 does not assert biological validity. The [INSDC location profile](feature-locations.md)
 separately interprets the bounded feature-table syntax and validates complete records.
 
-The caller must choose `--format gff3`, `--format gtf` or `--format bed12`. A filename or absent header
+The caller must choose `--format gff3`, `--format gtf`, `--format bed12` or `--format genbank`. A filename or absent header
 never supplies an inferred format. `--profile generic` is the default; producer
 interpretation requires explicitly selecting `prodigal` or `ncbi`.
 BED12 accepts only `generic`; comments and `track`/`browser` commands retain stream
