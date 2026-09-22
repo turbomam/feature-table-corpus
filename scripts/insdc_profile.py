@@ -41,6 +41,8 @@ def parse_location(text, seqid, *, depth=0):
     require(match is not None, "unsupported-location", f"unsupported location descriptor: {text!r}")
     statuses = {"": "exact", "<": "before", ">": "after"}
     start, end = int(match[2]), int(match[4] or match[2])
+    # A single fuzzy position applies to both interval bounds, as in Biopython.
+    # A one-sided fuzzy span requires an explicit range such as <10..10.
     return {"location_operator": "single", "parts": [{"seqid": seqid, "start": start, "end": end,
              "start_status": statuses[match[1]], "end_status": statuses[match[3] if match[4] else match[1]], "strand": "+"}]}
 

@@ -29,7 +29,7 @@ def imported(content):
 
 
 def constructed(location, qualifiers="", topology="linear"):
-    return (f"LOCUS       TEST                      100 bp    DNA     {topology} PLN 01-JAN-2000\n"
+    return (f"LOCUS       TEST                     100 bp    DNA     {topology:<8} PLN 01-JAN-2000\n"
             "DEFINITION  Constructed parser control, not observed biological evidence.\n"
             "ACCESSION   TEST0001\nVERSION     TEST0001.1\nFEATURES             Location/Qualifiers\n"
             f"     misc_feature    {location}\n{qualifiers}ORIGIN\n        1 {'a' * 100}\n//\n").encode()
@@ -58,8 +58,13 @@ class LocationTests(unittest.TestCase):
                 self.assertEqual(len(original_records), len(new_records))
                 for before, after in zip(original_records, new_records):
                     self.assertEqual((before.id, str(before.seq)), (after.id, str(after.seq)))
-                    self.assertEqual([(f.type, f.location, f.qualifiers) for f in before.features],
-                                     [(f.type, f.location, f.qualifiers) for f in after.features])
+                    # Biopython position objects compare numerically across
+                    # classes; compare endpoint types as well as coordinates.
+                    def signature(record):
+                        return [(f.type, f.location,
+                                 [(type(p.start), type(p.end)) for p in f.location.parts], f.qualifiers)
+                                for f in record.features]
+                    self.assertEqual(signature(before), signature(after))
                 self.assertEqual(path.read_bytes(), content)
 
     def test_known_plant_parts_uncertainty_and_repeated_qualifiers(self):
@@ -168,6 +173,23 @@ class LocationTests(unittest.TestCase):
         for mode in ("exact", "reconstruct"):
             with self.assertRaises(ConversionError):
                 export_source(changed, mode=mode)
+
+    def test_single_fuzzy_positions_are_distinct_from_one_sided_fuzzy_spans(self):
+        cases = {"<10": ("before", "before"), ">10": ("after", "after"),
+                 "<10..10": ("before", "exact"), "10..>10": ("exact", "after")}
+        for descriptor, statuses in cases.items():
+            for wrapper in ("{}", "complement({})"):
+                expression = wrapper.format(descriptor)
+                with self.subTest(expression=expression):
+                    content = constructed(expression)
+                    bundle = imported(content)
+                    part = bundle["dataset"]["features"][0]["location"]["parts"][0]
+                    self.assertEqual((part["start_status"], part["end_status"]), statuses)
+                    canonical = export_source(bundle, mode="reconstruct", original_bytes=content)
+                    before = next(SeqIO.parse(StringIO(content.decode()), "genbank")).features[0].location
+                    after = next(SeqIO.parse(StringIO(canonical.decode()), "genbank")).features[0].location
+                    self.assertEqual(before, after)
+                    self.assertEqual((type(before.start), type(before.end)), (type(after.start), type(after.end)))
 
     def test_circular_parts_cannot_traverse_the_reference_more_than_once(self):
         for wrapper in ("{}", "complement({})"):

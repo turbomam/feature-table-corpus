@@ -37,6 +37,13 @@ features. Explicit `reported` mode queries only the nominal reported parts and
 labels partial results `partial-reported`; it does not claim to cover unknown
 extensions, including bases outside the presented sequence.
 
+For a single fuzzy position, this profile follows
+[Biopython 1.85's location parser](https://github.com/biopython/biopython/blob/biopython-185/Bio/SeqFeature.py):
+`<10` gives both bounds `before`, and `>10` gives both bounds `after`.
+An explicit span such as `<10..10` instead has a `before` start and an `exact`
+end. Regression tests preserve this distinction on both strands and compare
+Biopython endpoint classes, which numeric coordinate equality alone can miss.
+
 Exact distance is the smallest number of intervening bases between any pair of
 occupied parts, with zero for overlap or adjacency. On a known-length circular
 reference it includes the path across the origin. Different references, protein
