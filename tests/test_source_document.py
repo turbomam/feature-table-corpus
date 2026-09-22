@@ -114,6 +114,20 @@ class SourceDocumentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "UTF-8"):
             parse_bytes(b"# \xff\n", source_uri="https://example.org/a", format="gff3")
 
+    def test_genbank_blank_lines_preserve_feature_section_and_exact_bytes(self):
+        content = (b"\r\nFEATURES             Location/Qualifiers\n"
+                   b"     gene            1..10\r\n\n"
+                   b"                     /gene=\"example\"\n"
+                   b"                     \r\n"
+                   b"     CDS             1..9\n"
+                   b"ORIGIN\n\n                     acgt\n//\n\t")
+        doc = self.parse(content, format="genbank")
+        self.assertEqual([r["kind"] for r in doc["records"]],
+                         ["blank", "document_text", "feature", "blank",
+                          "feature_continuation", "blank", "feature",
+                          "document_text", "blank", "document_text",
+                          "document_text", "blank"])
+
     def test_repeated_sequence_names_and_quoted_delimiters_keep_distinct_contexts(self):
         content = b'''# Sequence Data: seqnum=1;seqlen=4;seqhdr="same description;with=delimiters";extra=one;extra=two
 # Model Data: transl_table=4

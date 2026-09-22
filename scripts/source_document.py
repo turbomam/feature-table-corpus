@@ -139,7 +139,10 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
                 record["context_record"] = anchor
 
         if format == "genbank":
-            if body.startswith("FEATURES "):
+            if not body.strip():
+                # A blank physical line does not end the lexical FEATURES section.
+                record["kind"] = "blank"
+            elif body.startswith("FEATURES "):
                 genbank_features = True
                 record["kind"] = "document_text"
             elif genbank_features and re.match(r"^ {5}[A-Za-z0-9][A-Za-z0-9_'*-]* +", body):
