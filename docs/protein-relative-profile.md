@@ -27,6 +27,8 @@ coordinates by splitting identifiers or invents contig lengths from endpoints.
 Missing or ambiguous bindings, missing translations, context/assembly mismatches,
 and hits beyond protein lengths are rejected. Context must cover exactly the
 source protein references.
+If context attributes include GFF `ID`, `Parent` or `product`, their values must
+agree with the corresponding typed context slots before bindings are used.
 
 Provenance is declared and supported by retained evidence. Consistency checking
 does not independently authenticate translation biology or provide a tamper-proof

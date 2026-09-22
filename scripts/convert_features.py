@@ -182,6 +182,12 @@ def protein_bindings(context, reference_context):
         require(parent["type"] == "CDS" and parent["coordinate_system"] == "contig"
                 and re.fullmatch(r"[A-Z]+", parent.get("translated_sequence", "")) is not None,
                 "protein-context", "each context feature must be a contig CDS with an explicit protein sequence")
+        pairs = parent.get("attributes") or []
+        for key, typed in (("ID", [parent["feature_id"]]), ("Parent", parent.get("parent") or []),
+                           ("product", [parent["product"]] if "product" in parent else [])):
+            generic = values(pairs, key)
+            require(not generic or generic == typed, "protein-context",
+                    f"context {key} attribute disagrees with its typed slot")
     require(isinstance(context["bindings"], list), "protein-context", "bindings must be a list")
     bindings, used = {}, set()
     for binding in context["bindings"]:
