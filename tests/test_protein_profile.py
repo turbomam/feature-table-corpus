@@ -124,7 +124,9 @@ class ProteinProfileTests(unittest.TestCase):
         self.assertEqual(len(imported(("\t".join(first) + "\n").encode(), c)["mappings"]), 1)
         for column, value, code in [(0, "unknown-protein", "protein-reference"), (2, "gene", "protein-profile"),
                                     (1, "Prodigal", "protein-profile"), (4, "999999", "protein-bound"),
-                                    (6, "+", "protein-profile"), (7, "0", "phase-domain")]:
+                                    (6, "+", "protein-profile"), (7, "0", "phase-domain"),
+                                    (8, first[8].rstrip(";") + ";Parent=" + first[0], "protein-profile"),
+                                    (8, ";".join(a for a in first[8].split(";") if not a.startswith("ID=")), "protein-profile")]:
             cols = first.copy(); cols[column] = value
             with self.subTest(column=column), self.assertRaises(ConversionError) as caught:
                 imported(("\t".join(cols) + "\n").encode(), c)
