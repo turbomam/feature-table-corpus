@@ -17620,10 +17620,12 @@
   ],
   "artifacts": [
     {
+      "role": "structural_annotation",
       "uri": "https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff",
       "sha256": "38340ec5f87db113c0c14a98fe58e1d1081a0d7f71d1a85891b59690cb7355ca"
     },
     {
+      "role": "protein_sequence",
       "uri": "https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_proteins.faa",
       "sha256": "49bd52721ccd054241b866a294cf3121bb04197cc0cd6f8f53fdd8b0ac5ed593"
     }
