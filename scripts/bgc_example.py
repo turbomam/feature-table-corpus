@@ -91,15 +91,25 @@ def query_order(con, *, reference_context, sequence_id, start, end,
     return [dict(zip(names, row)) for row in rows]
 
 
+def export_example(bundle, *, mode):
+    """Check declarations against this pinned exercise as well as source bytes."""
+    original = derive_source(SOURCE.read_bytes())
+    validate_bundle(bundle, original_bytes=original)
+    require(bundle["profile"] == PROFILE and bundle["reference_context"] == REFERENCE
+            and bundle["source"]["artifact"]["uri"] == URI
+            and bundle["source"]["profile"] == "ncbi",
+            "bgc-context", "bundle declarations differ from the independently pinned BGC context")
+    return export_source(bundle, mode=mode, original_bytes=original)
+
+
 def make_report():
     content = SOURCE.read_bytes()
     excerpt = derive_source(content)
     require(EXCERPT.read_bytes() == excerpt, "bgc-excerpt", "derived example does not reproduce")
     expected = json.loads(EXPECTED.read_text())
     bundle = import_source(excerpt, profile=PROFILE, reference_context=REFERENCE, source_uri=URI, metadata_profile="ncbi")
-    validate_bundle(bundle)
-    exact = export_source(bundle, mode="exact", original_bytes=excerpt)
-    reconstructed = export_source(bundle, mode="reconstruct", original_bytes=excerpt)
+    exact = export_example(bundle, mode="exact")
+    reconstructed = export_example(bundle, mode="reconstruct")
     again = import_source(reconstructed, profile=PROFILE, reference_context=REFERENCE, source_uri=URI, metadata_profile="ncbi")
     require(exact == excerpt and again["dataset"] == bundle["dataset"] and again["mappings"] == bundle["mappings"],
             "bgc-roundtrip", "conversion preservation failed")
@@ -133,8 +143,12 @@ def make_report():
     evidence = [{"line": number, "old_locus_tag": a["old_locus_tag"][0],
                  "start": int(c[3]), "end": int(c[4]), "strand": c[6]}
                 for number, _, c, a in source_rows(content)
-                if c[2] == "gene" and set(a.get("old_locus_tag", ())) & {"SCO5087", "SCO5088", "SCO5089"}]
-    require([(r["old_locus_tag"], r["start"], r["end"], r["strand"]) for r in evidence] ==
+                if c[2] == "gene" and set(a.get("old_locus_tag", ())) & {f"SCO{i}" for i in range(5071, 5093)}]
+    evidence.sort(key=lambda r: (r["start"], r["end"], r["old_locus_tag"]))
+    require([r["old_locus_tag"] for r in evidence] == expected["cluster_gene_order"],
+            "bgc-evidence", "full source gene order differs from checked-in expectations")
+    focus_evidence = [r for r in evidence if r["old_locus_tag"] in {"SCO5087", "SCO5088", "SCO5089"}]
+    require([(r["old_locus_tag"], r["start"], r["end"], r["strand"]) for r in focus_evidence] ==
             [(r["old_locus_tag"], r["start"], r["end"], r["strand"]) for r in expected["focus"]],
             "bgc-evidence", "direct source inspection differs from checked-in expectations")
     return {"report_version": 1, "profile": PROFILE, "reference_context": REFERENCE, "seqid": SEQID,

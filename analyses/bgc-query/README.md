@@ -15,7 +15,8 @@ annotation convention part of the general model.
 These values were read directly from the retained GFF rows before running the
 converter or SQL. [expected.json](expected.json) is maintained evidence, not
 generated query output. [report.json](report.json) checks the result against it
-and records full-source line numbers for a separate direct inspection.
+and records full-source line numbers and coordinates for all 22 genes, with a
+separate direct source check of the full order and the three focus intervals.
 
 | Old locus tag | Current gene | CDS product in this snapshot | Inclusive genomic interval | Strand |
 |---|---|---|---|---|
@@ -31,7 +32,10 @@ general overlap query at 5,532,706 also finds the next gene, SCO5090.
 
 The full cluster query recovers all 22 locus tags in order. Exact product lookup
 finds SCO5089 for `acyl carrier protein`. Controls give no matches for an absent
-product, an out-of-range interval or a different sequence accession version.
+product, an interval with no selected features or a different sequence accession
+version. These overlap queries allow positive intervals outside the selected
+region, including beyond the reference sequence; no matching rows means an empty
+result. This is not a reference-length validation API.
 Queries declaring a different reference context or protein coordinate space fail
 explicitly. SQL parameters preserve literal attribute values.
 The reference guard derives `refseq:ACCESSION.VERSION` from the sole chromosome
@@ -60,7 +64,11 @@ Both files pass the pinned GenomeTools validator.
 Reconstruction derives its feature rows from modeled fields and semantic mappings,
 then reimports with identical fields and relationships. This does not claim that
 44 selected rows reconstruct the complete chromosome annotation. Edited bundles
-are rejected by both exporters.
+are rejected by both exporters when mapped fields or preservation records change.
+The exercise's `export_example` also compares the declared reference, source URI
+and metadata profile with its independently pinned context. The generic conversion
+CLI treats those declarations as caller-supplied provenance; source bytes alone
+cannot authenticate them. `bgc-check` verifies both source and pinned context.
 
 The query describes annotations and proximity. It does not infer biochemical
 function from distance or establish cluster activity. MIBiG provides complementary
