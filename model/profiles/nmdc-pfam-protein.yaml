@@ -5,7 +5,7 @@ scope: NMDC HMMER Pfam protein-relative annotation rows with an explicit CDS/FAS
 required_context:
   - source-scoped or assembly-qualified reference context
   - closed Dataset containing the referenced contig-coordinate CDSs and their translated sequences
-  - unique protein-reference to CDS bindings and source artifact SHA-256 provenance
+  - unique protein-reference to CDS bindings and two distinct artifacts with structural_annotation/protein_sequence roles, URIs and SHA-256 provenance
 mapping:
   coordinates: 1-based inclusive amino-acid offsets within the bound CDS translation
   seqid: source column 1 is a protein reference; model seqid is the bound CDS's contig

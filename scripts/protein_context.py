@@ -41,8 +41,8 @@ def build_context(annotation, structural, fasta, *, reference_context, annotatio
     context = {"context_version": 1, "reference_context": reference_context,
                "dataset": {"contigs": [{"contig_id": c} for c in contigs], "features": parents},
                "bindings": [{"protein_id": p["feature_id"], "cds_id": p["feature_id"]} for p in parents],
-               "artifacts": [{"uri": uri, "sha256": hashlib.sha256(content).hexdigest()} for uri, content in
-                             ((structural_uri, structural), (fasta_uri, fasta))]}
+               "artifacts": [{"role": role, "uri": uri, "sha256": hashlib.sha256(content).hexdigest()} for role, uri, content in
+                             (("structural_annotation", structural_uri, structural), ("protein_sequence", fasta_uri, fasta))]}
     protein_bindings(context, reference_context)
     # Check actual producer annotations against this context before writing it.
     import_source(annotation, profile=PROTEIN, reference_context=reference_context,

@@ -19,6 +19,7 @@ class DocumentationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=prepare_docs.ROOT / "local") as directory:
             root = Path(directory)
             files = {"README.md": "# Example\n\n[Sources](corpus/)\n", "corpus/example.gff3": "##gff-version 3\n",
+                     "corpus/protein.faa": ">protein\nMKAA\n", "corpus/sequence.fna": ">sequence\nACGT\n",
                      "local/private.md": "private", "docs/.env": "private", "docs/cache.duckdb": "database",
                      "docs/untracked.md": "private", "other/private.md": "private"}
             for name, text in files.items():
@@ -30,9 +31,11 @@ class DocumentationTests(unittest.TestCase):
             with patch.object(prepare_docs, "ROOT", root), patch.object(prepare_docs, "DEST", dest), patch.object(prepare_docs.subprocess, "check_output", return_value=tracked):
                 prepare_docs.prepare()
                 self.assertTrue((dest / "corpus/example.gff3").is_file())
+                for name in ("corpus/protein.faa", "corpus/sequence.fna"):
+                    self.assertEqual((dest / name).read_text(), files[name])
                 self.assertIn("corpus/README.md", (dest / "README.md").read_text())
                 for name in files:
-                    if name not in ("README.md", "corpus/example.gff3"):
+                    if name not in ("README.md", "corpus/example.gff3", "corpus/protein.faa", "corpus/sequence.fna"):
                         self.assertFalse((dest / name).exists(), name)
                 # Rebuilding removes stale publication output as well.
                 stale = dest / "stale.txt"

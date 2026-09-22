@@ -17,7 +17,7 @@
     },
     "nmdc-pfam-protein/1.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
-      "sha256": "1e11bc04c04f36a2c412baeee9599e63dea5ca5ea2faf17fcaaa25d76d5d45d2"
+      "sha256": "b251242c36759a0d70697e49f7181cc4fcd25b86352ea05dd0e37c5c5a484c24"
     }
   },
   "query_performance": "not-measured",
@@ -32,7 +32,7 @@
       "case_kind": "observed",
       "losses": [],
       "edited_export": "unsupported",
-      "protein_context_sha256": "4abd53605d273c068fd3877c8ef595fd4da588cb4fb33c2df8faadc8aff1823a",
+      "protein_context_sha256": "d253d896fe09d0b9f3a116e1df8f76af16bf44fa728ceb1c65423d42ae5f6c33",
       "status": "supported",
       "source_byte_recovery": "exact-bytes",
       "modeled_field_reconstruction": "preserved-interpreted-meaning",

@@ -77,6 +77,9 @@ class ProteinProfileTests(unittest.TestCase):
         c = deepcopy(self.context); c["dataset"]["features"][0]["translated_sequence"] = "M"; bad.append(c)
         c = deepcopy(self.context); c["dataset"]["features"][0]["type"] = "gene"; bad.append(c)
         c = deepcopy(self.context); c["context_version"] = True; bad.append(c)
+        for key in ("role", "uri", "sha256"):
+            c = deepcopy(self.context); c["artifacts"][1][key] = c["artifacts"][0][key]; bad.append(c)
+        c = deepcopy(self.context); c["artifacts"][0]["role"] = "unknown"; bad.append(c)
         for context in bad:
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
