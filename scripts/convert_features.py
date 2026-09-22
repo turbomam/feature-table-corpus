@@ -211,7 +211,8 @@ def protein_bindings(context, reference_context):
     for binding in context["bindings"]:
         require(isinstance(binding, dict) and set(binding) == {"protein_id", "cds_id"}
                 and isinstance(binding["protein_id"], str) and binding["protein_id"]
-                and isinstance(binding["cds_id"], str), "protein-context", "invalid protein binding")
+                and isinstance(binding["cds_id"], str) and binding["cds_id"],
+                "protein-context", "protein bindings require nonempty protein and CDS identifiers")
         protein, cds = binding["protein_id"], binding["cds_id"]
         require(protein not in bindings and cds not in used and cds in parents,
                 "protein-context", "protein bindings must uniquely identify existing CDSs")

@@ -80,6 +80,16 @@ class ProteinProfileTests(unittest.TestCase):
         for key in ("role", "uri", "sha256"):
             c = deepcopy(self.context); c["artifacts"][1][key] = c["artifacts"][0][key]; bad.append(c)
         c = deepcopy(self.context); c["artifacts"][0]["role"] = "unknown"; bad.append(c)
+        # Keep the binding and Dataset internally consistent: an empty target
+        # must fail even when it resolves to an equally empty feature ID.
+        c = deepcopy(self.context)
+        target = c["bindings"][0]["cds_id"]
+        parent = next(f for f in c["dataset"]["features"] if f["feature_id"] == target)
+        parent["feature_id"] = c["bindings"][0]["cds_id"] = ""
+        for pair in parent.get("attributes", []):
+            if pair["key"] == "ID":
+                pair["value"] = ""
+        bad.append(c)
         for context in bad:
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
