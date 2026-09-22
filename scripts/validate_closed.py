@@ -14,6 +14,7 @@ from pathlib import Path
 import jsonschema
 import yaml
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
+from feature_locations import location_errors
 
 
 def make_validator(schema_path, class_name="Dataset"):
@@ -41,6 +42,9 @@ def dataset_errors(data):
             index[identifier] = row
         indexes[collection] = index
     contigs, features = indexes["contigs"], indexes["features"]
+    for cid, contig in contigs.items():
+        if contig.get("topology") == "circular" and not contig.get("length_bp"):
+            errors.append(f"contig {cid!r}: circular topology requires length_bp")
     for fid, feature in features.items():
         def error(message):
             errors.append(f"feature {fid!r}: {message}")
@@ -50,6 +54,8 @@ def dataset_errors(data):
         contig = contigs.get(feature["seqid"])
         if contig is None:
             error(f"unknown seqid {feature['seqid']!r}")
+        for problem in location_errors(feature, contig):
+            error(problem)
         space = feature["coordinate_system"]
         if space == "contig" and contig and contig.get("length_bp") is not None:
             if feature["end"] > contig["length_bp"]:

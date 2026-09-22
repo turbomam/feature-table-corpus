@@ -69,6 +69,7 @@ classes:
     slots:
       - contig_id
       - length_bp
+      - topology
       - taxonomic_lineage
       - lineage_confidence
       - generated_by
@@ -102,11 +103,63 @@ classes:
       - product
       - product_source
       - translated_sequence
+      - location
     slot_usage:
       feature_id:
         identifier: true
 
+  FeatureLocation:
+    description: Ordered component intervals; authoritative when present, with scalar feature bounds serving only as an indexing envelope.
+    slots:
+      - location_operator
+      - parts
+      - crosses_origin
+
+  LocationPart:
+    description: One oriented, reference-qualified interval with explicit endpoint status.
+    slots:
+      - seqid
+      - start
+      - end
+      - strand
+      - start_status
+      - end_status
+    slot_usage:
+      strand:
+        required: true
+
 slots:
+  topology:
+    description: Declared reference topology; circular locations also require length_bp.
+    range: TopologyEnum
+  location:
+    description: Explicit location parts; parent links and BED drawing blocks are separate concepts.
+    range: FeatureLocation
+    inlined: true
+  location_operator:
+    description: Whether the parts describe one interval, a joined sequence, or ordered intervals without a join assertion.
+    range: LocationOperatorEnum
+    required: true
+  parts:
+    description: Parts in biological traversal order, including strand orientation.
+    range: LocationPart
+    multivalued: true
+    inlined_as_list: true
+    list_elements_ordered: true
+    required: true
+    minimum_cardinality: 1
+  crosses_origin:
+    description: True only when traversal crosses the origin of a known-length circular reference.
+    range: boolean
+    required: true
+  start_status:
+    description: Exact lower endpoint or a bound before or after the reported coordinate.
+    range: EndpointStatusEnum
+    required: true
+  end_status:
+    description: Exact upper endpoint or a bound before or after the reported coordinate.
+    range: EndpointStatusEnum
+    required: true
   contigs:
     title: Contigs
     multivalued: true
@@ -187,13 +240,13 @@ slots:
     range: integer
     required: true
     minimum_value: 1
-    description: 1-based, inclusive. See `coordinate_system` before comparing across rows.
+    description: 1-based inclusive start; when location is present this is only the minimum reported part coordinate, not a claim that gaps are occupied.
   end:
     title: End
     range: integer
     required: true
     minimum_value: 1
-    description: 1-based, inclusive, always >= start. See `coordinate_system`.
+    description: 1-based inclusive end, always >= start; when location is present this is only the maximum reported part coordinate.
     comments:
       - Cross-field comparison is enforced by scripts/validate_closed.py for Dataset instances.
   coordinate_system:
@@ -310,6 +363,31 @@ slots:
         a data gap to fill in.
 
 enums:
+  TopologyEnum:
+    description: Reference topology used by location validation and distance queries.
+    permissible_values:
+      linear:
+        description: Linear reference with no origin wrap.
+      circular:
+        description: Circular reference whose final base is adjacent to base one.
+  LocationOperatorEnum:
+    description: Relationship between ordered location parts.
+    permissible_values:
+      single:
+        description: One interval.
+      join:
+        description: Parts are joined end to end.
+      order:
+        description: Parts have known order without asserting a joined sequence.
+  EndpointStatusEnum:
+    description: Relationship of the true endpoint to the reported position.
+    permissible_values:
+      exact:
+        description: Exact coordinate.
+      before:
+        description: Endpoint is before the reported coordinate, possibly outside the presented sequence.
+      after:
+        description: Endpoint is after the reported coordinate, possibly outside the presented sequence.
   StrandEnum:
     title: Strand
     description: GFF3 column-7 strand values.

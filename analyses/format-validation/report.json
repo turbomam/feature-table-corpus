@@ -11,7 +11,7 @@
   },
   "summary": {
     "accepted": 8,
-    "not_checked": 10,
+    "not_checked": 11,
     "rejected": 21
   },
   "records": [
@@ -394,6 +394,14 @@
       "stdout": "input is valid GFF3",
       "stderr": "",
       "expected_from_validity": "accepted"
+    },
+    {
+      "id": "refseq-phix-genbank",
+      "path": "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb",
+      "format": "GenBank nucleotide flat file",
+      "sha256": "0a8099e207633f8c3ba998bfe2a198518e1de356c7956691101b2512324b807c",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
     }
   ]
 }

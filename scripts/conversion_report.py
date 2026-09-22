@@ -22,10 +22,10 @@ def insdc_observations(content):
     """Text observations on this fixture, NOT an INSDC parser/validity verdict."""
     lines = content.decode().splitlines()
     locations = [m.group(1) for line in lines
-                 if (m := re.match(r"^ {5}\S+ +(.+)$", line))]
+                 if (m := re.match(r"^ {5}[A-Za-z][A-Za-z0-9_'*-]* +(.+)$", line))]
     repeated, qualifiers = 0, Counter()
     for line in [*lines, "     end             end"]:
-        if re.match(r"^ {5}\S", line):
+        if re.match(r"^ {5}[A-Za-z]", line):
             repeated += sum(n > 1 for n in qualifiers.values())
             qualifiers.clear()
         match = re.match(r"^ {21}/([A-Za-z0-9_]+)", line)
@@ -81,11 +81,16 @@ def make_report():
                                   source_uri=source_uri, metadata_profile=case.get("metadata_profile", "generic"),
                                   protein_context=context)
             require(exact == content, "byte-mismatch", "exact export differs")
-            require(again["dataset"] == bundle["dataset"] and again["mappings"] == bundle["mappings"],
+            mappings_equal = again["mappings"] == bundle["mappings"]
+            if case["format"] == "genbank":
+                from insdc_profile import semantic_mappings, nonfeature_text
+                mappings_equal = semantic_mappings(again) == semantic_mappings(bundle)
+            require(again["dataset"] == bundle["dataset"] and mappings_equal,
                     "reconstruction-mismatch", "re-imported fields/relationships/grouping differ")
-            nonfeatures = lambda b: [r for r in b["source"]["records"] if r["kind"] != "feature"]
+            nonfeatures = (nonfeature_text if case["format"] == "genbank" else
+                           lambda b: [r for r in b["source"]["records"] if r["kind"] != "feature"])
             require(nonfeatures(again) == nonfeatures(bundle), "metadata-mismatch", "metadata records/scopes changed")
-            feature_columns = lambda b: [r["feature_columns"] for r in b["source"]["records"] if r["kind"] == "feature"]
+            feature_columns = lambda b: [r["feature_columns"] for r in b["source"]["records"] if "feature_columns" in r]
             lexical_changes = Counter()
             for before, after in zip(feature_columns(bundle), feature_columns(again)):
                 lexical_changes.update(i for i, (a, b) in enumerate(zip(before, after), 1) if a != b)
@@ -98,6 +103,12 @@ def make_report():
                        nonfeature_records=len(nonfeatures(bundle)),
                        reconstructed_sha256=hashlib.sha256(reconstructed).hexdigest(),
                        validation="profile constraints and closed Dataset checks passed; not a full source-format validator")
+            if case["format"] == "genbank":
+                row.pop("normalized_columns")
+                def blocks(b):
+                    records = b["source"]["records"]
+                    return ["".join(r["raw_text"] for r in records[m["source_span"][0]:m["source_span"][1]]) for m in b["mappings"]]
+                row["normalized_feature_blocks"] = sum(a != b for a, b in zip(blocks(bundle), blocks(again)))
         except ConversionError as error:
             row.update(status="unsupported", source_byte_recovery="not-attempted",
                        modeled_field_reconstruction="not-attempted", diagnostic={"code": error.code, "message": str(error)})

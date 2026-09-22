@@ -1,6 +1,6 @@
 # Executable conversion profiles
 
-Three versioned source profiles now convert complete, supported artifacts into the
+Four versioned source profiles now convert complete, supported artifacts into the
 shared `Dataset` model and back. They implement the first cross-format milestone
 in [#16](https://github.com/turbomam/feature-table-corpus/issues/16).
 The [measured report](../analyses/conversion-roundtrips/README.md) separates exact
@@ -42,6 +42,7 @@ internally consistent artifact; it cannot pass comparison with the old original.
 
 | Profile | Forward mapping | Reverse mapping and bounds |
 |---|---|---|
+| [`insdc-locations/1.0.0`](../model/profiles/insdc-locations.yaml) | GenBank nucleotide records with qualified references, ordered parts, partial endpoints, circular topology and generic qualifiers. | Reconstruct feature-table blocks from modeled locations and qualifiers; preserve header/sequence text in SourceDocument. Remote, between-base, unknown and mixed-strand locations are refused. |
 | [`nmdc-pfam-protein/1.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
 | [`gff3-contig/1.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
@@ -136,25 +137,26 @@ equivalence beyond the declared mappings.
 Unexpected rejection **or** unexpected acceptance fails. Unit tests also cover
 120 deterministically generated positive cases, wrong/conflicting representations,
 malformed values, boundaries, metadata scopes, literal arguments and refused edits.
-Common interval and attribute queries cover all three converted profiles. Query
+Common interval and attribute queries cover the converted profiles, with explicit
+[part-aware and partial-bound semantics](feature-locations.md) for INSDC. Query
 performance remains unmeasured. [Independent GFF3 validation](../analyses/format-validation/README.md)
 records separate GenomeTools verdicts; other formats have no independent validator yet.
 
-## Evidence for the next model changes
+## Additional format coverage and remaining limits
 
 The [INSDC feature-table definition](https://www.insdc.org/submitting-standards/feature-table/)
 uses location expressions and qualifiers within GenBank/EMBL records. This is
 distinct from the [NCBI five-column submission table](https://www.ncbi.nlm.nih.gov/genbank/feature_table/).
 The retained six plant records have joined/partial locations and repeated qualifiers.
-There is no INSDC adapter yet, so the report marks them unsupported instead of
+The [bounded INSDC adapter](feature-locations.md) now covers these retained examples. Earlier reports marked them unsupported instead of
 reducing a joined location to its outer span. The existing GTF reader also supplies
 byte preservation, not an executable GTF-to-Dataset conversion profile.
 
-The next justified extensions are explicit compound-location parts and uncertain
-endpoints, circular-reference behavior, and assembly-qualified reference identities.
-BED's block children provide one reversible source mapping; they do not yet define
-a universal location algebra. NMDC/JGI, Prokka and Phytozome remain candidate
-producer profiles, not interchangeable dialect names or implemented support claims.
+Explicit ordered parts, partial endpoints and circular references now have a bounded
+GenBank profile. Remote locations, between-base sites and ambiguous bounds remain
+unsupported. BED's block children retain their original profile meaning; they are
+not silently reinterpreted as the new location class. Additional NMDC/JGI, Prokka
+and Phytozome conventions remain candidates, not interchangeable dialect names.
 
 A new supported conversion must add a versioned contract, importer, reverse mapper,
 profile validation, real and generated round-trip cases, rejection controls and an

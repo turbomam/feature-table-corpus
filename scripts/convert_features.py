@@ -20,7 +20,8 @@ from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTEIN = "nmdc-pfam-protein/1.0.0"
-PROFILES = {"gff3-contig/1.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3"}
+PROFILES = {"gff3-contig/1.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
+            "insdc-locations/1.0.0": "genbank"}
 
 
 class ConversionError(ValueError):
@@ -231,6 +232,10 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
         require(metadata_profile == "generic", "protein-profile", "protein profile uses generic source metadata")
     else:
         require(protein_context is None, "protein-context", "protein context is only valid with the protein profile")
+    if profile == "insdc-locations/1.0.0":
+        require(metadata_profile == "generic", "metadata-profile", "GenBank requires generic source metadata")
+        from insdc_profile import import_insdc
+        return import_insdc(content, reference_context=reference_context, source_uri=source_uri)
     source = parse_bytes(content, source_uri=source_uri, format=PROFILES[profile], profile=metadata_profile)
     errors = validation_errors(source, source_validator(), "SourceDocument")
     require(not errors, "source-invalid", "; ".join(errors))
@@ -361,6 +366,10 @@ def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
 def export_source(bundle, *, mode, original_bytes=None, protein_context=None):
     require(mode in ("exact", "reconstruct"), "export-mode", "choose exact or reconstruct explicitly")
     content = validate_bundle(bundle, original_bytes, protein_context=protein_context)
+    if bundle["profile"] == "insdc-locations/1.0.0":
+        from insdc_profile import reconstruct_document
+        reconstructed = reconstruct_document(bundle)
+        return content if mode == "exact" else reconstructed
     by_id = {f["feature_id"]: f for f in bundle["dataset"]["features"]}
     mappings = {m["record_id"]: m for m in bundle["mappings"]}
     bindings = protein_bindings(bundle["protein_context"], bundle["reference_context"]) if bundle["profile"] == PROTEIN else None

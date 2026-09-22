@@ -4,7 +4,8 @@
   "toolchain": {
     "linkml": "1.11.1",
     "jsonschema": "4.26.0",
-    "PyYAML": "6.0.3"
+    "PyYAML": "6.0.3",
+    "biopython": "1.85"
   },
   "profiles": {
     "bed12-blocks/1.0.0": {
@@ -14,6 +15,10 @@
     "gff3-contig/1.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
       "sha256": "555395d6c89eeb2da52006c119186df594272d1eab55cc3b84e14032781d0cef"
+    },
+    "insdc-locations/1.0.0": {
+      "path": "model/profiles/insdc-locations.yaml",
+      "sha256": "fd500c8a49a2719ff68eff58731c54ee85d98df12c2c6149f755724fe1b85ca4"
     },
     "nmdc-pfam-protein/1.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
@@ -221,7 +226,7 @@
       "id": "insdc-plant-locations",
       "path": "corpus/sources/biopython/cor6_6.gb",
       "format": "genbank",
-      "profile": null,
+      "profile": "insdc-locations/1.0.0",
       "source_sha256": "01b4e193b71344752a96e2b37e886118a33c07b16c3684741c31eb3efeaf60b8",
       "case_kind": "upstream-sequence-records",
       "losses": [],
@@ -241,13 +246,48 @@
         "partial_location_lines": 7,
         "repeated_qualifier_keys_within_features": 2
       },
-      "status": "unsupported",
-      "source_byte_recovery": "not-attempted",
-      "modeled_field_reconstruction": "not-attempted",
-      "diagnostic": {
-        "code": "unsupported-format",
-        "message": "no genbank conversion adapter implemented; source is retained as corpus evidence"
-      }
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "source_feature_rows": 38,
+      "model_features": 38,
+      "nonfeature_records": 187,
+      "reconstructed_sha256": "fcc2fd2a16569aaaa3e5456730666a77303cd5317a8e8ea11887b3390119e854",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator",
+      "normalized_feature_blocks": 5
+    },
+    {
+      "id": "insdc-phix-circular",
+      "path": "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb",
+      "format": "genbank",
+      "profile": "insdc-locations/1.0.0",
+      "source_sha256": "0a8099e207633f8c3ba998bfe2a198518e1de356c7956691101b2512324b807c",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "observations": {
+        "method": "fixed-column source-text inspection, not format validation",
+        "accession_versions": [
+          "NC_001422.1"
+        ],
+        "feature_location_lines": 32,
+        "join_location_lines": 6,
+        "partial_location_lines": 0,
+        "repeated_qualifier_keys_within_features": 0
+      },
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "source_feature_rows": 32,
+      "model_features": 32,
+      "nonfeature_records": 275,
+      "reconstructed_sha256": "197276f5c2a4e2313503daea41f27a5ddbe3d019931d245cf2c86992db1a5e98",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator",
+      "normalized_feature_blocks": 10
     },
     {
       "id": "constructed-discontinuous-gff",

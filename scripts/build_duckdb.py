@@ -21,12 +21,12 @@ from validate_closed import load_validated
 
 CONTIG_COLUMNS = (
     "contig_id", "length_bp", "lineage_confidence", "taxonomic_lineage",
-    "generated_by", "source_files",
+    "generated_by", "source_files", "topology",
 )
 FEATURE_COLUMNS = (
     "feature_id", "seqid", "source", "type", "start", "end", "coordinate_system",
     "score", "strand", "phase", "generated_by", "source_files", "is_selected",
-    "product", "product_source", "translated_sequence", "parent", "attributes",
+    "product", "product_source", "translated_sequence", "parent", "attributes", "location",
 )
 
 
@@ -58,7 +58,8 @@ def _populate_database(data, db_path):
                 lineage_confidence DOUBLE,
                 taxonomic_lineage VARCHAR[],
                 generated_by VARCHAR,
-                source_files VARCHAR[]
+                source_files VARCHAR[],
+                topology VARCHAR
             )
         """)
         con.execute("""
@@ -81,7 +82,8 @@ def _populate_database(data, db_path):
                 product_source VARCHAR,
                 translated_sequence VARCHAR,
                 parent VARCHAR[],
-                attributes STRUCT(key VARCHAR, value VARCHAR)[]
+                attributes STRUCT(key VARCHAR, value VARCHAR)[],
+                location JSON
             )
         """)
         for table, collection, columns in (
@@ -90,13 +92,13 @@ def _populate_database(data, db_path):
             # DuckDB interprets a Python dict with exactly key/value keys as a MAP.
             # Cast JSON explicitly so the generic attribute stays a STRUCT.
             placeholders = ", ".join(
-                "?::JSON::STRUCT(key VARCHAR, value VARCHAR)[]" if c == "attributes" else "?"
+                "?::JSON::STRUCT(key VARCHAR, value VARCHAR)[]" if c == "attributes" else "?::JSON" if c == "location" else "?"
                 for c in columns
             )
             for row in data.get(collection) or []:
                 con.execute(
                     f"INSERT INTO {table} VALUES ({placeholders})",
-                    [json.dumps(row.get(c)) if c == "attributes" else row.get(c) for c in columns],
+                    [json.dumps(row[c]) if c in ("attributes", "location") and row.get(c) is not None else row.get(c) for c in columns],
                 )
         counts = (
             con.execute("SELECT count(*) FROM contig").fetchone()[0],

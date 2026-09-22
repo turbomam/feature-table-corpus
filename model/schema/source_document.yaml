@@ -1,7 +1,7 @@
 id: https://w3id.org/ber-data/source-document
 name: source-document
 title: Feature source documents (draft)
-description: Ordered source records and scoped metadata from individual GFF3, GTF, or BED12 artifacts.
+description: Ordered source records and scoped metadata from individual GFF3, GTF, BED12 or GenBank artifacts.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -143,6 +143,8 @@ enums:
         description: GTF nine-column records and comments; GFF3 section markers are not interpreted.
       bed12:
         description: Twelve tab-separated BED columns; comments and browser/track commands retain stream scope.
+      genbank:
+        description: GenBank flat-file records; feature blocks and remaining physical text are retained separately.
   MetadataProfileEnum:
     description: Producer-specific metadata interpretation, or generic format behavior.
     permissible_values:
@@ -156,7 +158,7 @@ enums:
     description: Lexical roles preserved in the ordered document stream.
     permissible_values:
       feature:
-        description: A nine-column source feature row, before any biological harmonization.
+        description: A tabular feature row or GenBank feature-block start, before biological harmonization.
       comment:
         description: A single-hash comment, including producer hash-bang conventions.
       directive:
@@ -173,6 +175,10 @@ enums:
         description: An empty or whitespace-only physical line.
       unparsed:
         description: Unrecognized content retained with a diagnostic.
+      feature_continuation:
+        description: A GenBank feature location continuation or qualifier line.
+      document_text:
+        description: GenBank header, sequence or record boundary retained without biological interpretation.
   MetadataScopeEnum:
     description: Extent of applicability established by the format or selected producer profile.
     permissible_values:

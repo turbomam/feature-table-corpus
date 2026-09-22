@@ -38,14 +38,23 @@ def interval_overlap(con, sequence_id, start, end, coordinate_system="contig"):
         raise ValueError("Interval must be 1-based inclusive with start <= end")
     if coordinate_system not in ("contig", "protein"):
         raise ValueError("coordinate_system must be contig or protein")
+    if coordinate_system == "contig" and con.execute('''
+        SELECT count(*) FROM feature f, json_each(f.location, '$.parts') p
+        WHERE f.seqid = ? AND
+          ((p.value->>'start_status') != 'exact' OR (p.value->>'end_status') != 'exact')
+    ''', [sequence_id]).fetchone()[0]:
+        raise ValueError("reference has uncertain endpoints; use the explicit location query's reported-bounds mode")
     return con.execute("""
         SELECT feature_id, type, start, "end", coordinate_system
         FROM feature
-        WHERE coordinate_system = ? AND start <= ? AND "end" >= ?
+        WHERE coordinate_system = ?
+          AND ((location IS NULL AND start <= ? AND "end" >= ?)
+            OR EXISTS (SELECT 1 FROM json_each(location, '$.parts') p
+                       WHERE CAST(p.value->>'start' AS BIGINT) <= ? AND CAST(p.value->>'end' AS BIGINT) >= ?))
           AND ((coordinate_system = 'contig' AND seqid = ?)
             OR (coordinate_system = 'protein' AND list_contains(parent, ?)))
         ORDER BY feature_id
-    """, [coordinate_system, end, start, sequence_id, sequence_id]).fetchall()
+    """, [coordinate_system, end, start, end, start, sequence_id, sequence_id]).fetchall()
 
 
 def by_attribute(con, key, value):

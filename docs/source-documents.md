@@ -41,6 +41,11 @@ specifications and tool authors' evaluations.
 
 ## Scope and producer profiles
 
+`--format genbank --profile generic` retains each physical GenBank line, distinguishing
+feature starts, feature continuations and other document text. This lexical mode
+does not assert biological validity. The [INSDC location profile](feature-locations.md)
+separately interprets the bounded feature-table syntax and validates complete records.
+
 The caller must choose `--format gff3`, `--format gtf` or `--format bed12`. A filename or absent header
 never supplies an inferred format. `--profile generic` is the default; producer
 interpretation requires explicitly selecting `prodigal` or `ncbi`.

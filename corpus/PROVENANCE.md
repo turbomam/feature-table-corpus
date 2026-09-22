@@ -204,3 +204,18 @@ preserved. The selection does not claim that omitted genes were biologically
 filtered. Both original and excerpt pass GenomeTools 1.6.6. The corpus now has
 65 entries, 29 vendored and 10 derived; nine derived artifacts remain deliberately
 altered fixtures. See the [query exercise](../analyses/bgc-query/README.md).
+
+## September 21 retrieval, modeled September 22: circular INSDC evidence
+
+Retained the complete NCBI RefSeq GenBank response for `NC_001422.1`, phiX174,
+unchanged from the indexed public endpoint. The index records its retrieval date,
+26,238 bytes, MD5/SHA-256, accession version and NCBI reuse policy. This is a
+5,386-base circular reference with 32 annotated features, six of which cross the
+origin using joined locations. It complements the previously retained GFF3 from
+the same reference; no automatic annotation equivalence between snapshots is assumed.
+
+The bounded INSDC profile tests this record and the six already retained plant
+records. It reconstructs their modeled locations and qualifiers separately from
+byte recovery; independent Biopython parsing checks the reconstructed feature
+meaning. No pre-existing source bytes were changed. The corpus now has 66 entries,
+30 vendored and 10 derived.

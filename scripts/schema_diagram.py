@@ -17,6 +17,7 @@ def main():
     # LinkML's current renderer does not infer how many records can reference
     # the same target. Correct those two edges and orient right-hand crow's feet.
     overrides = {
+        'LocationPart ||--|| Contig : "seqid"': 'Contig ||--o{ LocationPart : "seqid"',
         'Feature ||--|| Contig : "seqid"': 'Contig ||--o{ Feature : "seqid"',
         'Feature ||--}o Feature : "parent"': 'Feature }o--o{ Feature : "parent"',
     }
@@ -24,7 +25,7 @@ def main():
         if diagram.count(original) != 1:
             raise ValueError(f'Generator output changed; review cardinality override: {original}')
         diagram = diagram.replace(original, corrected)
-    diagram = diagram.replace('||--}o', '||--o{')
+    diagram = diagram.replace('||--}o', '||--o{').replace('||--}|', '||--|{').replace('||--|o', '||--o|')
     print('\n'.join(line.rstrip() for line in diagram.splitlines()).rstrip())
 
 

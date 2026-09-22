@@ -29,7 +29,7 @@ consumer documentation, and format/tool authors' claims.
 
 For executable interchange, see [versioned conversion profiles](docs/conversion-profiles.md)
 and the [per-case preservation report](analyses/conversion-roundtrips/README.md).
-The GFF3, BED12 and [NMDC Pfam](docs/protein-relative-profile.md) profiles separately test exact byte recovery and reconstruction
+The GFF3, BED12, [NMDC Pfam](docs/protein-relative-profile.md) and [INSDC location](docs/feature-locations.md) profiles separately test exact byte recovery and reconstruction
 from mapped fields, with unsupported cases reported explicitly. The corpus now
 also includes [pinned BED12 and INSDC plant examples](corpus/sources/biopython/README.md).
 
@@ -84,12 +84,12 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-65 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+66 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 29 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 30 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 10 | Nine deliberately altered fixtures and one explicitly selected real BGC excerpt, each traceable to its source |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
