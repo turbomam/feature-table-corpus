@@ -6,13 +6,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import duckdb
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from bgc_example import (EXCERPT, FIRST, LAST, REFERENCE, REPORT, SEQID, SOURCE,
-                         derive_source, make_report, query_order, source_rows)
+from bgc_example import (EXCERPT, EXPECTED, FIRST, LAST, REFERENCE, REPORT, SEQID, SOURCE, URI,
+                         derive_source, export_example, make_report, query_order, source_rows)
 from build_duckdb import build_database
 from convert_features import ConversionError, export_source, import_source
 
@@ -27,6 +28,7 @@ class BGCExampleTests(unittest.TestCase):
         self.assertEqual(report, json.loads(REPORT.read_text()))
         self.assertEqual(report["query_results"]["signed_gaps_bp"], [-4, 24])
         self.assertEqual(len(report["query_results"]["cluster_gene_order"]), 22)
+        self.assertEqual(len(report["source_evidence"]), 22)
         full = SOURCE.read_bytes().splitlines(keepends=True)
         derived_rows = [line for _, line, _, _ in source_rows(EXCERPT.read_bytes())]
         self.assertEqual(len(derived_rows), 44)
@@ -63,6 +65,9 @@ class BGCExampleTests(unittest.TestCase):
                         query_order(con, **{**opts, "reference_context": empty})
                     self.assertEqual(caught.exception.code, "reference-context")
                 self.assertEqual(query_order(con, **opts, product="x' OR true --"), [])
+                for start, end in ((1, 100), (LAST + 1, LAST + 100), (10_000_000, 10_000_100)):
+                    with self.subTest(start=start, end=end):
+                        self.assertEqual(query_order(con, **{**opts, "start": start, "end": end}), [])
 
     def test_edited_coordinate_or_annotation_cannot_replay_old_source(self):
         bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/1.0.0",
@@ -82,3 +87,32 @@ class BGCExampleTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("reproduce exactly", result.stdout)
         self.assertEqual(before, [(path.read_bytes(), path.stat().st_mtime_ns) for path in (SOURCE, EXCERPT, REPORT)])
+
+    def test_pinned_context_and_independent_full_order_cannot_be_redefined(self):
+        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/1.0.0",
+                               reference_context=REFERENCE, source_uri=URI, metadata_profile="ncbi")
+        for field in ("reference_context", "source_uri"):
+            edited = copy.deepcopy(bundle)
+            if field == "reference_context":
+                edited[field] = "refseq:NC_003888.2"
+            else:
+                edited["source"]["artifact"]["uri"] = "urn:changed:source"
+            for mode in ("exact", "reconstruct"):
+                with self.subTest(field=field, mode=mode), self.assertRaisesRegex(ConversionError, "pinned BGC context"):
+                    export_example(edited, mode=mode)
+        # A coordinated wrong SQL order and expected list must still fail
+        # independent inspection of all 22 genes in the retained source.
+        expected = json.loads(EXPECTED.read_text())
+        order = expected["cluster_gene_order"]
+        order[0], order[1] = order[1], order[0]
+        def wrong_order(con, **kwargs):
+            rows = query_order(con, **kwargs)
+            if len(rows) == 22:
+                rows[0], rows[1] = rows[1], rows[0]
+            return rows
+        with tempfile.TemporaryDirectory(dir=ROOT / "local") as work:
+            path = Path(work) / "wrong-expectations.json"
+            path.write_text(json.dumps(expected))
+            with patch("bgc_example.EXPECTED", path), patch("bgc_example.query_order", wrong_order):
+                with self.assertRaisesRegex(ConversionError, "full source gene order"):
+                    make_report()
