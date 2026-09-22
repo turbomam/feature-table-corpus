@@ -36,8 +36,9 @@ class SourceDocumentTests(unittest.TestCase):
     def test_all_real_gff_and_gtf_sources_round_trip_and_keep_every_feature(self):
         paths = list((ROOT / "corpus/sources/nmdc").glob("*.gff"))
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff"))
+        paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff3"))
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gtf"))
-        self.assertEqual(len(paths), 18)
+        self.assertEqual(len(paths), 21)
         for path in paths:
             with self.subTest(path=path.name):
                 original = path.read_bytes()

@@ -1,0 +1,25 @@
+id: nmdc-pfam-protein/1.0.0
+format: gff3
+status: experimental
+scope: NMDC HMMER Pfam protein-relative annotation rows with an explicit CDS/FASTA context
+required_context:
+  - source-scoped or assembly-qualified reference context
+  - closed Dataset containing the referenced contig-coordinate CDSs and their translated sequences
+  - unique protein-reference to CDS bindings and two distinct artifacts with structural_annotation/protein_sequence roles, URIs and SHA-256 provenance
+mapping:
+  coordinates: 1-based inclusive amino-acid offsets within the bound CDS translation
+  seqid: source column 1 is a protein reference; model seqid is the bound CDS's contig
+  parent: model parent is the explicit CDS binding; no source Parent tag is invented
+  type: literal Pfam accession, not a Sequence Ontology assertion
+  attributes: ordered generic pairs with repeated/empty/unknown values and comma grouping retained
+round_trip:
+  exact: byte-identical source recovery after projection and independent-original checks
+  reconstruct: model fields plus semantic protein identity/attribute grouping mappings
+  context: validation and export require the independent original context; supporting CDS/protein evidence is not exported as extra annotation rows
+limitations:
+  - requires explicit profile selection; never inferred from nine columns or identifier spelling
+  - requires ID, HMMER source, PF accession, strand '.', phase '.', and no source Parent tag
+  - protein context must cover exactly the source references and contain one translation per CDS
+  - no conversion of protein offsets into genomic positions is claimed
+  - context provenance is declared; consistency checking does not authenticate external biology
+  - edited-instance export and other NMDC annotation families are unsupported

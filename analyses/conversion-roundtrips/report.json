@@ -4,7 +4,8 @@
   "toolchain": {
     "linkml": "1.11.1",
     "jsonschema": "4.26.0",
-    "PyYAML": "6.0.3"
+    "PyYAML": "6.0.3",
+    "rfc3987": "1.3.8"
   },
   "profiles": {
     "bed12-blocks/1.0.0": {
@@ -14,11 +15,72 @@
     "gff3-contig/1.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
       "sha256": "555395d6c89eeb2da52006c119186df594272d1eab55cc3b84e14032781d0cef"
+    },
+    "nmdc-pfam-protein/1.0.0": {
+      "path": "model/profiles/nmdc-pfam-protein.yaml",
+      "sha256": "b251242c36759a0d70697e49f7181cc4fcd25b86352ea05dd0e37c5c5a484c24"
     }
   },
   "query_performance": "not-measured",
   "lossy_export": "not-implemented",
   "cases": [
+    {
+      "id": "refseq-actinorhodin-excerpt",
+      "path": "corpus/derived-examples/actinorhodin.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/1.0.0",
+      "source_sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
+      "case_kind": "selected-real-source-rows",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 2,
+          "changed_records": 22
+        },
+        {
+          "column": 9,
+          "changed_records": 22
+        }
+      ],
+      "source_feature_rows": 44,
+      "model_features": 44,
+      "nonfeature_records": 8,
+      "reconstructed_sha256": "01bb6f5679c3fbea17fa24852aa6dc5b81128a87189c4bda074cf9bcff8c87b8",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "nmdc-biosample-pfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
+      "format": "gff3",
+      "profile": "nmdc-pfam-protein/1.0.0",
+      "source_sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "protein_context_sha256": "d253d896fe09d0b9f3a116e1df8f76af16bf44fa728ceb1c65423d42ae5f6c33",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 2,
+          "changed_records": 416
+        }
+      ],
+      "source_feature_rows": 416,
+      "model_features": 813,
+      "nonfeature_records": 0,
+      "reconstructed_sha256": "d93fbd4ceb0606c41b437245ecfa8cce75d0e7d7c44f9dbc9ca8659af1b4ef25",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
     {
       "id": "nmdc-prodigal",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",

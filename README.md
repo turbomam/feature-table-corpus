@@ -29,9 +29,13 @@ consumer documentation, and format/tool authors' claims.
 
 For executable interchange, see [versioned conversion profiles](docs/conversion-profiles.md)
 and the [per-case preservation report](analyses/conversion-roundtrips/README.md).
-The GFF3 and BED12 profiles separately test exact byte recovery and reconstruction
+The GFF3, BED12 and [NMDC Pfam](docs/protein-relative-profile.md) profiles separately test exact byte recovery and reconstruction
 from mapped fields, with unsupported cases reported explicitly. The corpus now
 also includes [pinned BED12 and INSDC plant examples](corpus/sources/biopython/README.md).
+
+The [actinorhodin BGC exercise](analyses/bgc-query/README.md) connects retained
+RefSeq source evidence to genomic gene order, annotation lookup, signed distances
+and both conversion round trips. Run `just bgc-check` to reproduce it offline.
 
 Suggested reading, in this order:
 
@@ -80,14 +84,14 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-60 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+65 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 25 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 29 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
-| derived | 9 | Built here from a vendored file by exactly one documented change. Traceable, but not observed in the wild |
+| derived | 10 | Nine deliberately altered fixtures and one explicitly selected real BGC excerpt, each traceable to its source |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
@@ -108,7 +112,9 @@ The checked-in source files are plain text, so their contents are reviewable in 
 
 ## The vendored files
 
-**NMDC, 14 files, 158 bytes to 4.6 KB.** One per distinct `data_object_type` that carries GFF in
+The NMDC collection contains 20 retained files in the following three groups.
+
+**Original NMDC GFF sample: 14 files, 158 bytes to 4.6 KB.** One per distinct `data_object_type` that carries GFF in
 NMDC production. Each is the smallest real file of its kind out of roughly 600 sampled through the
 public API, and each checksum matches the MD5 recorded in the NMDC record itself. These 14 are the
 useful part of this corpus, because they show that one annotation is not one file. It is a set of
@@ -126,8 +132,14 @@ All are outputs of the JGI IMG annotation pipeline, reachable openly through NMD
 **NMDC, 3 additional non-GFF files.** Enzyme Commission TSV, KEGG Orthology TSV, and CRT
 `.crisprs` text extend the corpus to other feature-bearing formats. The EC and KO files
 carry hits; the selected `.crisprs` file contains three populated, six-field records.
-These bring the NMDC vendored total
-to 17; the 14-file GFF measurements above remain specifically about GFF.
+Together these first two groups contain 17 files; the 14-file GFF measurements
+above remain specifically about the original sample.
+
+**NMDC, 3 companion files for protein conversion.** A full Pfam GFF, structural
+GFF and protein FASTA from `nmdc:wfmgan-11-5xxrm214.2` bring the NMDC total to 20.
+They support the [protein-relative conversion example](docs/protein-relative-profile.md):
+416 hits on 397 proteins, with explicit CDS bindings and retained translations.
+These were selected as related evidence, independently of the smallest-file sample.
 
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the

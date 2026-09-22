@@ -1,6 +1,6 @@
 # Executable conversion profiles
 
-Two versioned source profiles now convert complete, supported artifacts into the
+Three versioned source profiles now convert complete, supported artifacts into the
 shared `Dataset` model and back. They implement the first cross-format milestone
 in [#16](https://github.com/turbomam/feature-table-corpus/issues/16).
 The [measured report](../analyses/conversion-roundtrips/README.md) separates exact
@@ -21,6 +21,10 @@ The JSON conversion bundle is one document with these required fields:
 | `dataset` | An instance of the existing [Dataset/Contig/Feature model](../model/schema/README.md), validated with its closed shape and cross-record checks. |
 | `mappings` | Source-record-to-feature identities, ordered block identities, and attribute grouping/cardinality metadata needed by the reverse mapping. |
 
+The protein profile additionally requires `protein_context` in the bundle. Supply
+the independent original context again to validation/export with
+`--protein-context`; it is compared before reimporting the source projection.
+
 `scripts/convert_features.py` checks both component shapes, then validates the complete
 executable bundle contract by re-importing its internally checked source and comparing the whole projection.
 Unknown fields and inconsistent copies fail. The two component classes remain
@@ -38,6 +42,7 @@ internally consistent artifact; it cannot pass comparison with the old original.
 
 | Profile | Forward mapping | Reverse mapping and bounds |
 |---|---|---|
+| [`nmdc-pfam-protein/1.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
 | [`gff3-contig/1.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
 
@@ -50,10 +55,16 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The GFF profile is a declared **contig-coordinate** contract, not a format detector.
+The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/1.0.0`,
+adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
+original contracts unchanged. Supporting CDSs are not exported as additional
+Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.
+
+The original GFF profile is a declared **contig-coordinate** contract, not a format detector.
 Do not apply it to NMDC protein-domain output just because that output has nine
-columns. The corpus has examples of both coordinate spaces. The existing curated
-protein-relative examples remain separately modeled and validated.
+columns. The corpus has examples of both coordinate spaces. Use the Pfam profile
+and its explicit companion context for the supported protein-relative convention;
+the existing curated protein-relative examples remain separately validated.
 
 The [GFF3 specification](https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md)
 allows richer representations than this first adapter supports. Unknown attributes,
@@ -90,7 +101,7 @@ help. Existing source/output files are never overwritten.
 
 Use Python 3.11+, uv and just 1.27+. The conversion commands and regression suite
 use [pinned dependencies](../requirements-conversion.txt): LinkML 1.11.1,
-jsonschema 4.26.0 and PyYAML 6.0.3. Use new output paths:
+jsonschema 4.26.0, PyYAML 6.0.3 and rfc3987 1.3.8. Use new output paths:
 
 ```sh
 just conversion-import \
@@ -125,7 +136,7 @@ equivalence beyond the declared mappings.
 Unexpected rejection **or** unexpected acceptance fails. Unit tests also cover
 120 deterministically generated positive cases, wrong/conflicting representations,
 malformed values, boundaries, metadata scopes, literal arguments and refused edits.
-Common interval and attribute queries run on both converted profiles. Query
+Common interval and attribute queries cover all three converted profiles. Query
 performance remains unmeasured. [Independent GFF3 validation](../analyses/format-validation/README.md)
 records separate GenomeTools verdicts; other formats have no independent validator yet.
 

@@ -19,7 +19,7 @@ default:
 
 [doc("Run corpus, schema, example, and regression checks.")]
 [group("Validation")]
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check bgc-check
     @echo "all checks passed"
 
 [doc("Check all three LinkML schemas against the metamodel.")]
@@ -108,6 +108,16 @@ pr-validation base="origin/main" audit_source="":
 
 # ---- Model analysis and databases -------------------------------------------
 
+[doc("Regenerate the real BGC excerpt and gene-order query report.")]
+[group("Queries")]
+bgc-report:
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/bgc_example.py
+
+[doc("Reproduce BGC source selection, round trips, and query results.")]
+[group("Queries")]
+bgc-check:
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/bgc_example.py --check
+
 # This recipe prints Mermaid; the checked-in diagram also contains maintained prose.
 [doc("Print the feature model's Mermaid ER diagram.")]
 [group("Model")]
@@ -188,6 +198,12 @@ nmdc-sample:
     python3 scripts/harvest_nmdc.py
 
 # ---- Versioned conversions -------------------------------------------------
+
+[doc("Build NMDC protein/CDS context; supply source URI options.")]
+[group("Conversions")]
+protein-context annotation structural fasta reference output *options:
+    context_annotation="$1"; context_structural="$2"; context_fasta="$3"; context_reference="$4"; context_output="$5"; shift 5; \
+        uv run --with-requirements requirements-conversion.txt python3 scripts/protein_context.py "$context_annotation" "$context_structural" "$context_fasta" "$context_output" --reference-context "$context_reference" "$@"
 
 [doc("Import through an explicit profile and reference context.")]
 [group("Conversions")]

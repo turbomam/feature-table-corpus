@@ -1,5 +1,8 @@
 # A converted BED12 document
 
+For the NMDC protein example and generated `nmdc-pfam-context.json`, see the
+[protein-relative profile guide](../../../docs/protein-relative-profile.md).
+
 [`blat-bed12.json`](blat-bed12.json) is a generated conversion bundle for the
 [pinned BLAT BED12 source](../../../corpus/sources/biopython/README.md), using
 `bed12-blocks/1.0.0`. Its 19 source rows become 19 parent intervals and 23 block

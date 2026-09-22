@@ -1,10 +1,10 @@
 # Independent format validation
 
 GenomeTools **1.6.6** measures all retained entries indexed as GFF3, including
-the nine derived fixtures. [report.json](report.json) records source SHA-256,
+the nine altered fixtures and selected BGC excerpt. [report.json](report.json) records source SHA-256,
 exit status, full diagnostics, and the derived fixture's expected verdict read
-from `corpus/index.yaml`. Its current results are **6 accepted, 19 rejected,
-and 9 not checked** (other formats). Linked/restricted/unlocated files are not
+from `corpus/index.yaml`. Its current results are **8 accepted, 21 rejected,
+and 10 not checked** (other formats). Linked/restricted/unlocated files are not
 fetched or validated. This report is distinct from
 [conversion preservation](../conversion-roundtrips/README.md).
 
@@ -39,8 +39,9 @@ changing its label, and replace the saved report to prove disagreement fails.
 GenomeTools accepts the phase-changed biological example and the silently split
 Note example: legal syntax does not establish biological or authorial intent.
 
-Of the 16 retained producer GFF3 files, Prodigal and both RefSeq files are
-accepted. Thirteen NMDC files fail at the required first-line version directive.
+Of the 19 retained producer GFF3 files, Prodigal and all three RefSeq files are
+accepted. Fifteen NMDC files fail at the required first-line version directive,
+including the two companion GFFs for the protein profile.
 The validator stops at its first error, so this does not establish whether they
 have additional problems. Prodigal emits warnings about absent sequence-region
 directives. Those warnings are retained; any internally inferred region is not
