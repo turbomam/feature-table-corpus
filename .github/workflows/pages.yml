@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read
 
-# One run per ref at a time. On main, runs queue instead of cancelling, so builds
+# One run per PR (or per branch outside PRs) at a time. On main, runs queue instead of cancelling, so builds
 # finish in push order and an older build can never deploy after a newer one.
 # GitHub keeps only the newest pending run, so skipped commits are not rebuilt.
 concurrency:
