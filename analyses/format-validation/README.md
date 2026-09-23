@@ -4,7 +4,7 @@ GenomeTools **1.6.6** measures all retained entries indexed as GFF3, including
 the nine altered fixtures and selected BGC excerpt. [report.json](report.json) records source SHA-256,
 exit status, full diagnostics, and the derived fixture's expected verdict read
 from `corpus/index.yaml`. Its current results are **8 accepted, 21 rejected,
-and 10 not checked** (other formats). Linked/restricted/unlocated files are not
+and 11 not checked** (other formats). Linked/restricted/unlocated files are not
 fetched or validated. This report is distinct from
 [conversion preservation](../conversion-roundtrips/README.md).
 

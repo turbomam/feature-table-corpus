@@ -108,6 +108,16 @@ pr-validation base="origin/main" audit_source="":
 
 # ---- Model analysis and databases -------------------------------------------
 
+[doc("Query explicit location parts; choose reported bounds for partials.")]
+[group("Queries")]
+location-overlap dataset reference start end mode="exact":
+    uv run --with-requirements requirements-conversion.txt python3 scripts/query_locations.py "$1" overlap "$2" "$3" "$4" --mode "$5"
+
+[doc("Measure shortest genomic gap between two exact feature locations.")]
+[group("Queries")]
+location-distance dataset left right:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/query_locations.py "$1" distance "$2" "$3"
+
 [doc("Regenerate the real BGC excerpt and gene-order query report.")]
 [group("Queries")]
 bgc-report:

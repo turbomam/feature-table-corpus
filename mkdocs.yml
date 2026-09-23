@@ -53,6 +53,7 @@ nav:
       - Schema guide: model/schema/README.md
       - Schema diagram: docs/schema-diagram.md
       - Generic attributes: docs/attributes.md
+      - Joined and circular locations: docs/feature-locations.md
       - Source documents and comments: docs/source-documents.md
       - Workflow provenance: docs/workflow-provenance.md
   - Conversion and query examples:

@@ -1,0 +1,24 @@
+id: insdc-locations/1.0.0
+format: genbank
+status: experimental
+scope: Complete nucleotide GenBank flat files with accession versions, LOCUS lengths and ORIGIN sequence
+mapping:
+  reference: Qualified insdc:accession.version identifiers; annotation source checksum pins the snapshot separately
+  topology: Explicit circular LOCUS token, otherwise the legacy GenBank linear default
+  location: single, join or order; complement reverses traversal and orientation; exact, before and after endpoint statuses
+  scalar_bounds: Reported part envelope only; occupied parts are authoritative
+  attributes: Ordered qualifier occurrences independent of GFF syntax; quoted, unquoted and flag forms mapped separately
+  typed_values: Unique product and translation qualifiers; codon_start remains generic, not GFF phase
+  identity: Record accession version plus feature ordinal; no inferred gene/transcript/CDS parent links
+round_trip:
+  exact: Original document bytes after consistency and reconstruction checks
+  reconstruct: Feature keys, locations and qualifiers from modeled fields; headers, references and sequence text preserved by SourceDocument
+  normalization: Feature wrapping, line endings, equivalent complement syntax and point-versus-unit-span spelling may normalize
+limitations:
+  - Requires complete presented sequence matching the declared nucleotide length and alphabet
+  - Same-reference, nonoverlapping parts with one uniform explicit strand; coordinate order within one reference circuit and at most one circular origin transition
+  - Remote references, between-base sites, unknown positions, one-of and mixed or nested join/order constructs are refused
+  - Import refuses feature values that cannot be reconstructed faithfully within flat-file width
+  - Uncertain endpoints require explicit reported-bounds query mode; no exact distance is asserted
+  - Does not independently validate all INSDC keys, qualifier vocabularies, citations or translation biology
+  - Other GenBank record kinds, EMBL syntax and the NCBI five-column submission table are unsupported

@@ -1,7 +1,7 @@
 # Source documents, comments, and directives
 
 [`model/schema/source_document.yaml`](../model/schema/source_document.yaml) represents one
-GFF3, GTF or BED12 source file as a `SourceDocument` instance with ordered `SourceRecord`
+GFF3, GTF, BED12 or GenBank source file as a `SourceDocument` instance with ordered `SourceRecord`
 instances. [`scripts/source_document.py`](../scripts/source_document.py) preserves
 every UTF-8 source byte and adds an explicitly scoped interpretation where the
 format or selected producer profile supports one. This implements the preservation
@@ -18,8 +18,9 @@ and metadata layer requested in [issue #13](https://github.com/turbomam/feature-
 | Harmonized `Dataset`, `Contig`, `Feature` | Separate biological model in `ber_feature_model.yaml`. This reader does not convert source rows into those entities. |
 | NMDC `DataObject` | External source catalogue used by one contributing project. This schema does not import it or require NMDC identifiers, slots, or categories. |
 
-Feature fields remain lexical strings in `feature_columns`: nine for GFF3/GTF,
-twelve for BED12. GFF/GTF column 9 is preserved without attribute parsing. Likewise, metadata extracted
+Tabular feature fields remain lexical strings in `feature_columns`: nine for
+GFF3/GTF, twelve for BED12. GenBank feature blocks remain physical `raw_text`
+lines. GFF/GTF column 9 is preserved without attribute parsing. Likewise, metadata extracted
 from a Prodigal comment does not acquire GFF column-9 escaping rules. Control markers
 (`###`, `##FASTA`) have their own record kinds rather than becoming generic attributes.
 
@@ -41,7 +42,13 @@ specifications and tool authors' evaluations.
 
 ## Scope and producer profiles
 
-The caller must choose `--format gff3`, `--format gtf` or `--format bed12`. A filename or absent header
+`--format genbank --profile generic` retains each physical GenBank line, distinguishing
+feature starts, feature continuations and other document text. This lexical mode
+labels empty or whitespace-only lines as `blank` without ending a feature section;
+it does not assert biological validity. The [INSDC location profile](feature-locations.md)
+separately interprets the bounded feature-table syntax and validates complete records.
+
+The caller must choose `--format gff3`, `--format gtf`, `--format bed12` or `--format genbank`. A filename or absent header
 never supplies an inferred format. `--profile generic` is the default; producer
 interpretation requires explicitly selecting `prodigal` or `ncbi`.
 BED12 accepts only `generic`; comments and `track`/`browser` commands retain stream
@@ -119,7 +126,7 @@ mode proves that the claimed provenance URI hosted those bytes or fetches that U
 checked-in Prodigal example; for another instance, pass its JSON and matching source as
 the recipe's two arguments. `just check` and CI include this comparison.
 
-All eighteen vendored GFF/GTF files are tested for exact byte replay, retained feature
+All twenty-one vendored GFF/GTF files are tested for exact byte replay, retained feature
 rows, and warning-free parsing under their selected profiles. A separately labeled
 [derived parser fixture](../tests/fixtures/source-documents/README.md) exercises
 repeated and unknown directives, a mid-file comment, a subinterval sequence-region,
@@ -149,7 +156,9 @@ and other encodings are not implemented. The reader does not fully validate GFF/
 grammar, feature coordinates, phase, relationships, sequence alphabets or declared
 lengths; it does not normalize, repair, or export harmonized biological features.
 Byte replay is a separate claim from semantic round-trip conversion. The separate
-[conversion profiles](conversion-profiles.md) now map constrained GFF3 and BED12
-inputs into Dataset instances and reconstruct feature fields. INSDC and GTF semantic
-conversion remain unsupported; that limitation does not prevent corpus observation
-or the existing GTF source-byte preservation.
+[conversion profiles](conversion-profiles.md) map constrained GFF3, BED12 and
+GenBank inputs into Dataset instances and reconstruct feature fields. The bounded
+[INSDC location adapter](feature-locations.md) handles the documented subset of
+GenBank syntax; generic source preservation does not imply that this adapter
+accepts every retained construct. GTF semantic conversion remains unsupported,
+independently of its existing source-byte preservation.

@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 65
+entry_count: 66
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -1083,8 +1083,21 @@ entries:
   mutation: "Select genes with old_locus_tag SCO5071 through SCO5092 and their direct CDS children; retain original header, row bytes and chromosome coordinates; append selection provenance comments."
   validity: "valid GFF3: selected real rows; checked with GenomeTools 1.6.6"
   notes: "Biologically observed rows selected here; not a complete chromosome annotation. Both conversion round trips apply to this explicitly derived excerpt."
+- id: "refseq-phix-genbank"
+  label: "NCBI RefSeq phiX174 GenBank record with circular origin-crossing features"
+  tier: "vendored"
+  source: "NCBI RefSeq NC_001422.1, Escherichia phage phiX174"
+  format: "GenBank nucleotide flat file"
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  retrieved: "2026-09-21"
+  path: "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb"
+  bytes: 26238
+  md5: "dad3a73118ab993fab0a836fb58fb593"
+  sha256: "0a8099e207633f8c3ba998bfe2a198518e1de356c7956691101b2512324b807c"
+  origin_url: "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_001422.1&db=nuccore&report=genbank&retmode=text"
+  notes: "Unchanged whole 5386 bp circular nucleotide record, 32 features including six origin-crossing joins. Complements the independently retained GFF3 annotation; source hash pins annotation snapshot separately from sequence accession version."
 tier_counts:
-  vendored: 29
+  vendored: 30
   linked: 22
   restricted: 3
   not located: 1

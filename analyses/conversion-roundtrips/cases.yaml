@@ -65,9 +65,16 @@ cases:
     path: corpus/sources/biopython/cor6_6.gb
     case_kind: upstream-sequence-records
     format: genbank
+    profile: insdc-locations/1.0.0
     reference_context: X55053.1,X62281.1,M81224.1,AJ237582.1,L31939.1,AF297471.1
-    expected: unsupported
-    expected_code: unsupported-format
+    expected: supported
+  - id: insdc-phix-circular
+    path: corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb
+    case_kind: observed
+    format: genbank
+    profile: insdc-locations/1.0.0
+    reference_context: insdc:NC_001422.1
+    expected: supported
   - id: constructed-discontinuous-gff
     path: tests/fixtures/conversions/discontinuous.gff3
     case_kind: constructed-negative-control

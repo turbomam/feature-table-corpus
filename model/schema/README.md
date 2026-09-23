@@ -6,6 +6,11 @@ generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
 [the attribute contract](../../docs/attributes.md). The schema remains a draft, not a
 complete GFF3 interchange standard.
 
+Optional `FeatureLocation` and `LocationPart` objects retain ordered, uncertain or
+circular locations. See the [location contract and migration guide](../../docs/feature-locations.md).
+With a structured location, scalar feature bounds are its indexing envelope;
+parts are authoritative for occupancy.
+
 [`source_document.yaml`](source_document.yaml) separately defines a physical source
 document and its ordered records. It imports the same generic attribute module for
 scoped comment metadata, without depending on Feature or NMDC DataObject. See the
@@ -54,8 +59,8 @@ upper bounds cannot be checked. Multiple parents must each be compatible with th
 
 These cross-record checks run for `Dataset`, not when validating an isolated Feature.
 Plain `linkml-validate` and exported JSON Schema alone do not enforce them. The profile
-currently assumes linear sequences; circular wraparound GFF3 coordinates need an explicit
-future representation. It does not validate biological CDS phase correctness, ontology terms,
+supports explicit parts and known-length circular references; the original GFF
+conversion profile still refuses circular input. It does not validate biological CDS phase correctness, ontology terms,
 or all GFF3 grammar.
 
 CI also downloads the pinned, unvendored prior-art GFF schema and asserts its published
@@ -74,6 +79,7 @@ the record's producer; they are not field-level provenance.
 
 BRIDGE's scalar-only prototype profile is not a requirement of this model. The loader uses
 native LIST columns for parents, lineages, and source files, and LIST of STRUCT for attributes.
+Structured locations use a JSON column, and references retain optional topology.
 `Feature.seqid` becomes a foreign key to Contig. The physical mapping is explicit Python/SQL;
 it is not a general LinkML database generator.
 

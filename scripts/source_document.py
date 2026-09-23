@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Preserve a UTF-8 GFF3/GTF/BED12 document and interpret scoped metadata.
+"""Preserve a UTF-8 GFF3/GTF/BED12/GenBank document and interpret scoped metadata.
 
-This is a source-document reader, not a biological feature converter or full GFF
-validator. Feature columns remain lexical strings; column 9 is not interpreted.
+This is a source-document reader, not a biological feature converter or full format
+validator. Feature columns and GenBank feature blocks remain lexical text;
+GFF column 9 and GenBank qualifiers are not interpreted.
 Only the standard library is needed. See docs/source-documents.md.
 """
 import argparse
@@ -12,7 +13,7 @@ from pathlib import Path
 import re
 import sys
 
-FORMATS = ("gff3", "gtf", "bed12")
+FORMATS = ("gff3", "gtf", "bed12", "genbank")
 PROFILES = ("generic", "prodigal", "ncbi")
 GFF_DOCUMENT_DIRECTIVES = {
     "gff-version", "feature-ontology", "attribute-ontology", "source-ontology",
@@ -99,8 +100,8 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
         raise ValueError("unsupported format or metadata profile")
     if profile == "prodigal" and format != "gff3":
         raise ValueError("the Prodigal profile requires GFF3")
-    if format == "bed12" and profile != "generic":
-        raise ValueError("BED12 requires the generic metadata profile")
+    if format in ("bed12", "genbank") and profile != "generic":
+        raise ValueError(f"{format} requires the generic metadata profile")
     if not isinstance(source_uri, str) or not source_uri:
         raise ValueError("a source URI is required")
     try:
@@ -115,6 +116,7 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
     context = None
     fasta = False
     fasta_context = None
+    genbank_features = False
     # Unlike str.splitlines, only physical CR/LF line endings delimit records.
     for match in re.finditer(r"[^\r\n]*(?:\r\n|\r|\n|$)", text):
         raw = match.group()
@@ -135,6 +137,22 @@ def parse_bytes(content, *, source_uri, format, profile="generic"):
             record.update(scope="sequence", sequence_id=sequence_id)
             if anchor is not None:
                 record["context_record"] = anchor
+
+        if format == "genbank":
+            if not body.strip():
+                # A blank physical line does not end the lexical FEATURES section.
+                record["kind"] = "blank"
+            elif body.startswith("FEATURES "):
+                genbank_features = True
+                record["kind"] = "document_text"
+            elif genbank_features and re.match(r"^ {5}[A-Za-z0-9][A-Za-z0-9_'*-]* +", body):
+                record["kind"] = "feature"
+            elif genbank_features and body.startswith(" " * 21):
+                record["kind"] = "feature_continuation"
+            else:
+                genbank_features = False
+                record["kind"] = "document_text"
+            continue
 
         if format == "bed12":
             # Track/browser commands affect the following stream. Their options

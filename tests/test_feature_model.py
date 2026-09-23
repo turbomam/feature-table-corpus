@@ -143,8 +143,8 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        self.assertEqual(len(rows), 28)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 20)
+        self.assertEqual(len(rows), 39)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 28)
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
         self.assertIn(('Attribute', 'key'), rows)
