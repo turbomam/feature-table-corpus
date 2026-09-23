@@ -10,9 +10,9 @@
     "biological_correctness": "not_measured"
   },
   "summary": {
-    "accepted": 6,
-    "not_checked": 9,
-    "rejected": 19
+    "accepted": 8,
+    "not_checked": 10,
+    "rejected": 21
   },
   "records": [
     {
@@ -345,6 +345,55 @@
       "sha256": "01b4e193b71344752a96e2b37e886118a33c07b16c3684741c31eb3efeaf60b8",
       "verdict": "not_checked",
       "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "nmdc-biosample-pfam",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
+      "format": "GFF3",
+      "sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-biosample-structural",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff",
+      "format": "GFF3",
+      "sha256": "38340ec5f87db113c0c14a98fe58e1d1081a0d7f71d1a85891b59690cb7355ca",
+      "verdict": "rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff\" does not begin with \"##gff-version\" or \"##gff-version\""
+    },
+    {
+      "id": "nmdc-biosample-proteins",
+      "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_proteins.faa",
+      "format": "FASTA (amino acids)",
+      "sha256": "49bd52721ccd054241b866a294cf3121bb04197cc0cd6f8f53fdd8b0ac5ed593",
+      "verdict": "not_checked",
+      "reason": "No independent validator configured for this format"
+    },
+    {
+      "id": "refseq-coelicolor-chromosome",
+      "path": "corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3",
+      "format": "GFF3",
+      "sha256": "e49de7213e25d075e0b79541f8a49288a055ae87bdd355931d129c0573026858",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "warning: skipping blank line 15852 in file \"corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3\""
+    },
+    {
+      "id": "derived-actinorhodin-excerpt",
+      "path": "corpus/derived-examples/actinorhodin.gff3",
+      "format": "GFF3",
+      "sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
+      "verdict": "accepted",
+      "exit_code": 0,
+      "stdout": "input is valid GFF3",
+      "stderr": "",
+      "expected_from_validity": "accepted"
     }
   ]
 }

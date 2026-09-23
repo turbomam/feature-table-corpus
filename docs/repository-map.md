@@ -10,6 +10,7 @@ corpus/                         Evidence collected from producers and prior art
   sources/{nmdc,ncbi-refseq,biopython}/  Preserved upstream source text
   specifications/               Prior-art schemas and specification extracts
   fixtures/{malformed,edge-cases}/  Deliberately altered, indexed test cases
+  derived-examples/              Explicit selections of unchanged real source rows
 model/                          This project's proposed contracts and instances
   schema/                       LinkML schemas and validation guide
   profiles/                     Versioned, executable source conversion contracts
@@ -18,6 +19,7 @@ analyses/                       Source-specific measurements and selection repor
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts
   nmdc-selection/                Saved sampling report for the original GFF files
   conversion-roundtrips/         Case manifest and reproducible preservation outcomes
+  bgc-query/                     Source-grounded actinorhodin order/proximity exercise
   format-validation/             Independent GFF3 verdicts and retained diagnostics
 docs/                           Comparisons, interpretation, and design decisions
 scripts/                        Acquisition, generation, and validation code
@@ -44,8 +46,10 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Corpus | `verify`, `verify-links`, `fixtures-generate`, `pr-validation` | Link checks and the default PR audit use the network; fixture generation rewrites tracked derived files |
 | Model | `diagram`, `flat-profile-audit [schema]` | Print results; a schema URL may require network access |
 | Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap` | Build/update a database, then query it read-only |
+| Queries | `bgc-check`, `bgc-report` | Check the real BGC exercise offline, or explicitly regenerate its selected excerpt and query report |
 | Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
 | NMDC | `nmdc-collect`, `nmdc-render`, `nmdc-sample` | Explicit live collection/sampling or offline regeneration of source-specific reports |
+| Documentation | `docs-build`, `docs-check`, `docs-serve [port]` | Stage tracked public files, render and check the site, or preview on loopback |
 
 `just check` keeps its validation scope: it does not collect live NMDC records, sample
 files, regenerate corpus fixtures, or publish reports. `uv` can still need the network
@@ -83,7 +87,7 @@ requirement. Add concise help and a task group when introducing a new public rec
 | How do prior models differ? | [Comparison](model-comparison.md), [columns and producer discretion](columns-and-discretion.md), and [specification evidence](../corpus/specifications/) | Chado SQL is an extracted subset under Artistic-2.0; the KBase YAML is an upstream module under MIT. Their indexed bytes and acquisition scope are recorded. The reserved-attribute YAML is a repository-authored transcription, with its source and date in the file header. These files are evidence for comparison. |
 | What model are we proposing? | [Schema guide](../model/schema/README.md), [attribute semantics](attributes.md), and [source-document guide](source-documents.md) | Reusable draft LinkML contracts live in `model/schema/`. Generic attributes are shared by biological records and source records. `just check` runs schema, semantic, corpus, and regression checks. |
 | Which instances demonstrate those contracts? | [Example crosswalk](#examples-and-their-contracts) below | Harmonized examples are curated transformations; the parsed source-document example is generated. Their guides identify exact sources and validation commands. |
-| Which conversions can round-trip? | [Profile contracts](conversion-profiles.md) and [measured outcomes](../analyses/conversion-roundtrips/README.md) | GFF3/BED12 adapters require explicit profiles and reference context; exact byte recovery and mapped-field reconstruction are tested separately. Unsupported INSDC/GTF and compound/circular cases remain visible. |
+| Which conversions can round-trip? | [Profile contracts](conversion-profiles.md), [protein-relative example](protein-relative-profile.md) and [measured outcomes](../analyses/conversion-roundtrips/README.md) | GFF3/BED12 and NMDC Pfam adapters require explicit profiles and reference context; exact byte recovery and mapped-field reconstruction are tested separately. Unsupported INSDC/GTF and compound/circular cases remain visible. |
 | What do the NMDC counts measure? | [DataObject analysis](../analyses/nmdc-data-objects/README.md) | A generated catalogue and counts of NMDC metadata records only. The report identifies pinned schema inputs, collection timestamps, hashes, and data-use terms. Refresh all report/JSON/CSV outputs together using the commands below. |
 | How were the original NMDC GFF files selected? | [Selection report guide](../analyses/nmdc-selection/README.md) and [saved selection](../analyses/nmdc-selection/selection.json) | This sampled selection is distinct from the full DataObject analysis. `just nmdc-sample` writes a new live sample to `local/nmdc-selection/selection.json`; inspect errors and changed selections before replacing the saved report. |
 | What should I read beyond one format's advocates? | [Cross-format reading guide](feature-format-reading.md) | Sources are dated and their perspectives identified. Literature and tool documentation motivate tests; they do not establish conversion fidelity. |
@@ -142,4 +146,4 @@ is not a transactional snapshot. See the report's refresh safeguards.
 
 Keep task inputs, retained downloads, and scratch output under `local/<task>/`, with
 source URLs and checksums where needed. These gitignored files are excluded from the
-future [GitHub Pages site](https://github.com/turbomam/feature-table-corpus/issues/12).
+[GitHub Pages build](documentation-site.md).

@@ -1,4 +1,20 @@
 cases:
+  - id: refseq-actinorhodin-excerpt
+    path: corpus/derived-examples/actinorhodin.gff3
+    case_kind: selected-real-source-rows
+    format: gff3
+    profile: gff3-contig/1.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_003888.3
+    expected: supported
+  - id: nmdc-biosample-pfam
+    path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
+    case_kind: observed
+    format: gff3
+    profile: nmdc-pfam-protein/1.0.0
+    reference_context: nmdc:wfmgas-11-19jh9v28.1
+    protein_context: model/examples/conversions/nmdc-pfam-context.json
+    expected: supported
   - id: nmdc-prodigal
     path: corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
     case_kind: observed

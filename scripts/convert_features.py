@@ -5,6 +5,7 @@ Exact export and reconstructed export are separate operations. Both reject edits
 to an imported bundle; neither silently replays an obsolete original after edits.
 """
 import argparse
+from copy import deepcopy
 from decimal import Decimal
 from functools import lru_cache
 import json
@@ -12,13 +13,16 @@ import math
 from pathlib import Path
 import re
 import sys
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlsplit
+
+import rfc3987
 
 from source_document import parse_bytes, replay_bytes, write_new
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROFILES = {"gff3-contig/1.0.0": "gff3", "bed12-blocks/1.0.0": "bed12"}
+PROTEIN = "nmdc-pfam-protein/1.0.0"
+PROFILES = {"gff3-contig/1.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3"}
 
 
 class ConversionError(ValueError):
@@ -164,10 +168,99 @@ def source_validator():
     return make_validator(ROOT / "model/schema/source_document.yaml", "SourceDocument")
 
 
-def import_source(content, *, profile, reference_context, source_uri, metadata_profile="generic"):
+def absolute_artifact_uri(value):
+    """Check the whole URI; HTTP(S) references also need a host and valid port."""
+    if not isinstance(value, str) or re.search(r"[\x00-\x20\x7f]", value):
+        return False
+    try:
+        parsed = rfc3987.parse(value, rule="URI")
+        if parsed["scheme"].lower() in ("http", "https"):
+            url = urlsplit(value)
+            if not url.hostname:
+                return False
+            _ = url.port  # Access validates the port, including its numeric range.
+        return True
+    except ValueError:
+        return False
+
+
+def protein_bindings(context, reference_context):
+    """Validate an explicit protein -> CDS map; never parse identity from offsets."""
+    require(isinstance(context, dict) and set(context) == {
+        "context_version", "reference_context", "dataset", "bindings", "artifacts"},
+        "protein-context", "supply a complete protein context document")
+    require(type(context["context_version"]) is int and context["context_version"] == 1
+            and context["reference_context"] == reference_context,
+            "protein-context", "protein context version/reference does not match")
+    errors = validation_errors(context["dataset"], dataset_validator())
+    require(not errors, "protein-context", "; ".join(errors))
+    parents = {f["feature_id"]: f for f in context["dataset"].get("features") or []}
+    require(bool(parents), "protein-context", "protein context requires CDS features")
+    for parent in parents.values():
+        require(parent.get("type") == "CDS" and parent["coordinate_system"] == "contig"
+                and re.fullmatch(r"[A-Z]+", parent.get("translated_sequence") or "") is not None,
+                "protein-context", "each context feature must be a contig CDS with an explicit protein sequence")
+        pairs = parent.get("attributes") or []
+        for key, typed in (("ID", [parent["feature_id"]]), ("Parent", parent.get("parent") or []),
+                           ("product", [parent["product"]] if "product" in parent else [])):
+            generic = values(pairs, key)
+            require(not generic or generic == typed, "protein-context",
+                    f"context {key} attribute disagrees with its typed slot")
+    require(isinstance(context["bindings"], list), "protein-context", "bindings must be a list")
+    bindings, used = {}, set()
+    for binding in context["bindings"]:
+        require(isinstance(binding, dict) and set(binding) == {"protein_id", "cds_id"}
+                and isinstance(binding["protein_id"], str) and binding["protein_id"]
+                and isinstance(binding["cds_id"], str) and binding["cds_id"],
+                "protein-context", "protein bindings require nonempty protein and CDS identifiers")
+        protein, cds = binding["protein_id"], binding["cds_id"]
+        require(protein not in bindings and cds not in used and cds in parents,
+                "protein-context", "protein bindings must uniquely identify existing CDSs")
+        bindings[protein] = parents[cds]
+        used.add(cds)
+    require(used == set(parents), "protein-context", "every context CDS must have one protein binding")
+    require(isinstance(context["artifacts"], list) and len(context["artifacts"]) == 2,
+            "protein-context", "record structural annotation and protein FASTA provenance")
+    for artifact in context["artifacts"]:
+        require(isinstance(artifact, dict) and set(artifact) == {"role", "uri", "sha256"}
+                and artifact["role"] in ("structural_annotation", "protein_sequence")
+                and absolute_artifact_uri(artifact["uri"])
+                and isinstance(artifact["sha256"], str) and re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"]),
+                "protein-context", "artifacts require absolute URIs and SHA-256 digests")
+    require({a["role"] for a in context["artifacts"]} == {"structural_annotation", "protein_sequence"}
+            and len({a["uri"] for a in context["artifacts"]}) == 2
+            and len({a["sha256"] for a in context["artifacts"]}) == 2,
+            "protein-context", "declare distinct structural annotation and protein sequence artifacts")
+    return bindings
+
+
+def protein_feature(columns, record_id, bindings):
+    rows, mapping = gff_feature(columns, record_id)
+    feature = rows[0]
+    protein = feature["seqid"]
+    require(protein in bindings, "protein-reference", f"no explicit CDS binding for {protein!r}")
+    require(mapping["source_has_id"] and not feature.get("parent")
+            and feature["strand"] == "." and "phase" not in feature
+            and feature.get("source", "").startswith("HMMER ")
+            and re.fullmatch(r"PF[0-9]{5}(?:\.[0-9]+)?", feature["type"]),
+            "protein-profile", "NMDC Pfam profile requires ID, HMMER source, Pfam accession, no Parent, strand/phase '.'")
+    parent = bindings[protein]
+    require(feature["end"] <= len(parent["translated_sequence"]),
+            "protein-bound", f"{record_id}: hit exceeds the retained protein length")
+    feature.update(seqid=parent["seqid"], coordinate_system="protein", parent=[parent["feature_id"]])
+    mapping["protein_id"] = protein
+    return rows, mapping
+
+
+def import_source(content, *, profile, reference_context, source_uri, metadata_profile="generic", protein_context=None):
     require(profile in PROFILES, "unsupported-profile", f"no executable conversion profile {profile!r}")
     require(isinstance(reference_context, str) and reference_context.strip(),
             "reference-context", "supply an assembly or source-scoped reference context explicitly")
+    if profile == PROTEIN:
+        bindings = protein_bindings(protein_context, reference_context)
+        require(metadata_profile == "generic", "protein-profile", "protein profile uses generic source metadata")
+    else:
+        require(protein_context is None, "protein-context", "protein context is only valid with the protein profile")
     source = parse_bytes(content, source_uri=source_uri, format=PROFILES[profile], profile=metadata_profile)
     errors = validation_errors(source, source_validator(), "SourceDocument")
     require(not errors, "source-invalid", "; ".join(errors))
@@ -184,9 +277,12 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
             regions.setdefault(decoded(region["seqid"]), []).append((int(region["start"]), int(region["end"])))
         if record["kind"] != "feature":
             continue
-        adapter = gff_feature if PROFILES[profile] == "gff3" else bed_features
         try:
-            features, mapping = adapter(record["feature_columns"], record["record_id"])
+            if profile == PROTEIN:
+                features, mapping = protein_feature(record["feature_columns"], record["record_id"], bindings)
+            else:
+                adapter = gff_feature if PROFILES[profile] == "gff3" else bed_features
+                features, mapping = adapter(record["feature_columns"], record["record_id"])
         except ConversionError as error:
             raise ConversionError(error.code, f"{record['record_id']}: {error}") from error
         context = source_records.get(record.get("context_record"), {})
@@ -199,15 +295,25 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
         for feature in features:
             contigs.setdefault(feature["seqid"], {"contig_id": feature["seqid"]})
     require(bool(rows), "no-features", "this profile requires at least one feature record")
+    protein_ids = {m["feature_ids"][0]: m.get("protein_id") for m in mappings}
     for feature in rows:
-        for start, end in regions.get(feature["seqid"], []):
+        region_id = protein_ids[feature["feature_id"]] if profile == PROTEIN else feature["seqid"]
+        for start, end in regions.get(region_id, []):
             require(start <= feature["start"] <= feature["end"] <= end,
                     "declared-region", f"{feature['feature_id']} is outside a declared sequence region")
     dataset = {"contigs": list(contigs.values()), "features": rows}
+    if profile == PROTEIN:
+        require(set(protein_ids.values()) == set(bindings), "protein-context",
+                "protein context must cover exactly the source protein references")
+        dataset = deepcopy(protein_context["dataset"])
+        dataset["features"].extend(rows)
     errors = validation_errors(dataset, dataset_validator())
     require(not errors, "dataset-invalid", "; ".join(errors))
-    return {"conversion_version": 1, "profile": profile, "reference_context": reference_context,
-            "source": source, "dataset": dataset, "mappings": mappings}
+    bundle = {"conversion_version": 1, "profile": profile, "reference_context": reference_context,
+              "source": source, "dataset": dataset, "mappings": mappings}
+    if profile == PROTEIN:
+        bundle["protein_context"] = deepcopy(protein_context)
+    return bundle
 
 
 def reconstruct_record(profile, by_id, mapping):
@@ -218,6 +324,14 @@ def reconstruct_record(profile, by_id, mapping):
     their generic mirrors. No lexical source cell is used here.
     """
     feature = by_id[mapping["feature_ids"][0]]
+    if profile == PROTEIN:
+        require(feature["coordinate_system"] == "protein" and len(feature.get("parent", [])) == 1,
+                "protein-profile", "protein features require one explicit CDS parent")
+        # Protein identity is a semantic reference mapping, not a retained source
+        # cell. The contextual CDS relationship is not a source Parent tag.
+        projected = {**feature, "seqid": mapping["protein_id"]}
+        projected.pop("parent")
+        return reconstruct_record("gff3-contig/1.0.0", {feature["feature_id"]: projected}, mapping)
     if PROFILES[profile] == "gff3":
         pairs = feature["attributes"]
         typed = {"ID": [feature["feature_id"]] if mapping["source_has_id"] else [],
@@ -253,12 +367,34 @@ def reconstruct_record(profile, by_id, mapping):
             ",".join(str(b["start"] - feature["start"]) for b in blocks) + ","]
 
 
-def validate_bundle(bundle, original_bytes=None):
+def mutable_object_ids(value):
+    """Identify shared JSON containers, including shallow copies of a context."""
+    pending, seen = [value], set()
+    while pending:
+        item = pending.pop()
+        if not isinstance(item, (dict, list)) or id(item) in seen:
+            continue
+        seen.add(id(item))
+        pending.extend(item.values() if isinstance(item, dict) else item)
+    return seen
+
+
+def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
     try:
+        if bundle["profile"] == PROTEIN:
+            require(protein_context is not None, "protein-context-original",
+                    "supply the independent original protein context for validation/export")
+            require(not mutable_object_ids(protein_context) & mutable_object_ids(bundle.get("protein_context")),
+                    "protein-context-original", "original context must not share mutable objects with the embedded context")
+            require(protein_context == bundle.get("protein_context"), "protein-context-edited",
+                    "bundle protein context differs from the supplied original context")
+        else:
+            require(protein_context is None, "protein-context", "this profile does not use protein context")
         source = bundle["source"]
         content = replay_bytes(source, original_bytes=original_bytes)
         expected = import_source(content, profile=bundle["profile"], reference_context=bundle["reference_context"],
-                                 source_uri=source["artifact"]["uri"], metadata_profile=source["profile"])
+                                 source_uri=source["artifact"]["uri"], metadata_profile=source["profile"],
+                                 protein_context=protein_context)
         require(json.dumps(bundle, sort_keys=True) == json.dumps(expected, sort_keys=True),
                 "edited-bundle", "bundle differs from its imported projection; edited-instance export is not supported")
         return content
@@ -266,11 +402,12 @@ def validate_bundle(bundle, original_bytes=None):
         raise ConversionError("bundle-shape", "invalid conversion bundle structure") from error
 
 
-def export_source(bundle, *, mode, original_bytes=None):
+def export_source(bundle, *, mode, original_bytes=None, protein_context=None):
     require(mode in ("exact", "reconstruct"), "export-mode", "choose exact or reconstruct explicitly")
-    content = validate_bundle(bundle, original_bytes)
+    content = validate_bundle(bundle, original_bytes, protein_context=protein_context)
     by_id = {f["feature_id"]: f for f in bundle["dataset"]["features"]}
     mappings = {m["record_id"]: m for m in bundle["mappings"]}
+    bindings = protein_bindings(bundle["protein_context"], bundle["reference_context"]) if bundle["profile"] == PROTEIN else None
     output = []
     for record in bundle["source"]["records"]:
         if record["kind"] != "feature":
@@ -278,8 +415,11 @@ def export_source(bundle, *, mode, original_bytes=None):
             continue
         columns = reconstruct_record(bundle["profile"], by_id, mappings[record["record_id"]])
         # Validate semantic reconstruction even when returning original spellings.
-        adapter = gff_feature if PROFILES[bundle["profile"]] == "gff3" else bed_features
-        rebuilt, mapping = adapter(columns, record["record_id"])
+        if bundle["profile"] == PROTEIN:
+            rebuilt, mapping = protein_feature(columns, record["record_id"], bindings)
+        else:
+            adapter = gff_feature if PROFILES[bundle["profile"]] == "gff3" else bed_features
+            rebuilt, mapping = adapter(columns, record["record_id"])
         require(rebuilt == [by_id[fid] for fid in mapping["feature_ids"]]
                 and mapping == mappings[record["record_id"]],
                 "reconstruction-mismatch", f"modeled fields do not reconstruct {record['record_id']}")
@@ -304,6 +444,7 @@ def main():
     load.add_argument("--reference-context", required=True)
     load.add_argument("--metadata-profile", default="generic", choices=("generic", "prodigal", "ncbi"))
     load.add_argument("--source-uri")
+    load.add_argument("--protein-context", type=Path, help="Explicit JSON protein-to-CDS context for the NMDC Pfam profile")
     load.add_argument("--output", type=Path, required=True)
     dump = commands.add_parser("export")
     dump.add_argument("input", type=Path)
@@ -313,20 +454,23 @@ def main():
     validate.add_argument("input", type=Path)
     for command in (dump, validate):
         command.add_argument("--original", type=Path)
+        command.add_argument("--protein-context", type=Path, help="Independent original context; required for the protein profile")
     args = parser.parse_args()
     try:
         if args.command == "import":
             bundle = import_source(args.input.read_bytes(), profile=args.profile,
                                    reference_context=args.reference_context, metadata_profile=args.metadata_profile,
-                                   source_uri=args.source_uri or args.input.resolve().as_uri())
+                                   source_uri=args.source_uri or args.input.resolve().as_uri(),
+                                   protein_context=json.loads(args.protein_context.read_text()) if args.protein_context else None)
             write_new(args.output, (json.dumps(bundle, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
         else:
             bundle = json.loads(args.input.read_text(encoding="utf-8"))
             original = args.original.read_bytes() if args.original else None
+            context = json.loads(args.protein_context.read_text()) if args.protein_context else None
             if args.command == "export":
-                write_new(args.output, export_source(bundle, mode=args.mode, original_bytes=original))
+                write_new(args.output, export_source(bundle, mode=args.mode, original_bytes=original, protein_context=context))
             else:
-                validate_bundle(bundle, original)
+                validate_bundle(bundle, original, protein_context=context)
                 print(json.dumps({"profile": bundle["profile"], "valid": True, "edited_export": "unsupported"}))
     except (OSError, ValueError, KeyError, TypeError) as error:
         print(json.dumps({"status": "rejected", "code": getattr(error, "code", "input-error"),
