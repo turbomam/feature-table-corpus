@@ -71,10 +71,16 @@ class ProteinProfileTests(unittest.TestCase):
     def test_context_is_required_unambiguous_and_bounded(self):
         bad = []
         bad.append(None)
+        for empty in (None, []):
+            c = deepcopy(self.context); c["dataset"]["features"] = empty; bad.append(c)
+        c = deepcopy(self.context); c["dataset"].pop("features"); bad.append(c)
         c = deepcopy(self.context); c["reference_context"] = "different:assembly"; bad.append(c)
         c = deepcopy(self.context); c["bindings"].append(c["bindings"][0]); bad.append(c)
         c = deepcopy(self.context); c["bindings"][0]["cds_id"] = "absent"; bad.append(c)
         c = deepcopy(self.context); c["dataset"]["features"][0]["translated_sequence"] = "M"; bad.append(c)
+        for empty in (None, ""):
+            c = deepcopy(self.context); c["dataset"]["features"][0]["translated_sequence"] = empty; bad.append(c)
+        c = deepcopy(self.context); c["dataset"]["features"][0].pop("translated_sequence"); bad.append(c)
         c = deepcopy(self.context); c["dataset"]["features"][0]["type"] = "gene"; bad.append(c)
         c = deepcopy(self.context); c["context_version"] = True; bad.append(c)
         for key in ("role", "uri", "sha256"):
@@ -124,7 +130,9 @@ class ProteinProfileTests(unittest.TestCase):
         self.assertEqual(len(imported(("\t".join(first) + "\n").encode(), c)["mappings"]), 1)
         for column, value, code in [(0, "unknown-protein", "protein-reference"), (2, "gene", "protein-profile"),
                                     (1, "Prodigal", "protein-profile"), (4, "999999", "protein-bound"),
-                                    (6, "+", "protein-profile"), (7, "0", "phase-domain")]:
+                                    (6, "+", "protein-profile"), (7, "0", "phase-domain"),
+                                    (8, first[8].rstrip(";") + ";Parent=" + first[0], "protein-profile"),
+                                    (8, ";".join(a for a in first[8].split(";") if not a.startswith("ID=")), "protein-profile")]:
             cols = first.copy(); cols[column] = value
             with self.subTest(column=column), self.assertRaises(ConversionError) as caught:
                 imported(("\t".join(cols) + "\n").encode(), c)
