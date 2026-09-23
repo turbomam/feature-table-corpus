@@ -13,7 +13,7 @@ permissions:
 # finish in push order and an older build can never deploy after a newer one.
 # GitHub keeps only the newest pending run, so skipped commits are not rebuilt.
 concurrency:
-  group: documentation-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  group: documentation-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
