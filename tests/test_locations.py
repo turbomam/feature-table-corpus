@@ -67,6 +67,13 @@ class LocationTests(unittest.TestCase):
                     self.assertEqual(signature(before), signature(after))
                 self.assertEqual(path.read_bytes(), content)
 
+    def test_leading_utf8_bom_is_accepted_and_replayed(self):
+        content = PLANT.read_bytes()
+        with_bom = b"\xef\xbb\xbf" + content
+        bundle = imported(with_bom)
+        self.assertEqual(bundle["dataset"], imported(content)["dataset"])
+        self.assertEqual(export_source(bundle, mode="exact", original_bytes=with_bom), with_bom)
+
     def test_known_plant_parts_uncertainty_and_repeated_qualifiers(self):
         data = self.plant["dataset"]
         cds = next(f for f in data["features"] if f["seqid"] == "insdc:X62281.1" and f["type"] == "CDS")

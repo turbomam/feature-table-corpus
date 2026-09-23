@@ -117,7 +117,9 @@ def import_insdc(content, *, reference_context, source_uri):
         if not records[i]["raw_text"].strip():
             i += 1; continue
         first = i
-        locus = re.match(r"^LOCUS\s+\S+\s+([1-9][0-9]*) bp\s+(.+)", records[i]["raw_text"])
+        # parse_bytes keeps a leading UTF-8 BOM in raw_text for exact replay.
+        header = records[i]["raw_text"].removeprefix("﻿") if i == 0 else records[i]["raw_text"]
+        locus = re.match(r"^LOCUS\s+\S+\s+([1-9][0-9]*) bp\s+(.+)", header)
         require(locus is not None, "genbank-record", "expected nucleotide LOCUS with length in bp")
         length = int(locus[1])
         # Old GenBank records omit the topology field for the linear default.
