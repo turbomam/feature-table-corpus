@@ -10,8 +10,9 @@ permissions:
   contents: read
 
 # One run per PR (or per branch outside PRs) at a time. On main, runs queue
-# instead of cancelling, and GitHub keeps only the newest pending run. Queue order
-# is not guaranteed, so the deploy job also checks that its commit is still main's head.
+# instead of cancelling. GitHub does not guarantee queue order, so main runs build
+# main's head at the moment they start rather than the commit that triggered them.
+# The last run to start begins after the last push, so it always publishes the latest main.
 concurrency:
   group: documentation-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -21,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Empty means the triggering ref, which is what PR previews need.
+          ref: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && 'main' || '' }}
       - uses: astral-sh/setup-uv@v7
       - uses: extractions/setup-just@v3
         with:
@@ -44,7 +48,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       pages: write
       id-token: write
     concurrency:
@@ -54,22 +57,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Concurrency groups serialize runs but do not guarantee push order, so a
-      # run deploys only if its commit is still the head of main.
-      - name: Check this build is still the head of main
-        id: freshness
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          head=$(gh api "repos/$REPO/commits/main" --jq .sha)
-          if [ "$head" = "$GITHUB_SHA" ]; then
-            echo "current=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "::notice::main is now at $head; not deploying the older build of $GITHUB_SHA"
-            echo "current=false" >> "$GITHUB_OUTPUT"
-          fi
       - name: Deploy successful main build
-        if: steps.freshness.outputs.current == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
