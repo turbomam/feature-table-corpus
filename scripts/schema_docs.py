@@ -9,6 +9,8 @@ every relationship, followed by one block of links to the supplementary material
 from pathlib import Path
 import subprocess
 
+from linkml_runtime import SchemaView
+
 from schema_diagram import render_combined
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,6 +73,26 @@ def supplementary_block():
     return "\n".join(lines)
 
 
+def schema_section():
+    """Which classes and enums come from which schema, read from the schemas themselves."""
+    view = SchemaView(str(ROOT / SCHEMA))
+    lines = ["", "## Two schemas", "",
+             "This site documents two schemas together. They are separate files with separate "
+             "identifiers; the diagram and tables below mix their classes only for reading. "
+             "Both import a third, smaller module, `attributes.yaml`, which defines only `Attribute`, "
+             "so `Attribute` belongs to neither schema alone.", "",
+             "| Schema | File | What it describes | Classes | Enumerations |",
+             "| --- | --- | --- | --- | --- |"]
+    for name in ("ber_feature_model", "source_document", "attributes"):
+        schema = SchemaView(str(ROOT / "model/schema" / f"{name}.yaml")).schema
+        classes = sorted(c for c in view.all_classes() if view.get_class(c).from_schema == schema.id)
+        enums = sorted(e for e in view.all_enums() if view.get_enum(e).from_schema == schema.id)
+        link = lambda folder, names: ", ".join(f"[{n}]({folder}/{n}.md)" for n in names) or "none"
+        lines.append(f"| {schema.title} | [`{name}.yaml`](model/schema/{name}.yaml) | "
+                     f"{schema.description.strip()} | {link('classes', classes)} | {link('enums', enums)} |")
+    return "\n".join(lines) + "\n"
+
+
 def generate():
     if not DEST.is_dir():
         raise SystemExit("Run scripts/prepare_docs.py first")
@@ -88,7 +110,8 @@ def generate():
     heading = "\n## Classes\n"
     if heading not in text:
         raise SystemExit("gen-doc index has no Classes heading to put the diagram before")
-    text = text.replace(heading, "\n## Relationships\n\n```mermaid\n" + diagram + "\n```\n" + heading, 1)
+    text = text.replace(heading, schema_section() + "\n## Relationships\n\n```mermaid\n" + diagram
+                        + "\n```\n" + heading, 1)
     index.write_text(text + supplementary_block())
     print(f"Generated schema pages from {SCHEMA} in {DEST.relative_to(ROOT)}")
 
