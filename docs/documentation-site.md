@@ -48,6 +48,10 @@ PR builds produce a downloadable Actions preview artifact and have no deployment
 permissions. Successful main-branch builds upload a Pages artifact; a separate
 deployment job alone receives `pages: write` and `id-token: write`, using the
 `github-pages` environment. Manual dispatch also deploys only from main.
+Runs for the same PR or branch never overlap: main builds queue, and a newer PR
+push cancels the older PR build. GitHub does not guarantee queue order, so a main
+build checks out main's head when it starts instead of its triggering commit. The
+last run to start therefore always publishes the latest main.
 
 The repository Pages setting must use **GitHub Actions**. The workflow becomes
 active when this change reaches main; a PR preview does not establish that the

@@ -9,11 +9,22 @@ on:
 permissions:
   contents: read
 
+# One run per PR (or per branch outside PRs) at a time. On main, runs queue
+# instead of cancelling. GitHub does not guarantee queue order, so main runs build
+# main's head at the moment they start rather than the commit that triggered them.
+# The last run to start begins after the last push, so it always publishes the latest main.
+concurrency:
+  group: documentation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Empty means the triggering ref, which is what PR previews need.
+          ref: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && 'main' || '' }}
       - uses: astral-sh/setup-uv@v7
       - uses: extractions/setup-just@v3
         with:
