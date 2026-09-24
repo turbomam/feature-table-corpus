@@ -22,6 +22,7 @@ markdown_extensions:
   - tables
   - admonition
   - attr_list
+  - md_in_html
   - pymdownx.highlight
   - pymdownx.superfences:
       custom_fences:
@@ -36,39 +37,5 @@ validation:
     anchors: warn
     unrecognized_links: warn
 nav:
-  - Start here:
-      - Overview: README.md
-      - Repository map and tasks: docs/repository-map.md
-      - Build and publish the docs: docs/documentation-site.md
-  - Evidence and formats:
-      - Reading guide: docs/feature-format-reading.md
-      - Prior art: docs/prior-art.md
-      - Model comparison: docs/model-comparison.md
-      - Columns and producer conventions: docs/columns-and-discretion.md
-      - Chado and scope: docs/chado-and-scope.md
-      - Corpus sources and downloads: corpus/README.md
-      - Acquisition history: corpus/PROVENANCE.md
-      - Independent validation: analyses/format-validation/README.md
-  - Draft model:
-      - Schema guide: model/schema/README.md
-      - Schema diagram: docs/schema-diagram.md
-      - Generic attributes: docs/attributes.md
-      - Joined and circular locations: docs/feature-locations.md
-      - Source documents and comments: docs/source-documents.md
-      - Workflow provenance: docs/workflow-provenance.md
-  - Conversion and query examples:
-      - Versioned profiles: docs/conversion-profiles.md
-      - Protein-relative Pfam profile: docs/protein-relative-profile.md
-      - Real BGC query exercise: analyses/bgc-query/README.md
-      - Round-trip evidence: analyses/conversion-roundtrips/README.md
-      - Converted BED12: model/examples/conversions/README.md
-      - One biosample: model/examples/one-biosample-sequencing/README.md
-      - Biosample transformation notes: model/examples/one-biosample-sequencing/notes.md
-      - Multiple Pfams: model/examples/multiple-pfams/README.md
-      - Query requirements: docs/query-requirements.md
-      - Parsed source document: model/examples/source-documents/README.md
-  - NMDC-specific analyses:
-      - DataObject catalogue and counts: analyses/nmdc-data-objects/README.md
-      - Source sampling: analyses/nmdc-selection/README.md
-  - Repository decisions:
-      - Artifact layout: docs/decisions/001-artifact-layout.md
+  - Schema: index.md
+  - Source document schema: source-document/index.md
