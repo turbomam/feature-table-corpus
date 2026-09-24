@@ -248,6 +248,7 @@ conversion-check:
 [group("Documentation")]
 docs-build:
     uv run --python '>=3.11.8' python scripts/prepare_docs.py
+    uv run --python '>=3.11.8' --with linkml==1.11.1 python scripts/schema_docs.py
     uv run --with-requirements requirements-docs.txt mkdocs build --strict
     uv run --python '>=3.11.8' python scripts/check_site.py
 
@@ -260,4 +261,5 @@ docs-check:
 [group("Documentation")]
 docs-serve port="8765":
     uv run --python '>=3.11.8' python scripts/prepare_docs.py
+    uv run --python '>=3.11.8' --with linkml==1.11.1 python scripts/schema_docs.py
     uv run --with-requirements requirements-docs.txt mkdocs serve --dev-addr "127.0.0.1:$1"
