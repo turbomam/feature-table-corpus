@@ -38,4 +38,3 @@ validation:
     unrecognized_links: warn
 nav:
   - Schema: index.md
-  - Source document schema: source-document/index.md

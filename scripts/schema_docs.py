@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generate LinkML schema reference pages into the staged site, after prepare_docs.py.
 
-The site home becomes the feature model's generated index, as on the nmdc-schema site,
-followed by one block of links to the supplementary material.
+One gen-doc run over model/schema/feature_schemas.yaml, which imports the feature model
+and the source-document schema, so each class has one page and its Usages table lists
+every class that refers to it. The site home is the generated index, with a diagram of
+every relationship, followed by one block of links to the supplementary material.
 """
 from pathlib import Path
 import subprocess
@@ -10,17 +12,13 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "local" / "site-src"
 
-SCHEMAS = [
-    ("model/schema/ber_feature_model.yaml", DEST),
-    ("model/schema/source_document.yaml", DEST / "source-document"),
-]
+SCHEMA = "model/schema/feature_schemas.yaml"
 
 # One block of links, in the order a new reader needs them. Paths are relative to the site root.
 SUPPLEMENTARY = [
     ("Start here", [
         ("Repository overview", "overview.md"),
         ("Repository map and tasks", "docs/repository-map.md"),
-        ("Source document schema", "source-document/index.md"),
         ("Schema diagram", "docs/schema-diagram.md"),
         ("Schema guide", "model/schema/README.md"),
     ]),
@@ -78,12 +76,19 @@ def generate():
     readme = DEST / "README.md"
     if readme.exists():
         readme.rename(DEST / "overview.md")
-    for schema, out in SCHEMAS:
-        out.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["gen-doc", "--subfolder-type-separation", "-d", str(out), str(ROOT / schema)], check=True)
+    subprocess.run(["gen-doc", "--subfolder-type-separation", "-d", str(DEST), str(ROOT / SCHEMA)], check=True)
+    # gen-doc's --include-top-level-diagram writes "None" with class-diagram pages in linkml
+    # 1.11.1, so the whole-schema diagram comes from gen-erdiagram instead.
+    diagram = subprocess.run(["gen-erdiagram", str(ROOT / SCHEMA)], check=True,
+                             capture_output=True, text=True).stdout
     index = DEST / "index.md"
-    index.write_text(index.read_text() + supplementary_block())
-    print(f"Generated schema pages for {len(SCHEMAS)} schemas in {DEST.relative_to(ROOT)}")
+    text = index.read_text()
+    heading = "\n## Classes\n"
+    if heading not in text:
+        raise SystemExit("gen-doc index has no Classes heading to put the diagram before")
+    text = text.replace(heading, "\n## Relationships\n\n" + diagram.strip() + "\n" + heading, 1)
+    index.write_text(text + supplementary_block())
+    print(f"Generated schema pages from {SCHEMA} in {DEST.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
