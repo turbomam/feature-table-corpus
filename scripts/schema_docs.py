@@ -9,6 +9,8 @@ every relationship, followed by one block of links to the supplementary material
 from pathlib import Path
 import subprocess
 
+from schema_diagram import render_combined
+
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "local" / "site-src"
 
@@ -78,15 +80,15 @@ def generate():
         readme.rename(DEST / "overview.md")
     subprocess.run(["gen-doc", "--subfolder-type-separation", "-d", str(DEST), str(ROOT / SCHEMA)], check=True)
     # gen-doc's --include-top-level-diagram writes "None" with class-diagram pages in linkml
-    # 1.11.1, so the whole-schema diagram comes from gen-erdiagram instead.
-    diagram = subprocess.run(["gen-erdiagram", str(ROOT / SCHEMA)], check=True,
-                             capture_output=True, text=True).stdout
+    # 1.11.1, so the whole-schema diagram comes from the ER generator, with the same
+    # inverse-cardinality corrections as docs/schema-diagram.md.
+    diagram = render_combined()
     index = DEST / "index.md"
     text = index.read_text()
     heading = "\n## Classes\n"
     if heading not in text:
         raise SystemExit("gen-doc index has no Classes heading to put the diagram before")
-    text = text.replace(heading, "\n## Relationships\n\n" + diagram.strip() + "\n" + heading, 1)
+    text = text.replace(heading, "\n## Relationships\n\n```mermaid\n" + diagram + "\n```\n" + heading, 1)
     index.write_text(text + supplementary_block())
     print(f"Generated schema pages from {SCHEMA} in {DEST.relative_to(ROOT)}")
 
