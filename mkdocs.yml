@@ -37,4 +37,4 @@ validation:
     anchors: warn
     unrecognized_links: warn
 nav:
-  - Schema: index.md
+  - Schemas: index.md

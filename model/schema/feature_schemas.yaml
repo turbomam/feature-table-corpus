@@ -1,11 +1,12 @@
 id: https://w3id.org/ber-data/feature-schemas
 name: feature-schemas
-title: BER feature model and source-document schema
+title: BER feature schemas (two schemas, one documentation site)
 description: >-
-  Documentation entry point that imports both schemas, so the generated site shows every
-  class once and every relationship between them, including the two slots whose range is
-  Attribute (Feature.attributes and SourceRecord.metadata). Validate data against
-  ber_feature_model.yaml or source_document.yaml, not this file.
+  Documentation entry point only. It imports two separate schemas, the BER feature model
+  and the source-document schema, plus the attribute module both of them import, so this
+  site can show every class once and every relationship between them. Each schema keeps
+  its own file, identifier and prefix; validate data against ber_feature_model.yaml or
+  source_document.yaml, never against this file.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
