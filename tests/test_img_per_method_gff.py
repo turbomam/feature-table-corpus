@@ -164,6 +164,7 @@ class ValidateTests(unittest.TestCase):
     def test_numbers_must_be_plain_ascii(self):
         self.assert_rejected("pfam", 0, "\t12\t395\t", "\t1_2\t395\t", "start '1_2' is not a number")
         self.assert_rejected("pfam", 0, "\t12\t395\t", "\t12\t+395\t", "end '+395' is not a number")
+        self.assert_rejected("pfam", 0, "\t410.5\t", "\t+410.5\t", "score '+410.5' is not a number")
         self.assert_rejected("pfam", 0, "\t410.5\t", "\t\uff14\uff11\uff10.5\t", "is not a number")
         self.assert_rejected("pfam", 0, "\t12\t395\t", "\t 12\t395\t", "start ' 12' is not a number")
         self.assert_rejected("pfam", 0, "alignment_length=384", "alignment_length=+3_84", "'+3_84' is not a integer")
@@ -188,6 +189,10 @@ class ValidateTests(unittest.TestCase):
     def test_line_ends_are_lf_with_a_final_newline(self):
         status, out = self.run_on(fixture("pfam").read_text().replace("\n", "\r\n", 1), "case_pfam.gff")
         self.assertIn("line 1: carriage return", out)
+        status, out = self.run_on(fixture("pfam").read_text().replace("\n", "\r", 1), "case_pfam.gff")
+        self.assertIn("line 1: carriage return", out)
+        status, out = self.run_on(fixture("pfam").read_text().rstrip("\n") + "\r", "case_pfam.gff")
+        self.assertIn("line 3: carriage return", out)
         status, out = self.run_on(fixture("pfam").read_text().rstrip("\n"), "case_pfam.gff")
         self.assertEqual(status, 1, out)
         self.assertIn("line 3: no final newline", out)
@@ -227,6 +232,10 @@ class ValidateTests(unittest.TestCase):
             with contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(dialect.main(["parse", str(fixture("pfam")), "--output", str(output)]), 2)
             self.assertEqual(output.read_text(), "keep")
+            missing = Path(tmp) / "no-such-directory" / "out.json"
+            with contextlib.redirect_stderr(io.StringIO()) as err:
+                self.assertEqual(dialect.main(["parse", str(fixture("pfam")), "--output", str(missing)]), 2)
+            self.assertIn("can't write", err.getvalue())
             fresh = Path(tmp) / "new.json"
             self.assertEqual(dialect.main(["parse", str(fixture("pfam")), "--output", str(fresh)]), 0)
             self.assertIn('"method": "pfam"', fresh.read_text())

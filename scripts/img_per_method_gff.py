@@ -121,11 +121,13 @@ def parse_lines(lines, source_file, slots=None):
     slots = slots or row_slots()
     rows = []
     for number, raw in enumerate(lines, start=1):
+        # Checked first: with newline="" a lone \r also ends a line, and it should
+        # be reported as a carriage return, not as a missing newline.
+        if "\r" in raw:
+            raise DialectError(f"line {number}: carriage return; this dialect writes LF line ends only")
         if not raw.endswith("\n"):
             raise DialectError(f"line {number}: no final newline; this dialect ends every line with one")
         text = raw[:-1]
-        if "\r" in text:
-            raise DialectError(f"line {number}: carriage return; this dialect writes LF line ends only")
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
@@ -283,8 +285,13 @@ def main(argv=None):
         return 1
     text = json.dumps(document, indent=1)
     if args.output:
-        with open(args.output, "x", encoding="utf-8") as handle:
-            handle.write(text + "\n")
+        try:
+            with open(args.output, "x", encoding="utf-8") as handle:
+                handle.write(text + "\n")
+        except OSError as error:
+            # A missing directory, or a file created since the check above.
+            print(f"can't write {args.output}: {error}", file=sys.stderr)
+            return 2
     else:
         print(text)
     return 0
