@@ -88,6 +88,16 @@ class ValidateTests(unittest.TestCase):
         lines[index] = lines[index].replace(old, new, 1)
         path.write_text("\n".join(lines))
 
+    def line(self, kind, index):
+        return (self.bundle / file_name(kind)).read_text().split("\n")[index]
+
+    def assert_status(self, path, expected):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            status = dialect.validate(path)
+        self.assertEqual(status, 1, out.getvalue())
+        self.assertIn(expected, out.getvalue())
+
     def assert_rejected(self, expected, *edits):
         for edit in edits:
             self.edit(*edit)
@@ -179,6 +189,88 @@ class ValidateTests(unittest.TestCase):
         self.setUp()
         self.assert_rejected("does not match", ("gff", 5, "ID=9900000005", "ID=Ga0139071_101.5"))
 
+    def test_row_needs_nine_columns(self):
+        self.assert_rejected("8 columns, expected 9", ("gff", 4, "\t.\t-\t0\t", "\t.\t-0\t"))
+
+    def test_blank_lines_and_empty_files_are_rejected(self):
+        self.assert_rejected("gff line 5: blank line", ("gff", 4, self.line("gff", 4), ""))
+        self.setUp()
+        self.assert_rejected("cog line 2: blank line", ("cog", 1, self.line("cog", 1), ""))
+        self.setUp()
+        (self.bundle / file_name("gff")).write_text("")
+        self.assert_rejected("gff: empty file")
+
+    def test_final_newline_is_required(self):
+        path = self.bundle / file_name("xref")
+        path.write_text(path.read_text().rstrip("\n"))
+        self.assert_rejected("xref line 5: no final newline")
+
+    def test_header_only_files_are_rejected(self):
+        path = self.bundle / file_name("xref")
+        path.write_text(path.read_text().split("\n")[0] + "\n")
+        self.assert_rejected("xref: header only")
+        self.setUp()
+        (self.bundle / file_name("gff")).write_text("##gff-version 3\n")
+        self.assert_rejected("gff: header only")
+
+    def test_empty_attribute_and_missing_value_are_rejected(self):
+        self.assert_rejected("empty attribute", ("gff", 1, ";product=23S", ";;product=23S"))
+        self.setUp()
+        self.assert_rejected("attribute 'product' has no value", ("gff", 1, "product=23S", "product"))
+
+    # Numbers: ASCII digits, no leading zeros, no trailing fractional zeros.
+    def test_leading_zeros_are_rejected(self):
+        self.assert_rejected("start '0300' is not a number", ("gff", 2, "\t300\t", "\t0300\t"))
+        self.setUp()
+        self.assert_rejected("phase '00' is not a number", ("gff", 2, "\t+\t0\t", "\t+\t00\t"))
+        self.setUp()
+        self.assert_rejected("'0157' is not an integer", ("cog", 1, "\t157", "\t0157"))
+        self.setUp()
+        self.assert_rejected("does not match '^[1-9][0-9]*$'", ("xref", 1, "9900000002\tGI", "09900000002\tGI"))
+
+    def test_trailing_fractional_zero_is_rejected(self):
+        self.assert_rejected("'118.0' is not a decimal number", ("cog", 1, "\t118\t", "\t118.0\t"))
+        self.setUp()
+        self.assert_rejected("'110.10' is not a decimal number", ("pfam", 1, "\t110.1\t", "\t110.10\t"))
+
+    def test_non_ascii_digits_are_rejected(self):
+        # The first digit is ASCII, so a pattern that only checks it still fails here.
+        arabic_indic = "3\u0660\u0660"
+        full_width = "11\uff18"
+        self.assert_rejected(f"start {arabic_indic!r} is not a number", ("gff", 2, "\t300\t", f"\t{arabic_indic}\t"))
+        self.setUp()
+        self.assert_rejected(f"{full_width!r} is not a decimal number", ("cog", 1, "\t118\t", f"\t{full_width}\t"))
+        self.setUp()
+        # The schema's patterns must not accept them either.
+        self.assert_rejected("does not match '^[1-9][0-9]*$'",
+                             ("gff", 5, "ID=9900000005", "ID=\uff19900000005"))
+        self.setUp()
+        self.assert_rejected("does not match '^COG[0-9]{4}$'", ("cog", 1, "COG1225", "COG\u0661225"))
+
+    # Files that can't be read, and files beside the GFF.
+    def test_unreadable_inputs_are_invalid_not_tracebacks(self):
+        (self.bundle / file_name("xref")).write_bytes(b"gene_oid\tdb_name\tid\n9900000002\tGI\t\xe9\n")
+        self.assert_rejected("not UTF-8")
+        missing = self.bundle / "missing" / f"{TAXON}.gff"
+        self.assert_status(missing, "No such file")
+        directory = self.bundle / "d.gff"
+        directory.mkdir()
+        self.assert_status(directory, "Is a directory")
+        self.assert_status(self.bundle / f"{TAXON}.gff3", "expected <taxon_oid>.gff")
+
+    def test_unread_files_beside_the_gff_are_rejected(self):
+        (self.bundle / f"{TAXON}.crispr.txt").write_text("contig_id\n")
+        self.assert_rejected("9900000001.crispr.txt: documented in the bundle README but not yet measured")
+        self.setUp()
+        (self.bundle / f"{TAXON}.pfam.tab.txt.bak").write_text("x\n")
+        self.assert_rejected("9900000001.pfam.tab.txt.bak: not a file this dialect reads")
+
+    def test_sequence_files_are_allowed(self):
+        for suffix in ("fna", "genes.fna", "genes.faa", "intergenic.fna"):
+            (self.bundle / f"{TAXON}.{suffix}").write_text(">x\nACGT\n")
+        status, out = self.run_validate()
+        self.assertEqual(status, 0, out)
+
     # Table shape and types.
     def test_table_header_must_match(self):
         self.assert_rejected("header is not", ("pfam", 0, "pfam_name", "pfam_desc"))
@@ -204,7 +296,12 @@ class ValidateTests(unittest.TestCase):
         self.assertIn("documented in the bundle README but not yet measured", out)
         (self.bundle / f"{TAXON}.kog.tab.txt").rename(self.bundle / f"{TAXON}.smart.tab.txt")
         status, out = self.run_validate()
-        self.assertIn("table kind 'smart' is not part of this dialect", out)
+        self.assertIn("9900000001.smart.tab.txt: not a file this dialect reads", out)
+
+    def test_superfamily_accession_has_five_or_six_digits(self):
+        self.assert_rejected("SUPERFAMILY accession 'SSF1000000'", ("ipr", 5, "SSF100000", "SSF1000000"))
+        self.setUp()
+        self.assert_rejected("SUPERFAMILY accession 'SSF5283'", ("ipr", 1, "SSF52833", "SSF5283"))
 
     # Rules across tables.
     def test_gene_oid_must_be_a_cds(self):
@@ -246,6 +343,12 @@ class ValidateTests(unittest.TestCase):
         self.setUp()
         self.assert_rejected("but its name lists", ("ko", 1, "transposase\t\t", "transposase\tEC:2.7.7.-\t"))
 
+    def test_ko_ec_rows_are_counted_not_just_collected(self):
+        path = self.bundle / file_name("ko")
+        rows = path.read_text().split("\n")
+        path.write_text("\n".join(rows[:4] + [rows[4]] + rows[4:]))
+        self.assert_rejected("KO:K01589 has EC rows ['EC:6.3.4.18', 'EC:6.3.4.18']")
+
     def test_img_ko_flag_value_is_not_yet_accepted(self):
         self.assert_rejected("'Yes' does not match", ("ko", 1, "transposase\t\t", "transposase\t\tYes"))
 
@@ -262,6 +365,39 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected("GI id 'ZP_04758925'", ("xref", 1, "241760836", "ZP_04758925"))
         self.setUp()
         self.assert_rejected("'RefSeq' is not one of", ("xref", 2, "GenBank/EMBL", "RefSeq"))
+        self.setUp()
+        self.assert_rejected("GenBank/EMBL id 'ZP04758925'", ("xref", 2, "ZP_04758925", "ZP04758925"))
+
+
+class ParseOutputTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.dir = Path(self.tmp.name)
+
+    def run_parse(self, output):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            status = dialect.main(["parse", str(FIXTURE), "--output", str(output)])
+        return status, err.getvalue()
+
+    def test_new_output_is_written(self):
+        output = self.dir / "bundle.json"
+        self.assertEqual(self.run_parse(output), (0, ""))
+        self.assertIn('"taxon_oid": "9900000001"', output.read_text())
+
+    def test_existing_output_is_refused(self):
+        output = self.dir / "bundle.json"
+        output.write_text("keep")
+        status, err = self.run_parse(output)
+        self.assertEqual(status, 1)
+        self.assertIn("not written", err)
+        self.assertEqual(output.read_text(), "keep")
+
+    def test_directory_output_is_refused(self):
+        status, err = self.run_parse(self.dir)
+        self.assertEqual(status, 1)
+        self.assertIn("not written", err)
 
 
 if __name__ == "__main__":

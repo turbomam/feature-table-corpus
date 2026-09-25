@@ -153,7 +153,7 @@ a silent loss.
 https://github.com/turbomam/feature-table-corpus/issues/54: the older IMG taxon download, a
 `<taxon_oid>.gff` written from the `img_core_v400` database plus `<taxon_oid>.<kind>.tab.txt`
 tables whose columns the bundle's `README.txt` documents. It was measured on 2026-09-25 against
-two bundles, Bacillus sp. BacspinBacteria_29 (`IMG_AP-1121004`, taxon 2708743150, 4,628 GFF rows,
+two bundles, Bacillus sp. V-88 (`IMG_AP-1121004`, taxon 2708743150, 4,628 GFF rows,
 7 tables) and Zymomonas mobilis ATCC 10988 (`IMG_AP-1377582`, taxon 645058785, 1,942 GFF rows,
 8 tables), both downloaded to `local/jgi/`.
 
@@ -173,7 +173,10 @@ as one document with one class per table. What the two bundles share:
 - Only `.ipr.tab.txt` has GO terms, joined with `|`. Pfam accessions are written `pfam00578`.
 
 `.kog.tab.txt`, `.crispr.txt` and a non-empty `img_ko_flag` are documented but were not in
-either bundle, so they fail until measured. `just dialect-validate-img-taxon GFF` checks the
+either bundle, so they fail until measured. Any other `<taxon_oid>.*` file beside the GFF fails
+too, except the documented sequence files (`.fna`, `.genes.fna`, `.genes.faa`,
+`.intergenic.fna`), so no table goes unchecked. Numbers must use ASCII digits with no leading
+zeros and no trailing fractional zeros, as IMG writes them, which keeps write-back exact. `just dialect-validate-img-taxon GFF` checks the
 GFF and every table beside it. Both bundles pass, and the writer reproduces all 17 files byte
 for byte. The tests edit single rows of a
 [constructed bundle](../tests/fixtures/img-taxon-bundle/README.md) to show each rule rejects.

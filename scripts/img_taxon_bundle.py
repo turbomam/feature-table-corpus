@@ -34,7 +34,9 @@ TABLES = {
     "xref": "XrefRow",
 }
 # Documented in the bundle README.txt but absent from both measured bundles.
-UNMEASURED = {"kog"}
+UNMEASURED = {"kog.tab.txt", "crispr.txt"}
+# Other bundle members the README documents; they hold sequence, not annotation rows.
+SEQUENCE_FILES = {"fna", "genes.fna", "genes.faa", "intergenic.fna"}
 # Values of a multivalued table cell are separated by "|".
 LIST_SEPARATOR = "|"
 
@@ -47,15 +49,17 @@ KEYS_BY_TYPE = {
     "CRISPR": [],
 }
 DOMAIN_ID = {
-    "SUPERFAMILY": r"SSF\d{5,6}",
-    "ProSiteProfiles": r"PS\d{5}",
-    "ProSitePatterns": r"PS\d{5}",
-    "SMART": r"SM\d{5}",
+    "SUPERFAMILY": r"SSF[0-9]{5,6}",
+    "ProSiteProfiles": r"PS[0-9]{5}",
+    "ProSitePatterns": r"PS[0-9]{5}",
+    "SMART": r"SM[0-9]{5}",
 }
-XREF_ID = {"GI": r"\d+", "GenBank/EMBL": r"[A-Z]{2}_\d+"}
+XREF_ID = {"GI": r"[1-9][0-9]*", "GenBank/EMBL": r"[A-Z]{2}_[0-9]+"}
 NAMED_ACCESSIONS = {"cog": "cog", "pfam": "pfam", "tigrfam": "tigrfam", "ko": "ko"}
-INTEGER = re.compile(r"\d+")
-DECIMAL = re.compile(r"\d+(\.\d+)?")
+# ASCII digits only (\d also matches Arabic-Indic and full-width digits), no leading
+# zeros, and no trailing zeros in a fraction: IMG writes 118, never 0118 or 118.0.
+INTEGER = re.compile(r"0|[1-9][0-9]*")
+DECIMAL = re.compile(r"(0|[1-9][0-9]*)(\.[0-9]*[1-9])?")
 
 
 class DialectError(ValueError):
@@ -94,21 +98,28 @@ def convert(text, slot, where):
 
 
 def text_lines(path):
-    with open(path, encoding="utf-8", newline="") as handle:
-        return handle.read().split("\n")
+    try:
+        with open(path, encoding="utf-8", newline="") as handle:
+            return handle.read().split("\n")
+    except UnicodeDecodeError as error:
+        raise DialectError(f"{path}: not UTF-8 ({error.reason} at byte {error.start})") from None
+    except OSError as error:
+        raise DialectError(f"{path}: {error.strerror or error}") from None
 
 
 def body(lines, name):
-    """Lines without the final newline's empty tail. Rejects CR, which IMG never writes."""
-    if lines and lines[-1] == "":
-        lines = lines[:-1]
+    """Lines without the final newline's empty tail. Rejects CR, which IMG never writes,
+    and a missing final newline, which IMG always writes."""
+    if lines == [""]:
+        raise DialectError(f"{name}: empty file")
+    if lines[-1] != "":
+        raise DialectError(f"{name} line {len(lines)}: no final newline")
+    lines = lines[:-1]
     for number, text in enumerate(lines, start=1):
         if "\r" in text:
             raise DialectError(f"{name} line {number}: carriage return; this dialect writes LF only")
         if not text:
             raise DialectError(f"{name} line {number}: blank line")
-    if not lines:
-        raise DialectError(f"{name}: empty file")
     return lines
 
 
@@ -151,6 +162,8 @@ def parse_gff_lines(lines):
     lines = body(lines, "gff")
     if lines[0] != HEADER:
         raise DialectError(f"gff line 1: {lines[0][:40]!r} is not {HEADER!r}")
+    if len(lines) == 1:
+        raise DialectError("gff: header only, no feature rows")
     rows = []
     for number, text in enumerate(lines[1:], start=2):
         if text.startswith("#"):
@@ -165,6 +178,8 @@ def parse_table_lines(lines, kind):
     lines = body(lines, kind)
     if lines[0].split("\t") != names:
         raise DialectError(f"{kind} line 1: header is not {chr(9).join(names)!r}")
+    if len(lines) == 1:
+        raise DialectError(f"{kind}: header only; IMG leaves an empty table out of the bundle")
     rows = []
     for number, text in enumerate(lines[1:], start=2):
         where = f"{kind} line {number}"
@@ -184,15 +199,23 @@ def parse_table_lines(lines, kind):
 
 
 def table_paths(gff_path):
-    """{kind: path} for every `<taxon_oid>.<kind>.tab.txt` beside the GFF."""
+    """{kind: path} for every `<taxon_oid>.<kind>.tab.txt` beside the GFF.
+
+    Every other `<taxon_oid>.*` file fails unless it is a sequence file, so a table
+    this dialect doesn't read, such as `.crispr.txt` or a renamed `.tab.txt.bak`,
+    can't pass unchecked.
+    """
     taxon = gff_path.name[:-len(".gff")]
     found = {}
-    for path in sorted(gff_path.parent.glob(glob.escape(taxon) + ".*.tab.txt")):
-        kind = path.name[len(taxon) + 1:-len(".tab.txt")]
-        if kind in UNMEASURED:
+    for path in sorted(gff_path.parent.glob(glob.escape(taxon) + ".*")):
+        suffix = path.name[len(taxon) + 1:]
+        if suffix == "gff" or suffix in SEQUENCE_FILES:
+            continue
+        if suffix in UNMEASURED:
             raise DialectError(f"{path.name}: documented in the bundle README but not yet measured")
+        kind = suffix[:-len(".tab.txt")] if suffix.endswith(".tab.txt") else None
         if kind not in TABLES:
-            raise DialectError(f"{path.name}: table kind {kind!r} is not part of this dialect")
+            raise DialectError(f"{path.name}: not a file this dialect reads")
         found[kind] = path
     return found
 
@@ -249,9 +272,10 @@ def write(document):
         lines = text.split("\n")
         reparsed = parse_gff_lines(lines) if kind == "gff" else parse_table_lines(lines, kind)
         original = document["rows"] if kind == "gff" else document[kind]
-        if len(reparsed) != len(original):
-            raise DialectError(f"{name}: written text parses back to {len(reparsed)} rows, not {len(original)}")
-        for row, again in zip(original, reparsed):
+        # A newline inside a value also shortens that value, so the comparison
+        # reports it before the row counts could differ; strict=True turns any
+        # other count difference into an error instead of a silent truncation.
+        for row, again in zip(original, reparsed, strict=True):
             if {**row, "line": 0} != {**again, "line": 0}:
                 changed = sorted(k for k in set(row) | set(again) if row.get(k) != again.get(k))
                 raise DialectError(f"{name} line {row.get('line', '?')}: written text parses back differently in {changed}")
@@ -461,7 +485,13 @@ def main(argv=None):
         return 1
     text = json.dumps(document, indent=1)
     if args.output:
-        args.output.write_text(text + "\n")
+        try:
+            # "x" refuses an existing file or directory instead of replacing it.
+            with open(args.output, "x", encoding="utf-8") as handle:
+                handle.write(text + "\n")
+        except OSError as error:
+            print(f"{args.output}: not written: {error.strerror or error}", file=sys.stderr)
+            return 1
     else:
         print(text)
     return 0
