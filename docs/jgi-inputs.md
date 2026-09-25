@@ -40,11 +40,25 @@ Nothing under `local/jgi/` is committed unless its terms allow redistribution. T
 ([#53](https://github.com/turbomam/feature-table-corpus/issues/53)); the others stay local. Checked
 2026-09-25:
 
-- The [JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy) says that after
-  the embargo period, data "are unrestricted for use". Asking the proposal PI before
-  redistributing applies only to use-restricted data. The policy names no license and gives no
-  citation wording.
+- Which policy applies depends on when the proposal was accepted, recorded per record as
+  `proposal_acceptance_date` and `governing_policy`. The current
+  [JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy) covers only "user
+  projects accepted FY22 and later". Earlier projects fall under the
+  [Legacy Data Policy](https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf).
+  An earlier version of this page applied the current policy to every record, which was wrong.
+- All four IMG records were accepted before FY22 (2012-03-22 to 2016-09-09), so the legacy
+  policy governs them. For proposals accepted before November 2018 it says unreserved data "are
+  freely available for any subsequent use", and a May 2021 update required that data to be
+  public without use restrictions by 2023-05-31. Publications using the data should include:
+  "These sequence data were produced by the US Department of Energy Joint Genome Institute
+  http://www.jgi.doe.gov/ in collaboration with the user community." For later proposals it
+  adds that "the source must still be cited". This repository treats attribution as required:
+  each vendored entry gives the acknowledgment and the record's dataset DOI. Neither policy
+  names a license.
 - Every record in the manifest has `data_utilization_status: Unrestricted` in the search API.
+- The search API gives no `proposal_acceptance_date` for the three Phytozome records, so which
+  JGI policy governs them is not determined. Their own `DataReleasePolicy.html` files ask for
+  citation, as below.
 - Each Phytozome genome has a `DataReleasePolicy.html`, listed in the manifest. The three read
   so far say only "This data set is public. Please cite the following publication", and the
   manifest's `citation` field copies that publication. Phytozome also asks users to cite

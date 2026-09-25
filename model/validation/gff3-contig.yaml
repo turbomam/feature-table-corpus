@@ -16,7 +16,7 @@ validation:
         later defects are not measured.'
       start-after-end: The deliberately malformed feature starts after its end.
       unsupported-version: 'The JGI isolate GeneMark file declares ##gff-version 2 while its attributes
-        use GFF3 tag=value syntax.'
+        use GFF3 tag=value syntax. GenomeTools stops here; later defects are not measured.'
       unresolved-parent: The deliberately malformed Parent value refers to an absent ID.
   gff3toolkit:
     status: measured
@@ -24,14 +24,16 @@ validation:
       Ema0003: The reversed-coordinate control is reported outside its parent boundaries.
       Ema0005: The RefSeq chromosome contains pseudogene children that this QC rule rejects.
       Emr0003: The duplicate-ID control is reported as a duplicate.
-      Esf0003: QC reports strand . as missing, including the protein-relative Pfam hits and unstranded
-        annotation families.
+      Esf0003: QC reports any strand other than + or - as missing. That covers . in the protein-relative
+        Pfam hits and unstranded annotation families, and the numeric 1 and -1 of the IMG pipeline 4.14.0
+        Bacillus GFF.
       Esf0014: 'The first line lacks ##gff-version. The source is preserved without adding it.'
       Esf0018: The reversed-coordinate control starts after its end.
       Esf0019: 'The JGI isolate GeneMark file declares ##gff-version 2.'
       Esf0022: Some NMDC and JGI isolate search files have an empty source column; QC requires a
         dot.
-      Esf0025: The IMG pipeline 4.14.0 isolate GFF writes strand as 1 and -1 rather than + and -.
+      Esf0025: The IMG pipeline 4.14.0 isolate GFF writes strand as 1 (2,062 rows) and -1 (2,631 rows)
+        rather than + and -.
       Esf0026: The deliberately malformed CDS fixture has phase 3.
       Esf0029: The unescaped-semicolon control has a bare attribute rather than one equals sign.
       Esf0031: The unescaped-semicolon control also produces an empty attribute value.

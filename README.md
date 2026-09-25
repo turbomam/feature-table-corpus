@@ -145,16 +145,20 @@ These were selected as related evidence, independently of the smallest-file samp
 metagenome workflow, so these add annotation of single organisms, from two pipeline generations,
 under `corpus/sources/jgi-img/`
 ([#53](https://github.com/turbomam/feature-table-corpus/issues/53)). Clostridium acetobutylicum
-`IMG_AP-1268149` (`Ga0423362`) has all 19 per-method GFF files of the newer IMG pipeline, the
+DJ311 `IMG_AP-1268149` (`Ga0423362`) has all 19 per-method GFF files of the newer IMG pipeline, the
 same evidence streams as the NMDC sample above plus SignalP, TMHMM and three Rfam subsets. Bacillus sp.
-BacspinBacteria_29 `IMG_AP-1121004` has one assembly annotated twice: `106476.assembled.gff` from
+V-88 `IMG_AP-1121004` has one assembly annotated twice: `106476.assembled.gff` from
 IMG pipeline 4.14.0 and `2708743150.gff` from `img_core_v400`, with that taxon's seven
 tab-separated side tables (COG, InterPro with GO, KO with EC, Pfam, SignalP, TIGRFAM, TMHMM).
 Its 8.6 MB GenBank file is left out. Each md5 matches the JGI Data Portal search API. Downloading
-needs a JGI login ([docs/jgi-inputs.md](docs/jgi-inputs.md)); both records are
-`data_utilization_status: Unrestricted`, and the
-[JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy) says such data "are
-unrestricted for use". It names no license.
+needs a JGI login ([docs/jgi-inputs.md](docs/jgi-inputs.md)). Both records are
+`data_utilization_status: Unrestricted` and were accepted before FY22, so the
+[JGI Legacy Data Policy](https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf)
+governs them. It names no license. **Attribution is required**: cite the dataset DOI
+(Clostridium https://doi.org/10.25585/1488021, Bacillus https://doi.org/10.25585/1488085) and
+include JGI's acknowledgment, "These sequence data were produced by the US Department of Energy
+Joint Genome Institute http://www.jgi.doe.gov/ in collaboration with the user community." Each
+index entry repeats both.
 
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the
@@ -413,7 +417,8 @@ Pull requests adding entries should fill in every field the existing entries car
 ## Licensing
 
 Per entry, recorded in `corpus/index.yaml`. The NMDC files are CC BY 4.0 and require attribution to NMDC.
-The JGI IMG files are distributed under the JGI Data Policy as unrestricted data; it names no license.
+The JGI IMG files are unrestricted data under the JGI Legacy Data Policy, which names no license;
+attribution is required, with the dataset DOI and acknowledgment given in each entry.
 The NCBI files are public domain. This repository's own contributions, meaning the index, the
 scripts and this README, are CC0.
 

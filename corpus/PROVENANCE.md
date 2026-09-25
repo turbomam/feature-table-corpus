@@ -227,10 +227,10 @@ https://github.com/turbomam/feature-table-corpus/issues/53, two public isolate r
 from the [JGI Data Portal](https://data.jgi.doe.gov/) are now retained under
 `corpus/sources/jgi-img/<record>/`, with the portal's file names:
 
-- Clostridium acetobutylicum `IMG_AP-1268149` (`Ga0423362`): all 19 `Ga0423362_*.gff`
+- Clostridium acetobutylicum DJ311 `IMG_AP-1268149` (`Ga0423362`): all 19 `Ga0423362_*.gff`
   files, the per-method outputs and structural and functional roll-ups of the newer IMG
   pipeline. Downloaded 2026-09-25 after a tape restore requested on 2026-09-24.
-- Bacillus sp. BacspinBacteria_29 `IMG_AP-1121004`: `106476.assembled.gff` from IMG
+- Bacillus sp. V-88 `IMG_AP-1121004`: `106476.assembled.gff` from IMG
   pipeline 4.14.0 (the record's `106476.pipeline_version.info`, read 2026-09-25),
   `2708743150.gff` from `img_core_v400`, and that taxon's seven `.tab.txt` side tables.
   Downloaded 2026-09-24. The 8,587,401-byte `106476.assembled.gbk` is not retained:
@@ -250,13 +250,24 @@ after copying. The index records each file's portal `file_id`, its download URL,
 SHA-256. No bytes were changed.
 
 Reuse terms, checked 2026-09-25: both records are `data_utilization_status: Unrestricted`
-and `visibility: public` in the search API. The
-[JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy) says post-embargo
-data "are unrestricted for use", and asking the PI before redistributing applies only to
-use-restricted data. It names no license, so each entry records the license as
-"JGI Data Policy; data_utilization_status Unrestricted" with the policy URL.
+and `visibility: public` in the search API. Their proposals were accepted on 2015-12-10
+(Clostridium, BrcProposal) and 2013-09-20 (Bacillus, Csp2014Proposal), before FY22, so the
+[JGI Legacy Data Policy](https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf)
+governs them, not the current
+[JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy), which covers projects
+accepted FY22 and later. The first version of this section cited the current policy; review
+on https://github.com/turbomam/feature-table-corpus/pull/63 caught it. The legacy policy names
+no license and asks publications to carry JGI's acknowledgment. Each entry records the license
+as "JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status
+Unrestricted; attribution required", with the acknowledgment and the dataset DOI
+(10.25585/1488021 and 10.25585/1488085).
 
-The 28 files add 13,392,577 bytes; `corpus/` goes from 5,690,300 to 19,082,877 bytes.
+The first version also used the download folder's short name, BacspinBacteria_29, for the
+Bacillus record. The portal title, and the name used here, is Bacillus sp. V-88.
+
+The 28 files total 13,392,577 bytes. By `git ls-tree -r -l`, `corpus/` was 5,690,300 bytes at
+fff5c1f and 19,120,039 bytes at dd7f183, the commit that added them; that second figure also
+counts the growth of `index.yaml` and this file, and later edits to either change it.
 The corpus now has 94 entries, 58 vendored. The 21 GFF files have measured validator
 cases in `model/validation/`; see the
 [validation report](../analyses/format-validation/README.md).

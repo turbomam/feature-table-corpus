@@ -111,10 +111,12 @@ in the IMG and NMDC inputs.
 The 21 JGI isolate GFF files, added on 2026-09-25 for
 https://github.com/turbomam/feature-table-corpus/issues/53, brought five more observed rules.
 GenomeTools rejects the Clostridium GeneMark file with `unsupported-version`, because it
-declares `##gff-version 2`; QC reports the same header as `Esf0019`. The IMG pipeline 4.14.0
-Bacillus file writes strand as `1` (`Esf0025`, 4,693 rows) and uses capitalized keys that GFF3
-does not reserve (`Esf0041`). A key repeated within one row is `Esf0032`. The Clostridium
-Prodigal file and, for GenomeTools only, the `img_core_v400` Bacillus file are accepted.
+declares `##gff-version 2`, and stops there, so it measures no later defect in that file.
+QC reports the same header as `Esf0019`. The IMG pipeline 4.14.0 Bacillus file writes strand
+as `1` in 2,062 rows and `-1` in 2,631; QC reports all 4,693 as `Esf0025` and as `Esf0003`.
+That file also uses capitalized keys that GFF3 does not reserve (`Esf0041`). A key repeated
+within one row is `Esf0032`. The Clostridium Prodigal file and, for GenomeTools only, the
+`img_core_v400` Bacillus file are accepted.
 
 ## AGAT installation blocker
 

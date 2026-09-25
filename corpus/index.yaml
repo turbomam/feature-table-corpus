@@ -1098,7 +1098,7 @@ entries:
   origin_url: "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_001422.1&db=nuccore&report=genbank&retmode=text"
   notes: "Unchanged whole 5386 bp circular nucleotide record, 32 features including six origin-crossing joins. Complements the independently retained GFF3 annotation; source hash pins annotation snapshot separately from sequence accession version."
 - id: jgi-img-clostridium-cath-funfam
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) CATH functional families search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) CATH functional families search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cath_funfam.gff
   format: GFF3
@@ -1114,14 +1114,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33d6263bf2148832ef7
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-cleavage-sites
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) SignalP cleavage sites
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) SignalP cleavage sites
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cleavage_sites.gff
   format: GFF3
@@ -1137,14 +1145,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33b6263bf2148832ed9
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-cog
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) COG search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) COG search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cog.gff
   format: GFF3
@@ -1160,14 +1176,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33a6263bf2148832ecc
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-crt
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) CRT CRISPR arrays
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) CRT CRISPR arrays
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_crt.gff
   format: GFF3
@@ -1183,14 +1207,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832eef
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-functional-annotation
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) functional roll-up
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) functional roll-up
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff
   format: GFF3
@@ -1206,14 +1238,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832eeb
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-genemark
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) GeneMark gene calls
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) GeneMark gene calls
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_genemark.gff
   format: 'GFF3 (declares ##gff-version 2)'
@@ -1229,15 +1269,23 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832eed
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: 'First line is ##gff-version 2 while column 9 uses GFF3 tag=value attributes.'
 - id: jgi-img-clostridium-ko-ec
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) KEGG Orthology and EC assignment
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) KEGG Orthology and EC assignment
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_ko_ec.gff
   format: GFF3
@@ -1253,14 +1301,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33b6263bf2148832eda
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-pfam
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) Pfam search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) Pfam search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_pfam.gff
   format: GFF3
@@ -1276,14 +1332,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33b6263bf2148832ede
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-prodigal
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) Prodigal gene calls
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) Prodigal gene calls
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff
   format: GFF3
@@ -1299,14 +1363,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33a6263bf2148832ec7
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-rfam
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) Rfam search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) Rfam search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam.gff
   format: GFF3
@@ -1322,15 +1394,23 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832eea
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-rfam-misc-bind-misc-feature-regulatory
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) Rfam misc_bind, misc_feature and regulatory
-    subset
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) Rfam misc_bind, misc_feature and
+    regulatory subset
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_misc_bind_misc_feature_regulatory.gff
   format: GFF3
@@ -1346,14 +1426,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33a6263bf2148832ec9
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-rfam-ncrna-tmrna
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) Rfam ncRNA and tmRNA subset
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) Rfam ncRNA and tmRNA subset
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_ncrna_tmrna.gff
   format: GFF3
@@ -1369,14 +1457,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832ef0
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-rfam-rrna
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) Rfam rRNA subset
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) Rfam rRNA subset
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_rrna.gff
   format: GFF3
@@ -1392,14 +1488,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832ef1
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-smart
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) SMART search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) SMART search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_smart.gff
   format: GFF3
@@ -1415,14 +1519,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832ee6
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-structural-annotation
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) structural roll-up
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) structural roll-up
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_structural_annotation.gff
   format: GFF3
@@ -1438,14 +1550,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33b6263bf2148832edc
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-supfam
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) SUPERFAMILY search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) SUPERFAMILY search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_supfam.gff
   format: GFF3
@@ -1461,14 +1581,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33b6263bf2148832edd
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-tigrfam
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) TIGRFAM search
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) TIGRFAM search
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tigrfam.gff
   format: GFF3
@@ -1484,14 +1612,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33c6263bf2148832ee7
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-tmh
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) TMHMM transmembrane topology
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) TMHMM transmembrane topology
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tmh.gff
   format: GFF3
@@ -1507,14 +1643,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33a6263bf2148832ec4
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-clostridium-trna
-  label: Clostridium acetobutylicum IMG_AP-1268149 (Ga0423362) tRNAscan-SE tRNAs
+  label: Clostridium acetobutylicum DJ311 IMG_AP-1268149 (Ga0423362) tRNAscan-SE tRNAs
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_trna.gff
   format: GFF3
@@ -1530,14 +1674,22 @@ entries:
   origin_record: IMG_AP-1268149
   origin_file_id: 5ee7d33a6263bf2148832ecb
   retrieved: '2026-09-25'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488021, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488021
+  proposal: BrcProposal 2804
+  proposal_acceptance_date: '2015-12-10'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
 - id: jgi-img-bacillus-assembled-gff
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 IMG pipeline 4.14.0 assembled annotation GFF
+  label: Bacillus sp. V-88 IMG_AP-1121004 IMG pipeline 4.14.0 assembled annotation GFF
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff
   format: GFF3
@@ -1553,8 +1705,16 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 585823e07ded5e78cff8edcb
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
@@ -1562,7 +1722,7 @@ entries:
   notes: 'Column 7 holds 1 and -1 rather than + and -, and there is no ##gff-version line. Same assembly
     (Ga0139071) as 2708743150.gff, from an earlier pipeline generation.'
 - id: jgi-img-bacillus-taxon-gff
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 taxon GFF
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 taxon GFF
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff
   format: GFF3
@@ -1578,8 +1738,16 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac94
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
@@ -1587,7 +1755,7 @@ entries:
   notes: Attributes are only ID, locus_tag and product; functional annotation is in the .tab.txt side
     tables, joined on gene_oid = ID.
 - id: jgi-img-bacillus-cog-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 COG side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 COG side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.cog.tab.txt
   format: TSV
@@ -1603,15 +1771,23 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac92
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: Not GFF. Tab-separated with a header row; rows are keyed by gene_oid, the ID of a row in 2708743150.gff.
 - id: jgi-img-bacillus-ipr-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 InterPro with GO side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 InterPro with GO side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.ipr.tab.txt
   format: TSV
@@ -1627,15 +1803,23 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac86
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: Not GFF. Tab-separated with a header row; rows are keyed by gene_oid, the ID of a row in 2708743150.gff.
 - id: jgi-img-bacillus-ko-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 KEGG Orthology with EC side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 KEGG Orthology with EC side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.ko.tab.txt
   format: TSV
@@ -1651,15 +1835,23 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac98
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: Not GFF. Tab-separated with a header row; rows are keyed by gene_oid, the ID of a row in 2708743150.gff.
 - id: jgi-img-bacillus-pfam-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 Pfam side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 Pfam side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.pfam.tab.txt
   format: TSV
@@ -1675,15 +1867,23 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac90
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: Not GFF. Tab-separated with a header row; rows are keyed by gene_oid, the ID of a row in 2708743150.gff.
 - id: jgi-img-bacillus-signalp-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 SignalP side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 SignalP side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.signalp.tab.txt
   format: TSV
@@ -1699,15 +1899,23 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac8e
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: Not GFF. Tab-separated with a header row; rows are keyed by gene_oid, the ID of a row in 2708743150.gff.
 - id: jgi-img-bacillus-tigrfam-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 TIGRFAM side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 TIGRFAM side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.tigrfam.tab.txt
   format: TSV
@@ -1723,15 +1931,23 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac84
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
     the md5
   notes: Not GFF. Tab-separated with a header row; rows are keyed by gene_oid, the ID of a row in 2708743150.gff.
 - id: jgi-img-bacillus-tmhmm-table
-  label: Bacillus sp. BacspinBacteria_29 IMG_AP-1121004 img_core_v400 TMHMM side table
+  label: Bacillus sp. V-88 IMG_AP-1121004 img_core_v400 TMHMM side table
   tier: vendored
   path: corpus/sources/jgi-img/IMG_AP-1121004/2708743150.tmhmm.tab.txt
   format: TSV
@@ -1747,8 +1963,16 @@ entries:
   origin_record: IMG_AP-1121004
   origin_file_id: 6822952a9a4399cb6ee0ac88
   retrieved: '2026-09-24'
-  license: JGI Data Policy; data_utilization_status Unrestricted
-  license_url: https://jgi.doe.gov/data-policy-support/data-policy
+  license: JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status Unrestricted;
+    attribution required
+  license_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+  attribution: 'Cite the dataset, https://doi.org/10.25585/1488085, and include the JGI acknowledgment:
+    These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/
+    in collaboration with the user community.'
+  dataset_doi: 10.25585/1488085
+  proposal: Csp2014Proposal 1312
+  proposal_acceptance_date: '2013-09-20'
+  origin_requires_login: true
   selection: Part of an organism-centric annotation set added for https://github.com/turbomam/feature-table-corpus/issues/53;
     unchanged full file
   barrier: Downloading from origin_url needs a JGI Data Portal login; the anonymous search API reports
