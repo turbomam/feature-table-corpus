@@ -22,3 +22,20 @@ limitations:
   - Uncertain endpoints require explicit reported-bounds query mode; no exact distance is asserted
   - Does not independently validate all INSDC keys, qualifier vocabularies, citations or translation biology
   - Other GenBank record kinds, EMBL syntax and the NCBI five-column submission table are unsupported
+
+# Independent validator observations; reproduce with just validity-check.
+validation:
+  scope: These GFF3 validator commands do not apply to this source format; empty failure lists do not
+    mean validation passed.
+  genometools:
+    status: not_applicable
+    expected_failures: {}
+  gff3toolkit:
+    status: not_applicable
+    expected_failures: {}
+  agat:
+    status: blocked
+    expected_failures: null
+    reason: No measured rule list. See analyses/format-validation/agat-blocker.json for the 2026-09-25
+      macOS arm64 dependency failure.
+  cases: {}
