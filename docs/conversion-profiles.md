@@ -108,6 +108,42 @@ validator, and adds the cross-row checks a schema can't express. The tests edit 
 of a [constructed fixture](../tests/fixtures/img-functional-gff/README.md) to show each rule
 rejects what it should.
 
+### Mapping a dialect with linkml-map
+
+[`img-functional-gff.transform.yaml`](../model/transforms/img-functional-gff.transform.yaml)
+maps dialect rows to `Feature` with [linkml-map](https://github.com/linkml/linkml-map) 0.5.4,
+pinned in `requirements-mapping.txt`. The reverse mapping is not written by hand: it is generated
+from the same file with linkml-map's inverter each time
+([#55](https://github.com/turbomam/feature-table-corpus/issues/55)).
+
+linkml-map handles the nine columns, the typed keys with a `Feature` slot (`ID`, `Parent`,
+`product`, `product_source`) and the strand enum. `scripts/img_functional_map.py` does four
+things it couldn't, found while building this on 2026-09-25:
+
+- MELT turns wide slots into key/value rows, but keeps a list as one value, keeps non-string
+  types, and follows the spec's slot order. Column 9 needs one `Attribute` per value, as text,
+  in file order, so the script builds `attributes` itself. Every key is kept, including those
+  that also fill a `Feature` slot, as `gff3-contig` does; the reverse step rejects a Feature
+  whose slot and attribute copies disagree.
+- A constant slot (`coordinate_system: contig`) makes inversion fail, so the script sets it.
+- linkml-map won't build records inside an expression, so the script makes one `Contig` per
+  distinct seqid, in file order.
+- Inversion drops `mirror_source` from the strand enum mapping, which turns every strand into
+  nothing on the way back, so the script copies it from the forward specification.
+
+`just map-img-functional-roundtrip FILE` validates the dialect, maps forward, validates the
+Dataset with `scripts/validate_closed.py`, maps back, and requires every row to come back
+equal. It then writes GFF text and checks that each line that differs from the source parses
+to the same row. Run on 2026-09-25, all rows came back equal for Clostridium acetobutylicum
+`Ga0423362` (4,439 features, 53,609 attributes) and Methanococcus maripaludis S1 `Ga0416744`
+(2,005 features, 24,507 attributes). The written text differs from the source only in number
+spelling, on 430 and 196 lines: scores such as `84.50` come back as `84.5`, and CRISPR lengths
+such as `26` as `26.0`. Exact bytes are out of scope here; `gff3-contig` keeps them through a
+[SourceDocument](source-documents.md).
+
+`just map-img-functional FILE OUT` and `just map-img-functional-back DATASET OUT` run each
+direction on its own.
+
 ## Attributes and authority
 
 The shared Attribute class still means a string key/value pair, independent of

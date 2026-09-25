@@ -29,6 +29,10 @@ def row_slots(schema=SCHEMA):
     return {slot.name: slot for slot in view.class_induced_slots(ROW_CLASS)}
 
 
+# Multivalued keys that repeat as a key, one value per occurrence, instead of
+# taking a comma list. Their values may contain commas.
+ONE_VALUE_PER_OCCURRENCE = {"shortened"}
+
 # Source keys that are not valid slot names, mapped one by one. Anything else
 # keeps its source spelling, so a key the dialect doesn't write stays unknown.
 KEY_TO_SLOT = {"e-value": "e_value"}
@@ -92,7 +96,7 @@ def parse_row(line_number, text, slots):
             row.setdefault(name, value)
             continue
         if slot.multivalued:
-            parts = value.split(",") if name != "shortened" else [value]
+            parts = [value] if name in ONE_VALUE_PER_OCCURRENCE else value.split(",")
             try:
                 row.setdefault(name, []).extend(convert(part, slot) for part in parts)
             except ValueError:
@@ -119,6 +123,42 @@ def parse(path, slots=None):
                 raise DialectError(f"line {number}: comment or directive; this dialect has none")
             rows.append(parse_row(number, text, slots))
     return {"source_file": str(path), "rows": rows}
+
+
+def value_text(value):
+    """Text for a typed value. A float is written as Python's shortest repr, so a
+    source spelling such as 84.50 comes back as 84.5; see the round-trip report."""
+    return repr(value) if isinstance(value, float) else str(value)
+
+
+def occurrences(row):
+    """Yield (key, [values]) for each column 9 occurrence, in source order."""
+    taken = {}
+    for key in row["attribute_order"]:
+        name = slot_name(key)
+        value = row[name]
+        if isinstance(value, list):
+            if name in ONE_VALUE_PER_OCCURRENCE:
+                index = taken.get(name, 0)
+                taken[name] = index + 1
+                yield key, [value[index]]
+            else:
+                yield key, value
+        else:
+            yield key, [value]
+
+
+def write_row(row):
+    column9 = ";".join(f"{key}=" + ",".join(value_text(v) for v in values)
+                       for key, values in occurrences(row))
+    columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
+               value_text(row["score"]) if "score" in row else ".", row["strand"],
+               str(row["phase"]) if "phase" in row else ".", column9]
+    return "\t".join(columns)
+
+
+def write(document):
+    return "".join(write_row(row) + "\n" for row in document["rows"])
 
 
 def cross_checks(document):
@@ -156,26 +196,31 @@ def cross_checks(document):
     return problems
 
 
-def validate(path, max_errors=20):
+def problems(document):
+    """Schema and cross-row problems for a parsed document; empty means valid."""
     from linkml.validator import Validator
     from linkml.validator.plugins import JsonschemaValidationPlugin
+    # closed=True rejects keys the dialect doesn't declare; set here rather than
+    # relying on the plugin's default.
+    validator = Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
+    report = validator.validate(document, TARGET)
+    return [result.message for result in report.results] + cross_checks(document)
+
+
+def validate(path, max_errors=20):
     try:
         document = parse(path)
     except DialectError as error:
         print(f"INVALID  {path}: {error}")
         return 1
-    # closed=True rejects keys the dialect doesn't declare; set here rather than
-    # relying on the plugin's default.
-    validator = Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
-    report = validator.validate(document, TARGET)
-    problems = [result.message for result in report.results] + cross_checks(document)
-    for message in problems[:max_errors]:
+    problems_found = problems(document)
+    for message in problems_found[:max_errors]:
         print(f"  {message}")
-    if len(problems) > max_errors:
-        print(f"  ... {len(problems) - max_errors} more")
-    status = "VALID" if not problems else "INVALID"
-    print(f"{status:8} {path}: {len(document['rows'])} rows, {len(problems)} problem(s)")
-    return 0 if not problems else 1
+    if len(problems_found) > max_errors:
+        print(f"  ... {len(problems_found) - max_errors} more")
+    status = "VALID" if not problems_found else "INVALID"
+    print(f"{status:8} {path}: {len(document['rows'])} rows, {len(problems_found)} problem(s)")
+    return 0 if not problems_found else 1
 
 
 def main(argv=None):

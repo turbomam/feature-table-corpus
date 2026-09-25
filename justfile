@@ -22,13 +22,14 @@ default:
 check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check bgc-check
     @echo "all checks passed"
 
-[doc("Check every LinkML schema, including dialects, against the metamodel.")]
+[doc("Check every LinkML schema and transform specification against its metamodel.")]
 [group("Validation")]
 validate-schema:
     uv run --with linkml linkml-validate model/schema/ber_feature_model.yaml
     uv run --with linkml linkml-validate model/schema/attributes.yaml
     uv run --with linkml linkml-validate model/schema/source_document.yaml
     uv run --with linkml linkml-validate model/dialects/img-functional-gff.yaml
+    uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
@@ -60,7 +61,7 @@ validate-example-closed example=feature_example:
 [doc("Run regression tests on real examples and negative controls.")]
 [group("Validation")]
 test:
-    uv run --with-requirements requirements-conversion.txt --with duckdb python3 -m unittest discover -s tests -v
+    uv run --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with duckdb python3 -m unittest discover -s tests -v
 
 # ---- Corpus maintenance -----------------------------------------------------
 
@@ -243,6 +244,21 @@ conversion-import input profile reference output *options:
 [group("Conversions")]
 dialect-validate-img-functional input:
     uv run --with-requirements requirements-conversion.txt python3 scripts/img_functional_gff.py validate "$1"
+
+[doc("Map an IMG *_functional_annotation.gff to a Dataset JSON with linkml-map.")]
+[group("Conversions")]
+map-img-functional input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py forward "$1" "$2"
+
+[doc("Map a Dataset JSON back to IMG functional annotation GFF text.")]
+[group("Conversions")]
+map-img-functional-back input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py reverse "$1" "$2"
+
+[doc("Map an IMG functional annotation GFF forward and back; rows must match.")]
+[group("Conversions")]
+map-img-functional-roundtrip input:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py roundtrip "$1"
 
 [doc("Export exact bytes or reconstruct fields; refuse edited bundles.")]
 [group("Conversions")]
