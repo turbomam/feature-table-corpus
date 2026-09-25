@@ -1,7 +1,7 @@
-id: img-functional-gff/1.0.0
-kind: source-dialect
-source_format: gff3
-model: model/dialects/img-functional-gff.yaml
+# Validator expectations for the IMG functional annotation dialect,
+# model/dialects/img-functional-gff.yaml.
+profile: img-functional-gff/1.0.0
+dialect: model/dialects/img-functional-gff.yaml
 scope: Validator expectations for the retained NMDC IMG functional annotation sample.
 
 # Independent validator observations; reproduce with just validity-check.

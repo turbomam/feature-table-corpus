@@ -19,6 +19,7 @@ import install_gff3toolkit as toolkit
 
 REPORT = ROOT / "analyses" / "format-validation" / "report.json"
 PROFILES = ROOT / "model/profiles"
+VALIDATION = ROOT / "model/validation"
 AGAT_BLOCKER = ROOT / "analyses/format-validation/agat-blocker.json"
 VALIDATORS = ("genometools", "gff3toolkit")
 # GenomeTools has no rule codes. These deliberately narrow patterns name the
@@ -105,15 +106,21 @@ def toolkit_verdict(binary, path, root=ROOT):
         return {**parse_qc_report(report.read_text()), "exit_code": result.returncode}
 
 
-def load_expectations(directory=PROFILES):
+def load_expectations(directory=VALIDATION, contracts=PROFILES):
+    """Read model/validation/*.yaml, one file per conversion contract or dialect.
+
+    Expectations are kept out of model/profiles/ so the contracts, whose
+    checksums the conversion report pins, change only when conversion does.
+    Every contract there must still have a file here naming it as `profile`.
+    """
     cases = {}
-    # Validation-only dialects live below validation/; top-level files remain
-    # exactly the executable contracts consumed by the conversion report.
-    for path in sorted(directory.rglob("*.yaml")):
+    covered = set()
+    for path in sorted(directory.glob("*.yaml")):
         profile = yaml.safe_load(path.read_text())
         validation = profile.get("validation")
-        if not isinstance(validation, dict):
+        if not isinstance(profile.get("profile"), str) or not isinstance(validation, dict):
             raise ValueError(f"Missing validator expectations in {path}")
+        covered.add(profile["profile"])
         for name in VALIDATORS:
             declared = validation[name]["expected_failures"]
             observed = set()
@@ -131,7 +138,11 @@ def load_expectations(directory=PROFILES):
         for identity, expected in validation["cases"].items():
             if identity in cases:
                 raise ValueError(f"Duplicate validator case: {identity}")
-            cases[identity] = {"profile": profile["id"], "expected": expected}
+            cases[identity] = {"profile": profile["profile"], "expected": expected}
+    if contracts is not None:
+        declared = {yaml.safe_load(path.read_text())["id"] for path in sorted(contracts.glob("*.yaml"))}
+        if declared - covered:
+            raise ValueError(f"Conversion contracts without validator expectations: {sorted(declared - covered)}")
     return cases
 
 

@@ -13,8 +13,9 @@ corpus/                         Evidence collected from producers and prior art
   derived-examples/              Explicit selections of unchanged real source rows
 model/                          This project's proposed contracts and instances
   schema/                       LinkML schemas and validation guide
-  profiles/                     Source conversion contracts and validator expectations
+  profiles/                     Versioned, executable source conversion contracts
   dialects/                     LinkML schemas for a source's own rows, validated before mapping
+  validation/                   Expected validator rules for each contract or dialect
   examples/                     Worked examples, source-artifact and JGI input manifests
 analyses/                       Source-specific measurements and selection reports
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts
@@ -57,8 +58,8 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 files, regenerate corpus fixtures, or publish reports. `uv` can still need the network
 to obtain dependencies; `UV_OFFLINE=1` uses cached dependencies when available.
 Run `just validity-install` once to install checksum-pinned GenomeTools and
-GFF3toolkit under `local/tools/`. `validity-check` checks the profiles' exact rule
-expectations and compares independent GFF3 verdicts and diagnostics with the
+GFF3toolkit under `local/tools/`. `validity-check` checks the exact rule expectations
+in `model/validation/` and compares independent GFF3 verdicts and diagnostics with the
 retained report. `validity-report` regenerates it only if the expectations match.
 AGAT's macOS arm64 installation blocker is recorded in the
 [validation report documentation](../analyses/format-validation/README.md).

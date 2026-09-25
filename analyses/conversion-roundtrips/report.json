@@ -11,19 +11,19 @@
   "profiles": {
     "bed12-blocks/1.0.0": {
       "path": "model/profiles/bed12-blocks.yaml",
-      "sha256": "e62b431144926d60477504cedd7a18dc42cc51add7224f15bf90f42a374d63f3"
+      "sha256": "b20a579e641d99d1a36a6fdd8cc8e203d0b6fe38ae432feb9710211153dd622d"
     },
     "gff3-contig/1.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
-      "sha256": "d18912705bb6ba1102074b775b79a65f768f643ad9fc88c793b1a17f57e7e71d"
+      "sha256": "555395d6c89eeb2da52006c119186df594272d1eab55cc3b84e14032781d0cef"
     },
     "insdc-locations/1.0.0": {
       "path": "model/profiles/insdc-locations.yaml",
-      "sha256": "fbee21685f3713d588bd23b9c66e059a227d296497f739fa6d00a41b19c69b0e"
+      "sha256": "812fe071016d23f2a2bdbdfe099ee8bc32037107b4ab0d36e98e1f4a2c986bea"
     },
     "nmdc-pfam-protein/1.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
-      "sha256": "361a00461591799a91ac48e791a004f0d074680cf02baa053e1fa79f7f0fd5ed"
+      "sha256": "b251242c36759a0d70697e49f7181cc4fcd25b86352ea05dd0e37c5c5a484c24"
     }
   },
   "query_performance": "not-measured",

@@ -154,14 +154,23 @@ class ValidatorExecutionTests(unittest.TestCase):
         self.assertEqual(cases["nmdc-pfam"]["profile"], "nmdc-pfam-protein/1.0.0")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            source = (validity.PROFILES / "nmdc-pfam-protein.yaml").read_text()
+            source = (validity.VALIDATION / "nmdc-pfam-protein.yaml").read_text()
             (root / "one.yaml").write_text(source)
             (root / "two.yaml").write_text(source)
             with self.assertRaisesRegex(ValueError, "Duplicate validator case"):
-                validity.load_expectations(root)
-            (root / "two.yaml").write_text("id: undeclared\n")
+                validity.load_expectations(root, contracts=None)
+            (root / "two.yaml").write_text("profile: undeclared\n")
             with self.assertRaisesRegex(ValueError, "Missing validator expectations"):
+                validity.load_expectations(root, contracts=None)
+            (root / "two.yaml").unlink()
+            with self.assertRaisesRegex(ValueError, "Conversion contracts without validator expectations"):
                 validity.load_expectations(root)
+
+    def test_expectations_stay_out_of_the_conversion_contracts(self):
+        import yaml
+        for path in sorted(validity.PROFILES.glob("*.yaml")):
+            self.assertNotIn("validation", yaml.safe_load(path.read_text()), path)
+        self.assertFalse(list(validity.PROFILES.glob("*/**/*.yaml")))
 
     def test_regeneration_does_not_bless_rule_drift(self):
         # Both CLI modes reject independently of the saved report.

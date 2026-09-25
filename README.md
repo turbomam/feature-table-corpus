@@ -293,8 +293,8 @@ now exists. Nothing reports anything.
 Every derived entry carries a `validity` field for exactly these cases.
 
 [Independent validation](analyses/format-validation/README.md) runs pinned
-GenomeTools 1.6.6 and GFF3toolkit 2.1.0. Each profile lists expected rule failures
-for its retained inputs; new failures and disappearing failures both fail the check.
+GenomeTools 1.6.6 and GFF3toolkit 2.1.0. A file in `model/validation/` for each
+conversion contract and dialect lists the expected rule failures for its retained inputs; new failures and disappearing failures both fail the check.
 The tools disagree on the dangling-parent control, which only GenomeTools rejects.
 AGAT 1.7.0 is recorded as blocked after its macOS arm64 dependency solve failed
 on 2026-09-25. Run `just validity-install` once, then `just validity-check`; CI

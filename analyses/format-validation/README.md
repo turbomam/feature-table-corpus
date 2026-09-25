@@ -41,10 +41,14 @@ skips the real-tool tests when either tool is missing; `validity-check` requires
 both. GenomeTools retains its existing `GENOMETOOLS` executable override, with
 version enforcement.
 
-## Expected rules are part of each profile
+## Expected rules sit beside each profile
 
-The `validation` block in every file under [model/profiles/](../../model/profiles/)
-lists the expected failures by rule with explanations. Its `cases` map gives the
+Each file under [model/validation/](../../model/validation/) names one conversion
+contract or dialect as its `profile`, and its `validation` block lists the expected
+failures by rule with explanations. The files sit outside
+[model/profiles/](../../model/profiles/) so the contracts, whose checksums the
+conversion report pins, change only when conversion does; every contract there must
+still have a file here. Its `cases` map gives the
 exact rule set for each named corpus input and validator. Empty lists mean no
 reported rules are expected. BED12 and INSDC explicitly say these GFF3 commands
 are not applicable; their empty rule catalogues do not claim a validation pass.
@@ -55,10 +59,9 @@ functional annotation belongs to the IMG profile, and the remaining GFF3 corpus
 and negative controls belong to the general GFF3 validation cases. These case
 assignments describe validation evidence, not conversion support. In particular,
 a malformed control or circular RefSeq file need not satisfy the converter's
-contract. The IMG profile here adds only validation expectations beside the
-existing dialect schema. Its [validation-only profile](../../model/profiles/validation/img-functional-gff.yaml)
-lives in a subdirectory so it is not mistaken for an executable conversion
-contract. Local JGI downloads are outside the retained corpus.
+contract. The [IMG expectations](../../model/validation/img-functional-gff.yaml)
+name the [dialect schema](../../model/dialects/img-functional-gff.yaml) they
+describe, which is not a conversion contract. Local JGI downloads are outside the retained corpus.
 
 Both report generation and checking reject unexpected rules and disappearing
 expected rules. A file that still fails can therefore fail the regression check
