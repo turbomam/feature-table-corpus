@@ -1,0 +1,8 @@
+# Tested Parquet export toolchain for scripts/lakehouse_export.py; update deliberately with its tests.
+linkml==1.11.1
+linkml-store==0.3.2
+duckdb==1.5.5
+pyarrow==25.0.1
+SQLAlchemy==2.1.1
+jsonschema==4.26.0
+PyYAML==6.0.3

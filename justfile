@@ -61,7 +61,7 @@ validate-example-closed example=feature_example:
 [doc("Run regression tests on real examples and negative controls.")]
 [group("Validation")]
 test:
-    uv run --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with duckdb python3 -m unittest discover -s tests -v
+    uv run --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with-requirements requirements-lakehouse.txt python3 -m unittest discover -s tests -v
 
 # ---- Corpus maintenance -----------------------------------------------------
 
@@ -155,6 +155,12 @@ flat-profile-audit schema=feature_schema:
 build-duckdb example=feature_example out=duckdb_path:
     mkdir -p "$(dirname "$2")"
     uv run --with linkml --with jsonschema --with duckdb python3 scripts/build_duckdb.py model/schema/ber_feature_model.yaml "$1" "$2"
+
+# The output directory must be new and under local/; checks run before it appears.
+[doc("Export a Dataset to one Parquet file per collection with linkml-store.")]
+[group("Queries")]
+lakehouse-export dataset out:
+    uv run --with-requirements requirements-lakehouse.txt python3 scripts/lakehouse_export.py model/schema/ber_feature_model.yaml "$1" "$2"
 
 # Keep the original recipe name/default; optional accessions filter the Pfam query.
 [doc("Find CDSs with multiple Pfams, optionally selecting accessions.")]
