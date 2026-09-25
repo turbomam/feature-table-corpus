@@ -102,6 +102,15 @@ class ValidateTests(unittest.TestCase):
     def test_single_valued_key_may_not_repeat(self):
         self.assert_rejected(self.edited(0, "product=", "product=x;product="), "repeats but is single-valued")
 
+    def test_nonnumeric_columns_and_values_are_reported_not_raised(self):
+        self.assert_rejected(self.edited(0, "\t100\t1299\t", "\tabc\t1299\t"), "start 'abc' is not a number")
+        self.assert_rejected(self.edited(0, "\t154.2\t", "\thigh\t"), "score 'high' is not a number")
+        self.assert_rejected(self.edited(0, "translation_table=11", "translation_table=x"),
+                             "translation_table 'x' is not a integer")
+
+    def test_attribute_named_like_a_column_is_rejected(self):
+        self.assert_rejected(self.edited(0, "cog=COG0001", "cog=COG0001;start=999"), "names a column")
+
     def test_comment_line_is_rejected(self):
         self.assert_rejected("##gff-version 3\n" + FIXTURE.read_text(), "comment or directive")
 

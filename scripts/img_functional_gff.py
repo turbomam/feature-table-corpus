@@ -53,11 +53,12 @@ def parse_row(line_number, text, slots):
         if value == "." and name in ("score", "phase"):
             continue
         row[name] = value
-    for name in ("start", "end", "phase"):
+    for name, kind in (("start", int), ("end", int), ("phase", int), ("score", float)):
         if name in row:
-            row[name] = int(row[name])
-    if "score" in row:
-        row["score"] = float(row["score"])
+            try:
+                row[name] = kind(row[name])
+            except ValueError:
+                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
     for pair in columns[8].split(";"):
         if not pair:
             raise DialectError(f"line {line_number}: empty attribute")
@@ -66,18 +67,26 @@ def parse_row(line_number, text, slots):
             raise DialectError(f"line {line_number}: attribute {key!r} has no value")
         row["attribute_order"].append(key)
         name = slot_name(key)
+        if name in CORE:
+            raise DialectError(f"line {line_number}: attribute {key!r} names a column, not a column 9 key")
         slot = slots.get(name)
-        if slot is None or name in CORE:
+        if slot is None:
             # Kept under its own name so validation reports it as not part of the dialect.
             row.setdefault(name, value)
             continue
         if slot.multivalued:
             parts = value.split(",") if name != "shortened" else [value]
-            row.setdefault(name, []).extend(convert(part, slot) for part in parts)
+            try:
+                row.setdefault(name, []).extend(convert(part, slot) for part in parts)
+            except ValueError:
+                raise DialectError(f"line {line_number}: {key} {value!r} is not a {slot.range}") from None
         elif name in row:
             raise DialectError(f"line {line_number}: {key} repeats but is single-valued")
         else:
-            row[name] = convert(value, slot)
+            try:
+                row[name] = convert(value, slot)
+            except ValueError:
+                raise DialectError(f"line {line_number}: {key} {value!r} is not a {slot.range}") from None
     return row
 
 
@@ -131,13 +140,17 @@ def cross_checks(document):
 
 
 def validate(path, max_errors=20):
-    from linkml.validator import validate as linkml_validate
+    from linkml.validator import Validator
+    from linkml.validator.plugins import JsonschemaValidationPlugin
     try:
         document = parse(path)
     except DialectError as error:
         print(f"INVALID  {path}: {error}")
         return 1
-    report = linkml_validate(document, str(SCHEMA), TARGET)
+    # closed=True rejects keys the dialect doesn't declare; set here rather than
+    # relying on the plugin's default.
+    validator = Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
+    report = validator.validate(document, TARGET)
     problems = [result.message for result in report.results] + cross_checks(document)
     for message in problems[:max_errors]:
         print(f"  {message}")
