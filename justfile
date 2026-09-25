@@ -29,6 +29,7 @@ validate-schema:
     uv run --with linkml linkml-validate model/schema/attributes.yaml
     uv run --with linkml linkml-validate model/schema/source_document.yaml
     uv run --with linkml linkml-validate model/dialects/img-functional-gff.yaml
+    uv run --with linkml linkml-validate model/dialects/img-per-method-gff.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
@@ -40,7 +41,7 @@ lint-schema:
 [doc("Run recommended lint with the declared naming exceptions.")]
 [group("Validation")]
 lint-schema-recommended:
-    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml
+    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml model/dialects/img-per-method-gff.yaml
 
 # Intentionally outside check: this reports the standard-naming exception by design.
 [doc("Run the strict audit; its strand-name finding is expected.")]
@@ -253,6 +254,11 @@ conversion-import input profile reference output *options:
 [group("Conversions")]
 dialect-validate-img-functional input:
     uv run --with-requirements requirements-conversion.txt python3 scripts/img_functional_gff.py validate "$1"
+
+[doc("Validate an IMG per-method hit GFF (_pfam, _cog, _ko_ec ...) against its dialect schema.")]
+[group("Conversions")]
+dialect-validate-img-per-method input:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/img_per_method_gff.py validate "$1"
 
 [doc("Map an IMG *_functional_annotation.gff to a Dataset JSON with linkml-map.")]
 [group("Conversions")]

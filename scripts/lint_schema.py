@@ -25,6 +25,12 @@ DIALECT_NAMES = {
             "CleavageSiteNetwork": ("SignalP-noTM", "SignalP-TM"),
         },
     },
+    "img_per_method_gff": {
+        "slots": ("ID", "Name"),
+        "values": {
+            "ImgPerMethodStrand": (".",),
+        },
+    },
 }
 for schema, names in DIALECT_NAMES.items():
     ALLOWED |= {(schema, "standard_naming", "warning", f"Slot has name '{name}'")

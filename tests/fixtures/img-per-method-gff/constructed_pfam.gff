@@ -1,0 +1,3 @@
+ctg_01_100_1299	HMMER 3.1b2 (February 2015)	PF00202	12	395	410.5	.	.	ID=ctg_01_100_1299_12_395;Name=Aminotran_3;fake_percent_id=99.10;alignment_length=384;e-value=13;model_start=1;model_end=339
+ctg_01_1600_2199	HMMER 3.1b2 (February 2015)	PF00005	20	160	98.4	.	.	ID=ctg_01_1600_2199_20_160;Name=ABC_tran;fake_percent_id=95.00;alignment_length=141;e-value=2.1e-30;model_start=1;model_end=137
+ctg_02_10_900	HMMER 3.1b2 (February 2015)	PF00098	268	285	22.5	.	.	ID=ctg_02_10_900_268_285;Name=zf-CCHC;fake_percent_id=100.00;alignment_length=18;e-value=2e-07;model_start=2;model_end=18

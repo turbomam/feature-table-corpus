@@ -1,0 +1,2 @@
+ctg_01_100_1299	HMMER 3.1b2 (February 2015)	3.40.640.10	40	300	201.7	.	.	ID=ctg_01_100_1299_40_300;fake_percent_id=96.00;alignment_length=261;independent_domain_e-value=4.4e-60;full_sequence_e-value=2.4e-60;full_sequence_bitscore=202.3;model_start=6;model_end=270
+ctg_01_100_1299	HMMER 3.1b2 (February 2015)	3.90.1150.10	301	398	80.2	.	.	ID=ctg_01_100_1299_301_398;fake_percent_id=91.84;alignment_length=98;independent_domain_e-value=7.1e-22;full_sequence_e-value=5.4e-22;full_sequence_bitscore=80.9;model_start=3;model_end=101

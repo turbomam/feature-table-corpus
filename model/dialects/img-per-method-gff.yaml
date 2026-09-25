@@ -1,0 +1,200 @@
+id: https://w3id.org/ber-data/dialects/img-per-method-gff
+name: img_per_method_gff
+title: IMG per-method protein hit GFF, parsed rows (draft dialect)
+description: >-
+  Rows of the JGI IMG annotation pipeline's per-method hit files (`*_pfam.gff`, `*_cog.gff`,
+  `*_ko_ec.gff`, `*_tigrfam.gff`, `*_smart.gff`, `*_supfam.gff`, `*_cath_funfam.gff`), as parsed
+  by scripts/img_per_method_gff.py, before any mapping to the feature model. Column 1 is a gene
+  ID, columns 4 and 5 are amino acid positions in that gene's protein, and column 3 is the hit's
+  database accession rather than a feature type. Validating against this schema checks a file
+  against what the pipeline is known to write, not a mapping.
+comments:
+  - >-
+    Measured 2026-09-25 on the seven per-method files of two JGI isolate annotations (Clostridium
+    acetobutylicum Ga0423362, 22,872 rows; Methanococcus maripaludis S1 Ga0416744, 10,991 rows)
+    and the eight vendored NMDC files of these types (443 rows). See
+    model/examples/jgi-inputs.yaml for the isolate inputs.
+  - >-
+    Each method writes one fixed key order, checked exactly by scripts/img_per_method_gff.py.
+    Pfam, SUPERFAMILY and CATH-FunFam name HMMER in column 2, and COG, TIGRFAM and SMART write
+    the same kind of keys (model_start, fake_percent_id and E-values spelled `e-value`). KO/EC
+    rows name lastal and spell the E-value key `evalue`.
+  - >-
+    COG, TIGRFAM and SMART files leave column 2 empty rather than writing ".". Every other method
+    names its tool there.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imgpm: https://w3id.org/ber-data/dialects/img-per-method-gff/
+default_prefix: imgpm
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  ImgPerMethodGffDocument:
+    tree_root: true
+    description: One parsed per-method hit file.
+    attributes:
+      source_file:
+        required: true
+        description: Path or URI of the parsed file.
+      method:
+        required: true
+        range: ImgMethod
+        description: >-
+          The search that wrote the file. Not a column: the parser infers it from the first
+          row's column 3 accession, and every row must agree.
+      rows:
+        description: Every hit row, in file order.
+        range: ImgPerMethodGffRow
+        multivalued: true
+        inlined_as_list: true
+        required: true
+
+  ImgPerMethodGffRow:
+    description: >-
+      One nine-column hit row. The file has no header or comment lines. Column 8 is always ".",
+      so the row has no phase.
+    attributes:
+      line:
+        range: integer
+        required: true
+        minimum_value: 1
+        description: One-based line number in the source file.
+      seqid:
+        description: >-
+          Column 1, the gene ID of the protein that was searched. IMG builds it as
+          <contig>_<start>_<end> in contig coordinates, which is what lets a hit be checked
+          against its protein's length.
+        required: true
+        pattern: "^\\S+_\\d+_\\d+$"
+      source:
+        required: true
+        description: >-
+          Column 2: "HMMER 3.1b2 (February 2015)" for Pfam, SUPERFAMILY and CATH-FunFam, "lastal"
+          and a version for KO/EC, and the empty string for COG, TIGRFAM and SMART.
+        pattern: "^(|HMMER .+|lastal \\d+)$"
+      type:
+        required: true
+        description: >-
+          Column 3, the accession of the model or ortholog group hit. For KO/EC it packs every
+          KO of the hit, joined by "_", then "__" and every EC number joined by "_", for example
+          KO:K01990 or KO:K00001_KO:K00002__EC:1.1.1.1.
+        pattern: "^(PF\\d{5}|COG\\d{4}|TIGR\\d{5}|SM\\d{5}|\\d+|\\d+\\.\\d+\\.\\d+\\.\\d+|KO:K\\d{5}(_KO:K\\d{5})*(__EC:\\d+(\\.(\\d+|-)){1,3}(_EC:\\d+(\\.(\\d+|-)){1,3})*)?)$"
+      start:
+        description: Column 4, first amino acid of the hit, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      end:
+        description: Column 5, last amino acid of the hit, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      score:
+        range: float
+        required: true
+        description: >-
+          Column 6, the bit score. Negative scores occur (two SMART rows). lastal writes
+          scores of 1000 or more in exponent form, such as 1.22e+03.
+      strand:
+        description: Column 7; always "." because positions are on the protein.
+        range: ImgPerMethodStrand
+        required: true
+      attribute_order:
+        multivalued: true
+        required: true
+        description: >-
+          Column 9 keys in source order, so the row can be written back. Each method has one
+          fixed order.
+      ID:
+        required: true
+        pattern: "^\\S+_\\d+_\\d+_\\d+_\\d+$"
+        description: Built as <seqid>_<start>_<end>; scripts/img_per_method_gff.py checks it.
+      Name:
+        description: Pfam family name, for example DeoRC. Only Pfam rows have it.
+        pattern: "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+      fake_percent_id:
+        description: Source key of the HMMER files, kept under its own name. Values run 0 to 100.
+        range: float
+        minimum_value: 0
+        maximum_value: 100
+      alignment_length:
+        description: Hit length in amino acids; equals end - start + 1 on every row measured.
+        range: integer
+        minimum_value: 1
+      e_value:
+        description: >-
+          Source key "e-value", on Pfam and TIGRFAM rows. Kept as text. Every Pfam row of both
+          isolates has 13, while the NMDC Pfam files have values such as 6e-18.
+        pattern: "^\\d+(\\.\\d+)?(e-\\d+)?$"
+      independent_domain_e_value:
+        description: Source key "independent_domain_e-value". Kept as text.
+        pattern: "^\\d+(\\.\\d+)?(e-\\d+)?$"
+      full_sequence_e_value:
+        description: Source key "full_sequence_e-value". Kept as text.
+        pattern: "^\\d+(\\.\\d+)?(e-\\d+)?$"
+      full_sequence_bitscore:
+        description: Bit score of the whole protein against the model; can be negative.
+        range: float
+      model_start:
+        description: First position of the model covered by the hit.
+        range: integer
+        minimum_value: 1
+      model_end:
+        description: Last position of the model covered by the hit.
+        range: integer
+        minimum_value: 1
+      subject_gene_ids:
+        description: IMG gene OIDs of the reference genes lastal matched, comma separated.
+        multivalued: true
+        pattern: "^\\d+$"
+      subject_start:
+        description: First aligned position in the reference protein.
+        range: integer
+        minimum_value: 1
+      subject_end:
+        description: Last aligned position in the reference protein.
+        range: integer
+        minimum_value: 1
+      evalue:
+        description: Source key "evalue", on KO/EC rows only. Kept as text.
+        pattern: "^\\d+(\\.\\d+)?(e-\\d+)?$"
+      percent_identity:
+        description: Identity of the lastal alignment, 0 to 100.
+        range: float
+        minimum_value: 0
+        maximum_value: 100
+      query_gene_length:
+        description: Length in amino acids of the searched protein.
+        range: integer
+        minimum_value: 1
+      subject_gene_length:
+        description: Length in amino acids of the reference protein.
+        range: integer
+        minimum_value: 1
+
+enums:
+  ImgMethod:
+    description: The search behind a per-method file, named by its file suffix.
+    permissible_values:
+      pfam:
+        description: Pfam families, HMMER; accessions such as PF00202.
+      cog:
+        description: COG groups; accessions such as COG0001.
+      ko_ec:
+        description: KEGG Orthology with EC numbers, lastal; accessions such as KO:K01990.
+      tigrfam:
+        description: TIGRFAM families; accessions such as TIGR00713.
+      smart:
+        description: SMART domains; accessions such as SM00382.
+      supfam:
+        description: SCOP SUPERFAMILY models, HMMER; bare numbers such as 53383.
+      cath_funfam:
+        description: CATH functional families, HMMER; four dotted numbers such as 3.40.640.10.
+  ImgPerMethodStrand:
+    description: Column 7 symbols.
+    permissible_values:
+      ".":
+        description: No strand; the positions are on a protein.
