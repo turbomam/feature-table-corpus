@@ -154,7 +154,8 @@ Its 8.6 MB GenBank file is left out. Each md5 matches the JGI Data Portal search
 needs a JGI login ([docs/jgi-inputs.md](docs/jgi-inputs.md)). Both records are
 `data_utilization_status: Unrestricted` and were accepted before FY22, so the
 [JGI Legacy Data Policy](https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf)
-governs them. It names no license. **Attribution is required**: cite the dataset DOI
+governs them. It names no license; for proposals of this age it says publications "should"
+include JGI's acknowledgment. **This repository asks for attribution**: cite the dataset DOI
 (Clostridium https://doi.org/10.25585/1488021, Bacillus https://doi.org/10.25585/1488085) and
 include JGI's acknowledgment, "These sequence data were produced by the US Department of Energy
 Joint Genome Institute http://www.jgi.doe.gov/ in collaboration with the user community." Each
@@ -418,7 +419,7 @@ Pull requests adding entries should fill in every field the existing entries car
 
 Per entry, recorded in `corpus/index.yaml`. The NMDC files are CC BY 4.0 and require attribution to NMDC.
 The JGI IMG files are unrestricted data under the JGI Legacy Data Policy, which names no license;
-attribution is required, with the dataset DOI and acknowledgment given in each entry.
+this repository asks for attribution, with the dataset DOI and acknowledgment given in each entry.
 The NCBI files are public domain. This repository's own contributions, meaning the index, the
 scripts and this README, are CC0.
 

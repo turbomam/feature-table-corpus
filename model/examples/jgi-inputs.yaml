@@ -2,9 +2,9 @@ description: JGI Data Portal files used to develop the organism-centric profiles
   login, so most are not retained in the repository; see docs/jgi-inputs.md. The selected IMG_AP-1268149
   and IMG_AP-1121004 files are vendored unchanged under corpus/sources/jgi-img/. `just jgi-collect` writes
   `name`, `title`, `proposal_acceptance_date`, `dataset_doi`, `data_utilization_status` and `files` from
-  the anonymous search API; the other fields, including `governing_policy`, are maintained by hand.
-  The current policy covers projects accepted FY22 (from 2021-10-01) and later; earlier ones fall under
-  the legacy policy, which asks publications to carry the JGI acknowledgment.
+  the anonymous search API; the other fields, including `governing_policy`, are maintained by hand. The
+  current policy covers projects accepted FY22 (from 2021-10-01) and later; earlier ones fall under the
+  legacy policy, which asks publications to carry the JGI acknowledgment.
 policy_url: https://jgi.doe.gov/data-policy-support/data-policy
 legacy_policy_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
 records:
@@ -316,7 +316,8 @@ records:
   title: Arabidopsis thaliana
   proposal_acceptance_date: null
   dataset_doi: null
-  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html file'
+  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html
+    file'
   data_utilization_status: Unrestricted
   files:
   - name: Athaliana_167_TAIR10.DataReleasePolicy.html
@@ -349,7 +350,8 @@ records:
   title: Arabidopsis thaliana
   proposal_acceptance_date: null
   dataset_doi: null
-  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html file'
+  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html
+    file'
   data_utilization_status: Unrestricted
   files:
   - name: Athaliana_447_Araport11.DataReleasePolicy.html
@@ -378,7 +380,8 @@ records:
   title: Populus trichocarpa
   proposal_acceptance_date: null
   dataset_doi: null
-  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html file'
+  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html
+    file'
   data_utilization_status: Unrestricted
   files:
   - name: Ptrichocarpa_533_v4.1.DataReleasePolicy.html

@@ -259,15 +259,15 @@ accepted FY22 and later. The first version of this section cited the current pol
 on https://github.com/turbomam/feature-table-corpus/pull/63 caught it. The legacy policy names
 no license and asks publications to carry JGI's acknowledgment. Each entry records the license
 as "JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status
-Unrestricted; attribution required", with the acknowledgment and the dataset DOI
+Unrestricted; attribution requested by this repository", with the acknowledgment and the dataset DOI
 (10.25585/1488021 and 10.25585/1488085).
 
 The first version also used the download folder's short name, BacspinBacteria_29, for the
 Bacillus record. The portal title, and the name used here, is Bacillus sp. V-88.
 
-The 28 files total 13,392,577 bytes. By `git ls-tree -r -l`, `corpus/` was 5,690,300 bytes at
-fff5c1f and 19,120,039 bytes at dd7f183, the commit that added them; that second figure also
-counts the growth of `index.yaml` and this file, and later edits to either change it.
+The 28 files total 13,392,577 bytes. By `git ls-tree -r -l`, `corpus/` is 5,690,300 bytes
+before https://github.com/turbomam/feature-table-corpus/pull/63 and 19,135,385 bytes after it;
+the second figure also counts the growth of `index.yaml` and this file.
 The corpus now has 94 entries, 58 vendored. The 21 GFF files have measured validator
 cases in `model/validation/`; see the
 [validation report](../analyses/format-validation/README.md).
