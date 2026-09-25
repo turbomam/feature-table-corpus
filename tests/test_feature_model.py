@@ -111,8 +111,8 @@ class ValidationTests(unittest.TestCase):
                 self.reject(change, expected)
 
     def test_circular_contig_needs_length_with_or_without_collections(self):
-        # Regression: 833db47 moved this check out of the contig loop, so it ran only when
-        # collections existed and crashed when a Dataset had collections but no contigs.
+        # Regression: once, adding the collection checks moved this one out of the contig loop,
+        # so it ran only when collections existed and crashed for collections with no contigs.
         for with_collections in (False, True):
             with self.subTest(with_collections=with_collections):
                 data = copy.deepcopy(self.example)
@@ -390,7 +390,7 @@ class DatabaseTests(unittest.TestCase):
         self.assertIn("start must be <= end", result.stdout)
 
     def test_valid_rebuild_and_query_cli(self):
-        self.assertEqual(build_database(SCHEMA, EXAMPLE, self.db), (3, 15))
+        self.assertEqual(build_database(SCHEMA, EXAMPLE, self.db), (3, 15, 1))
         build_database(SCHEMA, PFAMS, self.db)
         result = subprocess.run([sys.executable, str(ROOT / "scripts/query_duckdb.py"),
                                  str(self.db), "pfams", "PF13358", "PF13592"],
@@ -426,7 +426,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stderr)
         self.assertNotIn('Traceback', result.stderr)
         self.assertEqual(set(self.work.iterdir()), before)
-        self.assertEqual(build_database(SCHEMA, EXAMPLE, fresh), (3, 15))
+        self.assertEqual(build_database(SCHEMA, EXAMPLE, fresh), (3, 15, 1))
+        # The CLI prints all three counts, including for an in-memory database.
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/build_duckdb.py'),
+                                 str(SCHEMA), str(EXAMPLE), ':memory:'],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('1 contig collections, 3 contigs, 15 features', result.stdout)
         self.assertEqual(set(self.work.iterdir()), before | {fresh})
 
     def test_destination_created_during_validation_is_preserved(self):
