@@ -1,0 +1,10 @@
+ctg_01	GeneMark.hmm-2 v1.05	CDS	100	1299	154.2	+	0	ID=ctg_01_100_1299;translation_table=11;start_type=ATG;product=glutamate-1-semialdehyde 2,1-aminomutase;product_source=KO:K01845;cath_funfam=3.40.640.10,3.90.1150.10;cog=COG0001;ko=KO:K01845;ec_number=EC:5.4.3.8;pfam=PF00202;superfamily=53383;tigrfam=TIGR00713
+ctg_01	Prodigal v2.6.3	CDS	1400	1543	3.1	-	0	ID=ctg_01_1400_1543;translation_table=11;shortened=original end 2500;shortened=original end 1750;start_type=Edge;partial=5';product=hypothetical protein;product_source=Hypo-rule applied;transmembrane_helix_parts=Outside_1_14,TMhelix_15_37,Inside_38_47
+ctg_01	GeneMark.hmm-2 v1.05	CDS	1600	2199	88.0	+	0	ID=ctg_01_1600_2199;translation_table=11;start_type=GTG;product=ABC transporter;product_source=COG1131/COG4152;cog=COG1131,COG4152;ko=KO:K01990,KO:K01992;ec_number=EC:7.6.2.-,EC:3.6.3.-;pfam=PF00005,PF13732;smart=SM00382;cleavage_site_network=SignalP-noTM
+ctg_01	tRNAscan-SE v.2.0.5 (October 2019)	tRNA	2300	2375	66.9	+	.	ID=ctg_01_2300_2375;product=tRNA_Gly_GCC;codon=GGC;used_search_mode=Bacterial
+ctg_01	tRNAscan-SE v.2.0.5 (October 2019)	tRNA	2400	2514	21.0	-	.	ID=ctg_01_2400_2514;product=tRNA_Xxx;codon=Pseudo;used_search_mode=Bacterial;note=pseudo
+ctg_01	INFERNAL 1.1.2 (July 2016)	rRNA	3000	4500	1609.3	-	.	ID=ctg_01_3000_4500;e-value=0;model=RF00177;accession=SSU_rRNA_bacteria;model_start=1;model_end=1533;product=16S ribosomal RNA;partial=3'
+ctg_01	INFERNAL 1.1.2 (July 2016)	regulatory	4600	4700	55.2	+	.	ID=ctg_01_4600_4700;e-value=2.1e-17;model=RF00162;accession=SAM;model_start=1;model_end=108;regulatory_class=riboswitch;note=SAM riboswitch (S box leader);bound_moiety=SAM
+ctg_02	CRT 1.8.2	CRISPR	500	620	.	.	.	ID=ctg_02_500_620;number_of_repeats=2;average_repeat_length=26;median_repeat_length=26;average_spacer_length=42;median_spacer_length=42
+ctg_02	CRT 1.8.2	repeat_unit	500	525	.	.	.	ID=ctg_02_500_620_DR1;Parent=ctg_02_500_620
+ctg_02	CRT 1.8.2	repeat_unit	595	620	.	.	.	ID=ctg_02_500_620_DR2;Parent=ctg_02_500_620

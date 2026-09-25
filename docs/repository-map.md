@@ -14,6 +14,7 @@ corpus/                         Evidence collected from producers and prior art
 model/                          This project's proposed contracts and instances
   schema/                       LinkML schemas and validation guide
   profiles/                     Versioned, executable source conversion contracts
+  dialects/                     LinkML schemas for a source's own rows, validated before mapping
   examples/                     Worked examples and their source-artifact manifest
 analyses/                       Source-specific measurements and selection reports
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts

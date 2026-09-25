@@ -35,10 +35,10 @@ lint-schema:
     uv run --with linkml linkml-lint model/schema/ber_feature_model.yaml
 
 # Check exact diagnostic identity, not just the number of four strand warnings.
-[doc("Run recommended lint with the four declared strand exceptions.")]
+[doc("Run recommended lint with the declared naming exceptions.")]
 [group("Validation")]
 lint-schema-recommended:
-    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml
+    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml
 
 # Intentionally outside check: this reports the standard-naming exception by design.
 [doc("Run the strict audit; its strand-name finding is expected.")]
@@ -220,6 +220,11 @@ protein-context annotation structural fasta reference output *options:
 conversion-import input profile reference output *options:
     conversion_input="$1"; conversion_profile="$2"; conversion_reference="$3"; conversion_output="$4"; shift 4; \
         uv run --with-requirements requirements-conversion.txt python3 scripts/convert_features.py import "$conversion_input" --profile "$conversion_profile" --reference-context "$conversion_reference" --output "$conversion_output" "$@"
+
+[doc("Validate an IMG *_functional_annotation.gff against its dialect schema.")]
+[group("Conversions")]
+dialect-validate-img-functional input:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/img_functional_gff.py validate "$1"
 
 [doc("Export exact bytes or reconstruct fields; refuse edited bundles.")]
 [group("Conversions")]

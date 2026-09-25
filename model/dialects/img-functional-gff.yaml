@@ -1,0 +1,255 @@
+id: https://w3id.org/ber-data/dialects/img-functional-gff
+name: img_functional_gff
+title: IMG functional annotation GFF, parsed rows (draft dialect)
+description: >-
+  Rows of the JGI IMG annotation pipeline's `*_functional_annotation.gff`, as parsed by
+  scripts/img_functional_gff.py, before any mapping to the feature model. Validating against
+  this schema checks the input against its own dialect, so a failure says the file differs
+  from what the pipeline is known to write, not that a mapping is wrong.
+comments:
+  - >-
+    Measured 2026-09-25 on two JGI isolate annotations (Clostridium acetobutylicum Ga0423362,
+    4,439 rows; Methanococcus maripaludis S1 Ga0416744, 2,005 rows) and the vendored NMDC file.
+    See model/examples/jgi-inputs.yaml for the isolate inputs.
+  - >-
+    Commas separate values only in the keys typed multivalued below. `product`, `note` and
+    `shortened` are free text and keep their commas: 96 product names in the two isolates
+    contain one, such as "glutamate-1-semialdehyde 2,1-aminomutase".
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imgfa: https://w3id.org/ber-data/dialects/img-functional-gff/
+default_prefix: imgfa
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  ImgFunctionalGffDocument:
+    tree_root: true
+    description: One parsed functional annotation file.
+    attributes:
+      source_file:
+        required: true
+        description: Path or URI of the parsed file.
+      rows:
+        description: Every feature row, in file order.
+        range: ImgFunctionalGffRow
+        multivalued: true
+        inlined_as_list: true
+        required: true
+
+  ImgFunctionalGffRow:
+    description: One nine-column feature row. The file has no header or comment lines.
+    attributes:
+      line:
+        range: integer
+        required: true
+        minimum_value: 1
+        description: One-based line number in the source file.
+      seqid:
+        description: Column 1, the contig identifier.
+        required: true
+        pattern: "^\\S+$"
+      source:
+        required: true
+        description: >-
+          Producing tool and version, for example "GeneMark.hmm-2 v1.05" or
+          "tRNAscan-SE v.2.0.5 (October 2019)". Left open because versions change.
+      type:
+        description: Column 3. IMG writes INSDC-style names here, not Sequence Ontology CURIEs.
+        range: ImgFeatureType
+        required: true
+      start:
+        description: Column 4, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      end:
+        description: Column 5, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      score:
+        range: float
+        description: Column 6; absent when the file has ".".
+      strand:
+        description: Column 7.
+        range: Strand
+        required: true
+      phase:
+        range: integer
+        minimum_value: 0
+        maximum_value: 0
+        description: Column 8. Every CDS observed has 0; other types have ".", parsed as absent.
+      attribute_order:
+        multivalued: true
+        required: true
+        description: >-
+          Column 9 keys in source order, repeats included, so the row can be written back.
+          The typed slots below hold the values.
+      ID:
+        required: true
+        pattern: "^\\S+_\\d+_\\d+(_DR\\d+)?$"
+        description: >-
+          Built by the pipeline as <seqid>_<start>_<end>. A repeat_unit instead takes its CRISPR's
+          ID plus _DR1, _DR2 and so on. scripts/img_functional_gff.py checks both rules.
+      Parent:
+        description: Present only on repeat_unit rows, pointing to their CRISPR row.
+      translation_table:
+        description: NCBI genetic code used for the CDS; every CDS observed has 11.
+        range: integer
+      start_type:
+        description: Start codon of the CDS, or Edge when the gene runs off the contig.
+        range: StartType
+      partial:
+        description: "Which end of the feature is incomplete: 5' or 3'."
+        range: Partial
+      product:
+        description: Free text; commas are part of the name.
+      product_source:
+        pattern: "^(Hypo-rule applied|((KO:K\\d{5}|COG\\d{4}|TIGR\\d{5})(/(KO:K\\d{5}|COG\\d{4}|TIGR\\d{5}))*))$"
+        description: >-
+          What justified the product. Slash-joined pairs occur (for example COG0001/COG0002);
+          they are one value, not a list.
+      pfam:
+        description: Pfam family accessions for the protein.
+        multivalued: true
+        pattern: "^PF\\d{5}$"
+      cog:
+        description: COG accessions for the protein.
+        multivalued: true
+        pattern: "^COG\\d{4}$"
+      ko:
+        description: "KEGG Orthology accessions, prefixed KO:."
+        multivalued: true
+        pattern: "^KO:K\\d{5}$"
+      ec_number:
+        multivalued: true
+        pattern: "^EC:\\d+(\\.(\\d+|-)){0,3}$"
+        description: Partial EC numbers such as EC:4.1.3.- and EC:1.- occur.
+      tigrfam:
+        description: TIGRFAM accessions for the protein.
+        multivalued: true
+        pattern: "^TIGR\\d{5}$"
+      smart:
+        description: SMART domain accessions for the protein.
+        multivalued: true
+        pattern: "^SM\\d{5}$"
+      superfamily:
+        multivalued: true
+        pattern: "^\\d+$"
+        description: SCOP superfamily numbers without a prefix.
+      cath_funfam:
+        description: CATH functional family identifiers.
+        multivalued: true
+        pattern: "^\\d+\\.\\d+\\.\\d+\\.\\d+$"
+      transmembrane_helix_parts:
+        multivalued: true
+        pattern: "^(Inside|Outside|TMhelix)_\\d+_\\d+$"
+        description: TMHMM topology in protein coordinates, in order.
+      cleavage_site_network:
+        description: SignalP network that called the signal peptide cleavage site.
+        range: CleavageSiteNetwork
+      shortened:
+        multivalued: true
+        description: >-
+          Free text such as "original end 636870". Repeats as a key rather than a comma list;
+          one Prodigal CDS in Ga0423362 has it twice.
+      e_value:
+        description: Source key "e-value". Kept as text; values such as 0 and 2.1e-17 occur.
+        pattern: "^\\d+(\\.\\d+)?(e-?\\d+)?$"
+      model:
+        pattern: "^RF\\d{5}$"
+        description: Rfam model accession.
+      accession:
+        description: Rfam model name, for example LSU_rRNA_bacteria or T-box.
+      model_start:
+        description: First position of the Rfam model covered by the hit.
+        range: integer
+      model_end:
+        description: Last position of the Rfam model covered by the hit.
+        range: integer
+      ncRNA_class:
+        description: INSDC ncRNA class, for example SRP_RNA or RNase_P_RNA.
+      regulatory_class:
+        description: INSDC regulatory class; every one observed is riboswitch.
+      bound_moiety:
+        description: Ligand of a riboswitch, for example SAM or TPP.
+      note:
+        description: Free text; commas are part of the note.
+      codon:
+        pattern: "^([ACGTN]{3}|Pseudo)$"
+        description: >-
+          Codon reported by tRNAscan-SE. A pseudo tRNA has "Pseudo", with product tRNA_Xxx and
+          note=pseudo (one row in Ga0423362).
+      used_search_mode:
+        description: tRNAscan-SE search model.
+        range: SearchMode
+      intron_start:
+        description: Contig coordinate where a tRNA intron starts.
+        range: integer
+      intron_end:
+        description: Contig coordinate where a tRNA intron ends.
+        range: integer
+      number_of_repeats:
+        description: Direct repeats in the CRISPR array, from CRT.
+        range: integer
+      average_repeat_length:
+        description: Mean direct repeat length in the array.
+        range: float
+      median_repeat_length:
+        description: Median direct repeat length in the array.
+        range: float
+      average_spacer_length:
+        description: Mean spacer length in the array.
+        range: float
+      median_spacer_length:
+        description: Median spacer length in the array.
+        range: float
+
+enums:
+  ImgFeatureType:
+    description: >-
+      Column 3 values observed in functional annotation files. The two isolates have eight;
+      tmRNA was seen on 2026-09-24 in Pseudomonas rhodesiae Ga0685644, read in the portal.
+    permissible_values:
+      CDS:
+      tRNA:
+      rRNA:
+      ncRNA:
+      tmRNA:
+      misc_feature:
+      regulatory:
+      CRISPR:
+      repeat_unit:
+  Strand:
+    description: Column 7 symbols.
+    permissible_values:
+      "+":
+      "-":
+      ".":
+        description: Unstranded; observed only on CRISPR and repeat_unit rows.
+  StartType:
+    description: Start codon reported for a CDS.
+    permissible_values:
+      ATG:
+      GTG:
+      TTG:
+      Edge:
+        description: The gene runs off the contig edge, so no start codon was called.
+  Partial:
+    description: Incomplete end of a feature.
+    permissible_values:
+      "5'":
+      "3'":
+  SearchMode:
+    description: tRNAscan-SE search model.
+    permissible_values:
+      Bacterial:
+      Archaeal:
+  CleavageSiteNetwork:
+    description: SignalP network variant.
+    permissible_values:
+      SignalP-noTM:
+      SignalP-TM:

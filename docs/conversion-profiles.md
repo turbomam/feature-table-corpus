@@ -76,6 +76,38 @@ reuse the existing source reader's scoped interpretation. Comments, FASTA and ot
 nonfeature records are preserved; they are not promoted into biological Dataset
 fields or independently reserialized from typed metadata.
 
+## Dialect schemas
+
+A profile above converts a source into the model. A dialect schema is an earlier,
+separate check: it describes a source's own rows in LinkML, so a file can be validated
+against its dialect before anything is mapped. When a file fails, that says it differs
+from what its producer is known to write, not that a mapping is wrong
+([#54](https://github.com/turbomam/feature-table-corpus/issues/54)).
+
+The first is [`img-functional-gff.yaml`](../model/dialects/img-functional-gff.yaml),
+for the JGI IMG pipeline's `*_functional_annotation.gff`. It was measured on 2026-09-25
+against two JGI isolate annotations (Clostridium acetobutylicum `Ga0423362`, 4,439 rows;
+Methanococcus maripaludis S1 `Ga0416744`, 2,005 rows), which need a JGI login to download
+([#52](https://github.com/turbomam/feature-table-corpus/issues/52)), and the vendored NMDC file.
+
+- `gff3-contig/1.0.0` rejects both isolate files at their first product name containing a
+  comma (`product-cardinality`), for example "glutamate-1-semialdehyde 2,1-aminomutase".
+  96 product names in the two files have one. The dialect splits commas only for the keys it
+  types as lists (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`,
+  `cath_funfam`, `transmembrane_helix_parts`).
+- Rows come from five tools (GeneMark, Prodigal, INFERNAL, tRNAscan-SE, CRT) in eight
+  column 3 types. There are no header or comment lines.
+- IDs are `<seqid>_<start>_<end>`, except CRISPR repeat units, which take their CRISPR's ID
+  plus `_DR1`, `_DR2` in order. Only repeat units carry `Parent`, and only CRISPR rows and
+  repeat units are unstranded.
+- A key can repeat: one Prodigal CDS has `shortened` twice. Key order is kept in
+  `attribute_order` so rows can be written back.
+
+`just dialect-validate-img-functional FILE` parses a file, validates it with the LinkML
+validator, and adds the cross-row checks a schema can't express. The tests edit single rows
+of a [constructed fixture](../tests/fixtures/img-functional-gff/README.md) to show each rule
+rejects what it should.
+
 ## Attributes and authority
 
 The shared Attribute class still means a string key/value pair, independent of
