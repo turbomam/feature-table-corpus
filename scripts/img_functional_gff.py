@@ -150,12 +150,31 @@ def occurrences(row):
             yield key, [value]
 
 
+LINE_BREAKS = ("\t", "\n", "\r")
+
+
+def checked(text, where, forbidden):
+    """IMG writes no escapes, so a delimiter inside a value can't be written back."""
+    for character in forbidden:
+        if character in text:
+            raise DialectError(f"{where}: {text!r} contains {character!r}, which this dialect can't escape")
+    return text
+
+
 def write_row(row):
-    column9 = ";".join(f"{key}=" + ",".join(value_text(v) for v in values)
-                       for key, values in occurrences(row))
+    where = f"line {row.get('line', '?')}"
+    parts = []
+    for key, values in occurrences(row):
+        name = slot_name(key)
+        comma_list = isinstance(row[name], list) and name not in ONE_VALUE_PER_OCCURRENCE
+        forbidden = LINE_BREAKS + (";",) + ((",",) if comma_list else ())
+        texts = [checked(value_text(v), f"{where} {key}", forbidden) for v in values]
+        parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}=" + ",".join(texts))
     columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
                value_text(row["score"]) if "score" in row else ".", row["strand"],
-               str(row["phase"]) if "phase" in row else ".", column9]
+               str(row["phase"]) if "phase" in row else ".", ";".join(parts)]
+    for column in columns[:8]:
+        checked(column, where, LINE_BREAKS)
     return "\t".join(columns)
 
 

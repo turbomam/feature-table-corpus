@@ -105,6 +105,22 @@ class MappingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, f"{dialect_name} is an attribute but not set"):
                 self.back(edited)
 
+    def test_values_the_dialect_cannot_escape_are_refused_when_writing(self):
+        cases = (("note", "a;b", "ctg_01_2400_2514"), ("product", "x\ty", "ctg_01_100_1299"),
+                 ("pfam", "PF00202,PF00001", "ctg_01_100_1299"))
+        for key, value, feature_id in cases:
+            edited = copy.deepcopy(self.dataset)
+            attribute = next(a for a in self.feature(feature_id, edited)["attributes"] if a["key"] == key)
+            attribute["value"] = value
+            if key == "product":
+                self.feature(feature_id, edited)["product"] = value
+            with self.assertRaisesRegex(dialect.DialectError, "can't escape", msg=key):
+                dialect.write(self.back(edited))
+
+    def test_free_text_keeps_its_commas_when_written(self):
+        text = dialect.write(self.back(copy.deepcopy(self.dataset)))
+        self.assertIn("product=glutamate-1-semialdehyde 2,1-aminomutase;", text)
+
     def test_only_contig_coordinates_map_back(self):
         edited = copy.deepcopy(self.dataset)
         self.feature("ctg_01_100_1299", edited)["coordinate_system"] = "protein"

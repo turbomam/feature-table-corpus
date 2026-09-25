@@ -171,7 +171,10 @@ def roundtrip(path):
     if len(back["rows"]) != len(document["rows"]):
         problems.append(f"{len(document['rows'])} rows in, {len(back['rows'])} out")
     original = Path(path).read_text(encoding="utf-8").splitlines()
-    written = dialect.write(back).splitlines()
+    try:
+        written = dialect.write(back).splitlines()
+    except dialect.DialectError as error:
+        return problems + [f"write: {error}"], report
     spelling = 0
     slots = dialect.row_slots()
     for number, (a, b) in enumerate(zip(original, written), start=1):
@@ -248,7 +251,12 @@ def main(argv=None):
                 errors = [f"dialect: {m}" for m in dialect.problems(document)]
         if report_errors(errors):
             return 1
-        return write_output(args.output, dialect.write(document))
+        try:
+            text = dialect.write(document)
+        except dialect.DialectError as error:
+            report_errors([f"write: {error}"])
+            return 1
+        return write_output(args.output, text)
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:
         print(f"  {problem}")
