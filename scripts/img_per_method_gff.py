@@ -16,7 +16,7 @@ import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, value_text  # noqa: E402
+from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, integer, value_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "model/dialects/img-per-method-gff.yaml"
@@ -37,6 +37,8 @@ _HMMER_DOMAIN = ("ID", "fake_percent_id", "alignment_length", "independent_domai
                  "full_sequence_e-value", "full_sequence_bitscore", "model_start", "model_end")
 # Per method: column 3 accession, column 2 source, and the exact column 9 key
 # order. Each was the only form seen in its method's files, measured 2026-09-25.
+# Tool versions are left open on purpose: every HMMER row measured is
+# "HMMER 3.1b2 (February 2015)" and lastal is 983 or 1456, but versions change.
 METHODS = {
     "pfam": (r"PF\d{5}", r"HMMER .+",
              ("ID", "Name", "fake_percent_id", "alignment_length", "e-value", "model_start", "model_end")),
@@ -51,6 +53,8 @@ METHODS = {
     "cath_funfam": (r"\d+\.\d+\.\d+\.\d+", r"HMMER .+", _HMMER_DOMAIN),
 }
 GENE = re.compile(r"^\S+_(\d+)_(\d+)$")
+# Only a known method suffix counts, so "my_sample_cog.gff" is read as cog.
+FILE_METHOD = re.compile(r"_(" + "|".join(sorted(METHODS, key=len, reverse=True)) + r")\.gff$")
 
 
 def row_slots(schema=SCHEMA):
@@ -79,7 +83,7 @@ def parse_row(line_number, text, slots):
         if value == "." and name == "phase":
             continue
         row[name] = value
-    for name, kind in (("start", int), ("end", int), ("score", finite)):
+    for name, kind in (("start", integer), ("end", integer), ("score", finite)):
         try:
             row[name] = kind(row[name])
         except ValueError:
@@ -117,7 +121,11 @@ def parse_lines(lines, source_file, slots=None):
     slots = slots or row_slots()
     rows = []
     for number, raw in enumerate(lines, start=1):
-        text = raw.rstrip("\n").rstrip("\r")
+        if not raw.endswith("\n"):
+            raise DialectError(f"line {number}: no final newline; this dialect ends every line with one")
+        text = raw[:-1]
+        if "\r" in text:
+            raise DialectError(f"line {number}: carriage return; this dialect writes LF line ends only")
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
@@ -132,8 +140,14 @@ def parse_lines(lines, source_file, slots=None):
 
 
 def parse(path, slots=None):
-    with open(path, encoding="utf-8", newline="") as handle:
-        return parse_lines(handle, path, slots)
+    """Parse a file; unreadable or non-UTF-8 input is a DialectError, not a traceback."""
+    try:
+        with open(path, encoding="utf-8", newline="") as handle:
+            return parse_lines(handle, path, slots)
+    except UnicodeDecodeError as error:
+        raise DialectError(f"not UTF-8: {error}") from None
+    except OSError as error:
+        raise DialectError(f"can't read: {error}") from None
 
 
 def write_row(row):
@@ -182,8 +196,8 @@ def cross_checks(document):
     method = document.get("method")
     pattern, source, order = METHODS.get(method, (None, None, None))
     name = Path(str(document.get("source_file", ""))).name
-    suffix = re.search(r"_([a-z_]+)\.gff$", name)
-    if suffix and suffix.group(1) in METHODS and suffix.group(1) != method:
+    suffix = FILE_METHOD.search(name)
+    if suffix and suffix.group(1) != method:
         problems.append(f"{name}: file name says {suffix.group(1)} but rows are {method}")
     seen = set()
     for row in document["rows"]:
@@ -259,10 +273,18 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "validate":
         return validate(args.file, args.max_errors)
-    document = parse(args.file)
+    if args.output and args.output.exists():
+        print(f"refusing to overwrite {args.output}", file=sys.stderr)
+        return 2
+    try:
+        document = parse(args.file)
+    except DialectError as error:
+        print(f"INVALID  {args.file}: {error}")
+        return 1
     text = json.dumps(document, indent=1)
     if args.output:
-        args.output.write_text(text + "\n")
+        with open(args.output, "x", encoding="utf-8") as handle:
+            handle.write(text + "\n")
     else:
         print(text)
     return 0

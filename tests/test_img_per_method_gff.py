@@ -161,6 +161,76 @@ class ValidateTests(unittest.TestCase):
         self.assertEqual(status, 1, out)
         self.assertIn("no rows", out)
 
+    def test_numbers_must_be_plain_ascii(self):
+        self.assert_rejected("pfam", 0, "\t12\t395\t", "\t1_2\t395\t", "start '1_2' is not a number")
+        self.assert_rejected("pfam", 0, "\t12\t395\t", "\t12\t+395\t", "end '+395' is not a number")
+        self.assert_rejected("pfam", 0, "\t410.5\t", "\t\uff14\uff11\uff10.5\t", "is not a number")
+        self.assert_rejected("pfam", 0, "\t12\t395\t", "\t 12\t395\t", "start ' 12' is not a number")
+        self.assert_rejected("pfam", 0, "alignment_length=384", "alignment_length=+3_84", "'+3_84' is not a integer")
+
+    def test_score_must_be_finite(self):
+        self.assert_rejected("pfam", 0, "\t410.5\t", "\tnan\t", "score 'nan' is not a number")
+        self.assert_rejected("pfam", 0, "\t410.5\t", "\tinf\t", "score 'inf' is not a number")
+        # Matches the ASCII pattern but overflows to inf.
+        self.assert_rejected("pfam", 0, "\t410.5\t", "\t1e999\t", "score '1e999' is not a number")
+
+    def test_row_shape_is_exact(self):
+        self.assert_rejected("pfam", 0, "model_end=339", "model_end=339\textra", "10 columns, expected 9")
+        self.assert_rejected("pfam", 0, "model_end=339", "model_end=339;start=1", "names a column")
+        self.assert_rejected("pfam", 0, "model_end=339", "model_end=339;", "empty attribute")
+        self.assert_rejected("pfam", 0, "model_end=339", "model_end=339;flag", "attribute 'flag' has no value")
+
+    def test_blank_line_is_rejected(self):
+        status, out = self.run_on(fixture("pfam").read_text() + "\n", "case_pfam.gff")
+        self.assertEqual(status, 1, out)
+        self.assertIn("line 4: blank line", out)
+
+    def test_line_ends_are_lf_with_a_final_newline(self):
+        status, out = self.run_on(fixture("pfam").read_text().replace("\n", "\r\n", 1), "case_pfam.gff")
+        self.assertIn("line 1: carriage return", out)
+        status, out = self.run_on(fixture("pfam").read_text().rstrip("\n"), "case_pfam.gff")
+        self.assertEqual(status, 1, out)
+        self.assertIn("line 3: no final newline", out)
+
+    def test_e_value_patterns(self):
+        self.assert_rejected("pfam", 1, "e-value=2.1e-30", "e-value=2.1e+30", "2.1e+30")
+        self.assert_rejected("ko_ec", 1, "evalue=1.2e-120", "evalue=1.2E-120", "1.2E-120")
+        self.assert_rejected("cog", 0, "independent_domain_e-value=1.1e-75", "independent_domain_e-value=1.1e75",
+                             "1.1e75")
+
+    def test_seqid_must_be_a_gene_id(self):
+        self.assert_rejected("tigrfam", 0, "ctg_01_100_1299\t", "ctg_01_100_x\t", "/rows/0/seqid")
+
+    def test_percent_identity_is_at_most_100(self):
+        self.assert_rejected("ko_ec", 0, "percent_identity=100.00", "percent_identity=100.5", "100.5")
+
+    def test_file_name_with_extra_underscores_is_checked(self):
+        status, out = self.run_on(fixture("pfam").read_text(), "my_sample_cog.gff")
+        self.assertEqual(status, 1, out)
+        self.assertIn("file name says cog but rows are pfam", out)
+
+    def test_unreadable_input_is_reported_not_raised(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            latin = Path(tmp) / "latin_pfam.gff"
+            latin.write_bytes(b"caf\xe9\n")
+            for path, expected in ((latin, "not UTF-8"), (Path(tmp) / "missing.gff", "can't read")):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(dialect.validate(path), 1)
+                    self.assertEqual(dialect.main(["parse", str(path)]), 1)
+                self.assertIn(expected, out.getvalue())
+
+    def test_parse_refuses_an_existing_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "out.json"
+            output.write_text("keep")
+            with contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(dialect.main(["parse", str(fixture("pfam")), "--output", str(output)]), 2)
+            self.assertEqual(output.read_text(), "keep")
+            fresh = Path(tmp) / "new.json"
+            self.assertEqual(dialect.main(["parse", str(fixture("pfam")), "--output", str(fresh)]), 0)
+            self.assertIn('"method": "pfam"', fresh.read_text())
+
 
 if __name__ == "__main__":
     unittest.main()

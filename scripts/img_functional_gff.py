@@ -12,6 +12,7 @@ import argparse
 import json
 import math
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,8 +44,23 @@ def slot_name(key):
     return KEY_TO_SLOT.get(key, key)
 
 
+# int() and float() also accept "1_2", "+395", surrounding spaces and non-ASCII
+# digits, none of which IMG writes, so numbers are gated by ASCII patterns first.
+INTEGER = re.compile(r"-?[0-9]+")
+DECIMAL = re.compile(r"-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?")
+
+
+def integer(text):
+    """An integer spelled in ASCII digits with an optional minus sign."""
+    if not INTEGER.fullmatch(text):
+        raise ValueError(text)
+    return int(text)
+
+
 def finite(text):
-    """float() accepts nan and inf; a GFF number never is either."""
+    """A decimal spelled in ASCII, so never nan, inf or a Python-only spelling."""
+    if not DECIMAL.fullmatch(text):
+        raise ValueError(text)
     number = float(text)
     if not math.isfinite(number):
         raise ValueError(text)
@@ -53,7 +69,7 @@ def finite(text):
 
 def convert(value, slot):
     if slot.range == "integer":
-        return int(value)
+        return integer(value)
     if slot.range == "float":
         return finite(value)
     return value
@@ -72,7 +88,7 @@ def parse_row(line_number, text, slots):
         if value == "." and name in ("score", "phase"):
             continue
         row[name] = value
-    for name, kind in (("start", int), ("end", int), ("phase", int), ("score", finite)):
+    for name, kind in (("start", integer), ("end", integer), ("phase", integer), ("score", finite)):
         if name in row:
             try:
                 row[name] = kind(row[name])

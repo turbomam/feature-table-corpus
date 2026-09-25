@@ -73,7 +73,9 @@ classes:
         required: true
         description: >-
           Column 2: "HMMER 3.1b2 (February 2015)" for Pfam, SUPERFAMILY and CATH-FunFam, "lastal"
-          and a version for KO/EC, and the empty string for COG, TIGRFAM and SMART.
+          and a version for KO/EC, and the empty string for COG, TIGRFAM and SMART. Versions are
+          left open on purpose, as in the first dialect, because they change between runs:
+          every measured HMMER row has that one value, and lastal is 983 or 1456.
         pattern: "^(|HMMER .+|lastal \\d+)$"
       type:
         required: true

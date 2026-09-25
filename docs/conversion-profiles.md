@@ -168,6 +168,12 @@ rows) and the eight vendored NMDC files of these types (443 rows); every file va
 - Every Pfam row in both isolates has `e-value=13`, while the NMDC Pfam files have values such
   as `6e-18`. The dialect records this and accepts it.
 
+`write()` turns parsed rows back into GFF text and refuses unless that text parses to the same
+rows, so the round trip is checked by parsed rows, not bytes. Numbers are respelled on the way:
+`91.40` comes back as `91.4` and `1.22e+03` as `1220.0`, on 8,638 of the 34,306 real lines.
+Numbers must be plain ASCII (`1_2`, `+395` and full-width digits are rejected), and lines must
+end with LF.
+
 The parser infers the method from the first row's accession and requires every row, and a file
 name ending `_<method>.gff`, to agree. `just dialect-validate-img-per-method FILE` runs it. The
 tests edit single rows of [constructed fixtures](../tests/fixtures/img-per-method-gff/README.md),
@@ -184,8 +190,9 @@ The other per-genome files were measured on the same date to place them:
 - `_prodigal` and `_genemark` also hold first-dialect rows: with their comment lines removed
   (and GeneMark's blank lines), all four isolate files validate against it. The comments are
   the tools' own: a `##gff-version 3` line and per-contig `# Sequence Data` and `# Model Data`
-  lines from Prodigal, and a `##gff-version 2` header and `##sequence-region` lines from
-  GeneMark. The first dialect rejects comment lines, so accepting these files means extending
+  lines from Prodigal. GeneMark writes a `##gff-version 2` line, then a 7-line `#` block
+  (program version, input and parameter files, translation table, run date), then a blank line
+  and a `##sequence-region` line before each contig's rows. The first dialect rejects comment lines, so accepting these files means extending
   it, not a new dialect.
 - Three vendored NMDC files (Rfam, one structural annotation, GeneMark) fail the first dialect
   only because metagenome rows can be partial at both ends (`partial=5',3'`), which it does not
