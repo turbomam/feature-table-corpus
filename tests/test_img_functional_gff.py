@@ -108,6 +108,10 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected(self.edited(0, "translation_table=11", "translation_table=x"),
                              "translation_table 'x' is not a integer")
 
+    def test_only_the_source_spelling_of_e_value_is_accepted(self):
+        self.assert_rejected(self.edited(5, "e-value=0", "e_value=0"), "is spelled 'e-value'")
+        self.assert_rejected(self.edited(0, "cog=COG0001", "cog=COG0001;model-start=1"), "model-start")
+
     def test_attribute_named_like_a_column_is_rejected(self):
         self.assert_rejected(self.edited(0, "cog=COG0001", "cog=COG0001;start=999"), "names a column")
 

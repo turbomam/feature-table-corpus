@@ -28,8 +28,14 @@ def row_slots(schema=SCHEMA):
     return {slot.name: slot for slot in view.class_induced_slots(ROW_CLASS)}
 
 
+# Source keys that are not valid slot names, mapped one by one. Anything else
+# keeps its source spelling, so a key the dialect doesn't write stays unknown.
+KEY_TO_SLOT = {"e-value": "e_value"}
+SLOT_ONLY_NAMES = {slot: key for key, slot in KEY_TO_SLOT.items()}
+
+
 def slot_name(key):
-    return key.replace("-", "_")
+    return KEY_TO_SLOT.get(key, key)
 
 
 def convert(value, slot):
@@ -66,6 +72,8 @@ def parse_row(line_number, text, slots):
         if not sep:
             raise DialectError(f"line {line_number}: attribute {key!r} has no value")
         row["attribute_order"].append(key)
+        if key in SLOT_ONLY_NAMES:
+            raise DialectError(f"line {line_number}: key {key!r} is spelled {SLOT_ONLY_NAMES[key]!r} in this dialect")
         name = slot_name(key)
         if name in CORE:
             raise DialectError(f"line {line_number}: attribute {key!r} names a column, not a column 9 key")
