@@ -1,0 +1,121 @@
+id: https://w3id.org/ber-data/dialects/phytozome-annotation-info
+name: phytozome_annotation_info
+title: Phytozome annotation_info table, parsed rows (draft dialect)
+description: >-
+  Rows of a Phytozome `*.annotation_info.txt`, one per transcript, as parsed by
+  scripts/phytozome_annotation_info.py. Each row joins to the mRNA row of the same genome's
+  gene_exons GFF3 whose pacid it names (model/dialects/phytozome-gene-exons-gff3.yaml).
+comments:
+  - >-
+    Measured 2026-09-25 on one file only, Athaliana_167_TAIR10.annotation_info.txt
+    (Phytozome-167, md5 e33a44eea32f95fb7b133590f4463a14, 35,386 rows, 10,498,567 bytes), listed
+    in model/examples/jgi-inputs.yaml. Other Phytozome genomes may differ; none has been read.
+  - >-
+    TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
+    of that file is kept in this repository. The test fixture is constructed.
+  - >-
+    The file is tab separated with a 14-column header line starting "#pacId". An empty cell is
+    parsed as absent. In the columns typed multivalued below, one space separates values; no
+    cell read has a leading, trailing or doubled space. Header names that are not valid slot
+    names are mapped in scripts/phytozome_annotation_info.py: "#pacId" to pacId and each
+    "Best-hit-..." column to the same name in lower case with underscores.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  phyann: https://w3id.org/ber-data/dialects/phytozome-annotation-info/
+default_prefix: phyann
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  PhytozomeAnnotationInfoDocument:
+    tree_root: true
+    description: One parsed annotation_info table.
+    attributes:
+      source_file:
+        required: true
+        description: Path or URI of the parsed file.
+      rows:
+        description: Every data row, in file order.
+        range: PhytozomeAnnotationInfoRow
+        multivalued: true
+        inlined_as_list: true
+        required: true
+
+  PhytozomeAnnotationInfoRow:
+    description: One transcript.
+    attributes:
+      line:
+        range: integer
+        required: true
+        minimum_value: 2
+        description: One-based line number in the source file; line 1 is the header.
+      pacId:
+        required: true
+        pattern: "^PAC:[1-9]\\d*$"
+        description: >-
+          Source column "#pacId". The GFF3 mRNA row with pacid=N has pacId PAC:N here.
+          Unique in the file.
+      locusName:
+        required: true
+        pattern: "^\\S+$"
+        description: The gene, equal to the Name of the GFF3 gene row.
+      transcriptName:
+        required: true
+        pattern: "^\\S+$"
+        description: >-
+          The transcript, equal to the Name of the GFF3 mRNA row. It is locusName plus "." and
+          more. Unique in the file.
+      peptideName:
+        required: true
+        pattern: "^\\S+$"
+        description: Equal to transcriptName in every row read.
+      Pfam:
+        multivalued: true
+        pattern: "^PF\\d{5}$"
+        description: Pfam family accessions.
+      Panther:
+        multivalued: true
+        pattern: "^PTHR\\d{5}([.:]SF\\d+)?$"
+        description: >-
+          PANTHER family and subfamily identifiers. Both PTHR10000.SF1 and PTHR10000:SF1
+          spellings occur, often in one cell, and a cell can name more than one family.
+      ec:
+        multivalued: true
+        pattern: "^EC:(\\d+\\.(\\d+|-)\\.(\\d+|-)\\.(n?\\d+|-)|PROLINE-MULTI)$"
+        description: >-
+          EC numbers, prefixed EC:. Six rows read also have the token EC:PROLINE-MULTI, which is
+          not an EC number; it is accepted as written.
+      KOG:
+        multivalued: true
+        pattern: "^KOG\\d{4}$"
+        description: KOG accessions.
+      KO:
+        multivalued: true
+        pattern: "^K\\d{5}$"
+        description: KEGG Orthology accessions, without the KO prefix that IMG files use.
+      GO:
+        multivalued: true
+        pattern: "^GO:\\d{7}$"
+        description: Gene Ontology terms. The most read in one cell is 70.
+      best_hit_clamy_name:
+        pattern: "^\\S+$"
+        description: >-
+          Source column "Best-hit-clamy-name", the best Chlamydomonas reinhardtii hit. Present
+          without a defline in 489 rows read.
+      best_hit_clamy_defline:
+        pattern: "^\\(\\d+ of \\d+\\) \\S"
+        description: >-
+          Source column "Best-hit-clamy-defline", free text starting "(i of n) ". Never present
+          without its name.
+      best_hit_rice_name:
+        pattern: "^\\S+$"
+        description: >-
+          Source column "Best-hit-rice-name", the best rice hit. Present without a defline in
+          1,851 rows read.
+      best_hit_rice_defline:
+        pattern: "^\\(\\d+ of \\d+\\) \\S"
+        description: >-
+          Source column "Best-hit-rice-defline", free text starting "(i of n) ". Never present
+          without its name.
