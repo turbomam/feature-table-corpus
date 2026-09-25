@@ -197,7 +197,7 @@ slots:
     multivalued: true
     inlined_as_list: true
     range: ContigCollection
-    description: Every ContigCollection that this dataset's Contigs name in member_of. A collection no contig names is rejected by the Dataset validator.
+    description: Every ContigCollection that this dataset's Contigs name in member_of.
   contigs:
     title: Contigs
     multivalued: true
@@ -278,7 +278,7 @@ slots:
       - Use a CURIE when a prefix exists, such as an NCBI GeneID. A locus tag has no registered
         prefix and is written as it appears. In the vendored RefSeq file
         corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3, the gene with current locus tag
-        SC_RS27595 also carries old_locus_tag SCO5087, and both are stable identifiers for it.
+        SC_RS27595 also carries old_locus_tag SCO5087; list the current and legacy locus tags.
         That file has no GeneID Dbxrefs (checked 2026-09-25).
       - NMDC annotation files carry no such identifier for their own genes. The IMG gene oid in
         the KO and EC files (column 2 of Annotation KEGG Orthology, subject_gene_ids in KO_EC

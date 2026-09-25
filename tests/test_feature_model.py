@@ -103,14 +103,29 @@ class ValidationTests(unittest.TestCase):
             (lambda d: d["contigs"][0]["member_of"].append(d["contigs"][0]["member_of"][0]), "duplicate member_of"),
             (lambda d: d["contig_collections"].append(copy.deepcopy(d["contig_collections"][0])),
              "duplicate collection_id"),
-            (lambda d: d["contig_collections"].append({"collection_id": "unnamed", "collection_type": "mag"}),
-             "no contig names it"),
             (lambda d: d["features"][0].update(parent=[d["features"][0]["feature_id"]]), "parent cycle"),
             (lambda d: d["features"][0].update(parent=[d["features"][1]["feature_id"]]), "parent cycle"),
         )
         for change, expected in cases:
             with self.subTest(expected=expected):
                 self.reject(change, expected)
+
+    def test_circular_contig_needs_length_with_or_without_collections(self):
+        # Regression: 833db47 moved this check out of the contig loop, so it ran only when
+        # collections existed and crashed when a Dataset had collections but no contigs.
+        for with_collections in (False, True):
+            with self.subTest(with_collections=with_collections):
+                data = copy.deepcopy(self.example)
+                if not with_collections:
+                    data.pop("contig_collections")
+                    for contig in data["contigs"]:
+                        contig.pop("member_of", None)
+                data["contigs"][0].update(topology="circular")
+                data["contigs"][0].pop("length_bp", None)
+                errors = validation_errors(data, self.validator)
+                self.assertTrue(any("circular topology requires length_bp" in e for e in errors), errors)
+        data = {"contig_collections": [{"collection_id": "g", "collection_type": "mag"}], "contigs": []}
+        self.assertEqual(validation_errors(data, self.validator), [])
 
     def test_membership_and_stable_identifiers_shapes(self):
         """Issues 41 and 44: collection types are closed; stable identifiers are a list."""

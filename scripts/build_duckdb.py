@@ -15,6 +15,7 @@ import sys
 import tempfile
 
 import duckdb
+import yaml
 
 from validate_closed import load_validated
 
@@ -140,8 +141,9 @@ def main():
     except (ValueError, duckdb.Error, OSError) as error:
         print(error, file=sys.stderr)
         return 1
-    with duckdb.connect(sys.argv[3], read_only=True) as con:
-        n_collections = con.execute("SELECT count(*) FROM contig_collection").fetchone()[0]
+    # Counted from the input, which build_database has already validated; reopening the
+    # database would fail for ':memory:'.
+    n_collections = len(yaml.safe_load(Path(sys.argv[2]).read_text()).get("contig_collections") or [])
     print(f"Wrote {sys.argv[3]}: {n_collections} contig collections, {n_contigs} contigs, {n_features} features")
     return 0
 

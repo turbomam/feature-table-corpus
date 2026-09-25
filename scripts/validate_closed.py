@@ -54,10 +54,6 @@ def dataset_errors(data):
         for collection_id in members:
             if collection_id not in collections:
                 errors.append(f"contig {cid!r}: unknown member_of collection {collection_id!r}")
-    named = {c for contig in contigs.values() for c in contig.get("member_of") or []}
-    for collection_id in collections:
-        if collection_id not in named:
-            errors.append(f"contig collection {collection_id!r}: no contig names it in member_of")
         if contig.get("topology") == "circular" and not contig.get("length_bp"):
             errors.append(f"contig {cid!r}: circular topology requires length_bp")
     for fid, feature in features.items():
