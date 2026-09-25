@@ -25,6 +25,16 @@ DIALECT_NAMES = {
             "CleavageSiteNetwork": ("SignalP-noTM", "SignalP-TM"),
         },
     },
+    "img_taxon_bundle": {
+        "slots": ("ID", "EC"),
+        "values": {
+            "ImgTaxonFeatureType": ("CDS", "tRNA", "rRNA", "RNA", "CRISPR"),
+            "Strand": ("+", "-"),
+            "TmhmmFeatureType": ("TMhelix",),
+            "DomainDatabase": ("SUPERFAMILY", "ProSiteProfiles", "ProSitePatterns", "SMART"),
+            "XrefDatabase": ("GI", "GenBank/EMBL"),
+        },
+    },
 }
 for schema, names in DIALECT_NAMES.items():
     ALLOWED |= {(schema, "standard_naming", "warning", f"Slot has name '{name}'")

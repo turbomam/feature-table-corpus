@@ -1,0 +1,9 @@
+##gff-version 3
+ctg_01	img_core_v400	rRNA	1	199	.	+	0	ID=9900000001;locus_tag=TEST_0001;product=23S
+ctg_01	img_core_v400	CDS	300	950	.	+	0	ID=9900000002;locus_tag=TEST_0002;product=peroxiredoxin, AhpC family 
+ctg_01	img_core_v400	CDS	1000	1551	.	-	0	ID=9900000003;locus_tag=TEST_0003;product=ribonuclease E
+ctg_01	img_core_v400	tRNA	1600	1675	.	-	0	ID=9900000004;locus_tag=TEST_R0001
+ctg_02	img_core_v400	RNA	10	95	.	+	0	ID=9900000005;locus_tag=TEST_0005
+ctg_02	img_core_v400	CDS	200	1360	.	+	0	ID=9900000006;locus_tag=TEST_0006;product=5-(carboxyamino)imidazole ribonucleotide synthase
+ctg_01	img_core_v400	CRISPR	5000		.	+	.	.
+ctg_02	img_core_v400	CRISPR	5000		.	+	.	.

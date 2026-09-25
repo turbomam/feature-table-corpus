@@ -1,0 +1,414 @@
+id: https://w3id.org/ber-data/dialects/img-taxon-bundle
+name: img_taxon_bundle
+title: IMG taxon bundle GFF and side tables, parsed rows (draft dialect)
+description: >-
+  Rows of the older JGI IMG taxon download bundle, as parsed by scripts/img_taxon_bundle.py:
+  `<taxon_oid>.gff`, written from the img_core_v400 database, and the `<taxon_oid>.<kind>.tab.txt`
+  tables beside it. The tables refer to genes by `gene_oid`, which is the GFF row's `ID`, so the
+  bundle is validated as one document. A failure says the files differ from what IMG is known to
+  write, not that a mapping is wrong.
+comments:
+  - >-
+    Measured 2026-09-25 on two bundles: Bacillus sp. BacspinBacteria_29 (IMG_AP-1121004, taxon
+    2708743150, 4,628 GFF rows, 7 tables) and Zymomonas mobilis ATCC 10988 (IMG_AP-1377582, taxon
+    645058785, 1,942 GFF rows, 8 tables). Column names and meanings come from the bundle's
+    README.txt; every pattern and cross-row rule was checked against both bundles.
+  - >-
+    Each table is its own class, because each has its own columns, and all of them sit in one
+    document class, because the rules that matter most join them: every gene_oid must be a CDS in
+    the GFF, and a gene's length must agree across tables.
+  - >-
+    The README also documents `.kog.tab.txt` and `.crispr.txt` and an `img_ko_flag` of Yes or No.
+    Neither table was in either bundle and every img_ko_flag cell was empty, so none of them is
+    accepted until a real example is measured, see
+    https://github.com/turbomam/feature-table-corpus/issues/54.
+  - >-
+    `106476.assembled.gff` in the Bacillus bundle is not this dialect. It is the IMG pipeline
+    4.14.0 output that the taxon GFF was loaded from: strand is written 1 and -1, sources are the
+    calling tools, types include misc_bind and misc_feature, and IDs are <seqid>.<n>. See
+    docs/conversion-profiles.md.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imgtb: https://w3id.org/ber-data/dialects/img-taxon-bundle/
+default_prefix: imgtb
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  ImgTaxonBundle:
+    tree_root: true
+    description: >-
+      One parsed bundle: the GFF and every side table found beside it. The README says a table
+      with no annotations is left out of the bundle, so every table slot is optional.
+    slots:
+      - source_file
+      - taxon_oid
+      - rows
+      - cog
+      - pfam
+      - tigrfam
+      - ko
+      - ipr
+      - signalp
+      - tmhmm
+      - xref
+
+  ImgTaxonGffRow:
+    description: >-
+      One nine-column row of `<taxon_oid>.gff`. The file starts with `##gff-version 3` and has no
+      other comment lines. Score is always ".", so it has no slot.
+    slots:
+      - line
+      - seqid
+      - source
+      - type
+      - start
+      - end
+      - strand
+      - phase
+      - attribute_order
+      - ID
+      - locus_tag
+      - product
+
+  CogHit:
+    description: One row of `.cog.tab.txt`, from NCBI RPSBLAST. Slots are in column order.
+    slots: [line, gene_oid, gene_length, percent_identity, query_start, query_end, subj_start,
+      subj_end, evalue, bit_score, cog_id, cog_name, cog_length]
+  PfamHit:
+    description: One row of `.pfam.tab.txt`, from pfam_scan. Slots are in column order.
+    slots: [line, gene_oid, gene_length, query_start, query_end, subj_start, subj_end, evalue,
+      bit_score, pfam_id, pfam_name, pfam_length]
+  TigrfamHit:
+    description: One row of `.tigrfam.tab.txt`, from hmmscan. Slots are in column order.
+    slots: [line, gene_oid, gene_length, query_start, query_end, evalue, bit_score, tigrfam_id,
+      tigrfam_name]
+  KoHit:
+    description: >-
+      One row of `.ko.tab.txt`, from BLASTP against KEGG genes. A KO whose name lists several EC
+      numbers gets one row per EC number. Slots are in column order.
+    slots: [line, gene_oid, gene_length, percent_identity, query_start, query_end, subj_start,
+      subj_end, evalue, bit_score, ko_id, ko_name, EC, img_ko_flag]
+  IprHit:
+    description: >-
+      One row of `.ipr.tab.txt`, InterPro member database hits other than Pfam and TIGRFAM. The only
+      table with GO terms. Slots are in column order.
+    slots: [line, gene_oid, gene_length, query_start, query_end, domaindb, domainid, iprid,
+      iprdesc, go_info]
+  SignalpFeature:
+    description: One row of `.signalp.tab.txt`, a SignalP cleavage site. Slots are in column order.
+    slots: [line, gene_oid, gene_length, feature_type, start_coord, end_coord]
+    slot_usage:
+      feature_type:
+        range: SignalpFeatureType
+  TmhmmFeature:
+    description: >-
+      One row of `.tmhmm.tab.txt`, one TMHMM topology segment. A gene's rows are adjacent and tile
+      the protein from 1 to gene_length. Slots are in column order.
+    slots: [line, gene_oid, gene_length, feature_type, start_coord, end_coord]
+    slot_usage:
+      feature_type:
+        range: TmhmmFeatureType
+  XrefRow:
+    description: One row of `.xref.tab.txt`, an external identifier for a gene.
+    slots: [line, gene_oid, db_name, id]
+
+slots:
+  source_file:
+    required: true
+    description: Path or URI of the parsed GFF file.
+  taxon_oid:
+    required: true
+    pattern: "^\\d+$"
+    description: IMG taxon object identifier, the file name before `.gff`.
+  rows:
+    description: Every GFF feature row, in file order.
+    range: ImgTaxonGffRow
+    multivalued: true
+    inlined_as_list: true
+    required: true
+  cog:
+    description: Rows of `<taxon_oid>.cog.tab.txt`, in file order.
+    range: CogHit
+    multivalued: true
+    inlined_as_list: true
+  pfam:
+    description: Rows of `<taxon_oid>.pfam.tab.txt`, in file order.
+    range: PfamHit
+    multivalued: true
+    inlined_as_list: true
+  tigrfam:
+    description: Rows of `<taxon_oid>.tigrfam.tab.txt`, in file order.
+    range: TigrfamHit
+    multivalued: true
+    inlined_as_list: true
+  ko:
+    description: Rows of `<taxon_oid>.ko.tab.txt`, in file order.
+    range: KoHit
+    multivalued: true
+    inlined_as_list: true
+  ipr:
+    description: Rows of `<taxon_oid>.ipr.tab.txt`, in file order.
+    range: IprHit
+    multivalued: true
+    inlined_as_list: true
+  signalp:
+    description: Rows of `<taxon_oid>.signalp.tab.txt`, in file order.
+    range: SignalpFeature
+    multivalued: true
+    inlined_as_list: true
+  tmhmm:
+    description: Rows of `<taxon_oid>.tmhmm.tab.txt`, in file order.
+    range: TmhmmFeature
+    multivalued: true
+    inlined_as_list: true
+  xref:
+    description: Rows of `<taxon_oid>.xref.tab.txt`, in file order.
+    range: XrefRow
+    multivalued: true
+    inlined_as_list: true
+
+  line:
+    range: integer
+    required: true
+    minimum_value: 1
+    description: One-based line number in the source file; the header is line 1 of a table.
+
+  # GFF columns and column 9 keys.
+  seqid:
+    required: true
+    pattern: "^\\S+$"
+    description: Column 1, the contig identifier.
+  source:
+    required: true
+    pattern: "^img_core_v400$"
+    description: >-
+      Column 2, the IMG database version. Only img_core_v400 has been seen, so another version
+      fails until it is measured.
+  type:
+    required: true
+    range: ImgTaxonFeatureType
+    description: Column 3.
+  start:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: Column 4, one-based inclusive.
+  end:
+    range: integer
+    minimum_value: 1
+    description: >-
+      Column 5, one-based inclusive. Empty on every CRISPR row, parsed as absent; present on every
+      other row.
+  strand:
+    required: true
+    range: Strand
+    description: Column 7.
+  phase:
+    range: integer
+    minimum_value: 0
+    maximum_value: 0
+    description: >-
+      Column 8. Every CDS, tRNA, rRNA and RNA row has 0, including the RNA genes, where GFF3 would
+      write "."; CRISPR rows have ".", parsed as absent.
+  attribute_order:
+    multivalued: true
+    description: >-
+      Column 9 keys in source order, so the row can be written back. Empty for a CRISPR row, whose
+      column 9 is ".".
+  ID:
+    pattern: "^\\d+$"
+    description: IMG gene_oid, the key the side tables use. Absent only on CRISPR rows.
+  locus_tag:
+    pattern: "^\\S+$"
+    description: >-
+      Locus tag, for example Ga0139071_1013 or ZmobDRAFT_R0001. Absent only on CRISPR rows.
+  product:
+    description: >-
+      Free text. Commas are part of the name, and 4 Bacillus names end with a space that is kept.
+      Present on CDS and rRNA rows only.
+
+  # Side table columns, shared by several tables.
+  gene_oid:
+    required: true
+    pattern: "^\\d+$"
+    description: Gene object identifier; the ID of a CDS row in the GFF.
+  gene_length:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: >-
+      Protein length in residues. Usually the CDS span divided by three, less the stop codon, but
+      not always (53 of 51,510 rows in the two bundles differ), so that is not checked.
+  percent_identity:
+    required: true
+    range: float
+    minimum_value: 0
+    maximum_value: 100
+    description: Percent identity of aligned residues.
+  query_start:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: First aligned residue of the gene's protein.
+  query_end:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: Last aligned residue of the gene's protein.
+  subj_start:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: First aligned position of the subject sequence or model.
+  subj_end:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: Last aligned position of the subject sequence or model.
+  evalue:
+    required: true
+    pattern: "^\\d\\.\\de[+-]\\d{2,3}$"
+    description: >-
+      Expectation value, kept as text in the one spelling seen in every table, such as 3.0e-28,
+      0.0e+00 and 1.0e-129.
+  bit_score:
+    required: true
+    range: float
+    minimum_value: 0
+    description: Bit score of the alignment.
+  start_coord:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: First residue of the feature in the protein.
+  end_coord:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: Last residue of the feature in the protein.
+  feature_type:
+    required: true
+    description: Kind of protein feature; its values depend on the table.
+
+  # Columns of one table each.
+  cog_id:
+    required: true
+    pattern: "^COG\\d{4}$"
+    description: COG accession.
+  cog_name:
+    required: true
+    description: COG name. Free text with commas.
+  cog_length:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: Length of the COG consensus sequence.
+  pfam_id:
+    required: true
+    pattern: "^pfam\\d{5}$"
+    description: Pfam accession in IMG's lower-case spelling, pfam00578 for PF00578.
+  pfam_name:
+    required: true
+    pattern: "^\\S+$"
+    description: Pfam short name, for example AhpC-TSA.
+  pfam_length:
+    required: true
+    range: integer
+    minimum_value: 1
+    description: Length of the Pfam model.
+  tigrfam_id:
+    required: true
+    pattern: "^TIGR\\d{5}$"
+    description: TIGRFAM accession.
+  tigrfam_name:
+    required: true
+    description: TIGRFAM name. Free text with commas.
+  ko_id:
+    required: true
+    pattern: "^KO:K\\d{5}$"
+    description: KEGG Orthology accession, prefixed KO:.
+  ko_name:
+    required: true
+    description: >-
+      KO name. When the KO has EC numbers the name ends with them, space-separated in brackets,
+      for example "ribonuclease J [EC:3.1.-.-]".
+  EC:
+    pattern: "^EC:(\\d+(\\.\\d+){3}|\\d+(\\.\\d+){0,2}\\.-)$"
+    description: >-
+      One EC number from the KO name, or empty when the name has none. IMG shortens trailing
+      unknown parts to one: the name's 3.1.-.- is written EC:3.1.-.
+  img_ko_flag:
+    pattern: "^$"
+    description: >-
+      Documented as Yes (assigned by the IMG pipeline) or No (from KEGG), but empty in all 3,794
+      rows of both bundles. Empty parses as absent, so any value fails until one is measured.
+  domaindb:
+    required: true
+    range: DomainDatabase
+    description: InterPro member database of the hit.
+  domainid:
+    required: true
+    description: Accession in the member database; its form depends on domaindb.
+  iprid:
+    pattern: "^IPR\\d{6}$"
+    description: InterPro entry, empty when the member signature is not integrated.
+  iprdesc:
+    description: InterPro entry name. Present exactly when iprid is.
+  go_info:
+    multivalued: true
+    pattern: "^GO:\\d{7}$"
+    description: GO terms of the InterPro entry, separated by "|" in the file. Often empty.
+  db_name:
+    required: true
+    range: XrefDatabase
+    description: External database of the reference.
+  id:
+    required: true
+    description: Identifier in db_name; its form depends on db_name.
+
+enums:
+  ImgTaxonFeatureType:
+    description: >-
+      Column 3 values seen in the two bundles. RNA rows are the pipeline's misc_RNA features:
+      their locus tags and coordinates match misc_RNA rows in the Bacillus 106476.assembled.gff.
+    permissible_values:
+      CDS:
+      tRNA:
+      rRNA:
+      RNA:
+      CRISPR:
+        description: >-
+          Seen only in Zymomonas, as 48 rows with no end, no ID and column 9 ".": two start
+          positions repeated on every one of the 24 contigs, 17 of which are shorter than the
+          larger start. They are accepted as written and carry no usable location.
+  Strand:
+    description: Column 7 symbols. No row in either bundle is unstranded.
+    permissible_values:
+      "+":
+      "-":
+  SignalpFeatureType:
+    description: SignalP feature kinds.
+    permissible_values:
+      cleavage:
+        description: A cleavage site, recorded as the two residues it falls between.
+  TmhmmFeatureType:
+    description: TMHMM topology segments.
+    permissible_values:
+      inside:
+      outside:
+      TMhelix:
+  DomainDatabase:
+    description: InterPro member databases seen in `.ipr.tab.txt`.
+    permissible_values:
+      SUPERFAMILY:
+      ProSiteProfiles:
+      ProSitePatterns:
+      SMART:
+  XrefDatabase:
+    description: External databases seen in `.xref.tab.txt` (Zymomonas only).
+    permissible_values:
+      GI:
+      GenBank/EMBL:

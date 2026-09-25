@@ -1,0 +1,4 @@
+gene_oid	gene_length	query_start	query_end	subj_start	subj_end	evalue	bit_score	pfam_id	pfam_name	pfam_length
+9900000002	216	47	194	1	123	1.6e-32	110.1	pfam00578	AhpC-TSA	124
+9900000006	386	20	80	1	60	2.2e-10	40	pfam02222	ATP-grasp	172
+9900000006	386	120	300	2	170	4.1e-45	150.3	pfam02222	ATP-grasp	172

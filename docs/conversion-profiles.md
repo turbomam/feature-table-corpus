@@ -147,6 +147,44 @@ result forward again and refuses unless that reproduces the input Dataset, so a 
 dialect can't hold, such as `translated_sequence` or a contig length, is an error rather than
 a silent loss.
 
+### IMG taxon bundle
+
+[`img-taxon-bundle.yaml`](../model/dialects/img-taxon-bundle.yaml) is the third dialect in
+https://github.com/turbomam/feature-table-corpus/issues/54: the older IMG taxon download, a
+`<taxon_oid>.gff` written from the `img_core_v400` database plus `<taxon_oid>.<kind>.tab.txt`
+tables whose columns the bundle's `README.txt` documents. It was measured on 2026-09-25 against
+two bundles, Bacillus sp. BacspinBacteria_29 (`IMG_AP-1121004`, taxon 2708743150, 4,628 GFF rows,
+7 tables) and Zymomonas mobilis ATCC 10988 (`IMG_AP-1377582`, taxon 645058785, 1,942 GFF rows,
+8 tables), both downloaded to `local/jgi/`.
+
+The tables name genes only by `gene_oid`, which is the GFF row's `ID`, so a bundle is validated
+as one document with one class per table. What the two bundles share:
+
+- The GFF starts with `##gff-version 3`. Score is always `.`, and phase is `0` on every gene row,
+  RNA genes included. Column 9 is `ID`, `locus_tag`, then `product` on CDS and rRNA rows only.
+  There is no gene hierarchy. Types are CDS, tRNA, rRNA, RNA and CRISPR.
+- The 48 CRISPR rows, all in Zymomonas, have no end, no ID and column 9 `.`. They repeat two start
+  positions on each of the 24 contigs, 17 of which are shorter than the larger one, so they
+  carry no usable location. The dialect accepts them as written.
+- Every `gene_oid` in every table is a CDS, and a gene's `gene_length` is the same in every
+  table. Rows are sorted by `gene_oid`. TMHMM segments tile each protein from 1 to its length.
+- A KO whose name lists several EC numbers gets one row per number, and the EC column shortens
+  trailing unknown parts to one, so `[EC:3.1.-.-]` in the name is `EC:3.1.-` in the column.
+- Only `.ipr.tab.txt` has GO terms, joined with `|`. Pfam accessions are written `pfam00578`.
+
+`.kog.tab.txt`, `.crispr.txt` and a non-empty `img_ko_flag` are documented but were not in
+either bundle, so they fail until measured. `just dialect-validate-img-taxon GFF` checks the
+GFF and every table beside it. Both bundles pass, and the writer reproduces all 17 files byte
+for byte. The tests edit single rows of a
+[constructed bundle](../tests/fixtures/img-taxon-bundle/README.md) to show each rule rejects.
+
+`106476.assembled.gff`, in the Bacillus bundle, is a separate dialect and is not written yet. It
+is IMG pipeline 4.14.0 output with no `##gff-version` line: sources are the calling tools
+(Prodigal V2.6.3, INFERNAL, HMMER), strand is `1` or `-1`, IDs are `<seqid>.<n>`, CDS rows carry
+Prodigal's `conf` and `gc_cont`, and every column 9 ends with `;`. Its 4,693 rows include all
+4,628 taxon GFF rows by locus tag, at the same coordinates, plus 39 `misc_bind` and 26
+`misc_feature` rows that the taxon GFF drops; its 39 `misc_RNA` rows are the taxon GFF's `RNA`.
+
 ## Attributes and authority
 
 The shared Attribute class still means a string key/value pair, independent of
