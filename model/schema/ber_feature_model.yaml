@@ -41,6 +41,8 @@ license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
   bfm: https://w3id.org/ber-data/gff-feature-model/
+  kb_cdm: http://kbase.github.io/cdm-schema/linkml/
+  mixs: https://genomicsstandardsconsortium.github.io/mixs/
 
 default_prefix: bfm
 default_range: string
@@ -60,6 +62,7 @@ classes:
         of one class, rather than only validating its Contig and Feature entries one at a
         time. linkml-lint's tree_root_class check caught the absence of this class.
     slots:
+      - contig_collections
       - contigs
       - features
 
@@ -68,12 +71,36 @@ classes:
     description: A reference sequence, chromosome, scaffold, or contig that features are located on.
     slots:
       - contig_id
+      - member_of
       - length_bp
       - topology
       - taxonomic_lineage
       - lineage_confidence
       - generated_by
       - source_files
+
+  ContigCollection:
+    title: Contig collection
+    description: A set of contigs that belong together, such as one isolate genome, one metagenome-assembled genome (MAG) bin, or one whole assembly.
+    exact_mappings:
+      - kb_cdm:ContigCollection
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/41, so that "same
+        organism" can be asked of features through their contigs. Mapped to the KBase CDM class
+        of the same name (kbase/cdm-schema src/linkml/cdm_bioentity.yaml, commit c1a59b9, read
+        2026-09-25), whose Contig_x_ContigCollection table records the same membership.
+      - Assembly and bin statistics (N50, CheckM completeness and contamination) are left to
+        CDM and source catalogues; this model only records membership.
+    slots:
+      - collection_id
+      - collection_type
+      - name
+      - taxonomic_lineage
+      - generated_by
+      - source_files
+    slot_usage:
+      collection_id:
+        identifier: true
 
   Feature:
     title: Feature
@@ -86,6 +113,7 @@ classes:
         Terms) this same class also holds.
     slots:
       - feature_id
+      - stable_identifiers
       - seqid
       - source
       - type
@@ -160,6 +188,12 @@ slots:
     description: Exact upper endpoint or a bound before or after the reported coordinate.
     range: EndpointStatusEnum
     required: true
+  contig_collections:
+    title: Contig collections
+    multivalued: true
+    inlined_as_list: true
+    range: ContigCollection
+    description: Every ContigCollection that this dataset's Contigs name in member_of.
   contigs:
     title: Contigs
     multivalued: true
@@ -177,6 +211,28 @@ slots:
     title: Contig ID
     identifier: true
     description: Native NMDC or source-system identifier for the contig or scaffold.
+  member_of:
+    title: Member of
+    multivalued: true
+    range: ContigCollection
+    description: Contig collections this contig belongs to, for example its isolate genome, or both its assembly and its MAG bin.
+    notes:
+      - Multivalued because one metagenome contig belongs to its assembly and can also be binned
+        into a MAG. Membership in a bin is a statement by the binning workflow, so the bin's
+        own generated_by names that workflow rather than the assembly.
+  collection_id:
+    title: Collection ID
+    description: Identifier of the genome, bin or assembly, from the system that defined it.
+    notes:
+      - Examples are an NMDC assembly workflow execution (nmdc:wfmgas-...), an NMDC MAG bin name,
+        or a JGI IMG taxon or Data Portal record. Use a CURIE when the identifier has one.
+  collection_type:
+    title: Collection type
+    range: ContigCollectionTypeEnum
+    description: What kind of contig collection this is.
+  name:
+    title: Name
+    description: Human-readable name, such as an organism and strain or a bin label.
   length_bp:
     title: Length (bp)
     range: integer
@@ -206,6 +262,23 @@ slots:
   feature_id:
     title: Feature ID
     description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
+  stable_identifiers:
+    title: Stable identifiers
+    multivalued: true
+    description: Identifiers an authority assigns to this feature and keeps across releases, as opposed to feature_id, which only needs to be unique within this Dataset.
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/44. The AgBioData GFF3
+        recommendations advise "NOT using the ID attribute to specify the globally unique,
+        persistent identifier", and NCBI says its GFF3 IDs are "not intended to be used as stable
+        feature identifiers" (both read 2026-09-23). feature_id stays the file-local key.
+      - Use a CURIE when a prefix exists, for example an NCBI GeneID from a RefSeq Dbxref
+        (GeneID:1096515). A locus tag has no registered prefix and is written as it appears.
+      - NMDC annotation files carry no such identifier for their own genes. The IMG gene oid in
+        the KO and EC files (column 2 of Annotation KEGG Orthology, subject_gene_ids in KO_EC
+        Annotation GFF) identifies the reference gene the query was aligned to, not the
+        annotated gene, so it does not belong here. Checked 2026-09-25 on
+        nmdc:wfmgan-11-grwgtd27.2, where both files give 2776147680 for the hit of
+        nmdc:wfmgan-11-grwgtd27.2_0016_3_1208.
   seqid:
     title: Sequence ID
     range: Contig
@@ -363,6 +436,33 @@ slots:
         a data gap to fill in.
 
 enums:
+  ContigCollectionTypeEnum:
+    title: Contig collection type
+    description: Kind of contig collection, using the values and descriptions of KBase CDM ContigCollectionType.
+    notes:
+      - Values copied from kbase/cdm-schema src/linkml/cdm_bioentity.yaml at commit c1a59b9 (read
+        2026-09-25), which takes them from Genomics Standards Consortium checklists.
+    permissible_values:
+      isolate:
+        description: Sequences assembled from DNA of isolated organism.
+      mag:
+        title: Metagenome-Assembled Genome
+        description: Sequences assembled from DNA of mixed community and binned.
+        meaning: mixs:0010011
+      metagenome:
+        description: Sequences assembled from DNA of mixed community.
+        meaning: mixs:0010007
+      metatranscriptome:
+        description: Sequences assembled from RNA of mixed community.
+      sag:
+        title: Single Amplified Genome
+        description: Sequences assembled from DNA of single cell.
+        meaning: mixs:0010010
+      virus:
+        description: Sequences assembled from uncultivated virus genome (DNA/RNA).
+        meaning: mixs:0010012
+      marker:
+        description: Sequences from targeted region of DNA.
   TopologyEnum:
     description: Reference topology used by location validation and distance queries.
     permissible_values:

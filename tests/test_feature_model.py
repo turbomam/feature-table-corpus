@@ -99,12 +99,28 @@ class ValidationTests(unittest.TestCase):
             (lambda d: d["features"][1]["parent"].append(d["features"][0]["feature_id"]), "duplicate parent"),
             (lambda d: d["features"].append(copy.deepcopy(d["features"][0])), "duplicate feature_id"),
             (lambda d: d["contigs"].append(copy.deepcopy(d["contigs"][0])), "duplicate contig_id"),
+            (lambda d: d["contigs"][0].update(member_of=["missing"]), "unknown member_of collection"),
+            (lambda d: d["contigs"][0]["member_of"].append(d["contigs"][0]["member_of"][0]), "duplicate member_of"),
+            (lambda d: d["contig_collections"].append(copy.deepcopy(d["contig_collections"][0])),
+             "duplicate collection_id"),
             (lambda d: d["features"][0].update(parent=[d["features"][0]["feature_id"]]), "parent cycle"),
             (lambda d: d["features"][0].update(parent=[d["features"][1]["feature_id"]]), "parent cycle"),
         )
         for change, expected in cases:
             with self.subTest(expected=expected):
                 self.reject(change, expected)
+
+    def test_membership_and_stable_identifiers_shapes(self):
+        """Issues 41 and 44: collection types are closed; stable identifiers are a list."""
+        self.reject(lambda d: d["contig_collections"][0].update(collection_type="genome"), "is not one of")
+        self.reject(lambda d: d["contig_collections"][0].pop("collection_id"), "required")
+        self.reject(lambda d: d["contig_collections"][0].update(member_of=["x"]), "Additional properties")
+        data = copy.deepcopy(self.example)
+        data["features"][0]["stable_identifiers"] = ["GeneID:1096515", "SCO5087"]
+        self.assertEqual(validation_errors(data, self.validator), [])
+        # A contig that belongs to nothing stays valid: membership is optional.
+        data["contigs"][0].pop("member_of")
+        self.assertEqual(validation_errors(data, self.validator), [])
 
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
@@ -143,8 +159,12 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        self.assertEqual(len(rows), 39)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 28)
+        # 48 pairs and 32 admissible since ContigCollection, member_of and stable_identifiers
+        # (issues 41 and 44); the membership and identifier lists flatten as child tables.
+        self.assertEqual(len(rows), 48)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 32)
+        self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
+        self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
         self.assertIn(('Attribute', 'key'), rows)
@@ -274,6 +294,22 @@ class DatabaseTests(unittest.TestCase):
         con = duckdb.connect(str(self.db))
         self.addCleanup(con.close)
         return con
+
+    def test_features_reach_their_collection_through_contigs(self):
+        con = self.connect()
+        rows = con.execute("""
+            SELECT DISTINCT cc.collection_id, cc.collection_type
+            FROM feature f
+            JOIN contig c ON f.seqid = c.contig_id
+            JOIN contig_collection cc ON list_contains(c.member_of, cc.collection_id)
+        """).fetchall()
+        self.assertEqual(rows, [("nmdc:wfmgas-11-19jh9v28.1", "metagenome")])
+        # Every feature in the example resolves to that one collection.
+        unresolved = con.execute("""
+            SELECT count(*) FROM feature f JOIN contig c ON f.seqid = c.contig_id
+            WHERE len(coalesce(c.member_of, [])) = 0
+        """).fetchone()[0]
+        self.assertEqual(unresolved, 0)
 
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])
