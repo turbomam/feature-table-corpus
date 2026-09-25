@@ -82,17 +82,26 @@ verify-links:
 fixtures-generate:
     python3 scripts/make_malformed.py
 
-[doc("Install the checksum-pinned GenomeTools validator in local/.")]
+[doc("Install checksum-pinned GenomeTools and GFF3toolkit in local/. AGAT is blocked; see the report.")]
 [group("Corpus")]
-validity-install:
+validity-install: validity-install-genometools validity-install-gff3toolkit
+
+[doc("Install checksum-pinned GenomeTools in local/.")]
+[group("Corpus")]
+validity-install-genometools:
     uv run --python '>=3.11.8' python scripts/install_genometools.py
+
+[doc("Install checksum-pinned GFF3toolkit QC in local/ with Python 3.11.15.")]
+[group("Corpus")]
+validity-install-gff3toolkit:
+    uv run --python 3.11.15 python scripts/install_gff3toolkit.py
 
 [doc("Measure retained GFF3 files and regenerate the validity report.")]
 [group("Corpus")]
 validity-report:
     uv run --with pyyaml python3 scripts/validate_corpus.py
 
-[doc("Check fixture validity labels and reproduce validator results.")]
+[doc("Check per-profile rule expectations, fixture labels, and retained validator results.")]
 [group("Corpus")]
 validity-check:
     uv run --with pyyaml python3 scripts/validate_corpus.py --check

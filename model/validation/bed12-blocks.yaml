@@ -1,0 +1,19 @@
+# Validator expectations for the conversion contract model/profiles/bed12-blocks.yaml.
+# Kept out of the contract so its checksum in the conversion report stays stable.
+profile: bed12-blocks/1.0.0
+# Independent validator observations; reproduce with just validity-check.
+validation:
+  scope: These GFF3 validator commands do not apply to this source format; empty failure lists do not
+    mean validation passed.
+  genometools:
+    status: not_applicable
+    expected_failures: {}
+  gff3toolkit:
+    status: not_applicable
+    expected_failures: {}
+  agat:
+    status: blocked
+    expected_failures: null
+    reason: No measured rule list. See analyses/format-validation/agat-blocker.json for the 2026-09-25
+      macOS arm64 dependency failure.
+  cases: {}

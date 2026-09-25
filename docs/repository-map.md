@@ -16,6 +16,7 @@ model/                          This project's proposed contracts and instances
   profiles/                     Versioned, executable source conversion contracts
   dialects/                     LinkML schemas for a source's own rows, validated before mapping
   transforms/                   linkml-map specifications from a dialect to the model
+  validation/                   Expected validator rules for each contract or dialect
   examples/                     Worked examples, source-artifact and JGI input manifests
 analyses/                       Source-specific measurements and selection reports
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts
@@ -57,9 +58,12 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 `just check` keeps its validation scope: it does not collect live NMDC records, sample
 files, regenerate corpus fixtures, or publish reports. `uv` can still need the network
 to obtain dependencies; `UV_OFFLINE=1` uses cached dependencies when available.
-Run `just validity-install` once to install the checksum-pinned GenomeTools binary
-under `local/tools/`. `validity-check` compares independent GFF3 verdicts and
-diagnostics with the retained report; `validity-report` explicitly regenerates it.
+Run `just validity-install` once to install checksum-pinned GenomeTools and
+GFF3toolkit under `local/tools/`. `validity-check` checks the exact rule expectations
+in `model/validation/` and compares independent GFF3 verdicts and diagnostics with the
+retained report. `validity-report` regenerates it only if the expectations match.
+AGAT's macOS arm64 installation blocker is recorded in the
+[validation report documentation](../analyses/format-validation/README.md).
 The optional pinned-upstream audit regression requires a retained schema supplied
 through `PINNED_GFF_SCHEMA`; otherwise that test reports a skip.
 Conversion commands and regression tests use `requirements-conversion.txt` to pin

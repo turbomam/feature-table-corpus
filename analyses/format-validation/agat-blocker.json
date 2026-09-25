@@ -1,0 +1,17 @@
+{
+  "validator": "AGAT",
+  "version": "1.7.0",
+  "status": "blocked",
+  "checked": "2026-09-25",
+  "platform": "osx-arm64",
+  "source_url": "https://codeload.github.com/NBISweden/AGAT/tar.gz/refs/tags/v1.7.0",
+  "source_sha256": "199ff4ad500827e7631e94f5fc1f40ea310dc048a0bdb82a3aaad06fbcd1f7a9",
+  "probe_url": "https://github.com/mamba-org/micromamba-releases/releases/download/2.9.0-0/micromamba-osx-arm64",
+  "probe_sha256": "ec2a072f028e1a7cf20f3e2e74d5a8127cf5a5f27636375b5359811565f4e5be",
+  "command": "local/tools/micromamba-osx-arm64 create --no-rc --root-prefix \"$PWD/local/tools/mamba\" --prefix \"$PWD/local/tools/agat-1.7.0\" --platform osx-arm64 --override-channels -c conda-forge -c bioconda 'agat=1.7.0' --dry-run --json",
+  "exit_code": 1,
+  "solver_problems": [
+    "nothing provides perl-socket needed by perl-test-requiresinternet-0.05-pl5321hdfd78af_1"
+  ],
+  "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+}
