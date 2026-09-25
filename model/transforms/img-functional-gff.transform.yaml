@@ -1,0 +1,51 @@
+id: https://w3id.org/ber-data/transforms/img-functional-gff-to-feature-model
+title: IMG functional annotation GFF rows to the feature model
+description: >-
+  linkml-map specification from the img_functional_gff dialect (model/dialects/img-functional-gff.yaml)
+  to Feature in model/schema/ber_feature_model.yaml. It maps the nine columns and the typed column 9
+  keys that have a Feature slot. The reverse specification is generated from this one with
+  `linkml-map invert`, not written by hand.
+comments:
+  - >-
+    Four things are done in scripts/img_functional_map.py instead, because linkml-map 0.5.4
+    can't express them here. (1) Column 9 becomes one Attribute per value, in file order, as
+    strings: MELT keeps a list as one value, keeps non-string types, and follows the spec's
+    slot order. (2) coordinate_system is the constant "contig": a constant slot makes
+    `linkml-map invert` fail (inverter.py line 144). (3) Dataset.contigs holds one Contig per
+    distinct seqid: linkml-map refuses to build records inside an expression. (4) `invert`
+    drops mirror_source from the StrandEnum derivation below, so the script restores it.
+source_schema: model/dialects/img-functional-gff.yaml
+target_schema: model/schema/ber_feature_model.yaml
+class_derivations:
+  Feature:
+    populated_from: ImgFunctionalGffRow
+    slot_derivations:
+      feature_id:
+        populated_from: ID
+      seqid:
+        populated_from: seqid
+      source:
+        populated_from: source
+      type:
+        # An expression, so the source enum is passed through as its text.
+        expr: type
+      start:
+        populated_from: start
+      end:
+        populated_from: end
+      score:
+        populated_from: score
+      strand:
+        populated_from: strand
+      phase:
+        populated_from: phase
+      product:
+        populated_from: product
+      product_source:
+        populated_from: product_source
+      parent:
+        populated_from: Parent
+enum_derivations:
+  StrandEnum:
+    populated_from: Strand
+    mirror_source: true

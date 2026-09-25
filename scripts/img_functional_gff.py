@@ -29,6 +29,10 @@ def row_slots(schema=SCHEMA):
     return {slot.name: slot for slot in view.class_induced_slots(ROW_CLASS)}
 
 
+# Multivalued keys that repeat as a key, one value per occurrence, instead of
+# taking a comma list. Their values may contain commas.
+ONE_VALUE_PER_OCCURRENCE = {"shortened"}
+
 # Source keys that are not valid slot names, mapped one by one. Anything else
 # keeps its source spelling, so a key the dialect doesn't write stays unknown.
 KEY_TO_SLOT = {"e-value": "e_value"}
@@ -92,7 +96,9 @@ def parse_row(line_number, text, slots):
             row.setdefault(name, value)
             continue
         if slot.multivalued:
-            parts = value.split(",") if name != "shortened" else [value]
+            if name in row and name not in ONE_VALUE_PER_OCCURRENCE:
+                raise DialectError(f"line {line_number}: {key} repeats; this dialect writes one comma list")
+            parts = [value] if name in ONE_VALUE_PER_OCCURRENCE else value.split(",")
             try:
                 row.setdefault(name, []).extend(convert(part, slot) for part in parts)
             except ValueError:
@@ -107,24 +113,99 @@ def parse_row(line_number, text, slots):
     return row
 
 
-def parse(path, slots=None):
+def parse_lines(lines, source_file, slots=None):
     slots = slots or row_slots()
     rows = []
+    for number, raw in enumerate(lines, start=1):
+        text = raw.rstrip("\n").rstrip("\r")
+        if not text:
+            raise DialectError(f"line {number}: blank line")
+        if text.startswith("#"):
+            raise DialectError(f"line {number}: comment or directive; this dialect has none")
+        rows.append(parse_row(number, text, slots))
+    return {"source_file": str(source_file), "rows": rows}
+
+
+def parse(path, slots=None):
     with open(path, encoding="utf-8", newline="") as handle:
-        for number, raw in enumerate(handle, start=1):
-            text = raw.rstrip("\n").rstrip("\r")
-            if not text:
-                raise DialectError(f"line {number}: blank line")
-            if text.startswith("#"):
-                raise DialectError(f"line {number}: comment or directive; this dialect has none")
-            rows.append(parse_row(number, text, slots))
-    return {"source_file": str(path), "rows": rows}
+        return parse_lines(handle, path, slots)
+
+
+def value_text(value):
+    """Text for a typed value. A float is written as Python's shortest repr, so a
+    source spelling such as 84.50 comes back as 84.5; see the round-trip report."""
+    return repr(value) if isinstance(value, float) else str(value)
+
+
+def occurrences(row):
+    """Yield (key, [values]) for each column 9 occurrence, in source order."""
+    taken = {}
+    for key in row["attribute_order"]:
+        name = slot_name(key)
+        value = row[name]
+        if isinstance(value, list):
+            if name in ONE_VALUE_PER_OCCURRENCE:
+                index = taken.get(name, 0)
+                taken[name] = index + 1
+                yield key, [value[index]]
+            else:
+                yield key, value
+        else:
+            yield key, [value]
+
+
+LINE_BREAKS = ("\t", "\n", "\r")
+
+
+def checked(text, where, forbidden):
+    """IMG writes no escapes, so a delimiter inside a value can't be written back."""
+    for character in forbidden:
+        if character in text:
+            raise DialectError(f"{where}: {text!r} contains {character!r}, which this dialect can't escape")
+    return text
+
+
+def write_row(row):
+    where = f"line {row.get('line', '?')}"
+    parts = []
+    for key, values in occurrences(row):
+        name = slot_name(key)
+        comma_list = isinstance(row[name], list) and name not in ONE_VALUE_PER_OCCURRENCE
+        forbidden = LINE_BREAKS + (";",) + ((",",) if comma_list else ())
+        texts = [checked(value_text(v), f"{where} {key}", forbidden) for v in values]
+        parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}=" + ",".join(texts))
+    columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
+               value_text(row["score"]) if "score" in row else ".", row["strand"],
+               str(row["phase"]) if "phase" in row else ".", ";".join(parts)]
+    for column in columns[:8]:
+        checked(column, where, LINE_BREAKS)
+    return "\t".join(columns)
+
+
+def write(document):
+    """GFF text for a document, refused unless it parses back to the same rows.
+
+    The reparse catches every value the dialect can't represent (a delimiter,
+    nan or inf, a character UTF-8 can't encode), rather than each one by name.
+    """
+    text = "".join(write_row(row) + "\n" for row in document["rows"])
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError as error:
+        raise DialectError(f"output can't be encoded as UTF-8: {error}") from None
+    reparsed = parse_lines(text.splitlines(keepends=True), document.get("source_file", ""))
+    for row, again in zip(document["rows"], reparsed["rows"], strict=True):
+        if {**row, "line": 0} != {**again, "line": 0}:
+            changed = sorted(k for k in set(row) | set(again) if row.get(k) != again.get(k))
+            raise DialectError(f"line {row.get('line', '?')}: written text parses back differently in {changed}")
+    return text
 
 
 def cross_checks(document):
     """Rules a schema can't express, each measured on the isolate files.
 
-    Phase only on CDS; start <= end; strand "." only on CRISPR and repeat_unit;
+    Each key once per row, except ONE_VALUE_PER_OCCURRENCE keys; phase only on
+    CDS; start <= end; strand "." only on CRISPR and repeat_unit;
     IDs built as <seqid>_<start>_<end>, except that a repeat_unit takes its
     CRISPR's ID plus _DR1, _DR2 ... in file order, and its Parent must be a
     CRISPR row in the same file.
@@ -135,6 +216,10 @@ def cross_checks(document):
     for row in document["rows"]:
         where = f"line {row['line']}"
         kind = row.get("type")
+        order = row.get("attribute_order", [])
+        for key in sorted({k for k in order if order.count(k) > 1}):
+            if slot_name(key) not in ONE_VALUE_PER_OCCURRENCE:
+                problems.append(f"{where}: {key} occurs {order.count(key)} times")
         if row.get("start", 0) > row.get("end", 0):
             problems.append(f"{where}: start > end")
         if ("phase" in row) != (kind == "CDS"):
@@ -156,26 +241,31 @@ def cross_checks(document):
     return problems
 
 
-def validate(path, max_errors=20):
+def problems(document):
+    """Schema and cross-row problems for a parsed document; empty means valid."""
     from linkml.validator import Validator
     from linkml.validator.plugins import JsonschemaValidationPlugin
+    # closed=True rejects keys the dialect doesn't declare; set here rather than
+    # relying on the plugin's default.
+    validator = Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
+    report = validator.validate(document, TARGET)
+    return [result.message for result in report.results] + cross_checks(document)
+
+
+def validate(path, max_errors=20):
     try:
         document = parse(path)
     except DialectError as error:
         print(f"INVALID  {path}: {error}")
         return 1
-    # closed=True rejects keys the dialect doesn't declare; set here rather than
-    # relying on the plugin's default.
-    validator = Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
-    report = validator.validate(document, TARGET)
-    problems = [result.message for result in report.results] + cross_checks(document)
-    for message in problems[:max_errors]:
+    problems_found = problems(document)
+    for message in problems_found[:max_errors]:
         print(f"  {message}")
-    if len(problems) > max_errors:
-        print(f"  ... {len(problems) - max_errors} more")
-    status = "VALID" if not problems else "INVALID"
-    print(f"{status:8} {path}: {len(document['rows'])} rows, {len(problems)} problem(s)")
-    return 0 if not problems else 1
+    if len(problems_found) > max_errors:
+        print(f"  ... {len(problems_found) - max_errors} more")
+    status = "VALID" if not problems_found else "INVALID"
+    print(f"{status:8} {path}: {len(document['rows'])} rows, {len(problems_found)} problem(s)")
+    return 0 if not problems_found else 1
 
 
 def main(argv=None):
