@@ -208,6 +208,23 @@ nmdc-render work=nmdc_work output=nmdc_report:
 nmdc-sample:
     python3 scripts/harvest_nmdc.py
 
+# ---- JGI files that need a login -------------------------------------------
+
+[doc("Print download URLs for the JGI files in model/examples/jgi-inputs.yaml.")]
+[group("JGI")]
+jgi-urls:
+    uv run --with pyyaml python3 scripts/jgi_inputs.py urls
+
+[doc("Check sizes and md5s of JGI files placed under local/jgi/RECORD/.")]
+[group("JGI")]
+jgi-verify dir="local/jgi":
+    uv run --with pyyaml python3 scripts/jgi_inputs.py verify --dir "$1"
+
+[doc("Refresh the JGI file lists from the anonymous search API (network).")]
+[group("JGI")]
+jgi-collect:
+    uv run --with pyyaml python3 scripts/jgi_inputs.py collect
+
 # ---- Versioned conversions -------------------------------------------------
 
 [doc("Build NMDC protein/CDS context; supply source URI options.")]
