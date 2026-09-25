@@ -111,6 +111,11 @@ def reverse(dataset, source_file, transformers=None):
     promoted = {name for cd in derivations for name in cd.slot_derivations} - dialect.CORE
     rows = []
     for number, feature in enumerate(dataset["features"], start=1):
+        # The dialect has only contig coordinates; dropping any other system would
+        # silently reinterpret protein positions as nucleotide positions.
+        if feature.get("coordinate_system") != "contig":
+            raise ValueError(f"{feature['feature_id']}: coordinate_system is "
+                             f"{feature.get('coordinate_system')!r}; this dialect has only contig")
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system")}
         # linkml-map reduces a one-item parent list to the dialect's single Parent,
         # and raises TransformationError for two or more.

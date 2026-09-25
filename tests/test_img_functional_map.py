@@ -105,6 +105,12 @@ class MappingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, f"{dialect_name} is an attribute but not set"):
                 self.back(edited)
 
+    def test_only_contig_coordinates_map_back(self):
+        edited = copy.deepcopy(self.dataset)
+        self.feature("ctg_01_100_1299", edited)["coordinate_system"] = "protein"
+        with self.assertRaisesRegex(ValueError, "this dialect has only contig"):
+            self.back(edited)
+
     def test_promoted_field_needs_its_attribute_copy(self):
         edited = copy.deepcopy(self.dataset)
         feature = self.feature("ctg_01_100_1299", edited)
