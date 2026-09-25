@@ -105,6 +105,10 @@ def rows_from_attributes(feature_attributes, slots):
 def reverse(dataset, source_file, transformers=None):
     _, to_dialect = transformers or _transformers()
     slots = dialect.row_slots()
+    # Column 9 keys that the specification also maps to a Feature slot.
+    derivations = to_dialect.specification.class_derivations
+    derivations = derivations.values() if isinstance(derivations, dict) else derivations
+    promoted = {name for cd in derivations for name in cd.slot_derivations} - dialect.CORE
     rows = []
     for number, feature in enumerate(dataset["features"], start=1):
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system")}
@@ -115,6 +119,8 @@ def reverse(dataset, source_file, transformers=None):
             row = rows_from_attributes(feature.get("attributes", []), slots)
         except ValueError as error:
             raise ValueError(f"{feature['feature_id']}: {error}") from None
+        for name in promoted & row.keys() - mapped.keys():
+            raise ValueError(f"{feature['feature_id']}: {name} is an attribute but not set on the Feature")
         for name, value in mapped.items():
             if name in dialect.CORE:
                 continue
@@ -187,6 +193,15 @@ def report_errors(errors):
     return bool(errors)
 
 
+def write_output(path, text):
+    try:
+        path.write_text(text, encoding="utf-8")
+    except OSError as error:
+        report_errors([f"output: {error}"])
+        return 1
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
@@ -211,8 +226,7 @@ def main(argv=None):
             errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        args.output.write_text(json.dumps(dataset, indent=1) + "\n")
-        return 0
+        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
@@ -229,8 +243,7 @@ def main(argv=None):
                 errors = [f"dialect: {m}" for m in dialect.problems(document)]
         if report_errors(errors):
             return 1
-        args.output.write_text(dialect.write(document))
-        return 0
+        return write_output(args.output, dialect.write(document))
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:
         print(f"  {problem}")

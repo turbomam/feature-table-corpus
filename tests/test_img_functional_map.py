@@ -98,6 +98,13 @@ class MappingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ko values are not contiguous"):
             self.back(edited)
 
+    def test_attribute_needs_its_feature_copy(self):
+        for slot, dialect_name in (("product", "product"), ("product_source", "product_source")):
+            edited = copy.deepcopy(self.dataset)
+            del self.feature("ctg_01_100_1299", edited)[slot]
+            with self.assertRaisesRegex(ValueError, f"{dialect_name} is an attribute but not set"):
+                self.back(edited)
+
     def test_promoted_field_needs_its_attribute_copy(self):
         edited = copy.deepcopy(self.dataset)
         feature = self.feature("ctg_01_100_1299", edited)
@@ -174,6 +181,17 @@ class CommandTests(unittest.TestCase):
                 self.assertEqual(status, 1, args)
                 self.assertIn("input: ", err)
                 self.assertFalse(out.exists())
+
+    def test_unwritable_output_is_reported(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset = Path(tmp) / "d.json"
+            self.assertEqual(self.run_cli("forward", FIXTURE, dataset)[0], 0)
+            for args in (("forward", FIXTURE, Path(tmp) / "no/such/dir/out.json"),
+                         ("reverse", dataset, Path(tmp) / "no/such/dir/out.gff")):
+                status, err = self.run_cli(*args)
+                self.assertEqual(status, 1, args)
+                self.assertIn("output: ", err)
 
     def test_both_directions_write_valid_output(self):
         import tempfile
