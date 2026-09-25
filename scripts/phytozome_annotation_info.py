@@ -10,6 +10,7 @@ transcripts: one table row per mRNA row, matched on pacid, with the same
 transcript and gene names. Each file should pass its own `validate` first.
 """
 import argparse
+import io
 import json
 from pathlib import Path
 import sys
@@ -31,8 +32,8 @@ LIST_SLOTS = ("Pfam", "Panther", "ec", "KOG", "KO", "GO")
 PAC = "PAC:"
 
 
-class DialectError(ValueError):
-    pass
+# One error type for both dialects, since this parser reuses the GFF3 line reader.
+DialectError = gff3.DialectError
 
 
 def parse_row(line_number, text):
@@ -57,7 +58,7 @@ def parse_row(line_number, text):
 def parse_lines(lines, source_file):
     rows, number = [], 0
     for number, raw in enumerate(lines, start=1):
-        text = raw.rstrip("\n").rstrip("\r")
+        text = gff3.strip(number, raw)
         if number == 1:
             if tuple(text.split("\t")) != HEADER:
                 raise DialectError(f"line 1: header is not the {len(HEADER)} Phytozome columns")
@@ -100,7 +101,7 @@ def write_row(row):
 def write(document):
     """Table text for a document, refused unless it parses back to the same rows."""
     text = "\t".join(HEADER) + "\n" + "".join(write_row(row) + "\n" for row in document["rows"])
-    reparsed = parse_lines(text.splitlines(keepends=True), document.get("source_file", ""))
+    reparsed = parse_lines(io.StringIO(text, newline=""), document.get("source_file", ""))
     for row, again in zip(document["rows"], reparsed["rows"], strict=True):
         if {**row, "line": 0} != {**again, "line": 0}:
             changed = sorted(k for k in set(row) | set(again) if row.get(k) != again.get(k))
@@ -136,6 +137,7 @@ def problems(document):
     """Schema and cross-row problems for a parsed document; empty means valid."""
     from linkml.validator import Validator
     from linkml.validator.plugins import JsonschemaValidationPlugin
+    # See phytozome_gene_exons.schema_validator: the generated schema is closed either way.
     validator = Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
     report = validator.validate(document, TARGET)
     rows = document["rows"]
@@ -146,7 +148,7 @@ def problems(document):
 
 def gff3_transcripts(path):
     """{pacid: (mRNA Name, gene Name, line)} from a gene_exons GFF3, read as a stream."""
-    transcripts, gene_names = {}, {}
+    transcripts, gene_names, problems = {}, {}, []
     with gff3.open_text(path) as handle:
         lines = iter(handle)
         gff3.read_header(lines)
@@ -154,8 +156,12 @@ def gff3_transcripts(path):
             if row.get("type") == "gene":
                 gene_names[row.get("ID")] = row.get("Name")
             elif row.get("type") == "mRNA":
-                transcripts[str(row.get("pacid"))] = (row.get("Name"), gene_names.get(row.get("Parent")), row["line"])
-    return transcripts
+                pacid = str(row.get("pacid"))
+                if pacid in transcripts:
+                    problems.append(f"GFF3 line {row['line']}: pacid {pacid} repeats line {transcripts[pacid][2]}")
+                    continue
+                transcripts[pacid] = (row.get("Name"), gene_names.get(row.get("Parent")), row["line"])
+    return transcripts, problems
 
 
 def join_problems(transcripts, document):
@@ -168,7 +174,9 @@ def join_problems(transcripts, document):
         pacid = pac[len(PAC):] if pac.startswith(PAC) else None
         found = unmatched.pop(pacid, None)
         if found is None:
-            problems.append(f"{where}: {pac!r} is not the pacid of any GFF3 mRNA row")
+            known = pacid in transcripts
+            problems.append(f"{where}: {pac!r} " + ("repeats an earlier table row" if known
+                                                      else "is not the pacid of any GFF3 mRNA row"))
             continue
         name, gene_name, line = found
         if row.get("transcriptName") != name:
@@ -193,7 +201,7 @@ def report(path, found, count, max_errors):
 def validate(path, max_errors=20):
     try:
         document = parse(path)
-    except DialectError as error:
+    except (DialectError, *gff3.READ_ERRORS) as error:
         print(f"INVALID  {path}: {error}")
         return 1
     return report(path, problems(document), len(document["rows"]), max_errors)
@@ -201,12 +209,12 @@ def validate(path, max_errors=20):
 
 def join(gff3_path, path, max_errors=20):
     try:
-        transcripts = gff3_transcripts(gff3_path)
+        transcripts, found = gff3_transcripts(gff3_path)
         document = parse(path)
-    except (DialectError, gff3.DialectError) as error:
+    except (DialectError, gff3.DialectError, *gff3.READ_ERRORS) as error:
         print(f"INVALID  {error}")
         return 1
-    found = join_problems(transcripts, document)
+    found += join_problems(transcripts, document)
     print(f"GFF3 {gff3_path}: {len(transcripts)} mRNA rows")
     return report(path, found, len(document["rows"]), max_errors)
 
@@ -232,9 +240,8 @@ def main(argv=None):
     document = parse(args.file)
     text = json.dumps(document, indent=1)
     if args.output:
-        args.output.write_text(text + "\n")
-    else:
-        print(text)
+        return gff3.write_output(args.output, text + "\n")
+    print(text)
     return 0
 
 

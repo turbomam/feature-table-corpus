@@ -172,7 +172,10 @@ the tests use a [constructed fixture](../tests/fixtures/phytozome/README.md).
 - Each mRNA's `pacid` appears once in the table, as `PAC:<pacid>`, with the mRNA's Name as
   `transcriptName` and its gene's Name as `locusName`. All 35,386 match in both directions.
 - In the table, one space separates values in `Pfam`, `Panther`, `ec`, `KOG`, `KO` and `GO`.
-  `ec` holds EC numbers, plus the non-EC token `EC:PROLINE-MULTI` in six rows, kept as written.
+  `ec` holds four-part EC numbers, plus the non-EC token `EC:PROLINE-MULTI` in six rows,
+  kept as written. Partial EC numbers such as `EC:1.1.1.-` are rejected, since none was read.
+- Both files use LF line endings and end with a newline; a carriage return, a missing final
+  newline, or a file with no data rows is rejected.
 
 `just dialect-validate-phytozome-gff3 FILE` reads plain or gzip-compressed GFF3 as a stream
 and validates rows in chunks of 5,000, so the whole genome is never one document. On the

@@ -1,7 +1,9 @@
 """The Phytozome gene_exons GFF3 and annotation_info dialects, and their join, reject single-row edits."""
 import contextlib
 import copy
+import gzip
 import io
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -69,13 +71,79 @@ class GeneExonsParseTests(unittest.TestCase):
             gff3.write(broken)
 
     def test_gzip_input_is_read_as_a_stream(self):
-        import gzip
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "case.gff3.gz"
             with gzip.open(path, "wt") as handle:
                 handle.write(GFF3.read_text())
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(gff3.validate(path), 0)
+
+
+def gzipped(text):
+    return gzip.compress(text.encode("utf-8"))
+
+
+class InputTests(unittest.TestCase):
+    """Unreadable, empty or unwritable input is reported, never raised or silently accepted."""
+
+    def status(self, function, data, name):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / name
+            path.write_bytes(data)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                return function(path), out.getvalue()
+
+    def assert_invalid(self, function, data, name, expected):
+        status, out = self.status(function, data, name)
+        self.assertEqual(status, 1, out)
+        self.assertIn("INVALID", out)
+        self.assertIn(expected, out)
+
+    def test_truncated_and_non_gzip_input(self):
+        whole = gzipped(GFF3.read_text())
+        self.assert_invalid(gff3.validate, whole[:len(whole) // 2], "case.gff3.gz", "ended before")
+        self.assert_invalid(gff3.validate, GFF3.read_bytes(), "case.gff3.gz", "Not a gzipped file")
+
+    def test_missing_path(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(gff3.validate(Path("/nonexistent/case.gff3")), 1)
+            self.assertEqual(table.validate(Path("/nonexistent/case.txt")), 1)
+            self.assertEqual(table.join(Path("/nonexistent/case.gff3"), TABLE), 1)
+        self.assertEqual(out.getvalue().count("No such file"), 3, out.getvalue())
+
+    def test_undecodable_byte(self):
+        data = TABLE.read_bytes().replace(b"Example domain", b"Example\xe9domain")
+        self.assert_invalid(table.validate, data, "case.txt", "can't decode")
+        data = GFF3.read_bytes().replace(b"scaffold_1", b"scaffold\xe9", 1)
+        self.assert_invalid(gff3.validate, data, "case.gff3", "can't decode")
+
+    def test_header_only_files_are_rejected(self):
+        head = "".join(GFF3.read_text().splitlines(keepends=True)[:2]).encode()
+        self.assert_invalid(gff3.validate, head, "case.gff3", "[] should be non-empty")
+        head = TABLE.read_text().splitlines(keepends=True)[0].encode()
+        self.assert_invalid(table.validate, head, "case.txt", "[] should be non-empty")
+
+    def test_carriage_returns_and_missing_final_newline_are_rejected(self):
+        for function, path in ((gff3.validate, GFF3), (table.validate, TABLE)):
+            text = path.read_text()
+            self.assert_invalid(function, text.replace("\n", "\r\n").encode(), path.name, "carriage return")
+            self.assert_invalid(function, text.rstrip("\n").encode(), path.name, "no final newline")
+
+    def test_parse_output_never_overwrites(self):
+        for module, path in ((gff3, GFF3), (table, TABLE)):
+            with tempfile.TemporaryDirectory() as tmp:
+                output = Path(tmp) / "out.json"
+                output.write_text("keep")
+                err = io.StringIO()
+                with contextlib.redirect_stderr(err):
+                    self.assertEqual(module.main(["parse", str(path), "--output", str(output)]), 1)
+                self.assertEqual(output.read_text(), "keep")
+                self.assertIn("File exists", err.getvalue())
+                fresh = Path(tmp) / "new.json"
+                self.assertEqual(module.main(["parse", str(path), "--output", str(fresh)]), 0)
+                self.assertEqual(json.loads(fresh.read_text())["rows"], module.parse(path)["rows"])
 
 
 class GeneExonsRuleTests(Case):
@@ -108,7 +176,7 @@ class GeneExonsRuleTests(Case):
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010%2C", "a percent escape")
         self.rejected(4, "Parent=Exa01g00010.1.EXv1", "Parent=Exa01g00010.1.EXv1,Exa01g00010.2.EXv1",
                       "a second value")
-        self.rejected(3, "longest=1", "longest=x", "longest 'x' is not a integer")
+        self.rejected(3, "longest=1", "longest=x", "longest 'x' is not an integer")
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010;start=5", "names a column")
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010;Name=Exa01g00010", "Name repeats")
 
@@ -192,6 +260,15 @@ class AnnotationInfoTests(Case):
         status, out = self.run_command(table.validate, [TABLE.read_text()], [".txt"])
         self.assertEqual(status, 0, out)
 
+    def test_a_form_feed_in_free_text_is_valid_and_written_back(self):
+        text = table_row(1, "Example domain", "Example\fdomain")
+        status, out = self.run_command(table.validate, [text], [".txt"])
+        self.assertEqual(status, 0, out)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "case.txt"
+            path.write_text(text)
+            self.assertEqual(table.write(table.parse(path)), text)
+
     def test_file_shape(self):
         self.rejected(0, "#pacId", "pacId", "header is not the 14 Phytozome columns")
         self.rejected(1, "\tPF00001 PF00002\t", "\tPF00001 PF00002 ", "13 columns, expected 14")
@@ -206,7 +283,8 @@ class AnnotationInfoTests(Case):
         self.rejected(1, "PAC:90000001", "90000001", "'90000001' does not match")
         self.rejected(1, "PF00002", "PF2", "'PF2' does not match")
         self.rejected(1, "PTHR10000.SF1", "PTHR10000-SF1", "'PTHR10000-SF1' does not match")
-        self.rejected(3, "EC:1.1.1.-", "1.1.1.-", "'1.1.1.-' does not match")
+        self.rejected(3, "EC:1.1.1.1", "1.1.1.1", "'1.1.1.1' does not match")
+        self.rejected(3, "EC:1.1.1.1", "EC:1.1.1.-", "'EC:1.1.1.-' does not match")
         self.rejected(1, "KOG0001", "KOG1", "'KOG1' does not match")
         self.rejected(1, "K00001", "KO:K00001", "'KO:K00001' does not match")
         self.rejected(3, "GO:0000003", "GO:3", "'GO:3' does not match")
@@ -237,6 +315,15 @@ class JoinTests(Case):
         self.assertEqual(status, 1, out)
         self.assertIn("'PAC:90000004' is not the pacid of any GFF3 mRNA row", out)
         self.assertIn("GFF3 line 16: mRNA 'Exa01g00020.1' pacid 90000003 has no table row", out)
+
+    def test_repeated_pacids_are_reported(self):
+        status, out = self.joined(edited(GFF3, 10, "pacid=90000002", "pacid=90000001"), TABLE.read_text())
+        self.assertEqual(status, 1, out)
+        self.assertIn("GFF3 line 11: pacid 90000001 repeats line 4", out)
+        status, out = self.joined(GFF3.read_text(), table_row(3, "PAC:90000003", "PAC:90000001"))
+        self.assertEqual(status, 1, out)
+        self.assertIn("line 4: 'PAC:90000001' repeats an earlier table row", out)
+        self.assertIn("pacid 90000003 has no table row", out)
 
     def test_names_must_agree(self):
         status, out = self.joined(GFF3.read_text(), table_row(2, "\tExa01g00010.2\t", "\tExa01g00010.3\t"))

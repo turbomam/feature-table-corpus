@@ -15,8 +15,9 @@ comments:
     TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
     of that file is kept in this repository. The test fixture is constructed.
   - >-
-    The file has no score, no percent escapes, and no commas in column 9, so a Parent never
-    names two rows. The parser rejects all three rather than guessing what they would mean.
+    The file has LF line endings and a final newline, no score, no percent escapes, and no
+    commas in column 9, so a Parent never names two rows. The parser rejects each of these
+    rather than guessing what it would mean.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -50,6 +51,7 @@ classes:
         multivalued: true
         inlined_as_list: true
         required: true
+        minimum_cardinality: 1
 
   PhytozomeGeneExonsRow:
     description: One nine-column feature row.

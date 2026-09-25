@@ -11,6 +11,7 @@ a separate step.
 """
 import argparse
 import gzip
+import io
 import json
 from pathlib import Path
 import re
@@ -49,8 +50,18 @@ def open_text(path):
     return open(path, encoding="utf-8", newline="")
 
 
-def strip(raw):
-    return raw.rstrip("\n").rstrip("\r")
+# What a malformed or unreadable input raises while it is read.
+READ_ERRORS = (OSError, EOFError, UnicodeDecodeError)
+
+
+def strip(number, raw):
+    """A line's text, refused unless it ends in LF alone, as every measured line does."""
+    if not raw.endswith("\n"):
+        raise DialectError(f"line {number}: no final newline")
+    text = raw[:-1]
+    if "\r" in text:
+        raise DialectError(f"line {number}: carriage return; this dialect writes LF line endings")
+    return text
 
 
 def read_header(lines):
@@ -58,7 +69,10 @@ def read_header(lines):
     found = {}
     for number, (key, directive) in enumerate((("gff_version", "##gff-version"),
                                                ("annot_version", "##annot-version")), start=1):
-        text = strip(next(lines, ""))
+        raw = next(lines, None)
+        if raw is None:
+            raise DialectError(f"line {number}: expected '{directive} <value>', found end of file")
+        text = strip(number, raw)
         name, _, value = text.partition(" ")
         if name != directive or not value:
             raise DialectError(f"line {number}: expected '{directive} <value>', found {text!r}")
@@ -107,13 +121,13 @@ def parse_row(line_number, text, slots):
         try:
             row[key] = int(value)
         except ValueError:
-            raise DialectError(f"line {line_number}: {key} {value!r} is not a integer") from None
+            raise DialectError(f"line {line_number}: {key} {value!r} is not an integer") from None
     return row
 
 
 def iter_rows(lines, slots, first_line=3):
     for number, raw in enumerate(lines, start=first_line):
-        text = strip(raw)
+        text = strip(number, raw)
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
@@ -166,7 +180,7 @@ def write(document):
         text.encode("utf-8")
     except UnicodeEncodeError as error:
         raise DialectError(f"output can't be encoded as UTF-8: {error}") from None
-    reparsed = parse_lines(text.splitlines(keepends=True), document.get("source_file", ""))
+    reparsed = parse_lines(io.StringIO(text, newline=""), document.get("source_file", ""))
     for key in ("gff_version", "annot_version"):
         if reparsed[key] != document[key]:
             raise DialectError(f"{key} parses back differently")
@@ -320,7 +334,9 @@ def cross_checks(document):
 def schema_validator():
     from linkml.validator import Validator
     from linkml.validator.plugins import JsonschemaValidationPlugin
-    # closed=True rejects keys the dialect doesn't declare.
+    # LinkML's generated JSON Schema already sets additionalProperties false, so an
+    # undeclared key is rejected with closed=False too (checked 2026-09-25); closed=True
+    # only states the intent. tests/test_phytozome.py checks the rejection itself.
     return Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
 
 
@@ -363,7 +379,7 @@ def validate(path, max_errors=20):
             lines = iter(handle)
             header = {"source_file": str(path), **read_header(lines)}
             found, count = check_stream(header, iter_rows(lines, row_slots()))
-    except DialectError as error:
+    except (DialectError, *READ_ERRORS) as error:
         print(f"INVALID  {path}: {error}")
         return 1
     for message in found[:max_errors]:
@@ -390,9 +406,19 @@ def main(argv=None):
     document = parse(args.file)
     text = json.dumps(document, indent=1)
     if args.output:
-        args.output.write_text(text + "\n")
-    else:
-        print(text)
+        return write_output(args.output, text + "\n")
+    print(text)
+    return 0
+
+
+def write_output(path, text):
+    """Write to a new file only; like the conversion commands, never overwrite."""
+    try:
+        with open(path, "x", encoding="utf-8") as handle:
+            handle.write(text)
+    except (OSError, UnicodeEncodeError) as error:
+        print(f"output: {error}", file=sys.stderr)
+        return 1
     return 0
 
 

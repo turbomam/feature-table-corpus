@@ -14,9 +14,10 @@ comments:
     TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
     of that file is kept in this repository. The test fixture is constructed.
   - >-
-    The file is tab separated with a 14-column header line starting "#pacId". An empty cell is
-    parsed as absent. In the columns typed multivalued below, one space separates values; no
-    cell read has a leading, trailing or doubled space. Header names that are not valid slot
+    The file is tab separated, with LF line endings and a final newline, and a 14-column
+    header line starting "#pacId". An empty cell is parsed as absent. In the columns typed
+    multivalued below, one space separates values; no cell read has a leading, trailing or
+    doubled space. Header names that are not valid slot
     names are mapped in scripts/phytozome_annotation_info.py: "#pacId" to pacId and each
     "Best-hit-..." column to the same name in lower case with underscores.
 license: CC BY 4.0
@@ -42,6 +43,7 @@ classes:
         multivalued: true
         inlined_as_list: true
         required: true
+        minimum_cardinality: 1
 
   PhytozomeAnnotationInfoRow:
     description: One transcript.
@@ -83,10 +85,11 @@ classes:
           spellings occur, often in one cell, and a cell can name more than one family.
       ec:
         multivalued: true
-        pattern: "^EC:(\\d+\\.(\\d+|-)\\.(\\d+|-)\\.(n?\\d+|-)|PROLINE-MULTI)$"
+        pattern: "^EC:(\\d+\\.\\d+\\.\\d+\\.\\d+|PROLINE-MULTI)$"
         description: >-
-          EC numbers, prefixed EC:. Six rows read also have the token EC:PROLINE-MULTI, which is
-          not an EC number; it is accepted as written.
+          EC numbers, prefixed EC:. Every one read has four numeric parts, so partial forms such
+          as EC:1.1.1.- are rejected until a file with one is read. Six rows read also have the
+          token EC:PROLINE-MULTI, which is not an EC number; it is accepted as written.
       KOG:
         multivalued: true
         pattern: "^KOG\\d{4}$"
