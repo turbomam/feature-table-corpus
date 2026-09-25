@@ -140,7 +140,9 @@ def main():
     except (ValueError, duckdb.Error, OSError) as error:
         print(error, file=sys.stderr)
         return 1
-    print(f"Wrote {sys.argv[3]}: {n_contigs} contigs, {n_features} features")
+    with duckdb.connect(sys.argv[3], read_only=True) as con:
+        n_collections = con.execute("SELECT count(*) FROM contig_collection").fetchone()[0]
+    print(f"Wrote {sys.argv[3]}: {n_collections} contig collections, {n_contigs} contigs, {n_features} features")
     return 0
 
 

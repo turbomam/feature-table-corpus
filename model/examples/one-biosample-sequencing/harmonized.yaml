@@ -30,6 +30,8 @@
 # Contig membership (https://github.com/turbomam/feature-table-corpus/issues/41). This assembly
 # produced no MAG bins in either binning run (see notes.md), so each contig belongs only to the
 # assembly. With a bin, the contig would also list the bin, whose generated_by is the binning run.
+# NMDC identifies an assembly by the workflow execution that produced it, so collection_id and
+# generated_by are the same ID here; the contigs FASTA data object is a separate record.
 contig_collections:
   - collection_id: nmdc:wfmgas-11-19jh9v28.1
     collection_type: metagenome

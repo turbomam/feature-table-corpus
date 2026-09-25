@@ -103,6 +103,8 @@ class ValidationTests(unittest.TestCase):
             (lambda d: d["contigs"][0]["member_of"].append(d["contigs"][0]["member_of"][0]), "duplicate member_of"),
             (lambda d: d["contig_collections"].append(copy.deepcopy(d["contig_collections"][0])),
              "duplicate collection_id"),
+            (lambda d: d["contig_collections"].append({"collection_id": "unnamed", "collection_type": "mag"}),
+             "no contig names it"),
             (lambda d: d["features"][0].update(parent=[d["features"][0]["feature_id"]]), "parent cycle"),
             (lambda d: d["features"][0].update(parent=[d["features"][1]["feature_id"]]), "parent cycle"),
         )
@@ -116,7 +118,8 @@ class ValidationTests(unittest.TestCase):
         self.reject(lambda d: d["contig_collections"][0].pop("collection_id"), "required")
         self.reject(lambda d: d["contig_collections"][0].update(member_of=["x"]), "Additional properties")
         data = copy.deepcopy(self.example)
-        data["features"][0]["stable_identifiers"] = ["GeneID:1096515", "SCO5087"]
+        # Identifiers from one gene row of the vendored RefSeq file (issue 44).
+        data["features"][0]["stable_identifiers"] = ["SC_RS27595", "SCO5087"]
         self.assertEqual(validation_errors(data, self.validator), [])
         # A contig that belongs to nothing stays valid: membership is optional.
         data["contigs"][0].pop("member_of")

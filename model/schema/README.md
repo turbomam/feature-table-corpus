@@ -28,8 +28,10 @@ profile contract, not by treating Dataset alone as a complete lossless serializa
 A `ContigCollection` is a set of contigs that belong together: an isolate genome, a
 metagenome-assembled genome (MAG) bin, or a whole assembly. `Contig.member_of` lists the
 collections a contig belongs to, so a metagenome contig can name both its assembly and its bin.
-Features reach their genome or bin through their contig, which is what a "same organism" query
-needs ([issue 41](https://github.com/turbomam/feature-table-corpus/issues/41)). The class maps
+Features reach their genome or bin through their contig
+([issue 41](https://github.com/turbomam/feature-table-corpus/issues/41)). Only an `isolate`,
+`mag`, `sag` or `virus` collection stands for one organism, so a "same organism" query filters on
+`collection_type`; a `metagenome` collection is a whole community. The class maps
 exactly to KBase CDM `ContigCollection`, and `collection_type` uses CDM's `ContigCollectionType`
 values, read from kbase/cdm-schema at commit c1a59b9 on 2026-09-25.
 
@@ -84,7 +86,7 @@ CI also downloads the pinned, unvendored prior-art GFF schema and asserts its pu
 schema's path to include this test; otherwise it is explicitly skipped. The current draft
 model's separate totals, 32 admissible of 48 class and slot pairs, are tested without network access.
 
-Both Contig and Feature expose `generated_by` and `source_files`. These remain optional
+ContigCollection, Contig and Feature all expose `generated_by` and `source_files`. These remain optional
 for sources lacking workflow metadata, but every supplied example populates them.
 `generated_by` replaces the earlier Feature-only `predicted_by` field. The
 [source manifest](../examples/source-artifacts.yaml) records IDs and checksums for cited
@@ -96,9 +98,9 @@ the record's producer; they are not field-level provenance.
 BRIDGE's scalar-only prototype profile is not a requirement of this model. The loader uses
 native LIST columns for parents, lineages, and source files, and LIST of STRUCT for attributes.
 Structured locations use a JSON column, and references retain optional topology.
-`Feature.seqid` becomes a foreign key to Contig. `Contig.member_of` is a LIST of collection IDs,
-checked against the `contig_collection` table by the Dataset validator rather than by a DuckDB
-constraint. The physical mapping is explicit Python/SQL;
+`Feature.seqid` becomes a foreign key to Contig. `Contig.member_of` is a LIST of collection IDs.
+The Dataset validator checks each one against the Dataset's `contig_collections` before loading;
+DuckDB itself has no constraint on it. The physical mapping is explicit Python/SQL;
 it is not a general LinkML database generator.
 
 `just build-duckdb` validates its supplied schema and Dataset before opening the output.
