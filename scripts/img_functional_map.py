@@ -138,6 +138,8 @@ def roundtrip(path):
         document = dialect.parse(path)
     except dialect.DialectError as error:
         return [f"dialect: {error}"], report
+    except (OSError, UnicodeDecodeError) as error:
+        return [f"input: {error}"], report
     problems = [f"dialect: {message}" for message in dialect.problems(document)]
     if problems:
         # Mapping assumes a valid dialect document, so stop and report.

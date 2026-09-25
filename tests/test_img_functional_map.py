@@ -48,6 +48,12 @@ class MappingTests(unittest.TestCase):
             unparsable.write_text("##gff-version 3\n" + FIXTURE.read_text())
             problems, _ = mapping.roundtrip(unparsable)
             self.assertIn("comment or directive", problems[0])
+            problems, _ = mapping.roundtrip(Path(tmp) / "missing.gff")
+            self.assertTrue(problems[0].startswith("input: "), problems)
+            binary = Path(tmp) / "binary.gff"
+            binary.write_bytes(b"\xff\xfe\x00")
+            problems, _ = mapping.roundtrip(binary)
+            self.assertTrue(problems[0].startswith("input: "), problems)
 
     def test_core_columns_and_constant(self):
         cds = self.feature("ctg_01_100_1299")
