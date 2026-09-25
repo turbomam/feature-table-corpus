@@ -133,6 +133,18 @@ class MappingTests(unittest.TestCase):
         text = dialect.write(self.back(copy.deepcopy(self.dataset)))
         self.assertIn("product=glutamate-1-semialdehyde 2,1-aminomutase;", text)
 
+    def test_fields_the_dialect_cannot_hold_are_refused(self):
+        for field, value in (("translated_sequence", "MKV"), ("is_selected", True),
+                             ("generated_by", "nmdc:wfmgan-11-x.1")):
+            edited = copy.deepcopy(self.dataset)
+            self.feature("ctg_01_100_1299", edited)[field] = value
+            with self.assertRaisesRegex(ValueError, f"loses or changes .*{field}", msg=field):
+                self.back(edited)
+        edited = copy.deepcopy(self.dataset)
+        edited["contigs"][0]["length_bp"] = 5000
+        with self.assertRaisesRegex(ValueError, "contig 'ctg_01' loses or changes \\['length_bp'\\]"):
+            self.back(edited)
+
     def test_only_contig_coordinates_map_back(self):
         edited = copy.deepcopy(self.dataset)
         self.feature("ctg_01_100_1299", edited)["coordinate_system"] = "protein"
@@ -226,6 +238,16 @@ class CommandTests(unittest.TestCase):
                 status, err = self.run_cli(*args)
                 self.assertEqual(status, 1, args)
                 self.assertIn("output: ", err)
+
+    def test_existing_output_is_never_overwritten(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "exists.json"
+            out.write_text("keep me")
+            status, err = self.run_cli("forward", FIXTURE, out)
+            self.assertEqual(status, 1)
+            self.assertIn("output: ", err)
+            self.assertEqual(out.read_text(), "keep me")
 
     def test_both_directions_write_valid_output(self):
         import tempfile

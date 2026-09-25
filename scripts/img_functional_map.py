@@ -103,7 +103,8 @@ def rows_from_attributes(feature_attributes, slots):
 
 
 def reverse(dataset, source_file, transformers=None):
-    _, to_dialect = transformers or _transformers()
+    transformers = transformers or _transformers()
+    _, to_dialect = transformers
     slots = dialect.row_slots()
     # Column 9 keys that the specification also maps to a Feature slot.
     derivations = to_dialect.specification.class_derivations
@@ -139,7 +140,33 @@ def reverse(dataset, source_file, transformers=None):
         row.update(mapped)
         row["line"] = number
         rows.append(row)
-    return {"source_file": source_file, "rows": rows}
+    document = {"source_file": source_file, "rows": rows}
+    # The dialect can't carry every model slot (translated_sequence, is_selected,
+    # location, contig lengths ...). Map the result forward again and require the
+    # input back, so nothing is dropped silently.
+    again = forward(document, transformers)
+    if again != canonical(dataset):
+        raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
+    return document
+
+
+def canonical(dataset):
+    return {"contigs": [present(c) for c in dataset.get("contigs", [])],
+            "features": [present(f) for f in dataset.get("features", [])]}
+
+
+def difference(dataset, again):
+    """Name the first record and fields that don't survive the round trip."""
+    before = canonical(dataset)
+    for kind in ("contigs", "features"):
+        if len(before[kind]) != len(again[kind]):
+            return f"{len(before[kind])} {kind} in, {len(again[kind])} back"
+        for a, b in zip(before[kind], again[kind]):
+            if a != b:
+                fields = sorted(k for k in set(a) | set(b) if a.get(k) != b.get(k))
+                name = a.get("feature_id") or a.get("contig_id")
+                return f"{kind[:-1]} {name!r} loses or changes {fields}"
+    return "unknown"
 
 
 def roundtrip(path):
@@ -202,8 +229,10 @@ def report_errors(errors):
 
 
 def write_output(path, text):
+    """Write to a new file only; like the conversion commands, never overwrite."""
     try:
-        path.write_text(text, encoding="utf-8")
+        with open(path, "x", encoding="utf-8") as handle:
+            handle.write(text)
     except (OSError, UnicodeEncodeError) as error:
         report_errors([f"output: {error}"])
         return 1

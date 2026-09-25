@@ -142,7 +142,10 @@ such as `26` as `26.0`. Exact bytes are out of scope here; `gff3-contig` keeps t
 [SourceDocument](source-documents.md).
 
 `just map-img-functional FILE OUT` and `just map-img-functional-back DATASET OUT` run each
-direction on its own.
+direction on its own, and never overwrite an existing file. The reverse direction maps its
+result forward again and refuses unless that reproduces the input Dataset, so a slot the
+dialect can't hold, such as `translated_sequence` or a contig length, is an error rather than
+a silent loss.
 
 ## Attributes and authority
 
