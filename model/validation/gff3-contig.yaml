@@ -15,6 +15,8 @@ validation:
       missing-version: 'The required first-line ##gff-version directive is absent. GenomeTools stops here;
         later defects are not measured.'
       start-after-end: The deliberately malformed feature starts after its end.
+      unsupported-version: 'The JGI isolate GeneMark file declares ##gff-version 2 while its attributes
+        use GFF3 tag=value syntax.'
       unresolved-parent: The deliberately malformed Parent value refers to an absent ID.
   gff3toolkit:
     status: measured
@@ -26,12 +28,19 @@ validation:
         annotation families.
       Esf0014: 'The first line lacks ##gff-version. The source is preserved without adding it.'
       Esf0018: The reversed-coordinate control starts after its end.
-      Esf0022: Some NMDC search files have an empty source column; QC requires a dot.
+      Esf0019: 'The JGI isolate GeneMark file declares ##gff-version 2.'
+      Esf0022: Some NMDC and JGI isolate search files have an empty source column; QC requires a
+        dot.
+      Esf0025: The IMG pipeline 4.14.0 isolate GFF writes strand as 1 and -1 rather than + and -.
       Esf0026: The deliberately malformed CDS fixture has phase 3.
       Esf0029: The unescaped-semicolon control has a bare attribute rather than one equals sign.
       Esf0031: The unescaped-semicolon control also produces an empty attribute value.
+      Esf0032: A key repeats within one row, such as shortened in a JGI isolate structural roll-up
+        and LowScore in the IMG pipeline 4.14.0 GFF.
       Esf0036: QC reports literal commas in attributes, including partial and product. This is recorded
         as a tool result, not a universal dialect prohibition.
+      Esf0041: Capitalized keys that GFF3 does not reserve, such as Type, Model and RNA_Class_ID in the
+        IMG pipeline 4.14.0 GFF and D-score in the JGI isolate SignalP file.
   agat:
     status: blocked
     expected_failures: null
@@ -168,6 +177,127 @@ validation:
       - Ema0005
       - Esf0036
     derived-actinorhodin-excerpt:
+      genometools: []
+      gff3toolkit:
+      - Esf0036
+    jgi-img-clostridium-cath-funfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+    jgi-img-clostridium-cleavage-sites:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0041
+    jgi-img-clostridium-cog:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0022
+    jgi-img-clostridium-crt:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+    jgi-img-clostridium-genemark:
+      genometools:
+      - unsupported-version
+      gff3toolkit:
+      - Esf0019
+    jgi-img-clostridium-ko-ec:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0036
+    jgi-img-clostridium-pfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+    jgi-img-clostridium-prodigal:
+      genometools: []
+      gff3toolkit: []
+    jgi-img-clostridium-rfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0014
+      - Esf0036
+    jgi-img-clostridium-rfam-misc-bind-misc-feature-regulatory:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0014
+      - Esf0036
+    jgi-img-clostridium-rfam-ncrna-tmrna:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0014
+    jgi-img-clostridium-rfam-rrna:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0014
+    jgi-img-clostridium-smart:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0022
+    jgi-img-clostridium-structural-annotation:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0032
+      - Esf0036
+    jgi-img-clostridium-supfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+    jgi-img-clostridium-tigrfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0022
+    jgi-img-clostridium-tmh:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+    jgi-img-clostridium-trna:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0014
+    jgi-img-bacillus-assembled-gff:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+      - Esf0025
+      - Esf0032
+      - Esf0041
+    jgi-img-bacillus-taxon-gff:
       genometools: []
       gff3toolkit:
       - Esf0036

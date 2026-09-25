@@ -89,6 +89,7 @@ for the JGI IMG pipeline's `*_functional_annotation.gff`. It was measured on 202
 against two JGI isolate annotations (Clostridium acetobutylicum `Ga0423362`, 4,439 rows;
 Methanococcus maripaludis S1 `Ga0416744`, 2,005 rows), which need a JGI login to download
 ([#52](https://github.com/turbomam/feature-table-corpus/issues/52)), and the vendored NMDC file.
+The Clostridium file is now vendored too, as `corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff`.
 
 - `gff3-contig/1.0.0` rejects both isolate files at their first product name containing a
   comma (`product-cardinality`), for example "glutamate-1-semialdehyde 2,1-aminomutase".

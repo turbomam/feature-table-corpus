@@ -84,18 +84,18 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-66 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+94 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 30 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 58 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 10 | Nine deliberately altered fixtures and one explicitly selected real BGC excerpt, each traceable to its source |
 | restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
-**The one promise this corpus makes.** A file under `corpus/sources/nmdc/` or `corpus/sources/ncbi-refseq/` is
+**The one promise this corpus makes.** A file under `corpus/sources/` is
 byte-for-byte what its origin served. Nothing in this repository writes into those files, and the
 verifier enforces it two ways: every checksum is compared on each run, and any provenance comment
 appearing in a sourced file is reported as `SOURCED-EDITED`. The nine files under
@@ -140,6 +140,21 @@ GFF and protein FASTA from `nmdc:wfmgan-11-5xxrm214.2` bring the NMDC total to 2
 They support the [protein-relative conversion example](docs/protein-relative-profile.md):
 416 hits on 397 proteins, with explicit CDS bindings and retained translations.
 These were selected as related evidence, independently of the smallest-file sample.
+
+**JGI IMG isolate annotation sets, 28 files, 13.4 MB.** Every NMDC file above comes from a
+metagenome workflow, so these add annotation of single organisms, from two pipeline generations,
+under `corpus/sources/jgi-img/`
+([#53](https://github.com/turbomam/feature-table-corpus/issues/53)). Clostridium acetobutylicum
+`IMG_AP-1268149` (`Ga0423362`) has all 19 per-method GFF files of the newer IMG pipeline, the
+same evidence streams as the NMDC sample above plus SignalP, TMHMM and three Rfam subsets. Bacillus sp.
+BacspinBacteria_29 `IMG_AP-1121004` has one assembly annotated twice: `106476.assembled.gff` from
+IMG pipeline 4.14.0 and `2708743150.gff` from `img_core_v400`, with that taxon's seven
+tab-separated side tables (COG, InterPro with GO, KO with EC, Pfam, SignalP, TIGRFAM, TMHMM).
+Its 8.6 MB GenBank file is left out. Each md5 matches the JGI Data Portal search API. Downloading
+needs a JGI login ([docs/jgi-inputs.md](docs/jgi-inputs.md)); both records are
+`data_utilization_status: Unrestricted`, and the
+[JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy) says such data "are
+unrestricted for use". It names no license.
 
 **NCBI RefSeq, 2 files.** Complete tiny reference annotations from the canonical GFF3 producer,
 for phiX174 at 6.5 KB and phage lambda at 58 KB. Public domain. Both are decompressed from the
@@ -398,6 +413,7 @@ Pull requests adding entries should fill in every field the existing entries car
 ## Licensing
 
 Per entry, recorded in `corpus/index.yaml`. The NMDC files are CC BY 4.0 and require attribution to NMDC.
+The JGI IMG files are distributed under the JGI Data Policy as unrestricted data; it names no license.
 The NCBI files are public domain. This repository's own contributions, meaning the index, the
 scripts and this README, are CC0.
 

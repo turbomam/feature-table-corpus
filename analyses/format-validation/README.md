@@ -1,15 +1,15 @@
 # Independent format validation
 
 Ran on macOS arm64 on **2026-09-25**: GenomeTools **1.6.6** and GFF3toolkit
-**2.1.0** checked all 29 retained GFF3 inputs. The existing
+**2.1.0** checked all 50 retained GFF3 inputs. The existing
 [report.json](report.json) now records each input's checksum and separate results
 for each validator. Linked/restricted/unlocated files are not fetched.
 
 | Validator | Accepted | Rejected | Other formats, not checked | Installation blocked |
 |---|---:|---:|---:|---:|
-| GenomeTools | 8 | 21 | 11 | 0 |
-| GFF3toolkit | 5 | 24 | 11 | 0 |
-| AGAT | 0 | 0 | 11 | 29 |
+| GenomeTools | 10 | 40 | 18 | 0 |
+| GFF3toolkit | 6 | 44 | 18 | 0 |
+| AGAT | 0 | 0 | 18 | 50 |
 
 A rejected result means the configured tool reported at least one rule, including
 QC warnings. An expected rejection passes the regression check only when its
@@ -61,7 +61,9 @@ assignments describe validation evidence, not conversion support. In particular,
 a malformed control or circular RefSeq file need not satisfy the converter's
 contract. The [IMG expectations](../../model/validation/img-functional-gff.yaml)
 name the [dialect schema](../../model/dialects/img-functional-gff.yaml) they
-describe, which is not a conversion contract. Local JGI downloads are outside the retained corpus.
+describe, which is not a conversion contract. The JGI isolate functional roll-up
+(`jgi-img-clostridium-functional-annotation`) is assigned there too; the other 20 JGI isolate GFF
+files are general GFF3 cases. JGI files that stay under `local/jgi/` are outside the retained corpus.
 
 Both report generation and checking reject unexpected rules and disappearing
 expected rules. A file that still fails can therefore fail the regression check
@@ -105,6 +107,14 @@ QC also reports strand `.` as missing (`Esf0003`), empty source columns
 (`Esf0022`), and commas in attributes (`Esf0036`). These are observed tool opinions,
 not new restrictions on the dialects. Missing headers are preserved as observed
 in the IMG and NMDC inputs.
+
+The 21 JGI isolate GFF files, added on 2026-09-25 for
+https://github.com/turbomam/feature-table-corpus/issues/53, brought five more observed rules.
+GenomeTools rejects the Clostridium GeneMark file with `unsupported-version`, because it
+declares `##gff-version 2`; QC reports the same header as `Esf0019`. The IMG pipeline 4.14.0
+Bacillus file writes strand as `1` (`Esf0025`, 4,693 rows) and uses capitalized keys that GFF3
+does not reserve (`Esf0041`). A key repeated within one row is `Esf0032`. The Clostridium
+Prodigal file and, for GenomeTools only, the `img_core_v400` Bacillus file are accepted.
 
 ## AGAT installation blocker
 

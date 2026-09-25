@@ -35,7 +35,9 @@ same file twice under different IDs; identical duplicates are merged and kept as
 
 ## Reuse terms
 
-Nothing under `local/jgi/` is committed unless its terms allow redistribution. Checked
+Nothing under `local/jgi/` is committed unless its terms allow redistribution. Two records,
+`IMG_AP-1268149` and `IMG_AP-1121004`, are vendored unchanged under `corpus/sources/jgi-img/`
+([#53](https://github.com/turbomam/feature-table-corpus/issues/53)); the others stay local. Checked
 2026-09-25:
 
 - The [JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy) says that after

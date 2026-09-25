@@ -7,7 +7,7 @@ actual layout; the model remains a draft, regardless of its directory name.
 corpus/                         Evidence collected from producers and prior art
   index.yaml                    Inventory, provenance, licenses, and checksums
   PROVENANCE.md                 Dated acquisition and correction history
-  sources/{nmdc,ncbi-refseq,biopython}/  Preserved upstream source text
+  sources/{nmdc,ncbi-refseq,biopython,jgi-img}/  Preserved upstream source text
   specifications/               Prior-art schemas and specification extracts
   fixtures/{malformed,edge-cases}/  Deliberately altered, indexed test cases
   derived-examples/              Explicit selections of unchanged real source rows
