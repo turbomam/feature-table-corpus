@@ -113,18 +113,22 @@ def parse_row(line_number, text, slots):
     return row
 
 
-def parse(path, slots=None):
+def parse_lines(lines, source_file, slots=None):
     slots = slots or row_slots()
     rows = []
+    for number, raw in enumerate(lines, start=1):
+        text = raw.rstrip("\n").rstrip("\r")
+        if not text:
+            raise DialectError(f"line {number}: blank line")
+        if text.startswith("#"):
+            raise DialectError(f"line {number}: comment or directive; this dialect has none")
+        rows.append(parse_row(number, text, slots))
+    return {"source_file": str(source_file), "rows": rows}
+
+
+def parse(path, slots=None):
     with open(path, encoding="utf-8", newline="") as handle:
-        for number, raw in enumerate(handle, start=1):
-            text = raw.rstrip("\n").rstrip("\r")
-            if not text:
-                raise DialectError(f"line {number}: blank line")
-            if text.startswith("#"):
-                raise DialectError(f"line {number}: comment or directive; this dialect has none")
-            rows.append(parse_row(number, text, slots))
-    return {"source_file": str(path), "rows": rows}
+        return parse_lines(handle, path, slots)
 
 
 def value_text(value):
@@ -179,7 +183,22 @@ def write_row(row):
 
 
 def write(document):
-    return "".join(write_row(row) + "\n" for row in document["rows"])
+    """GFF text for a document, refused unless it parses back to the same rows.
+
+    The reparse catches every value the dialect can't represent (a delimiter,
+    nan or inf, a character UTF-8 can't encode), rather than each one by name.
+    """
+    text = "".join(write_row(row) + "\n" for row in document["rows"])
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError as error:
+        raise DialectError(f"output can't be encoded as UTF-8: {error}") from None
+    reparsed = parse_lines(text.splitlines(keepends=True), document.get("source_file", ""))
+    for row, again in zip(document["rows"], reparsed["rows"], strict=True):
+        if {**row, "line": 0} != {**again, "line": 0}:
+            changed = sorted(k for k in set(row) | set(again) if row.get(k) != again.get(k))
+            raise DialectError(f"line {row.get('line', '?')}: written text parses back differently in {changed}")
+    return text
 
 
 def cross_checks(document):

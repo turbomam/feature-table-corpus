@@ -204,7 +204,7 @@ def report_errors(errors):
 def write_output(path, text):
     try:
         path.write_text(text, encoding="utf-8")
-    except OSError as error:
+    except (OSError, UnicodeEncodeError) as error:
         report_errors([f"output: {error}"])
         return 1
     return 0

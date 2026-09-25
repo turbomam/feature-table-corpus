@@ -117,6 +117,18 @@ class MappingTests(unittest.TestCase):
             with self.assertRaisesRegex(dialect.DialectError, "can't escape", msg=key):
                 dialect.write(self.back(edited))
 
+    def test_values_json_allows_but_gff_cannot_hold_are_refused(self):
+        for value in (float("nan"), float("inf")):
+            edited = copy.deepcopy(self.dataset)
+            self.feature("ctg_01_100_1299", edited)["score"] = value
+            with self.assertRaises(dialect.DialectError):
+                dialect.write(self.back(edited))
+        edited = copy.deepcopy(self.dataset)
+        self.feature("ctg_01_100_1299", edited)["product"] = "a\ud800b"
+        next(a for a in self.feature("ctg_01_100_1299", edited)["attributes"] if a["key"] == "product")["value"] = "a\ud800b"
+        with self.assertRaisesRegex(dialect.DialectError, "UTF-8"):
+            dialect.write(self.back(edited))
+
     def test_free_text_keeps_its_commas_when_written(self):
         text = dialect.write(self.back(copy.deepcopy(self.dataset)))
         self.assertIn("product=glutamate-1-semialdehyde 2,1-aminomutase;", text)
