@@ -131,12 +131,24 @@ def reverse(dataset, source_file, transformers=None):
 
 def roundtrip(path):
     """Return (problems, report) for one file; no problems means the round trip held."""
-    document = dialect.parse(path)
+    report = {"file": str(path)}
+    try:
+        document = dialect.parse(path)
+    except dialect.DialectError as error:
+        return [f"dialect: {error}"], report
     problems = [f"dialect: {message}" for message in dialect.problems(document)]
+    if problems:
+        # Mapping assumes a valid dialect document, so stop and report.
+        return problems, report
     transformers = _transformers()
     dataset = forward(document, transformers)
     problems += [f"model: {message}" for message in validation_errors(dataset, make_validator(str(MODEL)))]
-    back = reverse(dataset, str(path), transformers)
+    if problems:
+        return problems, report
+    try:
+        back = reverse(dataset, str(path), transformers)
+    except Exception as error:  # linkml-map raises its own TransformationError
+        return [f"reverse: {error}"], report
     for before, after in zip(document["rows"], back["rows"]):
         if before != after:
             changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
@@ -155,7 +167,7 @@ def roundtrip(path):
             problems.append(f"line {number}: written text differs in value, not only in spelling")
         else:
             spelling += 1
-    report = {"file": str(path), "rows": len(document["rows"]), "features": len(dataset["features"]),
+    report |= {"rows": len(document["rows"]), "features": len(dataset["features"]),
               "contigs": len(dataset["contigs"]),
               "attributes": sum(len(f["attributes"]) for f in dataset["features"]),
               "lines_differing_only_in_number_spelling": spelling}

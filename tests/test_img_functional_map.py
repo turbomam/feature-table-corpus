@@ -36,6 +36,19 @@ class MappingTests(unittest.TestCase):
         problems, _ = mapping.roundtrip(NMDC)
         self.assertEqual(problems, [])
 
+    def test_roundtrip_reports_instead_of_raising(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            unknown = Path(tmp) / "unknown.gff"
+            unknown.write_text(FIXTURE.read_text().replace("cog=COG0001", "cog=COG0001;new_key=1", 1))
+            problems, report = mapping.roundtrip(unknown)
+            self.assertTrue(problems and all(p.startswith("dialect: ") for p in problems), problems)
+            self.assertNotIn("rows", report)
+            unparsable = Path(tmp) / "unparsable.gff"
+            unparsable.write_text("##gff-version 3\n" + FIXTURE.read_text())
+            problems, _ = mapping.roundtrip(unparsable)
+            self.assertIn("comment or directive", problems[0])
+
     def test_core_columns_and_constant(self):
         cds = self.feature("ctg_01_100_1299")
         self.assertEqual((cds["seqid"], cds["start"], cds["end"], cds["strand"], cds["phase"]),
