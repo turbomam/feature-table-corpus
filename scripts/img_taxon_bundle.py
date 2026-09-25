@@ -35,8 +35,9 @@ TABLES = {
 }
 # Documented in the bundle README.txt but absent from both measured bundles.
 UNMEASURED = {"kog.tab.txt", "crispr.txt"}
-# Other bundle members the README documents; they hold sequence, not annotation rows.
-SEQUENCE_FILES = {"fna", "genes.fna", "genes.faa", "intergenic.fna"}
+# Other bundle members: the sequence files the README documents, and the downloaded
+# archive they come in (model/examples/jgi-inputs.yaml), which unpacks beside them.
+SEQUENCE_FILES = {"fna", "genes.fna", "genes.faa", "intergenic.fna", "tar.gz"}
 # Values of a multivalued table cell are separated by "|".
 LIST_SEPARATOR = "|"
 
@@ -91,7 +92,9 @@ def convert(text, slot, where):
             raise DialectError(f"{where}: {text!r} is not an integer")
         return int(text)
     if slot.range == "float":
-        if not DECIMAL.fullmatch(text):
+        # The spelling must also survive a float, so 31.123456789012345678 (too many
+        # digits) and 0.0000001 (repr gives 1e-07) fail rather than change on write-back.
+        if not DECIMAL.fullmatch(text) or value_text(float(text)) != text:
             raise DialectError(f"{where}: {text!r} is not a decimal number")
         return float(text)
     return text
@@ -319,7 +322,9 @@ def table_checks(document):
             gene = row.get("gene_oid")
             if gene not in cds:
                 problems.append(f"{where}: gene_oid {gene!r} is not a CDS ID in the GFF")
-            if str(previous).isdigit() and str(gene).isdigit() and int(gene) < int(previous):
+            # str.isdigit() accepts characters such as "²" that int() rejects.
+            if (INTEGER.fullmatch(str(previous)) and INTEGER.fullmatch(str(gene))
+                    and int(gene) < int(previous)):
                 problems.append(f"{where}: gene_oid {gene} comes after {previous}; rows are sorted by gene_oid")
             previous = gene if gene is not None else previous
             if "gene_length" in row:

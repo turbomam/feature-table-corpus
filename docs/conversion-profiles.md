@@ -175,7 +175,7 @@ as one document with one class per table. What the two bundles share:
 `.kog.tab.txt`, `.crispr.txt` and a non-empty `img_ko_flag` are documented but were not in
 either bundle, so they fail until measured. Any other `<taxon_oid>.*` file beside the GFF fails
 too, except the documented sequence files (`.fna`, `.genes.fna`, `.genes.faa`,
-`.intergenic.fna`), so no table goes unchecked. Numbers must use ASCII digits with no leading
+`.intergenic.fna`) and the downloaded `.tar.gz` they come in, so no table goes unchecked. Numbers must use ASCII digits with no leading
 zeros and no trailing fractional zeros, as IMG writes them, which keeps write-back exact. `just dialect-validate-img-taxon GFF` checks the
 GFF and every table beside it. Both bundles pass, and the writer reproduces all 17 files byte
 for byte. The tests edit single rows of a

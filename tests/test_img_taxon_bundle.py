@@ -191,6 +191,8 @@ class ValidateTests(unittest.TestCase):
 
     def test_row_needs_nine_columns(self):
         self.assert_rejected("8 columns, expected 9", ("gff", 4, "\t.\t-\t0\t", "\t.\t-0\t"))
+        self.setUp()
+        self.assert_rejected("10 columns, expected 9", ("gff", 4, "\t.\t-\t0\t", "\t.\t-\t0\t.\t"))
 
     def test_blank_lines_and_empty_files_are_rejected(self):
         self.assert_rejected("gff line 5: blank line", ("gff", 4, self.line("gff", 4), ""))
@@ -233,6 +235,15 @@ class ValidateTests(unittest.TestCase):
         self.setUp()
         self.assert_rejected("'110.10' is not a decimal number", ("pfam", 1, "\t110.1\t", "\t110.10\t"))
 
+    def test_decimals_a_float_cannot_write_back_are_rejected(self):
+        self.assert_rejected("'31.123456789012345678' is not a decimal number",
+                             ("cog", 1, "\t31.98\t", "\t31.123456789012345678\t"))
+        self.setUp()
+        self.assert_rejected("'0.0000001' is not a decimal number", ("cog", 1, "\t31.98\t", "\t0.0000001\t"))
+
+    def test_superscript_gene_oid_is_reported_not_raised(self):
+        self.assert_rejected("'\u00b2' does not match", ("pfam", 2, "9900000006\t386\t20", "\u00b2\t386\t20"))
+
     def test_non_ascii_digits_are_rejected(self):
         # The first digit is ASCII, so a pattern that only checks it still fails here.
         arabic_indic = "3\u0660\u0660"
@@ -246,6 +257,10 @@ class ValidateTests(unittest.TestCase):
                              ("gff", 5, "ID=9900000005", "ID=\uff19900000005"))
         self.setUp()
         self.assert_rejected("does not match '^COG[0-9]{4}$'", ("cog", 1, "COG1225", "COG\u0661225"))
+        self.setUp()
+        self.assert_rejected("does not match '^GO:[0-9]{7}$'", ("ipr", 2, "GO:0015035", "GO:001503\u0665"))
+        self.setUp()
+        self.assert_rejected("GI id '24176083\u0666'", ("xref", 1, "241760836", "24176083\u0666"))
 
     # Files that can't be read, and files beside the GFF.
     def test_unreadable_inputs_are_invalid_not_tracebacks(self):
@@ -266,7 +281,7 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected("9900000001.pfam.tab.txt.bak: not a file this dialect reads")
 
     def test_sequence_files_are_allowed(self):
-        for suffix in ("fna", "genes.fna", "genes.faa", "intergenic.fna"):
+        for suffix in ("fna", "genes.fna", "genes.faa", "intergenic.fna", "tar.gz"):
             (self.bundle / f"{TAXON}.{suffix}").write_text(">x\nACGT\n")
         status, out = self.run_validate()
         self.assertEqual(status, 0, out)
