@@ -207,7 +207,9 @@ def count_mismatches(view, schema_path, data_path, written, work):
 
 def export(schema_path, data_path, out_dir):
     """Validate, export, check, then publish out_dir. Returns a summary dict."""
-    out_dir = Path(out_dir)
+    # Resolve first, so a ".." cannot hide an existing directory from the exists
+    # check or put a directory this call did not make into the cleanup list.
+    out_dir = Path(out_dir).resolve()
     if out_dir.exists():
         raise ValueError(f"{out_dir} already exists; choose a new output directory")
     timings = {}

@@ -186,6 +186,20 @@ class LakehouseExportTests(unittest.TestCase):
                 lakehouse.export(SCHEMA, EXAMPLE, self.work / "c" / "d" / "out")
         self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["invalid.json"])
 
+    def test_dot_dot_in_the_output_path(self):
+        keep = self.work / "keep"
+        (keep / "out").mkdir(parents=True)
+        # "new" does not exist, so an unresolved path would not see keep/out.
+        with self.assertRaisesRegex(ValueError, "already exists"):
+            lakehouse.export(SCHEMA, EXAMPLE, self.work / "new" / ".." / "keep" / "out")
+        (keep / "out").rmdir()
+        # On a failed check, the pre-existing empty keep stays and nothing else appears.
+        with patch.object(lakehouse, "value_mismatches", return_value=["features[0]: differs"]):
+            with self.assertRaises(ValueError):
+                lakehouse.export(SCHEMA, EXAMPLE, self.work / "new" / ".." / "keep" / "out")
+        self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["keep"])
+        self.assertEqual(list(keep.iterdir()), [])
+
     def test_linkml_store_default_types_lose_values(self):
         # Negative control 3: without the type fixes, linkml-store's 4-byte FLOAT
         # changes scores, and the value check says so.

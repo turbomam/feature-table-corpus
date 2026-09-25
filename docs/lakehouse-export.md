@@ -95,15 +95,17 @@ All three run before `DIR` is published, and a failure leaves no output:
 
 - **Column types.** Each file's column names and types, as DuckDB reads them, must equal
   those the schema gives. The value check can't see this: an `is_selected` rewritten as
-  `int64` compares equal, because `True == 1` in Python.
+  `int64` compares equal, because `True == 1` in Python. DuckDB's DESCRIBE does not show
+  Parquet-level differences such as `large_string` against `string` or nullability; that is
+  enough here because DuckDB's own `COPY` writes the files and cannot produce those.
 - **Row counts.** Each collection's row count must equal the matching table that
   [`build_duckdb.py`](../scripts/build_duckdb.py) builds from the same Dataset (the table
   name is the range class in snake case, such as `feature`). A table with no matching
   collection is also an error. https://github.com/turbomam/feature-table-corpus/issues/57
   asked for this check. The value check already compares row counts against the input, and
-  both paths read the file with the same `load_validated`, so this adds no second reading.
+  both paths read the file with the same `load_validated`, so this adds no independent reading.
   It is kept because it is the only check that ties the export to the existing DuckDB
-  mapping: a collection one has and the other lacks is reported. It is also most of the run time: 5.37 s of the checks on `Ga0423362`, measured
+  mapping: a collection one has and the other lacks is reported. It is also most of the check time: 5.37 s on `Ga0423362`, measured
   2026-09-25, against 0.01 s for types and 0.09 s for values.
 - **Values.** Each file is read back with pyarrow, and every row must equal the validated
   input, with null and empty lists treated as absent.
