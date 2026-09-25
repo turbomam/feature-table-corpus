@@ -105,6 +105,9 @@ class ValidateTests(unittest.TestCase):
     def test_nonnumeric_columns_and_values_are_reported_not_raised(self):
         self.assert_rejected(self.edited(0, "\t100\t1299\t", "\tabc\t1299\t"), "start 'abc' is not a number")
         self.assert_rejected(self.edited(0, "\t154.2\t", "\thigh\t"), "score 'high' is not a number")
+        self.assert_rejected(self.edited(0, "\t154.2\t", "\tnan\t"), "score 'nan' is not a number")
+        self.assert_rejected(self.edited(7, "average_repeat_length=26", "average_repeat_length=inf"),
+                             "average_repeat_length 'inf' is not a float")
         self.assert_rejected(self.edited(0, "translation_table=11", "translation_table=x"),
                              "translation_table 'x' is not a integer")
 

@@ -10,6 +10,7 @@ multivalued, because product names and notes contain literal commas.
 """
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -38,11 +39,19 @@ def slot_name(key):
     return KEY_TO_SLOT.get(key, key)
 
 
+def finite(text):
+    """float() accepts nan and inf; a GFF number never is either."""
+    number = float(text)
+    if not math.isfinite(number):
+        raise ValueError(text)
+    return number
+
+
 def convert(value, slot):
     if slot.range == "integer":
         return int(value)
     if slot.range == "float":
-        return float(value)
+        return finite(value)
     return value
 
 
@@ -59,7 +68,7 @@ def parse_row(line_number, text, slots):
         if value == "." and name in ("score", "phase"):
             continue
         row[name] = value
-    for name, kind in (("start", int), ("end", int), ("phase", int), ("score", float)):
+    for name, kind in (("start", int), ("end", int), ("phase", int), ("score", finite)):
         if name in row:
             try:
                 row[name] = kind(row[name])

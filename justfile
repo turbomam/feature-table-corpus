@@ -22,12 +22,13 @@ default:
 check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check bgc-check
     @echo "all checks passed"
 
-[doc("Check all three LinkML schemas against the metamodel.")]
+[doc("Check every LinkML schema, including dialects, against the metamodel.")]
 [group("Validation")]
 validate-schema:
     uv run --with linkml linkml-validate model/schema/ber_feature_model.yaml
     uv run --with linkml linkml-validate model/schema/attributes.yaml
     uv run --with linkml linkml-validate model/schema/source_document.yaml
+    uv run --with linkml linkml-validate model/dialects/img-functional-gff.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
