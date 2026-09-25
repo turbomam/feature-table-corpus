@@ -15,6 +15,12 @@ comments:
     Commas separate values only in the keys typed multivalued below. `product`, `note` and
     `shortened` are free text and keep their commas: 96 product names in the two isolates
     contain one, such as "glutamate-1-semialdehyde 2,1-aminomutase".
+  - >-
+    Two spellings are documented but not yet seen in a file, so they are not accepted: a 2021 copy
+    of the pipeline's writer appends `supfam=` where these files have `superfamily=`, and NMDC
+    output has been reported with `evalue=` beside `e-value=` (docs/columns-and-discretion.md).
+    A file using either fails as an undeclared key until a real example is added, see
+    https://github.com/turbomam/feature-table-corpus/issues/54.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
