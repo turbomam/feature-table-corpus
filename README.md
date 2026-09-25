@@ -292,12 +292,14 @@ now exists. Nothing reports anything.
 
 Every derived entry carries a `validity` field for exactly these cases.
 
-[Independent validation](analyses/format-validation/README.md) now measures those
-labels with pinned GenomeTools 1.6.6: six malformed fixtures are rejected and
-three valid edge cases accepted. The report also records verdicts for every
-retained producer GFF3 file, including missing-header failures in NMDC sources.
-Run `just validity-install` once, then `just validity-check`; CI checks that the
-report reproduces. Biological correctness and conversion support remain separate.
+[Independent validation](analyses/format-validation/README.md) runs pinned
+GenomeTools 1.6.6 and GFF3toolkit 2.1.0. A file in `model/validation/` for each
+conversion contract and dialect lists the expected rule failures for its retained inputs; new failures and disappearing failures both fail the check.
+The tools disagree on the dangling-parent control, which only GenomeTools rejects.
+AGAT 1.7.0 is recorded as blocked after its macOS arm64 dependency solve failed
+on 2026-09-25. Run `just validity-install` once, then `just validity-check`; CI
+checks that the report reproduces. Biological correctness and conversion support
+remain separate.
 
 ## Why some things are only linked
 

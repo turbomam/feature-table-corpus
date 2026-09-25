@@ -1,0 +1,36 @@
+# Validator expectations for the conversion contract model/profiles/nmdc-pfam-protein.yaml.
+# Kept out of the contract so its checksum in the conversion report stays stable.
+profile: nmdc-pfam-protein/1.0.0
+# Independent validator observations; reproduce with just validity-check.
+validation:
+  scope: Exact rule sets for the listed retained corpus inputs, including negative controls. These are
+    validator observations, not conversion-support claims.
+  genometools:
+    status: measured
+    expected_failures:
+      missing-version: 'The required first-line ##gff-version directive is absent. GenomeTools stops here;
+        later defects are not measured.'
+  gff3toolkit:
+    status: measured
+    expected_failures:
+      Esf0003: QC reports strand . as missing, including the protein-relative Pfam hits and unstranded
+        annotation families.
+      Esf0014: 'The first line lacks ##gff-version. The source is preserved without adding it.'
+  agat:
+    status: blocked
+    expected_failures: null
+    reason: No measured rule list. See analyses/format-validation/agat-blocker.json for the 2026-09-25
+      macOS arm64 dependency failure.
+  cases:
+    nmdc-pfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014
+    nmdc-biosample-pfam:
+      genometools:
+      - missing-version
+      gff3toolkit:
+      - Esf0003
+      - Esf0014

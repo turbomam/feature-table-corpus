@@ -1,75 +1,142 @@
 # Independent format validation
 
-GenomeTools **1.6.6** measures all retained entries indexed as GFF3, including
-the nine altered fixtures and selected BGC excerpt. [report.json](report.json) records source SHA-256,
-exit status, full diagnostics, and the derived fixture's expected verdict read
-from `corpus/index.yaml`. Its current results are **8 accepted, 21 rejected,
-and 11 not checked** (other formats). Linked/restricted/unlocated files are not
-fetched or validated. This report is distinct from
-[conversion preservation](../conversion-roundtrips/README.md).
+Ran on macOS arm64 on **2026-09-25**: GenomeTools **1.6.6** and GFF3toolkit
+**2.1.0** checked all 29 retained GFF3 inputs. The existing
+[report.json](report.json) now records each input's checksum and separate results
+for each validator. Linked/restricted/unlocated files are not fetched.
+
+| Validator | Accepted | Rejected | Other formats, not checked | Installation blocked |
+|---|---:|---:|---:|---:|
+| GenomeTools | 8 | 21 | 11 | 0 |
+| GFF3toolkit | 5 | 24 | 11 | 0 |
+| AGAT | 0 | 0 | 11 | 29 |
+
+A rejected result means the configured tool reported at least one rule, including
+QC warnings. An expected rejection passes the regression check only when its
+exact rule set matches the profile. AGAT was not run; its blocked results are
+neither successes nor expected format failures.
 
 ## Reproduce
 
 ```sh
-just validity-install  # explicit network download into gitignored local/tools/
+just validity-install  # explicit network downloads into gitignored local/tools/
 just validity-check   # read-only; also part of just check
-just validity-report  # explicitly regenerate the tracked report; review its diff
+just validity-report  # regenerate only after rule expectations match
 ```
 
-The installer supports Apple Silicon macOS and x86-64 Linux. It verifies the
-upstream release archive's pinned SHA-256 before extraction. Python 3.11.8+
-is needed for safe tar extraction. On other platforms, install GenomeTools
-1.6.6 separately and set `GENOMETOOLS` to its executable path. The report checks
-the version and normalizes only the executable path in diagnostics; source
-paths, warning/error text, and verdicts are preserved. A timeout, crash,
-unexpected output, or tool startup failure fails the check rather than counting
-as rejection. CI runs the same real validator and compares the retained report.
-`just test` reports an explicit skip for the three real-tool regression methods
-if GenomeTools is not installed; the mock execution-failure test still runs.
-`just validity-check` and therefore `just check` always require the real binary.
-Extraction filters are available in Python 3.11 through the
-[3.11.4 backport](https://docs.python.org/3.11/library/tarfile.html#extraction-filters);
-direct invocation with a Python lacking that feature fails before downloading.
+Individual install targets are `validity-install-genometools` and
+`validity-install-gff3toolkit`. Both verify a pinned SHA-256 before extraction.
+No package is installed globally. GenomeTools uses upstream macOS arm64 or Linux
+x86-64 binaries. GFF3toolkit uses the unmodified upstream source archive and
+Python **3.11.15**, selected by `uv`; the local launcher calls the upstream
+`gff3_QC` entry point. Its configured QC path needs only Python's standard library.
+The installer does not run upstream `setup.py`, whose build hook downloads an
+unverified BLAST 2.2.31 archive. The `-noncg` mode does not invoke BLAST.
 
-## What the result means
+The CI job installs the same two tools before `just check`. The macOS run is
+measured here; the Linux execution remains a CI check. Missing tools, wrong
+versions, crashes, timeouts, unknown GenomeTools errors, malformed QC output,
+and even QC exit zero without its output file all fail. `just test` explicitly
+skips the real-tool tests when either tool is missing; `validity-check` requires
+both. GenomeTools retains its existing `GENOMETOOLS` executable override, with
+version enforcement.
 
-All **six malformed fixtures are rejected**, and all **three valid edge cases
-are accepted**. Tests deliberately flip a label, repair an invalid file without
-changing its label, and replace the saved report to prove disagreement fails.
-GenomeTools accepts the phase-changed biological example and the silently split
-Note example: legal syntax does not establish biological or authorial intent.
+## Expected rules sit beside each profile
 
-Of the 19 retained producer GFF3 files, Prodigal and all three RefSeq files are
-accepted. Fifteen NMDC files fail at the required first-line version directive,
-including the two companion GFFs for the protein profile.
-The validator stops at its first error, so this does not establish whether they
-have additional problems. Prodigal emits warnings about absent sequence-region
-directives. Those warnings are retained; any internally inferred region is not
-written back to the source or promoted to measured biological metadata.
+Each file under [model/validation/](../../model/validation/) names one conversion
+contract or dialect as its `profile`, and its `validation` block lists the expected
+failures by rule with explanations. The files sit outside
+[model/profiles/](../../model/profiles/) so the contracts, whose checksums the
+conversion report pins, change only when conversion does; every contract there must
+still have a file here. Its `cases` map gives the
+exact rule set for each named corpus input and validator. Empty lists mean no
+reported rules are expected. BED12 and INSDC explicitly say these GFF3 commands
+are not applicable; their empty rule catalogues do not claim a validation pass.
+AGAT lists `expected_failures: null` because no measurement exists.
 
-The command is `gt gff3validator FILE`, with no ontology `-typecheck`, no
-cross-reference vocabulary check, and no reference sequence/protein comparison.
-Acceptance means acceptance by this pinned validator/configuration. It does not
-establish valid SO typing, biological correctness, conversion support, or
-conformance of BED/GTF/INSDC/other formats. Conversely, a restrictive converter
-may reject a valid circular or discontinuous feature.
+The Pfam examples belong to the protein-relative profile, the retained IMG
+functional annotation belongs to the IMG profile, and the remaining GFF3 corpus
+and negative controls belong to the general GFF3 validation cases. These case
+assignments describe validation evidence, not conversion support. In particular,
+a malformed control or circular RefSeq file need not satisfy the converter's
+contract. The [IMG expectations](../../model/validation/img-functional-gff.yaml)
+name the [dialect schema](../../model/dialects/img-functional-gff.yaml) they
+describe, which is not a conversion contract. Local JGI downloads are outside the retained corpus.
 
-## Tool choice and sources
+Both report generation and checking reject unexpected rules and disappearing
+expected rules. A file that still fails can therefore fail the regression check
+for a new reason. Missing cases, stale cases, duplicate assignments, undeclared
+rules, and unused rule declarations also fail. Report regeneration cannot accept
+rule drift automatically. Review the source and diagnostics before deliberately
+changing an expectation. The original derived-fixture `validity` labels still
+constrain GenomeTools independently.
 
-[GenomeTools documentation](https://genometools.org/tools/gt_gff3validator.html)
-describes the strict validator and optional vocabulary checks. The
-[1.6.6 release](https://github.com/genometools/genometools/releases/tag/v1.6.6)
-provides the pinned binaries; archive hashes are recorded in
-[the installer](../../scripts/install_genometools.py).
+GenomeTools has no error IDs, so the adapter assigns narrow names to its observed
+diagnostics, such as `missing-version` and `unresolved-parent`. Unrecognized
+errors fail rather than becoming a generic expected rejection. GFF3toolkit
+supplies its own codes, such as `Esf0014` for the missing version directive.
+The report retains full GenomeTools output. QC diagnostics retain each code's
+count and one example, plus a SHA-256 of **all** sorted diagnostic rows, so changes
+to unshown occurrences still fail `validity-check`. Sorting removes traversal
+order differences. Upstream writes temporary outputs in a fresh temporary
+directory; the input file is never rewritten.
 
-We also evaluated PyPI `gff3==1.0.1`'s `Gff3(path).lines[*].line_errors` API:
-it reported five of the six malformed fixtures, but parsing alone left the
-dangling-parent case without line errors. Its
-[API documentation](https://gff3-py.readthedocs.io/en/latest/usage.html) separates
-parsing and further checks. That experiment is not a claim that no configuration
-of that package can detect missing parents. GenomeTools provides the required
-end-to-end verdict here without an additional custom interpretation layer.
+## What the measurements establish
 
-Upgrading the validator requires rerunning the control cases, inspecting all
-diagnostic changes, and reviewing any changes to the corpus's validity labels.
-Do not regenerate this report merely to hide an unexpected verdict.
+GenomeTools rejects all six malformed controls and accepts all three valid edge
+cases. GFF3toolkit rejects five malformed controls but accepts the dangling-parent
+control in this configuration. Both accept the biologically wrong phase and
+silently split Note controls. Tests repair the missing header of a real dialect
+sample, introduce a new QC phase failure while GenomeTools still rejects its
+header, and remove QC's strand complaint while the file still fails other rules.
+All three changes fail for the intended added or disappearing rule.
+
+Commands are `gt gff3validator FILE` and
+`gff3_QC -g FILE -noncg -f /dev/null -o qc.tsv -s statistics.tsv`.
+GenomeTools stops at its first error and does not run `-typecheck`. QC's
+noncanonical mode omits canonical gene-model, phase-consistency, and BLAST
+checks. `/dev/null` supplies no reference FASTA; this invocation does not measure
+sequence bounds or biological correctness. Neither invocation validates Sequence
+Ontology types. Consequently the known NMDC accession-valued type columns have
+no measured ontology failure to expect here. Neither tool's acceptance establishes
+conversion support or biological correctness.
+
+QC also reports strand `.` as missing (`Esf0003`), empty source columns
+(`Esf0022`), and commas in attributes (`Esf0036`). These are observed tool opinions,
+not new restrictions on the dialects. Missing headers are preserved as observed
+in the IMG and NMDC inputs.
+
+## AGAT installation blocker
+
+On **2026-09-25**, downloaded and SHA-256 checked the AGAT **1.7.0** source
+archive and micromamba **2.9.0-0** macOS arm64 executable under `local/tools/`.
+[agat-blocker.json](agat-blocker.json) records their URLs, hashes, exact probe
+command, exit status and solver diagnostic. The native solve used only
+`conda-forge` and `bioconda`, with user configuration disabled, and exited **1**:
+
+```text
+nothing provides perl-socket needed by perl-test-requiresinternet-0.05-pl5321hdfd78af_1
+```
+
+Read the package metadata and solver output: AGAT requires
+`perl-lwp-protocol-https`, which requires `perl-test-requiresinternet`, which
+requires the unavailable `perl-socket`. This blocks the tested native Bioconda
+route. Read AGAT's `Makefile.PL`: its manual route declares unpinned Perl module
+requirements; it does not supply a reproducible dependency lock to substitute.
+Stopped this tool under the requested macOS arm64 exception in
+https://github.com/turbomam/feature-table-corpus/issues/56. No AGAT install target,
+runner, or measured rule expectations are claimed. No GPL code is tracked or
+vendored. The blocker is explicit on every relevant report row on all platforms;
+installing an arbitrary local AGAT cannot silently change this report.
+
+## Upstream sources read
+
+- [GenomeTools validator documentation](https://genometools.org/tools/gt_gff3validator.html)
+  and [1.6.6 release](https://github.com/genometools/genometools/releases/tag/v1.6.6).
+- GFF3toolkit 2.1.0's [QC command](https://github.com/NAL-i5K/GFF3toolkit/blob/v2.1.0/gff3tool/bin/gff3_QC.py),
+  [rule definitions](https://github.com/NAL-i5K/GFF3toolkit/blob/v2.1.0/gff3tool/lib/ERROR/ERROR.py),
+  and [build hook](https://github.com/NAL-i5K/GFF3toolkit/blob/v2.1.0/setup.py).
+- [AGAT 1.7.0 prerequisites](https://github.com/NBISweden/AGAT/blob/v1.7.0/Makefile.PL)
+  and [Bioconda package metadata](https://api.anaconda.org/package/bioconda/agat).
+
+This report is separate from [conversion preservation](../conversion-roundtrips/README.md).

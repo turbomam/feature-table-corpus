@@ -155,8 +155,8 @@ jobs:
           just --fmt --check
           just --list
 
-      # Fetch for testing, without redistributing the unlicensed upstream schema.
-      - name: Install checksum-pinned independent GFF3 validator
+      # Tools stay under local/tools/. The report records the AGAT blocker.
+      - name: Install checksum-pinned GenomeTools and GFF3toolkit validators
         run: just validity-install
 
       - name: Fetch pinned comparison schema
