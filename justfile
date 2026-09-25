@@ -100,7 +100,7 @@ validity-install-gff3toolkit:
 validity-report:
     uv run --with pyyaml python3 scripts/validate_corpus.py
 
-[doc("Check fixture validity labels and reproduce validator results.")]
+[doc("Check per-profile rule expectations, fixture labels, and retained validator results.")]
 [group("Corpus")]
 validity-check:
     uv run --with pyyaml python3 scripts/validate_corpus.py --check
