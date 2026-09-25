@@ -6,6 +6,7 @@ import io
 from pathlib import Path
 import tempfile
 import unittest
+import unittest.mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("jgi_inputs", ROOT / "scripts/jgi_inputs.py")
@@ -74,6 +75,74 @@ class ManifestTests(unittest.TestCase):
         self.assertEqual(merged[0]["duplicate_file_ids"], ["2"])
         with self.assertRaises(ValueError):
             jgi.merge_duplicates("r", [dict(row, _id="1"), dict(row, _id="2", md5sum="other")])
+
+
+def api_file(name, file_id, md5="0" * 32, size=3):
+    return {"file_name": name, "_id": file_id, "file_size": size, "md5sum": md5,
+            "file_status": "RESTORED"}
+
+
+class CollectTests(unittest.TestCase):
+    """collect() against canned search pages; no network."""
+
+    def record(self, **fields):
+        base = {"record_id": "IMG_AP-2", "query": "q", "file_name_pattern": r"Ga1_.*\.gff",
+                "kind": "hand-written", "citation": "hand-written"}
+        return {**base, **fields}
+
+    def run_collect(self, pages, record):
+        calls = []
+
+        def fake_search(query, page):
+            calls.append(page)
+            return pages[page]
+
+        manifest = {"records": [record]}
+        with tempfile.TemporaryDirectory() as tmp, \
+                unittest.mock.patch.object(jgi, "search", fake_search), \
+                contextlib.redirect_stderr(io.StringIO()):
+            jgi.collect(manifest, Path(tmp) / "out.yaml")
+            written = jgi.load(Path(tmp) / "out.yaml")
+        return written["records"][0], calls
+
+    def test_finds_record_on_a_later_page_and_selects_by_full_match(self):
+        pages = {
+            1: {"organisms": [{"id": "other"}], "next_page": 2},
+            2: {"organisms": [{"id": "IMG_AP-2", "name": "Isolate", "data_utilization_status": "Unrestricted",
+                               "files": [api_file("Ga1_pfam.gff", "b"), api_file("Ga1_cog.gff", "a"),
+                                         api_file("Ga1_pfam.gff.gz", "c"), api_file("x_Ga1_a.gff", "d")]}],
+                "next_page": None},
+        }
+        written, calls = self.run_collect(pages, self.record())
+        self.assertEqual(calls, [1, 2])
+        self.assertEqual([f["name"] for f in written["files"]], ["Ga1_cog.gff", "Ga1_pfam.gff"])
+        self.assertEqual(written["name"], "Isolate")
+        self.assertEqual((written["kind"], written["citation"]), ("hand-written", "hand-written"))
+
+    def test_no_matching_file_fails(self):
+        pages = {1: {"organisms": [{"id": "IMG_AP-2", "name": "n", "files": [api_file("other.txt", "a")]}]}}
+        with self.assertRaises(LookupError):
+            self.run_collect(pages, self.record())
+
+    def test_record_missing_from_every_page_fails(self):
+        pages = {1: {"organisms": [{"id": "other"}], "next_page": 2}, 2: {"organisms": [], "next_page": None}}
+        with self.assertRaises(LookupError):
+            self.run_collect(pages, self.record())
+
+    def test_non_advancing_next_page_fails_instead_of_looping(self):
+        pages = {1: {"organisms": [{"id": "other"}], "next_page": 1}}
+        with self.assertRaises(LookupError):
+            self.run_collect(pages, self.record())
+
+    def test_duplicates_merge_and_conflicts_fail_through_collect(self):
+        same = {1: {"organisms": [{"id": "IMG_AP-2", "name": "n", "files": [
+            api_file("Ga1_a.gff", "2"), api_file("Ga1_a.gff", "1")]}]}}
+        written, _ = self.run_collect(same, self.record())
+        self.assertEqual(written["files"][0]["duplicate_file_ids"], ["2"])
+        conflict = {1: {"organisms": [{"id": "IMG_AP-2", "name": "n", "files": [
+            api_file("Ga1_a.gff", "1"), api_file("Ga1_a.gff", "2", md5="1" * 32)]}]}}
+        with self.assertRaises(ValueError):
+            self.run_collect(conflict, self.record())
 
 
 if __name__ == "__main__":

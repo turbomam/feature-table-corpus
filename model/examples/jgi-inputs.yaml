@@ -1,6 +1,7 @@
 description: JGI Data Portal files used to develop the organism-centric profiles. Downloads need a JGI
-  login, so these are not retained in the repository; see docs/jgi-inputs.md. `files` is written by `just
-  jgi-collect` from the anonymous search API; the other fields are maintained by hand.
+  login, so these are not retained in the repository; see docs/jgi-inputs.md. `just jgi-collect` writes
+  `name`, `data_utilization_status` and `files` from the anonymous search API; the other fields are
+  maintained by hand.
 policy_url: https://jgi.doe.gov/data-policy-support/data-policy
 records:
 - record_id: IMG_AP-1268149

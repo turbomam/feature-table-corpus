@@ -27,8 +27,9 @@ md5 as reported by the portal's search API.
 5. Run `just jgi-verify`. It reports each listed file as `OK`, `MISSING`, `SIZE` or `MD5`.
    Missing files are expected, since nobody needs every record; a size or md5 mismatch fails.
 
-`just jgi-collect` refreshes the file lists from the search API. It keeps the hand-written
-fields and the `file_name_pattern` that selects each record's files. The portal can list the
+`just jgi-collect` refreshes each record's `name`, `data_utilization_status` and `files` from
+the search API. It keeps every other field, which is written by hand, including the
+`file_name_pattern` that selects each record's files. The portal can list the
 same file twice under different IDs; identical duplicates are merged and kept as
 `duplicate_file_ids`, and a name listed with two different contents is an error.
 

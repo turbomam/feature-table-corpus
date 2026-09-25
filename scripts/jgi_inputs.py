@@ -9,8 +9,10 @@ checks what a person has placed under local/jgi/.
     python3 scripts/jgi_inputs.py verify [--dir DIR]    # md5-check local copies
     python3 scripts/jgi_inputs.py collect               # refresh from the API
 
-`collect` is the only command that uses the network. It rewrites the `files`
-of each record from the Data Portal search API, keeping the selection rules.
+`collect` is the only command that uses the network. From the Data Portal
+search API it rewrites three fields of each record: `name`,
+`data_utilization_status` and `files`. Every other field is written by hand
+and kept, including the `file_name_pattern` that selects the files.
 """
 import argparse
 import hashlib
@@ -91,16 +93,23 @@ def search(query, page):
         return json.load(response)
 
 
+MAX_PAGES = 40
+
+
 def find_record(record):
     page = 1
-    while True:
+    for _ in range(MAX_PAGES):
         result = search(record["query"], page)
         for organism in result.get("organisms", []):
             if organism.get("id") == record["record_id"]:
                 return organism
-        if not result.get("next_page"):
+        following = result.get("next_page")
+        if not following:
             raise LookupError(f"{record['record_id']} not found for query {record['query']!r}")
-        page = result["next_page"]
+        if not isinstance(following, int) or following <= page:
+            raise LookupError(f"search returned next_page {following!r} after page {page}")
+        page = following
+    raise LookupError(f"{record['record_id']} not found in {MAX_PAGES} pages of {record['query']!r}")
 
 
 def merge_duplicates(record_id, matches):
