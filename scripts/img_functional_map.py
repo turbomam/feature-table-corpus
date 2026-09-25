@@ -91,6 +91,8 @@ def rows_from_attributes(feature_attributes, slots):
         if slot.multivalued:
             continuing = order and order[-1] == key and name not in dialect.ONE_VALUE_PER_OCCURRENCE
             if not continuing:
+                if key in order and name not in dialect.ONE_VALUE_PER_OCCURRENCE:
+                    raise ValueError(f"{key} values are not contiguous; the dialect writes one comma list")
                 order.append(key)
             row.setdefault(name, []).append(value)
         else:
@@ -196,7 +198,11 @@ def main(argv=None):
     trip.add_argument("gff", type=Path)
     args = parser.parse_args(argv)
     if args.command == "forward":
-        document = dialect.parse(args.gff)
+        try:
+            document = dialect.parse(args.gff)
+        except (dialect.DialectError, OSError, UnicodeDecodeError) as error:
+            report_errors([f"input: {error}"])
+            return 1
         errors = [f"dialect: {m}" for m in dialect.problems(document)]
         if not errors:
             dataset = forward(document)
@@ -206,7 +212,11 @@ def main(argv=None):
         args.output.write_text(json.dumps(dataset, indent=1) + "\n")
         return 0
     if args.command == "reverse":
-        dataset = json.loads(args.dataset.read_text())
+        try:
+            dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+            report_errors([f"input: {error}"])
+            return 1
         errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if not errors:
             try:

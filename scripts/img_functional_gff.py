@@ -166,7 +166,8 @@ def write(document):
 def cross_checks(document):
     """Rules a schema can't express, each measured on the isolate files.
 
-    Phase only on CDS; start <= end; strand "." only on CRISPR and repeat_unit;
+    Each key once per row, except ONE_VALUE_PER_OCCURRENCE keys; phase only on
+    CDS; start <= end; strand "." only on CRISPR and repeat_unit;
     IDs built as <seqid>_<start>_<end>, except that a repeat_unit takes its
     CRISPR's ID plus _DR1, _DR2 ... in file order, and its Parent must be a
     CRISPR row in the same file.
@@ -177,6 +178,10 @@ def cross_checks(document):
     for row in document["rows"]:
         where = f"line {row['line']}"
         kind = row.get("type")
+        order = row.get("attribute_order", [])
+        for key in sorted({k for k in order if order.count(k) > 1}):
+            if slot_name(key) not in ONE_VALUE_PER_OCCURRENCE:
+                problems.append(f"{where}: {key} occurs {order.count(key)} times")
         if row.get("start", 0) > row.get("end", 0):
             problems.append(f"{where}: start > end")
         if ("phase" in row) != (kind == "CDS"):

@@ -84,6 +84,14 @@ class MappingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not a column 9 key"):
             self.back(edited)
 
+    def test_non_contiguous_list_values_are_rejected(self):
+        edited = copy.deepcopy(self.dataset)
+        attributes = self.feature("ctg_01_1600_2199", edited)["attributes"]
+        second_ko = next(i for i, a in enumerate(attributes) if a["value"] == "KO:K01992")
+        attributes.append(attributes.pop(second_ko))
+        with self.assertRaisesRegex(ValueError, "ko values are not contiguous"):
+            self.back(edited)
+
     def test_promoted_field_needs_its_attribute_copy(self):
         edited = copy.deepcopy(self.dataset)
         feature = self.feature("ctg_01_100_1299", edited)
@@ -148,6 +156,18 @@ class CommandTests(unittest.TestCase):
             self.assertEqual(status, 1)
             self.assertIn("gone", err)
             self.assertFalse(out.exists())
+
+    def test_unreadable_input_is_reported_in_both_directions(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            bad_gff, bad_json, out = Path(tmp) / "bad.gff", Path(tmp) / "bad.json", Path(tmp) / "out"
+            bad_gff.write_text("##gff-version 3\n")
+            bad_json.write_text("{not json")
+            for args in (("forward", bad_gff, out), ("reverse", bad_json, out), ("reverse", Path(tmp) / "none", out)):
+                status, err = self.run_cli(*args)
+                self.assertEqual(status, 1, args)
+                self.assertIn("input: ", err)
+                self.assertFalse(out.exists())
 
     def test_both_directions_write_valid_output(self):
         import tempfile
