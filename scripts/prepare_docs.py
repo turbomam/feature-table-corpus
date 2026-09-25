@@ -9,7 +9,8 @@ from urllib.parse import quote, unquote, urlsplit, urlunsplit
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "local" / "site-src"
 PUBLIC_ROOTS = {"docs", "model", "analyses", "corpus", "scripts", "tests"}
-ROOT_FILES = {"README.md", "LICENSE", "justfile", "requirements-conversion.txt", "requirements-docs.txt"}
+ROOT_FILES = {"README.md", "LICENSE", "justfile", "requirements-conversion.txt", "requirements-docs.txt",
+              "requirements-mapping.txt"}
 EXTENSIONS = {".md", ".yaml", ".yml", ".json", ".csv", ".tsv", ".gff", ".gff3", ".gtf",
               ".bed", ".gb", ".faa", ".fna", ".sql", ".py", ".txt", ".rst", ".svg", ".png", ".crisprs"}
 

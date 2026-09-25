@@ -112,7 +112,7 @@ rejects what it should.
 
 [`img-functional-gff.transform.yaml`](../model/transforms/img-functional-gff.transform.yaml)
 maps dialect rows to `Feature` with [linkml-map](https://github.com/linkml/linkml-map) 0.5.4,
-pinned in `requirements-mapping.txt`. The reverse mapping is not written by hand: it is generated
+pinned in [`requirements-mapping.txt`](../requirements-mapping.txt). The reverse mapping is not written by hand: it is generated
 from the same file with linkml-map's inverter each time
 ([#55](https://github.com/turbomam/feature-table-corpus/issues/55)).
 
