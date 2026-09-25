@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "model/dialects/phytozome-gene-exons-gff3.yaml"
@@ -50,18 +51,19 @@ def open_text(path):
     return open(path, encoding="utf-8", newline="")
 
 
-# What a malformed or unreadable input raises while it is read.
-READ_ERRORS = (OSError, EOFError, UnicodeDecodeError)
+# What a malformed or unreadable input raises while it is read. zlib.error, from a
+# corrupted gzip body, is not an OSError.
+READ_ERRORS = (OSError, EOFError, UnicodeDecodeError, zlib.error)
 
 
 def strip(number, raw):
     """A line's text, refused unless it ends in LF alone, as every measured line does."""
+    # Checked first: the reader also ends a line at a bare CR, so that line lacks LF too.
+    if "\r" in raw:
+        raise DialectError(f"line {number}: carriage return; this dialect writes LF line endings")
     if not raw.endswith("\n"):
         raise DialectError(f"line {number}: no final newline")
-    text = raw[:-1]
-    if "\r" in text:
-        raise DialectError(f"line {number}: carriage return; this dialect writes LF line endings")
-    return text
+    return raw[:-1]
 
 
 def read_header(lines):
@@ -403,7 +405,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "validate":
         return validate(args.file, args.max_errors)
-    document = parse(args.file)
+    try:
+        document = parse(args.file)
+    except (DialectError, *READ_ERRORS) as error:
+        print(f"INVALID  {args.file}: {error}", file=sys.stderr)
+        return 1
     text = json.dumps(document, indent=1)
     if args.output:
         return write_output(args.output, text + "\n")

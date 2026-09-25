@@ -237,7 +237,11 @@ def main(argv=None):
         return validate(args.file, args.max_errors)
     if args.command == "join":
         return join(args.gff3, args.file, args.max_errors)
-    document = parse(args.file)
+    try:
+        document = parse(args.file)
+    except (DialectError, *gff3.READ_ERRORS) as error:
+        print(f"INVALID  {args.file}: {error}", file=sys.stderr)
+        return 1
     text = json.dumps(document, indent=1)
     if args.output:
         return gff3.write_output(args.output, text + "\n")

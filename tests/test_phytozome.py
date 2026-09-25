@@ -70,6 +70,12 @@ class GeneExonsParseTests(unittest.TestCase):
         with self.assertRaisesRegex(gff3.DialectError, "doesn't write"):
             gff3.write(broken)
 
+    def test_a_form_feed_in_a_name_is_written_back_unchanged(self):
+        # The reader splits lines only at LF (and CR); str.splitlines would also split at \f.
+        text = edited(GFF3, 2, "Name=Exa01g00010", "Name=Exa01\fg00010")
+        document = gff3.parse_lines(io.StringIO(text, newline=""), "case")
+        self.assertEqual(gff3.write(document), text)
+
     def test_gzip_input_is_read_as_a_stream(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "case.gff3.gz"
@@ -104,6 +110,34 @@ class InputTests(unittest.TestCase):
         whole = gzipped(GFF3.read_text())
         self.assert_invalid(gff3.validate, whole[:len(whole) // 2], "case.gff3.gz", "ended before")
         self.assert_invalid(gff3.validate, GFF3.read_bytes(), "case.gff3.gz", "Not a gzipped file")
+
+    def test_corrupted_gzip_body(self):
+        data = bytearray(gzipped(GFF3.read_text()))
+        for index in range(40, 60):
+            data[index] ^= 0xFF
+        self.assert_invalid(gff3.validate, bytes(data), "case.gff3.gz", "while decompressing")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "case.gff3.gz"
+            path.write_bytes(bytes(data))
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(table.join(path, TABLE), 1)
+            self.assertIn("while decompressing", out.getvalue())
+
+    def test_parse_reports_bad_input_and_exits_1(self):
+        for module, path in ((gff3, GFF3), (table, TABLE)):
+            with tempfile.TemporaryDirectory() as tmp:
+                crlf = Path(tmp) / path.name
+                crlf.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+                for bad, expected in ((Path(tmp) / "missing", "No such file"), (crlf, "carriage return")):
+                    err = io.StringIO()
+                    with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                        self.assertEqual(module.main(["parse", str(bad)]), 1)
+                    self.assertIn(expected, err.getvalue())
+
+    def test_a_bare_carriage_return_is_named(self):
+        data = TABLE.read_bytes().replace(b"Example domain", b"Example\rdomain")
+        self.assert_invalid(table.validate, data, "case.txt", "line 2: carriage return")
 
     def test_missing_path(self):
         out = io.StringIO()
