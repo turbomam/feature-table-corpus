@@ -96,6 +96,8 @@ def parse_row(line_number, text, slots):
             row.setdefault(name, value)
             continue
         if slot.multivalued:
+            if name in row and name not in ONE_VALUE_PER_OCCURRENCE:
+                raise DialectError(f"line {line_number}: {key} repeats; this dialect writes one comma list")
             parts = [value] if name in ONE_VALUE_PER_OCCURRENCE else value.split(",")
             try:
                 row.setdefault(name, []).extend(convert(part, slot) for part in parts)

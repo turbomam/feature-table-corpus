@@ -65,6 +65,19 @@ class MappingTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.back(edited)
 
+    def test_unknown_attribute_key_is_reported(self):
+        edited = copy.deepcopy(self.dataset)
+        self.feature("ctg_01_100_1299", edited)["attributes"].append({"key": "new_key", "value": "x"})
+        with self.assertRaisesRegex(ValueError, "not a column 9 key"):
+            self.back(edited)
+
+    def test_promoted_field_needs_its_attribute_copy(self):
+        edited = copy.deepcopy(self.dataset)
+        feature = self.feature("ctg_01_100_1299", edited)
+        feature["attributes"] = [a for a in feature["attributes"] if a["key"] != "ID"]
+        with self.assertRaisesRegex(ValueError, "ID has no attribute copy"):
+            self.back(edited)
+
     def test_two_parents_do_not_fit_the_dialect(self):
         from linkml_map.transformer.errors import TransformationError
         edited = copy.deepcopy(self.dataset)
@@ -85,6 +98,51 @@ class MappingTests(unittest.TestCase):
         edited = copy.deepcopy(self.dataset)
         self.feature("ctg_02_500_620_DR1", edited)["parent"] = ["no_such_feature"]
         self.assertTrue(any("no_such_feature" in e for e in self.errors(edited)), self.errors(edited))
+
+
+class CommandTests(unittest.TestCase):
+    """The command line refuses invalid input in either direction and writes nothing."""
+
+    def run_cli(self, *args):
+        import contextlib
+        import io
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            status = mapping.main([str(a) for a in args])
+        return status, err.getvalue()
+
+    def test_forward_refuses_input_outside_the_dialect(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "bad.gff"
+            source.write_text(FIXTURE.read_text().replace("+\t.\tID=ctg_01_2300_2375", "+\t0\tID=ctg_01_2300_2375", 1))
+            out = Path(tmp) / "out.json"
+            status, err = self.run_cli("forward", source, out)
+            self.assertEqual(status, 1)
+            self.assertIn("phase present on tRNA", err)
+            self.assertFalse(out.exists())
+
+    def test_reverse_refuses_an_invalid_dataset(self):
+        import json
+        import tempfile
+        dataset = mapping.forward(dialect.parse(FIXTURE))
+        next(f for f in dataset["features"] if f["feature_id"] == "ctg_02_500_620_DR1")["parent"] = ["gone"]
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "dataset.json"
+            source.write_text(json.dumps(dataset))
+            out = Path(tmp) / "out.gff"
+            status, err = self.run_cli("reverse", source, out)
+            self.assertEqual(status, 1)
+            self.assertIn("gone", err)
+            self.assertFalse(out.exists())
+
+    def test_both_directions_write_valid_output(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, back = Path(tmp) / "d.json", Path(tmp) / "back.gff"
+            self.assertEqual(self.run_cli("forward", FIXTURE, dataset)[0], 0)
+            self.assertEqual(self.run_cli("reverse", dataset, back)[0], 0)
+            self.assertEqual(dialect.parse(back)["rows"], dialect.parse(FIXTURE)["rows"])
 
 
 class AgreementTests(unittest.TestCase):

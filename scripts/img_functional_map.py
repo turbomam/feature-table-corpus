@@ -84,7 +84,9 @@ def rows_from_attributes(feature_attributes, slots):
     for attribute in feature_attributes:
         key = attribute["key"]
         name = dialect.slot_name(key)
-        slot = slots[name]
+        slot = slots.get(name)
+        if slot is None or name in dialect.CORE or key in dialect.SLOT_ONLY_NAMES:
+            raise ValueError(f"attribute key {key!r} is not a column 9 key of this dialect")
         value = dialect.convert(attribute["value"], slot)
         if slot.multivalued:
             continuing = order and order[-1] == key and name not in dialect.ONE_VALUE_PER_OCCURRENCE
@@ -107,9 +109,18 @@ def reverse(dataset, source_file, transformers=None):
         # linkml-map reduces a one-item parent list to the dialect's single Parent,
         # and raises TransformationError for two or more.
         mapped = present(to_dialect.map_object(core, source_type="Feature"))
-        row = rows_from_attributes(feature.get("attributes", []), slots)
+        try:
+            row = rows_from_attributes(feature.get("attributes", []), slots)
+        except ValueError as error:
+            raise ValueError(f"{feature['feature_id']}: {error}") from None
         for name, value in mapped.items():
-            if name in row and row[name] != value:
+            if name in dialect.CORE:
+                continue
+            # A column 9 key promoted to a Feature slot must also be an attribute,
+            # which is where its position in the row comes from.
+            if name not in row:
+                raise ValueError(f"{feature['feature_id']}: {name} has no attribute copy")
+            if row[name] != value:
                 raise ValueError(f"{feature['feature_id']}: {name} is {value!r} in the Feature "
                                  f"but {row[name]!r} in its attributes")
         row.update(mapped)
@@ -151,6 +162,15 @@ def roundtrip(path):
     return problems, report
 
 
+def report_errors(errors):
+    """Print errors and say whether there were any; output is written only when there were none."""
+    for error in errors[:20]:
+        print(f"  {error}", file=sys.stderr)
+    if len(errors) > 20:
+        print(f"  ... {len(errors) - 20} more", file=sys.stderr)
+    return bool(errors)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
@@ -164,15 +184,28 @@ def main(argv=None):
     trip.add_argument("gff", type=Path)
     args = parser.parse_args(argv)
     if args.command == "forward":
-        dataset = forward(dialect.parse(args.gff))
-        errors = validation_errors(dataset, make_validator(str(MODEL)))
-        for error in errors[:20]:
-            print(f"  {error}", file=sys.stderr)
+        document = dialect.parse(args.gff)
+        errors = [f"dialect: {m}" for m in dialect.problems(document)]
+        if not errors:
+            dataset = forward(document)
+            errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        if report_errors(errors):
+            return 1
         args.output.write_text(json.dumps(dataset, indent=1) + "\n")
-        return 1 if errors else 0
+        return 0
     if args.command == "reverse":
         dataset = json.loads(args.dataset.read_text())
-        args.output.write_text(dialect.write(reverse(dataset, str(args.output))))
+        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        if not errors:
+            try:
+                document = reverse(dataset, str(args.output))
+            except Exception as error:  # linkml-map raises its own TransformationError
+                errors = [f"reverse: {error}"]
+            else:
+                errors = [f"dialect: {m}" for m in dialect.problems(document)]
+        if report_errors(errors):
+            return 1
+        args.output.write_text(dialect.write(document))
         return 0
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:

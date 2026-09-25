@@ -99,6 +99,10 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected(self.edited(9, "_DR2;", "_DR3;"), "is not 'ctg_02_500_620_DR2'")
         self.assert_rejected(self.edited(9, "Parent=ctg_02_500_620", "Parent=ctg_02_1_2"), "is not a CRISPR row")
 
+    def test_comma_list_key_may_not_repeat(self):
+        self.assert_rejected(self.edited(2, "ko=KO:K01990,KO:K01992", "ko=KO:K01990;ko=KO:K01992"),
+                             "ko repeats; this dialect writes one comma list")
+
     def test_single_valued_key_may_not_repeat(self):
         self.assert_rejected(self.edited(0, "product=", "product=x;product="), "repeats but is single-valued")
 
