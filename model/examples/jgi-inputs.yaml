@@ -1,0 +1,366 @@
+description: JGI Data Portal files used to develop the organism-centric profiles. Downloads need a JGI
+  login, so these are not retained in the repository; see docs/jgi-inputs.md. `just jgi-collect` writes
+  `name`, `data_utilization_status` and `files` from the anonymous search API; the other fields are
+  maintained by hand.
+policy_url: https://jgi.doe.gov/data-policy-support/data-policy
+records:
+- record_id: IMG_AP-1268149
+  query: Clostridium acetobutylicum
+  file_name_pattern: Ga0423362_.*\.gff
+  kind: bacterium, isolate
+  workflow: IMG annotation pipeline, per-method GFF set with structural and functional roll-ups
+  citation: null
+  name: Clostridium acetobutylicum
+  data_utilization_status: Unrestricted
+  files:
+  - name: Ga0423362_cath_funfam.gff
+    file_id: 5ee7d33d6263bf2148832ef7
+    bytes: 1329740
+    md5: 05c603dd179ca0c635338b3ffd919173
+    status_when_collected: RESTORED
+  - name: Ga0423362_cleavage_sites.gff
+    file_id: 5ee7d33b6263bf2148832ed9
+    bytes: 18175
+    md5: 168c2bdc36962433f1cd43f48e1ddc5e
+    status_when_collected: RESTORED
+  - name: Ga0423362_cog.gff
+    file_id: 5ee7d33a6263bf2148832ecc
+    bytes: 927609
+    md5: a85084105705f69d5d01b6747ccd2659
+    status_when_collected: RESTORED
+  - name: Ga0423362_crt.gff
+    file_id: 5ee7d33c6263bf2148832eef
+    bytes: 690
+    md5: 06c8ff10e31d69d6394aa6c0bf788d66
+    status_when_collected: RESTORED
+  - name: Ga0423362_functional_annotation.gff
+    file_id: 5ee7d33c6263bf2148832eeb
+    bytes: 1386145
+    md5: dc12d0593b5f3c52bf173331ad89052e
+    status_when_collected: RESTORED
+  - name: Ga0423362_genemark.gff
+    file_id: 5ee7d33c6263bf2148832eed
+    bytes: 481892
+    md5: 2b2daa60b138d433946cbca97f8e224e
+    status_when_collected: RESTORED
+  - name: Ga0423362_ko_ec.gff
+    file_id: 5ee7d33b6263bf2148832eda
+    bytes: 559474
+    md5: 40206bf13bbb3a052e33150a626b96b8
+    status_when_collected: RESTORED
+  - name: Ga0423362_pfam.gff
+    file_id: 5ee7d33b6263bf2148832ede
+    bytes: 1045944
+    md5: f00a1a55fab731e96ba29a56f6ee0e70
+    status_when_collected: RESTORED
+  - name: Ga0423362_prodigal.gff
+    file_id: 5ee7d33a6263bf2148832ec7
+    bytes: 452840
+    md5: b5fa3db7bb855bad9d11d1d1bdb1c16a
+    status_when_collected: RESTORED
+  - name: Ga0423362_rfam.gff
+    file_id: 5ee7d33c6263bf2148832eea
+    bytes: 21904
+    md5: df566e904bb9f63f626e35833305c066
+    status_when_collected: RESTORED
+  - name: Ga0423362_rfam_misc_bind_misc_feature_regulatory.gff
+    file_id: 5ee7d33a6263bf2148832ec9
+    bytes: 14267
+    md5: fe8c470ac9d213e775903248da4fa629
+    status_when_collected: RESTORED
+  - name: Ga0423362_rfam_ncrna_tmrna.gff
+    file_id: 5ee7d33c6263bf2148832ef0
+    bytes: 1318
+    md5: fcc88bfab85559a26582c2fd1c781073
+    status_when_collected: RESTORED
+  - name: Ga0423362_rfam_rrna.gff
+    file_id: 5ee7d33c6263bf2148832ef1
+    bytes: 6319
+    md5: 1dd5582e20a3cdc2a21d47a87022af9a
+    status_when_collected: RESTORED
+  - name: Ga0423362_smart.gff
+    file_id: 5ee7d33c6263bf2148832ee6
+    bytes: 432216
+    md5: 5822395083abf3ab081144fd619e62af
+    status_when_collected: RESTORED
+  - name: Ga0423362_structural_annotation.gff
+    file_id: 5ee7d33b6263bf2148832edc
+    bytes: 586379
+    md5: 4dc2b0d1f231720089b7f65381cb9527
+    status_when_collected: RESTORED
+  - name: Ga0423362_supfam.gff
+    file_id: 5ee7d33b6263bf2148832edd
+    bytes: 1381060
+    md5: 05e8683a592b8d01e55d2163b957940f
+    status_when_collected: RESTORED
+  - name: Ga0423362_tigrfam.gff
+    file_id: 5ee7d33c6263bf2148832ee7
+    bytes: 213597
+    md5: 33bcbb51d5bbfd95fa05696431c153ee
+    status_when_collected: RESTORED
+  - name: Ga0423362_tmh.gff
+    file_id: 5ee7d33a6263bf2148832ec4
+    bytes: 1000930
+    md5: 73416d0bef09ac9ec8f522e5c7b1151b
+    status_when_collected: RESTORED
+  - name: Ga0423362_trna.gff
+    file_id: 5ee7d33a6263bf2148832ecb
+    bytes: 13467
+    md5: 44804feb3711da8923f4b146dcd25a33
+    status_when_collected: RESTORED
+- record_id: IMG_AP-1257706
+  query: Methanococcus maripaludis S1
+  file_name_pattern: Ga0416744_.*\.gff
+  kind: archaeon, isolate
+  workflow: IMG annotation pipeline, per-method GFF set with structural and functional roll-ups
+  citation: null
+  name: Methanococcus maripaludis S1
+  data_utilization_status: Unrestricted
+  files:
+  - name: Ga0416744_cath_funfam.gff
+    file_id: 5e7fbd0f76b4483f14ac1c4b
+    bytes: 624674
+    md5: 4204363efdb73cb5cc9539f09523e12f
+    status_when_collected: RESTORED
+  - name: Ga0416744_cleavage_sites.gff
+    file_id: 5e7fbd0d76b4483f14ac1c2d
+    bytes: 9707
+    md5: e446232d6325634f1699e4b791f1d0c1
+    status_when_collected: RESTORED
+  - name: Ga0416744_cog.gff
+    file_id: 5e7fbd0c76b4483f14ac1c20
+    bytes: 449417
+    md5: 787b96518f524c1be884ddb4986c9960
+    status_when_collected: RESTORED
+  - name: Ga0416744_crt.gff
+    file_id: 5e7fbd0f76b4483f14ac1c43
+    bytes: 779
+    md5: 29452d00c221fe8ce664e308704d809f
+    status_when_collected: RESTORED
+  - name: Ga0416744_functional_annotation.gff
+    file_id: 5e7fbd0e76b4483f14ac1c3f
+    bytes: 623908
+    md5: 688996de9455defdf4969b382219b1f8
+    status_when_collected: RESTORED
+  - name: Ga0416744_genemark.gff
+    file_id: 5e7fbd0e76b4483f14ac1c41
+    bytes: 219184
+    md5: 15c31dd173f1bc7b3203154217ab5ec0
+    status_when_collected: RESTORED
+  - name: Ga0416744_ko_ec.gff
+    file_id: 5e7fbd0d76b4483f14ac1c2e
+    bytes: 296093
+    md5: b5c307095281d733691e93e0f532394c
+    status_when_collected: RESTORED
+  - name: Ga0416744_pfam.gff
+    file_id: 5e7fbd0e76b4483f14ac1c32
+    bytes: 464741
+    md5: fd1d3d0f3455118f99b1f4e08cff31df
+    status_when_collected: RESTORED
+  - name: Ga0416744_prodigal.gff
+    file_id: 5e7fbd0c76b4483f14ac1c1b
+    bytes: 206434
+    md5: f691367f20da7efd4bffa892926774c5
+    status_when_collected: RESTORED
+  - name: Ga0416744_rfam.gff
+    file_id: 5e7fbd0e76b4483f14ac1c3e
+    bytes: 1455
+    md5: 0ca7fc68315e325de61b884dee625f43
+    status_when_collected: RESTORED
+  - name: Ga0416744_rfam_misc_bind_misc_feature_regulatory.gff
+    file_id: 5e7fbd0c76b4483f14ac1c1d
+    bytes: 188
+    md5: a6b112958ffb77526328c753d91daa40
+    status_when_collected: RESTORED
+  - name: Ga0416744_rfam_ncrna_tmrna.gff
+    file_id: 5e7fbd0f76b4483f14ac1c44
+    bytes: 454
+    md5: 4c91e21e235ee0b3869f70d921c8dab9
+    status_when_collected: RESTORED
+  - name: Ga0416744_rfam_rrna.gff
+    file_id: 5e7fbd0f76b4483f14ac1c45
+    bytes: 813
+    md5: 0132ea037300b5c51bafbbc482ccc0c5
+    status_when_collected: RESTORED
+  - name: Ga0416744_smart.gff
+    file_id: 5e7fbd0e76b4483f14ac1c3a
+    bytes: 174240
+    md5: a6850dbba87385aa63e319ac293883df
+    status_when_collected: RESTORED
+  - name: Ga0416744_structural_annotation.gff
+    file_id: 5e7fbd0d76b4483f14ac1c30
+    bytes: 257179
+    md5: e6c0947b5417d73d0686221ad7f7cb25
+    status_when_collected: RESTORED
+  - name: Ga0416744_supfam.gff
+    file_id: 5e7fbd0d76b4483f14ac1c31
+    bytes: 644200
+    md5: 30273b2387a766f65e0426c1c9606e00
+    status_when_collected: RESTORED
+  - name: Ga0416744_tigrfam.gff
+    file_id: 5e7fbd0e76b4483f14ac1c3b
+    bytes: 118863
+    md5: 1ae0eb09fe78262459e17686c7429aa6
+    status_when_collected: RESTORED
+  - name: Ga0416744_tmh.gff
+    file_id: 5e7fbd0c76b4483f14ac1c18
+    bytes: 408072
+    md5: 2230ca9cf2e622233f4deb8b532d42fa
+    status_when_collected: RESTORED
+  - name: Ga0416744_trna.gff
+    file_id: 5e7fbd0c76b4483f14ac1c1f
+    bytes: 6252
+    md5: b9e440d42b82f993554ce8dd2e469bff
+    status_when_collected: RESTORED
+- record_id: IMG_AP-1121004
+  query: Bacillus
+  file_name_pattern: (2708743150\.gff|2708743150\..*\.tab\.txt|106476\.assembled\.(gff|gbk))
+  kind: bacterium, isolate
+  workflow: IMG pipeline 4.14 assembled GFF and GenBank, plus the img_core_v400 taxon GFF and side tables
+  citation: null
+  name: 'Bacillus sp. (in: Bacteria)'
+  data_utilization_status: Unrestricted
+  files:
+  - name: 106476.assembled.gbk
+    file_id: 585823e17ded5e78cff8edcc
+    bytes: 8587401
+    md5: bdf9019b01439445090aef0cbea057e3
+    status_when_collected: RESTORED
+  - name: 106476.assembled.gff
+    file_id: 585823e07ded5e78cff8edcb
+    bytes: 667730
+    md5: 21b6400d7e9c82c01ea1a286baf01bf9
+    status_when_collected: RESTORED
+  - name: 2708743150.cog.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac92
+    bytes: 311598
+    md5: 7ba882ac0614c94717387d9e27a09161
+    status_when_collected: RESTORED
+  - name: 2708743150.gff
+    file_id: 6822952a9a4399cb6ee0ac94
+    bytes: 615004
+    md5: f42ce397a9106100ca58d94ab4b93c76
+    status_when_collected: RESTORED
+  - name: 2708743150.ipr.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac86
+    bytes: 686982
+    md5: 1ef979df60827b86078f1b28cbe5be09
+    status_when_collected: RESTORED
+  - name: 2708743150.ko.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac98
+    bytes: 268565
+    md5: a652e06193f50ee804291602ba4ff93c
+    status_when_collected: RESTORED
+  - name: 2708743150.pfam.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac90
+    bytes: 353141
+    md5: 3ff86b2d280581152bed91d597863e60
+    status_when_collected: RESTORED
+  - name: 2708743150.signalp.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac8e
+    bytes: 5695
+    md5: ea25b2aec9744ede3ec17189da9160e4
+    status_when_collected: RESTORED
+  - name: 2708743150.tigrfam.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac84
+    bytes: 128243
+    md5: a67c8b39aa9c601233531b5dcda46c1d
+    status_when_collected: RESTORED
+  - name: 2708743150.tmhmm.tab.txt
+    file_id: 6822952a9a4399cb6ee0ac88
+    bytes: 481653
+    md5: 7b021eea69be390c4ab8eb0868c98a88
+    status_when_collected: RESTORED
+- record_id: IMG_AP-1377582
+  query: Zymomonas mobilis
+  file_name_pattern: 645058785\.tar\.gz
+  kind: bacterium, isolate
+  workflow: img_core_v400 taxon bundle (GFF and side tables inside the tarball)
+  citation: null
+  name: Zymomonas mobilis subsp. mobilis ATCC 10988, Genomic DNA
+  data_utilization_status: Unrestricted
+  files:
+  - name: 645058785.tar.gz
+    file_id: 687fd4fe5b874f5cc973874d
+    bytes: 2175786
+    md5: c867720f425e696425a5caf3df174fd1
+    status_when_collected: RESTORED
+- record_id: Phytozome-167
+  query: Athaliana
+  file_name_pattern: Athaliana_167_TAIR10\.(gene_exons\.gff3\.gz|annotation_info\.txt|DataReleasePolicy\.html)
+  kind: plant, sequenced outside JGI (Phytozome tag UNRST EXT)
+  workflow: TAIR10 structural annotation with Phytozome functional annotation
+  citation: 'Lamesch et al. 2012, The Arabidopsis Information Resource (TAIR): improved gene annotation
+    and new tools. Nucleic Acids Research 40(D1):D1202-D1210. https://doi.org/10.1093/nar/gkr1090'
+  name: Arabidopsis thaliana TAIR10
+  data_utilization_status: Unrestricted
+  files:
+  - name: Athaliana_167_TAIR10.DataReleasePolicy.html
+    file_id: 5a1f33697ded5e41c3079ec7
+    bytes: 731
+    md5: 73f4464cbc774044678049125feb3a68
+    status_when_collected: RESTORED
+  - name: Athaliana_167_TAIR10.annotation_info.txt
+    file_id: 56aef01f0d878559e2870404
+    bytes: 10498567
+    md5: e33a44eea32f95fb7b133590f4463a14
+    status_when_collected: RESTORED
+    duplicate_file_ids:
+    - 6851d640c975d7e29758f11b
+  - name: Athaliana_167_TAIR10.gene_exons.gff3.gz
+    file_id: 53112a1a49607a1be005585d
+    bytes: 5919855
+    md5: 83f7e24dca4020e5cc0bc642301ee1c9
+    status_when_collected: RESTORED
+    duplicate_file_ids:
+    - 5854743b7ded5e78cff8c475
+- record_id: Phytozome-447
+  query: Athaliana
+  file_name_pattern: Athaliana_447_Araport11\.(gene_exons\.gff3\.gz|annotation_info\.txt|DataReleasePolicy\.html)
+  kind: plant, sequenced outside JGI (Phytozome tag UNRST EXT)
+  workflow: Araport11 structural annotation with Phytozome functional annotation
+  citation: 'Cheng et al. 2017, Araport11: a complete reannotation of the Arabidopsis thaliana reference
+    genome. The Plant Journal 89(4):789-804. https://doi.org/10.1111/tpj.13415'
+  name: Arabidopsis thaliana Araport11
+  data_utilization_status: Unrestricted
+  files:
+  - name: Athaliana_447_Araport11.DataReleasePolicy.html
+    file_id: 5a1f33557ded5e41c3079ea0
+    bytes: 566
+    md5: 21adda75c04c1d8d22151a1ad8dbe1d6
+    status_when_collected: RESTORED
+  - name: Athaliana_447_Araport11.annotation_info.txt
+    file_id: 587b0add7ded5e4229d885a7
+    bytes: 7586938
+    md5: 1b666b5eb61e9ec5257ac0e4d3e583ec
+    status_when_collected: RESTORED
+  - name: Athaliana_447_Araport11.gene_exons.gff3.gz
+    file_id: 587b0ada7ded5e4229d885a0
+    bytes: 8430669
+    md5: 350389b5c9892cda4c72c2f351a6d2c8
+    status_when_collected: BACKUP_COMPLETE
+- record_id: Phytozome-533
+  query: Ptrichocarpa
+  file_name_pattern: Ptrichocarpa_533_v4\.1\.(gene_exons\.gff3\.gz|annotation_info\.txt|DataReleasePolicy\.html)
+  kind: plant, sequenced by JGI (Phytozome tag UNRST JGI)
+  workflow: Phytozome annotation pipeline
+  citation: Tuskan et al. 2006, The genome of black cottonwood, Populus trichocarpa (Torr. & Gray). Science
+    313(5793):1596-1604. PMID 16973872
+  name: Populus trichocarpa v4.1
+  data_utilization_status: Unrestricted
+  files:
+  - name: Ptrichocarpa_533_v4.1.DataReleasePolicy.html
+    file_id: 5d94dc9ec0d65a87debccfc7
+    bytes: 1703
+    md5: 2d89ecc90fd839fe156517a67c073fa1
+    status_when_collected: RESTORED
+  - name: Ptrichocarpa_533_v4.1.annotation_info.txt
+    file_id: 5d94dc9ec0d65a87debccfcc
+    bytes: 8742751
+    md5: aaf04aa3515d96748d1229d36ac7dfe4
+    status_when_collected: RESTORED
+  - name: Ptrichocarpa_533_v4.1.gene_exons.gff3.gz
+    file_id: 5d94dc9fc0d65a87debccfce
+    bytes: 9769649
+    md5: 3fdcfdd5af213c5f4dde0c01f2cdbfda
+    status_when_collected: RESTORED

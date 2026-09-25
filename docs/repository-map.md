@@ -14,7 +14,7 @@ corpus/                         Evidence collected from producers and prior art
 model/                          This project's proposed contracts and instances
   schema/                       LinkML schemas and validation guide
   profiles/                     Versioned, executable source conversion contracts
-  examples/                     Worked examples and their source-artifact manifest
+  examples/                     Worked examples, source-artifact and JGI input manifests
 analyses/                       Source-specific measurements and selection reports
   nmdc-data-objects/             NMDC categorical-slot and URL-host counts
   nmdc-selection/                Saved sampling report for the original GFF files
@@ -49,6 +49,7 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Queries | `bgc-check`, `bgc-report` | Check the real BGC exercise offline, or explicitly regenerate its selected excerpt and query report |
 | Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
 | NMDC | `nmdc-collect`, `nmdc-render`, `nmdc-sample` | Explicit live collection/sampling or offline regeneration of source-specific reports |
+| JGI | `jgi-urls`, `jgi-verify [dir]`, `jgi-collect` | Print login-only download URLs, check local copies under `local/jgi/`, or refresh the file list from the search API ([guide](jgi-inputs.md)) |
 | Documentation | `docs-build`, `docs-check`, `docs-serve [port]` | Stage tracked public files, render and check the site, or preview on loopback |
 
 `just check` keeps its validation scope: it does not collect live NMDC records, sample
