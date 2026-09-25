@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run recommended LinkML lint with four exact strand-symbol exceptions."""
+"""Run recommended LinkML lint with exact, listed naming exceptions."""
 import argparse
 
 from linkml.linter.linter import Linter, get_named_config
@@ -10,6 +10,28 @@ ALLOWED = {
      f"Permissible value of Enum 'StrandEnum' has name '{symbol}'")
     for symbol in ("+", "-", ".", "?")
 }
+
+# A dialect schema spells keys and values exactly as its source file does, so
+# its naming exceptions are the source's own spellings, listed one by one.
+DIALECT_NAMES = {
+    "img_functional_gff": {
+        "slots": ("ID", "Parent", "ncRNA_class"),
+        "values": {
+            "ImgFeatureType": ("CDS", "tRNA", "rRNA", "ncRNA", "tmRNA", "CRISPR"),
+            "Strand": ("+", "-", "."),
+            "StartType": ("ATG", "GTG", "TTG", "Edge"),
+            "Partial": ("5'", "3'"),
+            "SearchMode": ("Bacterial", "Archaeal"),
+            "CleavageSiteNetwork": ("SignalP-noTM", "SignalP-TM"),
+        },
+    },
+}
+for schema, names in DIALECT_NAMES.items():
+    ALLOWED |= {(schema, "standard_naming", "warning", f"Slot has name '{name}'")
+                for name in names["slots"]}
+    ALLOWED |= {(schema, "standard_naming", "warning",
+                 f"Permissible value of Enum '{enum}' has name '{value}'")
+                for enum, values in names["values"].items() for value in values}
 
 
 def allowed(problem):
