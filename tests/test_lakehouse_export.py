@@ -1,6 +1,7 @@
 """Parquet written through linkml-store reads back equal to the Dataset, and the checks can fail."""
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -10,6 +11,7 @@ from unittest.mock import patch
 import duckdb
 import pyarrow as pa
 import pyarrow.parquet as pq
+import sqlalchemy as sqla
 from linkml_runtime import SchemaView
 from linkml_store.api.stores.duckdb import mappings as store_mappings
 
@@ -110,6 +112,80 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual(lakehouse.value_mismatches(self.view, data, written),
                          ["features: 14 rows read back, 15 expected"])
 
+    def rewrite(self, path, change):
+        """Replace a Parquet file with change(rows, schema) -> Table."""
+        table = pq.read_table(path)
+        pq.write_table(change(table.to_pylist(), table.schema), path)
+
+    def export_with(self, change, name="changed"):
+        """Run export() with the features file rewritten after writing."""
+        real = lakehouse.write_parquet
+
+        def write_then_change(view, data, out_dir):
+            written = real(view, data, out_dir)
+            self.rewrite(written["features"], change)
+            return written
+        with patch.object(lakehouse, "write_parquet", write_then_change):
+            return lakehouse.export(SCHEMA, EXAMPLE, self.work / name)
+
+    def test_export_refuses_a_row_count_that_differs_from_build_duckdb(self):
+        # The value check is switched off, so only the build_duckdb.py count can fail.
+        with patch.object(lakehouse, "value_mismatches", return_value=[]):
+            with self.assertRaisesRegex(ValueError, "features: 14 Parquet rows, build_duckdb.py feature has 15"):
+                self.export_with(lambda rows, schema: pa.Table.from_pylist(rows[1:], schema=schema))
+        self.assertFalse((self.work / "changed").exists())
+
+    def test_export_refuses_a_column_type_the_schema_does_not_give(self):
+        # An int64 is_selected compares equal to the booleans (True == 1), so only
+        # the type check can see it.
+        def as_int(rows, schema):
+            table = pa.Table.from_pylist(rows, schema=schema)
+            index = table.schema.get_field_index("is_selected")
+            values = [None if v is None else int(v) for v in table.column(index).to_pylist()]
+            return table.set_column(index, "is_selected", pa.array(values, pa.int64()))
+        data = load_validated(SCHEMA, EXAMPLE)
+        with self.assertRaisesRegex(ValueError, r"features: column types differ: \('is_selected', 'BOOLEAN'\) "
+                                                r"!= \('is_selected', 'BIGINT'\)"):
+            self.export_with(as_int)
+        _, out = self.exported(EXAMPLE)
+        written = {name: out / f"{name}.parquet" for name, _ in lakehouse.collections(self.view)}
+        self.rewrite(written["features"], as_int)
+        self.assertEqual(lakehouse.value_mismatches(self.view, data, written), [])
+
+    def test_coordinates_above_32_bits(self):
+        dataset = mapping.forward(mapping.dialect.parse(IMG_FIXTURE))
+        dataset["features"][0].update(start=2**33, end=2**33 + 99)
+        path = self.write_json("big.json", dataset)
+        _, out = self.exported(path)
+        first = pq.read_table(out / "features.parquet").to_pylist()[0]
+        self.assertEqual((first["start"], first["end"]), (2**33, 2**33 + 99))
+        # Negative control: linkml-store's own 4-byte INTEGER refuses the value.
+        data = load_validated(SCHEMA, path)
+        previous = lakehouse.widen_store_types({"float": sqla.Double})
+        try:
+            with self.assertRaisesRegex(Exception, "out of range"):
+                lakehouse.write_parquet(self.view, data, self.work)
+        finally:
+            lakehouse.restore_store_types(previous)
+
+    def test_type_table_guard(self):
+        store_mappings.TMAP["float"] = sqla.Double
+        try:
+            with self.assertRaisesRegex(ValueError, "type table changed"):
+                lakehouse.export(SCHEMA, EXAMPLE, self.work / "new" / "guarded")
+        finally:
+            store_mappings.TMAP["float"] = sqla.Float
+        self.assertEqual([p.name for p in self.work.iterdir()], [])
+
+    def test_failures_leave_no_directories(self):
+        invalid = self.write_json("invalid.json", {"features": [{"feature_id": "x"}]})
+        with self.assertRaises(ValueError):
+            lakehouse.export(SCHEMA, invalid, self.work / "a" / "b" / "out")
+        with patch.object(lakehouse, "value_mismatches", return_value=["features[0]: differs"]):
+            with self.assertRaises(ValueError):
+                lakehouse.export(SCHEMA, EXAMPLE, self.work / "c" / "d" / "out")
+        self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["invalid.json"])
+
     def test_linkml_store_default_types_lose_values(self):
         # Negative control 3: without the type fixes, linkml-store's 4-byte FLOAT
         # changes scores, and the value check says so.
@@ -132,7 +208,9 @@ class LakehouseExportTests(unittest.TestCase):
             lakehouse.export(SCHEMA, EXAMPLE, self.work / "again")
 
     def test_command_line_requires_output_under_local(self):
-        outside = Path(tempfile.gettempdir()) / "ftc-lakehouse-outside"
+        outside_parent = Path(tempfile.mkdtemp(prefix="ftc-lakehouse-outside-"))
+        self.addCleanup(shutil.rmtree, outside_parent, ignore_errors=True)
+        outside = outside_parent / "out"
         result = subprocess.run([sys.executable, str(ROOT / "scripts/lakehouse_export.py"), str(SCHEMA),
                                  str(EXAMPLE), str(outside)], capture_output=True, text=True)
         self.assertEqual(result.returncode, 2, result.stderr)
@@ -143,6 +221,13 @@ class LakehouseExportTests(unittest.TestCase):
                                  str(EXAMPLE), str(inside)], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)["collections"]["features"]["rows"], 15)
+        malformed = self.work / "malformed.yaml"
+        malformed.write_text("contigs: [1, 2\n")
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/lakehouse_export.py"), str(SCHEMA),
+                                 str(malformed), str(self.work / "from malformed")], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertFalse((self.work / "from malformed").exists())
 
 
 if __name__ == "__main__":

@@ -11,18 +11,24 @@ collection with no rows still gets a file with the full column set.
 
 Two things here are not linkml-store defaults, both driven by the schema:
 
-- linkml-store 0.3.2 maps `float` to a 4-byte FLOAT, `integer` to a 4-byte INTEGER
-  and `boolean` to VARCHAR. A score of 239.1 comes back as 239.10000610351562 and
-  is_selected as the text "true". TYPE_FIXES widens those three before loading.
-- linkml-store keeps inlined objects as JSON text. The Parquet columns cast them
-  to nested STRUCT types derived from the class's slots, so `attributes` is
-  list<struct<key, value>> rather than a list of JSON strings.
+- linkml-store 0.3.2 maps `float` to a 4-byte FLOAT and `integer` to a 4-byte
+  INTEGER. A score of 239.1 comes back as 239.10000610351562, and a coordinate
+  above 2,147,483,647 is refused. TYPE_FIXES widens both before loading, and
+  refuses to run if linkml-store's own mapping is no longer the one it replaces.
+- Every Parquet column is cast to the type column_type() derives from the schema.
+  That turns linkml-store's JSON text for inlined objects into nested STRUCT
+  types, so `attributes` is list<struct<key, value>>, and its VARCHAR booleans
+  into BOOLEAN.
 
-Before the output directory is published, two checks run and any failure leaves
-no output: row counts must equal those of scripts/build_duckdb.py for the same
-Dataset, and every value read back with pyarrow must equal the validated input.
-The output directory must not exist, and the command line requires it under
-local/ so Parquet files are never staged beside tracked files.
+Before the output directory is published, three checks run and any failure
+leaves no output: each file's column types must equal column_type(), row counts
+must equal those of scripts/build_duckdb.py for the same Dataset (asked for in
+https://github.com/turbomam/feature-table-corpus/issues/57; it ties the export to
+that existing mapping, so a collection one has and the other lacks is reported),
+and every value read back with pyarrow must equal the validated input. The
+output directory must not exist, and the command line requires it under local/
+so Parquet files are never staged beside tracked files. Directories the export
+created are removed again if it fails.
 """
 import json
 import os
@@ -35,6 +41,7 @@ import time
 import duckdb
 import pyarrow.parquet as pq
 import sqlalchemy as sqla
+import yaml
 from linkml_runtime import SchemaView
 from linkml_store import Client
 from linkml_store.api.stores.duckdb import mappings as store_mappings
@@ -43,13 +50,20 @@ from build_duckdb import build_database
 from validate_closed import load_validated
 
 ROOT = Path(__file__).resolve().parents[1]
-TYPE_FIXES = {"integer": sqla.BigInteger, "float": sqla.Double, "boolean": sqla.Boolean}
+TYPE_FIXES = {"integer": sqla.BigInteger, "float": sqla.Double}
+# linkml-store 0.3.2's own entries that TYPE_FIXES replaces. If a later version
+# changes them, the fix may no longer be needed or right, so stop and recheck.
+REPLACED_TYPES = {"integer": sqla.Integer, "float": sqla.Float}
 SCALAR_TYPES = {"integer": "BIGINT", "float": "DOUBLE", "double": "DOUBLE", "boolean": "BOOLEAN"}
 
 
 def widen_store_types(fixes=TYPE_FIXES):
     """Replace linkml-store's lossy scalar mappings; return the previous ones."""
     previous = {k: store_mappings.TMAP.get(k) for k in fixes}
+    unexpected = {k: v for k, v in previous.items() if v is not REPLACED_TYPES.get(k)}
+    if unexpected:
+        raise ValueError(f"linkml-store's type table changed ({unexpected}); "
+                         "recheck TYPE_FIXES against the installed version")
     store_mappings.TMAP.update(fixes)
     return previous
 
@@ -119,6 +133,25 @@ def write_parquet(view, data, out_dir):
     return written
 
 
+def type_mismatches(view, written):
+    """Each file's column names and types must equal those column_type() derives."""
+    problems = []
+    con = duckdb.connect()
+    try:
+        for name, cls in collections(view):
+            expected = con.execute("DESCRIBE SELECT " + ", ".join(
+                f'CAST(NULL AS {column_type(view, s)}) AS "{s.name}"'
+                for s in view.class_induced_slots(cls))).fetchall()
+            actual = con.execute(f"DESCRIBE SELECT * FROM read_parquet({_quote(written[name])})").fetchall()
+            want, got = [r[:2] for r in expected], [r[:2] for r in actual]
+            if want != got:
+                diff = [f"{w} != {g}" for w, g in zip(want, got) if w != g] or [f"{len(got)} columns, {len(want)} expected"]
+                problems.append(f"{name}: column types differ: " + "; ".join(diff))
+    finally:
+        con.close()
+    return problems
+
+
 def present(value):
     """Drop absent values (None and empty lists) at every depth."""
     if isinstance(value, dict):
@@ -177,14 +210,16 @@ def export(schema_path, data_path, out_dir):
     out_dir = Path(out_dir)
     if out_dir.exists():
         raise ValueError(f"{out_dir} already exists; choose a new output directory")
-    out_dir.parent.mkdir(parents=True, exist_ok=True)
     timings = {}
     started = time.perf_counter()
     data = load_validated(schema_path, data_path)
     timings["validate_seconds"] = time.perf_counter() - started
     view = SchemaView(str(schema_path))
-    previous = widen_store_types()
+    created = [p for p in [out_dir.parent, *out_dir.parent.parents] if not p.exists()]
+    out_dir.parent.mkdir(parents=True, exist_ok=True)
+    previous = {}
     try:
+        previous = widen_store_types()
         with tempfile.TemporaryDirectory(prefix=f".{out_dir.name}.", dir=out_dir.parent) as work:
             staged = Path(work) / "export"
             staged.mkdir()
@@ -192,7 +227,8 @@ def export(schema_path, data_path, out_dir):
             written = write_parquet(view, data, staged)
             timings["store_and_write_seconds"] = time.perf_counter() - started
             started = time.perf_counter()
-            problems = count_mismatches(view, schema_path, data_path, written, work)
+            problems = type_mismatches(view, written)
+            problems += count_mismatches(view, schema_path, data_path, written, work)
             problems += value_mismatches(view, data, written)
             timings["check_seconds"] = time.perf_counter() - started
             if problems:
@@ -200,6 +236,13 @@ def export(schema_path, data_path, out_dir):
             summary = {name: {"rows": pq.read_metadata(path).num_rows, "bytes": path.stat().st_size}
                        for name, path in written.items()}
             os.rename(staged, out_dir)
+    except BaseException:
+        for directory in created:  # innermost first; only directories this call made
+            try:
+                directory.rmdir()
+            except OSError:
+                break
+        raise
     finally:
         restore_store_types(previous)
     return {"output": str(out_dir), "collections": summary,
@@ -218,7 +261,7 @@ def main():
         return 2
     try:
         summary = export(schema_path, data_path, out_dir)
-    except (ValueError, duckdb.Error, sqla.exc.SQLAlchemyError, OSError) as error:
+    except (ValueError, yaml.YAMLError, duckdb.Error, sqla.exc.SQLAlchemyError, OSError) as error:
         print(error, file=sys.stderr)
         return 1
     print(json.dumps(summary, indent=2))
