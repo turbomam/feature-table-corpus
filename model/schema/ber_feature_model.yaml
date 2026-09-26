@@ -110,6 +110,16 @@ classes:
     slot_usage:
       feature_id:
         identifier: true
+    rules:
+      - description: A score_type qualifies a score, so it needs one (issue 46).
+        preconditions:
+          slot_conditions:
+            score_type:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            score:
+              value_presence: PRESENT
 
   FeatureLocation:
     description: Ordered component intervals; authoritative when present, with scalar feature bounds serving only as an indexing envelope.

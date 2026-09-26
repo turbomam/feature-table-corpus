@@ -112,7 +112,8 @@ binary is committed: the YAML examples and scripts are the reviewable, reproduci
 translated with, and `Feature.score_type` says what kind of number `score` is: `bit_score`,
 `e_value`, `p_value` or `score`, each mapped to an EDAM data term
 ([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)). Unset `score_type` means
-no source states the meaning. In the worked example only the HMMER rows set it. nmdc-lakehouse
+no source states the meaning, and a schema rule rejects a `score_type` on a feature with no
+`score`. In the worked example only the HMMER rows set it. nmdc-lakehouse
 documents NMDC's HMMER column 6 as a bit score
 (https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/pfam_annotation_gff.md). On all
 five vendored HMMER rows that also have `full_sequence_bitscore`, column 6 is lower, so it reads

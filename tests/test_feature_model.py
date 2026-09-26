@@ -119,6 +119,9 @@ class ValidationTests(unittest.TestCase):
             with self.subTest(score_type=value):
                 self.reject(lambda d: d["features"][0].__setitem__("score_type", value), "is not one of")
         data = copy.deepcopy(self.example)
+        # A score_type qualifies a score, so it can't appear without one; a bare score is fine.
+        self.reject(lambda d: next(f for f in d["features"] if f.get("score_type")).pop("score"),
+                    "'score' is a required property")
         data["features"][0]["score_type"] = "score"
         for assigned in (1, 4, 33):
             data["contigs"][0]["translation_table"] = assigned
