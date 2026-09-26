@@ -35,6 +35,8 @@ class LakehouseExportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.view = SchemaView(str(SCHEMA))
+        # One Parquet file per collection of the tree root, in name order.
+        cls.files = sorted(f"{name}.parquet" for name, _ in lakehouse.collections(cls.view))
 
     def setUp(self):
         scratch = ROOT / "local/test-tmp"
@@ -57,7 +59,17 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual({k: v["rows"] for k, v in summary["collections"].items()},
                          {name: len(load_validated(SCHEMA, EXAMPLE).get(name) or [])
                           for name, _ in lakehouse.collections(self.view)})
-        self.assertEqual(sorted(p.name for p in out.iterdir()), ["contigs.parquet", "features.parquet"])
+        self.assertEqual(sorted(p.name for p in out.iterdir()), self.files)
+        for name, cls in lakehouse.collections(self.view):
+            table = pq.read_table(out / f"{name}.parquet")
+            self.assertEqual(table.column_names, list(self.view.class_slots(cls)), name)
+        strings = pa.list_(pa.string())
+        collection = pq.read_schema(out / "contig_collections.parquet")
+        for column in ("taxonomic_lineage", "source_files"):
+            self.assertEqual(collection.field(column).type, strings)
+        # Multivalued references are lists of IDs, not text.
+        self.assertEqual(pq.read_schema(out / "contigs.parquet").field("member_of").type, strings)
+        self.assertEqual(pq.read_schema(out / "features.parquet").field("stable_identifiers").type, strings)
         features = pq.read_table(out / "features.parquet")
         self.assertEqual(features.column_names, list(self.view.class_slots("Feature")))
         schema = features.schema
@@ -265,8 +277,9 @@ class LakehouseExportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "already exists"):
                 lakehouse.export(SCHEMA, EXAMPLE, target)
         self.assertEqual(theirs.read_bytes(), b"theirs")
-        # contigs.parquet was linked before the conflict; it stays, and is reported.
-        self.assertEqual(sorted(p.name for p in target.iterdir()), ["contigs.parquet", "features.parquet"])
+        # Files are linked in name order, so those before the conflict stay, next to theirs.
+        self.assertEqual(sorted(p.name for p in target.iterdir()),
+                         [name for name in self.files if name < "features.parquet"] + ["features.parquet"])
 
     def failing_link(self, target, replace_first=False):
         """Patch os.link to fail on features.parquet, after contigs.parquet is linked."""
@@ -310,7 +323,7 @@ class LakehouseExportTests(unittest.TestCase):
                 lakehouse.export(SCHEMA, EXAMPLE, target)
         notes = self.notes(caught.exception)
         published = [target, *sorted(target.iterdir())]
-        self.assertEqual([p.name for p in published[1:]], ["contigs.parquet", "features.parquet"])
+        self.assertEqual([p.name for p in published[1:]], self.files)
         for path in published:
             self.assertIn(f"left behind, remove if unwanted: {path.resolve()}", notes)
         # The staging directory is named too. Its finalizer may remove it later,
@@ -326,7 +339,8 @@ class LakehouseExportTests(unittest.TestCase):
             with self.assertRaisesRegex(OSError, "injected failure"):
                 lakehouse.export(SCHEMA, EXAMPLE, target)
         self.assertEqual((target / "contigs.parquet").read_bytes(), b"theirs")
-        self.assertEqual([p.name for p in target.iterdir()], ["contigs.parquet"])
+        self.assertEqual(sorted(p.name for p in target.iterdir()),
+                         [name for name in self.files if name < "features.parquet"])
 
     def test_parent_made_by_another_process_is_not_reported_as_ours(self):
         # "shared" is absent when the export starts; another process creates it just
