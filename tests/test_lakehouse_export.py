@@ -277,8 +277,9 @@ class LakehouseExportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "already exists"):
                 lakehouse.export(SCHEMA, EXAMPLE, target)
         self.assertEqual(theirs.read_bytes(), b"theirs")
-        # Files linked before the conflict stay, and are reported.
-        self.assertEqual(sorted(p.name for p in target.iterdir()), self.files)
+        # Files are linked in name order, so those before the conflict stay, next to theirs.
+        self.assertEqual(sorted(p.name for p in target.iterdir()),
+                         [name for name in self.files if name < "features.parquet"] + ["features.parquet"])
 
     def failing_link(self, target, replace_first=False):
         """Patch os.link to fail on features.parquet, after contigs.parquet is linked."""
