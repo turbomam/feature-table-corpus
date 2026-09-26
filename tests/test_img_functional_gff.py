@@ -120,6 +120,15 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected(self.edited(0, "translation_table=11", "translation_table=x"),
                              "translation_table 'x' is not a integer")
 
+    def test_numbers_must_be_plain_ascii(self):
+        self.assert_rejected(self.edited(0, "\t100\t1299\t", "\t1_00\t1299\t"), "start '1_00' is not a number")
+        self.assert_rejected(self.edited(0, "\t100\t1299\t", "\t100\t+1299\t"), "end '+1299' is not a number")
+        self.assert_rejected(self.edited(0, "\t154.2\t", "\t+154.2\t"), "score '+154.2' is not a number")
+        self.assert_rejected(self.edited(0, "\t154.2\t", "\t\uff11\uff15\uff14.2\t"), "is not a number")
+        self.assert_rejected(self.edited(0, "\t100\t1299\t", "\t 100\t1299\t"), "start ' 100' is not a number")
+        self.assert_rejected(self.edited(0, "translation_table=11", "translation_table=1_1"),
+                             "translation_table '1_1' is not a integer")
+
     def test_only_the_source_spelling_of_e_value_is_accepted(self):
         self.assert_rejected(self.edited(5, "e-value=0", "e_value=0"), "is spelled 'e-value'")
         self.assert_rejected(self.edited(0, "cog=COG0001", "cog=COG0001;model-start=1"), "model-start")

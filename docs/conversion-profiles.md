@@ -148,6 +148,61 @@ result forward again and refuses unless that reproduces the input Dataset, so a 
 dialect can't hold, such as `translated_sequence` or a contig length, is an error rather than
 a silent loss.
 
+### IMG per-method hit files
+
+The second dialect, [`img-per-method-gff.yaml`](../model/dialects/img-per-method-gff.yaml),
+covers the seven files the IMG pipeline writes per search: `_pfam`, `_cog`, `_ko_ec`,
+`_tigrfam`, `_smart`, `_supfam` and `_cath_funfam`. Column 1 is a gene ID, columns 4 and 5 are
+amino acid positions in that gene's protein, and column 3 is the hit's accession rather than a
+feature type. It was measured on 2026-09-25 against the same two isolates (22,872 and 10,991
+rows) and the eight vendored NMDC files of these types (443 rows); every file validates.
+
+- Each method writes one fixed key order, and the validator requires it exactly. The six
+  HMMER-style files write `e-value` or `independent_domain_e-value`; the lastal KO/EC file
+  writes `evalue`.
+- COG, TIGRFAM and SMART files leave column 2 empty. The other four name their tool.
+- A KO/EC accession packs every KO joined by `_`, then `__` and every EC number joined by `_`,
+  for example `KO:K01990_KO:K01992__EC:7.6.2.-_EC:3.6.3.-`. 1,467 of 2,884 rows carry ECs.
+- IDs are `<gene ID>_<start>_<end>`. Every hit ends within its protein, whose length is at most
+  a third of the gene span that the gene ID itself records, and `alignment_length` always
+  equals the hit's length.
+- Every Pfam row in both isolates has `e-value=13`, while the NMDC Pfam files have values such
+  as `6e-18`. The dialect records this and accepts it.
+
+`write()` turns parsed rows back into GFF text and refuses unless that text parses to the same
+rows, so the round trip is checked by parsed rows, not bytes. Numbers are respelled on the way:
+`91.40` comes back as `91.4` and `1.22e+03` as `1220.0`, on 8,638 of the 34,306 real lines.
+Numbers must be plain ASCII (`1_2`, `+395` and full-width digits are rejected), and lines must
+end with LF.
+
+The parser infers the method from the first row's accession and requires every row, and a file
+name ending `_<method>.gff`, to agree. `just dialect-validate-img-per-method FILE` runs it. The
+tests edit single rows of [constructed fixtures](../tests/fixtures/img-per-method-gff/README.md),
+one per method.
+
+The other per-genome files were measured on the same date to place them:
+
+- `_crt`, `_trna`, `_rfam`, `_rfam_rrna`, `_rfam_ncrna_tmrna`,
+  `_rfam_misc_bind_misc_feature_regulatory` and `_structural_annotation` hold contig rows of
+  the functional annotation's own kinds, and all 14 isolate files validate against the first
+  dialect. Every structural annotation ID is also in `_functional_annotation.gff`, and so is
+  every CRT, tRNA and Rfam row, verbatim, except one: a Ga0423362 tmRNA row
+  (`Ga0423362_02_1250883_1251241`) in the two Rfam files that the functional annotation lacks.
+- `_prodigal` and `_genemark` also hold first-dialect rows: with their comment lines removed
+  (and GeneMark's blank lines), all four isolate files validate against it. The comments are
+  the tools' own: a `##gff-version 3` line and per-contig `# Sequence Data` and `# Model Data`
+  lines from Prodigal. GeneMark writes a `##gff-version 2` line, then a 7-line `#` block
+  (program version, input and parameter files, translation table, run date), then a blank line
+  and a `##sequence-region` line before each contig's rows. The first dialect rejects comment lines, so accepting these files means extending
+  it, not a new dialect.
+- Three vendored NMDC files (Rfam, one structural annotation, GeneMark) fail the first dialect
+  only because metagenome rows can be partial at both ends (`partial=5',3'`), which it does not
+  yet accept. The NMDC GeneMark file has no header lines.
+- `_tmh` (TMHMM topology, column 3 `Inside`, `Outside` or `TMhelix`, score `.`) and
+  `_cleavage_sites` (SignalP, column 3 `cleavage_site`, no `ID`) are on protein positions like
+  the hit files, but their column 3 is not an accession and their keys differ. They need their
+  own dialect.
+
 ### Phytozome gene_exons GFF3 and annotation_info
 
 Two more dialects describe a Phytozome genome's

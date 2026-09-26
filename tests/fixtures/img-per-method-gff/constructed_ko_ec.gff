@@ -1,0 +1,3 @@
+ctg_01_100_1299	lastal 983	KO:K01845__EC:5.4.3.8	1	399	1.22e+03	.	.	ID=ctg_01_100_1299_1_399;subject_gene_ids=637175796,650950158;subject_start=1;subject_end=399;evalue=0;percent_identity=100.00;alignment_length=399;query_gene_length=399;subject_gene_length=410
+ctg_01_1600_2199	lastal 983	KO:K01990_KO:K01992__EC:7.6.2.-_EC:3.6.3.-	1	199	402	.	.	ID=ctg_01_1600_2199_1_199;subject_gene_ids=2706263458;subject_start=5;subject_end=203;evalue=1.2e-120;percent_identity=88.40;alignment_length=199;query_gene_length=199;subject_gene_length=240
+ctg_02_10_900	lastal 983	KO:K07498	1	296	150	.	.	ID=ctg_02_10_900_1_296;subject_gene_ids=2777997019;subject_start=59;subject_end=354;evalue=1.6e-39;percent_identity=78.21;alignment_length=296;query_gene_length=296;subject_gene_length=360

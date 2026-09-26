@@ -1,0 +1,2 @@
+ctg_01_1600_2199		SM00382	30	180	88.0	.	.	ID=ctg_01_1600_2199_30_180;fake_percent_id=90.10;alignment_length=151;independent_domain_e-value=3.3e-26;full_sequence_e-value=2.9e-26;full_sequence_bitscore=88.6;model_start=1;model_end=198
+ctg_02_10_900		SM01408	10	82	-1.5	.	.	ID=ctg_02_10_900_10_82;fake_percent_id=39.08;alignment_length=73;independent_domain_e-value=6.8;full_sequence_e-value=4.1;full_sequence_bitscore=-0.8;model_start=21;model_end=54
