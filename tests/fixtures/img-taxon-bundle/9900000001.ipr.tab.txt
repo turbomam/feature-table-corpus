@@ -1,0 +1,6 @@
+gene_oid	gene_length	query_start	query_end	domaindb	domainid	iprid	iprdesc	go_info
+9900000002	216	44	216	SUPERFAMILY	SSF52833	IPR036249	Thioredoxin-like superfamily	
+9900000002	216	45	216	ProSiteProfiles	PS51352	IPR013766	Thioredoxin domain	GO:0015035
+9900000006	386	10	200	SMART	SM00382			
+9900000006	386	30	40	ProSitePatterns	PS00001	IPR003010	Carbon-nitrogen hydrolase	GO:0006807|GO:0016810
+9900000006	386	100	380	SUPERFAMILY	SSF100000	IPR003010	Carbon-nitrogen hydrolase	GO:0006807|GO:0016810

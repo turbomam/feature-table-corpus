@@ -31,6 +31,16 @@ DIALECT_NAMES = {
             "ImgPerMethodStrand": (".",),
         },
     },
+    "img_taxon_bundle": {
+        "slots": ("ID", "EC"),
+        "values": {
+            "ImgTaxonFeatureType": ("CDS", "tRNA", "rRNA", "RNA", "CRISPR"),
+            "Strand": ("+", "-"),
+            "TmhmmFeatureType": ("TMhelix",),
+            "DomainDatabase": ("SUPERFAMILY", "ProSiteProfiles", "ProSitePatterns", "SMART"),
+            "XrefDatabase": ("GI", "GenBank/EMBL"),
+        },
+    },
     "phytozome_gene_exons_gff3": {
         "slots": ("ID", "Name", "Parent"),
         "values": {

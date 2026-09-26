@@ -1,0 +1,2 @@
+gene_oid	gene_length	feature_type	start_coord	end_coord
+9900000003	183	cleavage	21	22

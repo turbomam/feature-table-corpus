@@ -1,0 +1,2 @@
+gene_oid	gene_length	query_start	query_end	evalue	bit_score	tigrfam_id	tigrfam_name
+9900000006	386	13	368	1.0e-129	418.9	TIGR01161	phosphoribosylaminoimidazole carboxylase, PurK protein

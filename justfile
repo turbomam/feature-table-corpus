@@ -30,6 +30,7 @@ validate-schema:
     uv run --with linkml linkml-validate model/schema/source_document.yaml
     uv run --with linkml linkml-validate model/dialects/img-functional-gff.yaml
     uv run --with linkml linkml-validate model/dialects/img-per-method-gff.yaml
+    uv run --with linkml linkml-validate model/dialects/img-taxon-bundle.yaml
     uv run --with linkml linkml-validate model/dialects/phytozome-gene-exons-gff3.yaml
     uv run --with linkml linkml-validate model/dialects/phytozome-annotation-info.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
@@ -43,7 +44,7 @@ lint-schema:
 [doc("Run recommended lint with the declared naming exceptions.")]
 [group("Validation")]
 lint-schema-recommended:
-    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml model/dialects/phytozome-gene-exons-gff3.yaml model/dialects/phytozome-annotation-info.yaml model/dialects/img-per-method-gff.yaml
+    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml model/dialects/phytozome-gene-exons-gff3.yaml model/dialects/phytozome-annotation-info.yaml model/dialects/img-per-method-gff.yaml model/dialects/img-taxon-bundle.yaml
 
 # Intentionally outside check: this reports the standard-naming exception by design.
 [doc("Run the strict audit; its strand-name finding is expected.")]
@@ -267,6 +268,11 @@ dialect-validate-img-functional input:
 [group("Conversions")]
 dialect-validate-img-per-method input:
     uv run --with-requirements requirements-conversion.txt python3 scripts/img_per_method_gff.py validate "$1"
+
+[doc("Validate an IMG taxon bundle, <taxon_oid>.gff and the .tab.txt tables beside it.")]
+[group("Conversions")]
+dialect-validate-img-taxon gff:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/img_taxon_bundle.py validate "$1"
 
 [doc("Validate a Phytozome *.gene_exons.gff3 (or .gff3.gz) against its dialect schema.")]
 [group("Conversions")]
