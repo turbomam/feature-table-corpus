@@ -66,6 +66,18 @@ def strip(number, raw):
     return raw[:-1]
 
 
+# The only integer spelling in the measured file. int() also accepts a sign,
+# leading zeros, surrounding spaces, underscores and non-ASCII digits, and would
+# turn them into a value the writer spells differently.
+CANONICAL_INTEGER = re.compile(r"(0|[1-9][0-9]*)")
+
+
+def integer(text):
+    if not CANONICAL_INTEGER.fullmatch(text):
+        raise ValueError(text)
+    return int(text)
+
+
 def read_header(lines):
     """Read the two directive lines that open every file, from an iterator."""
     found = {}
@@ -98,7 +110,7 @@ def parse_row(line_number, text, slots):
     for name in ("start", "end", "phase"):
         if name in row:
             try:
-                row[name] = int(row[name])
+                row[name] = integer(row[name])
             except ValueError:
                 raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
     for pair in columns[8].split(";"):
@@ -121,7 +133,7 @@ def parse_row(line_number, text, slots):
             row[key] = value
             continue
         try:
-            row[key] = int(value)
+            row[key] = integer(value)
         except ValueError:
             raise DialectError(f"line {line_number}: {key} {value!r} is not an integer") from None
     return row

@@ -200,6 +200,16 @@ class GeneExonsRuleTests(Case):
         self.rejected(4, "exon.1;", "exon.1;;", "empty attribute")
         self.rejected(4, "pacid=90000001", "pacid", "has no value")
 
+    def test_integers_must_be_spelled_canonically(self):
+        # int() accepts every one of these; each would write back differently.
+        for spelling in ("01000", "+1000", " 1000", "1000 ", "1_000", "\u0661000"):
+            self.rejected(4, "\t1000\t1300\t", f"\t{spelling}\t1300\t", f"start {spelling!r} is not a number")
+        self.rejected(4, "\t1000\t1300\t", "\t1000\t01300\t", "end '01300' is not a number")
+        self.rejected(6, "\t+\t0\t", "\t+\t+0\t", "phase '+0' is not a number")
+        self.rejected(6, "\t+\t0\t", "\t+\t00\t", "phase '00' is not a number")
+        for spelling in ("01", "+1", " 1", "1_0"):
+            self.rejected(3, "longest=1", f"longest={spelling}", f"longest {spelling!r} is not an integer")
+
     def test_blank_line(self):
         lines = GFF3.read_text().splitlines()
         self.assertTrue(lines[23])
