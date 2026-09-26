@@ -144,6 +144,11 @@ class MappingTests(unittest.TestCase):
         edited["contigs"][0]["length_bp"] = 5000
         with self.assertRaisesRegex(ValueError, "contig 'ctg_01' loses or changes \\['length_bp'\\]"):
             self.back(edited)
+        # The dialect has no place for contig collections (issue 41), so they must not vanish.
+        edited = copy.deepcopy(self.dataset)
+        edited["contig_collections"] = [{"collection_id": "genome_1", "collection_type": "isolate"}]
+        with self.assertRaisesRegex(ValueError, "1 contig_collections in, 0 back"):
+            self.back(edited)
 
     def test_only_contig_coordinates_map_back(self):
         edited = copy.deepcopy(self.dataset)

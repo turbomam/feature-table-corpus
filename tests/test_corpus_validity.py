@@ -45,6 +45,17 @@ class CorpusValidityTests(unittest.TestCase):
         self.assertEqual(dangling["validators"]["genometools"]["rules"], ["unresolved-parent"])
         self.assertEqual(dangling["validators"]["agat"]["verdict"], "blocked")
 
+    def test_unsupported_version_hides_later_errors(self):
+        # GenomeTools stops at the version line, so a start after end and a
+        # dangling Parent later in the file go unreported by it. The expectation
+        # text says so; this pins the behavior it describes.
+        with tempfile.TemporaryDirectory(dir=validity.ROOT / "local") as directory:
+            path = Path(directory) / "v2.gff"
+            path.write_text("##gff-version 2\nc1\tt\tgene\t50\t10\t.\t+\t.\tID=g1\n"
+                            "c1\tt\tCDS\t1\t9\t.\t+\t0\tID=c1;Parent=absent\n")
+            result = validity.verdict(validity.binary_path(), path)
+        self.assertEqual(result["rules"], ["unsupported-version"])
+
     def test_flipped_label_is_rejected(self):
         index = yaml.safe_load((validity.ROOT / "corpus/index.yaml").read_text())
         entry = copy.deepcopy(next(e for e in index["entries"] if e["id"] == "derived-cds-phase-illegal"))
@@ -148,6 +159,19 @@ class ValidatorExecutionTests(unittest.TestCase):
         with patch.object(validity.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, "", "gt gff3validator: error: new rule")):
             with self.assertRaisesRegex(ValueError, "Unrecognized GenomeTools"):
                 validity.verdict(Path("gt"), "example.gff3")
+
+    def test_unsupported_version_rule_matches_only_the_real_message(self):
+        # Exact stderr from GenomeTools 1.6.6 on a ##gff-version 2 file (2026-09-25).
+        real = "gt gff3validator: error: GFF version 2 does not equal required version 3"
+        with patch.object(validity.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, "", real)):
+            result = validity.verdict(Path("gt"), "example.gff3")
+        self.assertEqual((result["verdict"], result["rules"]), ("rejected", ["unsupported-version"]))
+        for other in ("gt gff3validator: error: GFF version 2 is not supported",
+                      "gt gff3validator: error: GFF version does not equal required version 3"):
+            with self.subTest(other=other), patch.object(validity.subprocess, "run",
+                    return_value=subprocess.CompletedProcess([], 1, "", other)):
+                with self.assertRaisesRegex(ValueError, "Unrecognized GenomeTools"):
+                    validity.verdict(Path("gt"), "example.gff3")
 
     def test_all_profiles_declare_expectations_and_duplicates_fail(self):
         cases = validity.load_expectations()

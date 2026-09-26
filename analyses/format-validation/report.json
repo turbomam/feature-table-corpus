@@ -51,18 +51,18 @@
   },
   "summary": {
     "genometools": {
-      "accepted": 8,
-      "not_checked": 11,
-      "rejected": 21
+      "accepted": 10,
+      "not_checked": 18,
+      "rejected": 40
     },
     "gff3toolkit": {
-      "accepted": 5,
-      "not_checked": 11,
-      "rejected": 24
+      "accepted": 6,
+      "not_checked": 18,
+      "rejected": 44
     },
     "agat": {
-      "blocked": 29,
-      "not_checked": 11
+      "blocked": 50,
+      "not_checked": 18
     }
   },
   "records": [
@@ -1782,6 +1782,1455 @@
       "path": "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb",
       "format": "GenBank nucleotide flat file",
       "sha256": "0a8099e207633f8c3ba998bfe2a198518e1de356c7956691101b2512324b807c",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-cath-funfam",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cath_funfam.gff",
+      "format": "GFF3",
+      "sha256": "25bfc4fa96d4bc36d5e1b6c09c8c2e6ed29b856609989a6db72a90b9c383086b",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cath_funfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 4671,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "263998039108231ada8709ae9351e8daae45cbaaa0bb71001662652b3f4c71db",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-cleavage-sites",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cleavage_sites.gff",
+      "format": "GFF3",
+      "sha256": "142c39926b279ac7e96a20d44d27cd872b9ded71f2395e6de34f6d9265be54d3",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cleavage_sites.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0041"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 146,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0041",
+              "count": 146,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0041",
+                "Error_level": "Error",
+                "Error_tag": "[Unknown reserved (uppercase) attribute: \"D-score\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "c5e6afd8763c00858a28107588a471ba3ed43d5eedc5e7b481b279fa010a3fb8",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0041"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-cog",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cog.gff",
+      "format": "GFF3",
+      "sha256": "cf2d624dfb7d691d9825ac2b1ef0ca29bf62243dd45c3b1c613b3137250609bf",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cog.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0022"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 3646,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0022",
+              "count": 3646,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0022",
+                "Error_level": "Error",
+                "Error_tag": "[Empty field: 2, must have a \".\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "103d6b1e77274586424661590a4446820c5d2d89f21d9ae4b18648fd921ecaf2",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0022"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-crt",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_crt.gff",
+      "format": "GFF3",
+      "sha256": "a3d42be8d21e9e32e2a6edcee9382a92d24c989804583f3df4b97ee7feebcddc",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_crt.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 5,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "261656ad8c99642edfaccd80b2b5b9cec48c3644f66c9c89852b252e004ef4c6",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-functional-annotation",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff",
+      "format": "GFF3",
+      "sha256": "ffbcca39c15830728367ea8fba80252d239842394fdd05bd10bf4d2fd834632a",
+      "profile": "img-functional-gff/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0032",
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 5,
+              "example": {
+                "Line_num": "['Line 679']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0032",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 655']",
+                "Error_code": "Esf0032",
+                "Error_level": "Error",
+                "Error_tag": "[Found multiple attribute tags: \"shortened\"]"
+              }
+            },
+            {
+              "rule": "Esf0036",
+              "count": 3784,
+              "example": {
+                "Line_num": "['Line 10']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of transmembrane_helix_parts attribute contains unescaped \",\": \"Inside_1_18,TMhelix_19_38,Outside_39_156,TMhelix_157_179,Inside_180_210,TMhelix_211_233,Outside_234_284,TMhelix_285_307,Inside_308_319,TMhelix_320_342,Outside_343_361,TMhelix_362_384,Inside_385_395\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "77687cee59d4e42018ea56f37ed6ee8a5b3b33c8a331a09875721fafe32dbd79",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0032",
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-genemark",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_genemark.gff",
+      "format": "GFF3 (declares ##gff-version 2)",
+      "sha256": "d4653a8edbd6d2c68922a842c5269dd558701cf6d85e626e8faef4648c85338a",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "unsupported-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: GFF version 2 does not equal required version 3",
+          "expected_rules": [
+            "unsupported-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0019"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0019",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0019",
+                "Error_level": "Info",
+                "Error_tag": "[Version is not \"3\": \"2\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "5dc4fcd2585d4adc79065669d9c984c8f9ea66dfd17dce7acbe298e511be8fd3",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0019"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-ko-ec",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_ko_ec.gff",
+      "format": "GFF3",
+      "sha256": "6949c6eda98e544d62556d67efa152d3219b57bcf9b966083ea27b7c445afbd2",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_ko_ec.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 1797,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0036",
+              "count": 1710,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of subject_gene_ids attribute contains unescaped \",\": \"637175796,650950158,651110057,2633078293,2706263464,2706266484\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "9ad8909d38a4c578a16079b4bc1f88e6f16fac43d83800d22f19e98d441432a3",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-pfam",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_pfam.gff",
+      "format": "GFF3",
+      "sha256": "1d9e3a23141ef750964b8b18591bf16bb41eeb035bb7a14b2aa6f7a7a06dc151",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_pfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 4891,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "97744da82a8b4a7d628910fa6bbfc513ef39eb3dbff620a05d33c43556566664",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-prodigal",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff",
+      "format": "GFF3",
+      "sha256": "1b5352af9a8722e743c07fe152c43ffddd01dd4e7fc468785f21f4526dfc25fc",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "accepted",
+          "rules": [],
+          "exit_code": 0,
+          "stdout": "input is valid GFF3",
+          "stderr": "warning: seqid \"Ga0423362_01\" on line 4 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0423362_02\" on line 2032 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0423362_03\" on line 3816 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0423362_04\" on line 4001 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0423362_05\" on line 4158 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically",
+          "expected_rules": []
+        },
+        "gff3toolkit": {
+          "verdict": "accepted",
+          "rules": [],
+          "diagnostics": [],
+          "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "exit_code": 0,
+          "expected_rules": []
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-rfam",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam.gff",
+      "format": "GFF3",
+      "sha256": "2fc7df38b341339352a3252c3c118d0da544be32cface6418f3c7f57a87bda0b",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0014",
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0036",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 97']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of note attribute contains unescaped \",\": \"glucosamine-6-phosphate riboswitch, glmS ribozyme\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "19f3d188330ababf570b945c2fa4fec1814c9590694ce40445f17e82c12851c7",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0014",
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-rfam-misc-bind-misc-feature-regulatory",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_misc_bind_misc_feature_regulatory.gff",
+      "format": "GFF3",
+      "sha256": "7e62e1d79ddb04641bd6a8e4ce5598322e65579f13abe370b8c68efdfca1fa1a",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_misc_bind_misc_feature_regulatory.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0014",
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0036",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 63']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of note attribute contains unescaped \",\": \"glucosamine-6-phosphate riboswitch, glmS ribozyme\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "9502684c6f143317a9b50776f4ff1aaa507a1787780fd6a2fb7c47b7026222c2",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0014",
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-rfam-ncrna-tmrna",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_ncrna_tmrna.gff",
+      "format": "GFF3",
+      "sha256": "0f5c2ef75e78aed9f40c728189840ea5170ce39d431ec270a92d848340985446",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_ncrna_tmrna.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "171928b7e0f537cb7fbd8401ec5f27e208bc61e9cd189628598c415025dc31d4",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-rfam-rrna",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_rrna.gff",
+      "format": "GFF3",
+      "sha256": "228990f4a7f67dcd009083f4d9a8279a9a5579ad9b9dfcbfd6c21e20b04220e3",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_rrna.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "171928b7e0f537cb7fbd8401ec5f27e208bc61e9cd189628598c415025dc31d4",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-smart",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_smart.gff",
+      "format": "GFF3",
+      "sha256": "f927403d5d60401e3e596047729f2ddaf438710c82a28d6162af346ff05238ad",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_smart.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0022"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 1711,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0022",
+              "count": 1711,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0022",
+                "Error_level": "Error",
+                "Error_tag": "[Empty field: 2, must have a \".\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "92278d3538eddec68fef84692b08089f39c4493d318385a846c3ede2a3cf214f",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0022"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-structural-annotation",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_structural_annotation.gff",
+      "format": "GFF3",
+      "sha256": "b05e90d843235abad80a4e491f652e5d7f4cf384b21fe89921cbbce21fcf5157",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_structural_annotation.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0032",
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 5,
+              "example": {
+                "Line_num": "['Line 679']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0032",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 655']",
+                "Error_code": "Esf0032",
+                "Error_level": "Error",
+                "Error_tag": "[Found multiple attribute tags: \"shortened\"]"
+              }
+            },
+            {
+              "rule": "Esf0036",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 4410']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of note attribute contains unescaped \",\": \"glucosamine-6-phosphate riboswitch, glmS ribozyme\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "d24f5982d292b44e2f40b3971fb2246d9cc7339e3aac8f7b402a969adf5e59ce",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0032",
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-supfam",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_supfam.gff",
+      "format": "GFF3",
+      "sha256": "95f7b5fdf782386f240e831b06eaf8cd1790d5b55ea98c537b0a10d1a21d95c6",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_supfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 4963,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "6ce3f387590de36712349c3e60bd13c237b1776682f9b8efe699fdd196d52f6f",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-tigrfam",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tigrfam.gff",
+      "format": "GFF3",
+      "sha256": "e3da798f08b67970d0b667d3c53e9518d190443576de3aad7805293cd2a2d387",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tigrfam.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0022"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 1193,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0022",
+              "count": 1193,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0022",
+                "Error_level": "Error",
+                "Error_tag": "[Empty field: 2, must have a \".\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "c468e9edd2f2853081f4ff7b06f4bdb15141ce2afa4332d9cba9f1f6f62065b5",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0022"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-tmh",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tmh.gff",
+      "format": "GFF3",
+      "sha256": "4a848198f45e3244549c93dccabec89a99f5a9a73c7d2e7677f08159f52f1c1c",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tmh.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 9710,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "85963509870837e24033fbe6d72b6d9de9994a7b29eb40e4c9b3be9de21d6d3e",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-clostridium-trna",
+      "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_trna.gff",
+      "format": "GFF3",
+      "sha256": "340969f36a687dfb657553a70e471a757cfaf841ff3e33f4f300d5de0e2b46af",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_trna.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0014"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "171928b7e0f537cb7fbd8401ec5f27e208bc61e9cd189628598c415025dc31d4",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0014"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-assembled-gff",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff",
+      "format": "GFF3",
+      "sha256": "e97219b1d1f70724b0b95c3652e4342c36a096c7ee1e2f6af68a92f3552fea4d",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "rejected",
+          "rules": [
+            "missing-version"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "gt gff3validator: error: line 1 in file \"corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff\" does not begin with \"##gff-version\" or \"##gff-version\"",
+          "expected_rules": [
+            "missing-version"
+          ]
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0025",
+            "Esf0032",
+            "Esf0041"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 4693,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: illegal chacracter, \"1\" found at the strand field]"
+              }
+            },
+            {
+              "rule": "Esf0014",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0014",
+                "Error_level": "Error",
+                "Error_tag": "[\"##gff-version\" missing from the first line]"
+              }
+            },
+            {
+              "rule": "Esf0025",
+              "count": 4693,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0025",
+                "Error_level": "Error",
+                "Error_tag": "[Strand has illegal characters: \"1\"]"
+              }
+            },
+            {
+              "rule": "Esf0032",
+              "count": 2,
+              "example": {
+                "Line_num": "['Line 4328']",
+                "Error_code": "Esf0032",
+                "Error_level": "Error",
+                "Error_tag": "[Found multiple attribute tags: \"LowScore\"]"
+              }
+            },
+            {
+              "rule": "Esf0041",
+              "count": 231,
+              "example": {
+                "Line_num": "['Line 1']",
+                "Error_code": "Esf0041",
+                "Error_level": "Error",
+                "Error_tag": "[Unknown reserved (uppercase) attribute: \"Type\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "cba569fe98ad9755ec73dc4978aedd320a7336e87472924cf235e29a474f9a84",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003",
+            "Esf0014",
+            "Esf0025",
+            "Esf0032",
+            "Esf0041"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-taxon-gff",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff",
+      "format": "GFF3",
+      "sha256": "79b7b72c28a46f63aabf897b1813836121e60a3a909ed80d932059983b0a093c",
+      "profile": "gff3-contig/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "accepted",
+          "rules": [],
+          "exit_code": 0,
+          "stdout": "input is valid GFF3",
+          "stderr": "warning: seqid \"Ga0139071_101\" on line 2 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_102\" on line 512 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_103\" on line 896 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_104\" on line 1190 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_105\" on line 1453 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_106\" on line 1701 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_107\" on line 1910 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_108\" on line 2066 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_109\" on line 2196 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_110\" on line 2334 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_111\" on line 2472 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_112\" on line 2582 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_113\" on line 2713 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_114\" on line 2840 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_115\" on line 2935 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_116\" on line 3038 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_117\" on line 3132 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_118\" on line 3226 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_119\" on line 3308 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_120\" on line 3377 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_121\" on line 3457 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_122\" on line 3531 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_123\" on line 3593 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_124\" on line 3665 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_125\" on line 3719 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_126\" on line 3776 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_127\" on line 3829 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_128\" on line 3874 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_129\" on line 3928 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_130\" on line 3987 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_131\" on line 4054 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_132\" on line 4106 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_133\" on line 4159 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_134\" on line 4212 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_135\" on line 4239 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_136\" on line 4269 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_137\" on line 4320 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_138\" on line 4348 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_139\" on line 4380 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_140\" on line 4406 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_141\" on line 4435 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_142\" on line 4466 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_143\" on line 4493 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_144\" on line 4515 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_145\" on line 4534 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_146\" on line 4554 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_147\" on line 4563 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_148\" on line 4573 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_149\" on line 4579 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_150\" on line 4581 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_151\" on line 4584 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_152\" on line 4586 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_153\" on line 4602 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_154\" on line 4606 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_155\" on line 4608 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_156\" on line 4609 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_157\" on line 4610 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_158\" on line 4621 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_159\" on line 4623 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_160\" on line 4624 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_161\" on line 4625 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_162\" on line 4626 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically\nwarning: seqid \"Ga0139071_163\" on line 4627 in file \"corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically",
+          "expected_rules": []
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0036",
+              "count": 316,
+              "example": {
+                "Line_num": "['Line 100']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of product attribute contains unescaped \",\": \"superoxide dismutase, Cu-Zn family\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "5ff22201b6a304644b708ad129405d66a7f36a148e83cda84e02ce79db249290",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-cog-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.cog.tab.txt",
+      "format": "TSV",
+      "sha256": "a40ffd17341fb341ab14dc6ff6e6f116f6b2764b56ba824c440aaac30f18933e",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-ipr-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.ipr.tab.txt",
+      "format": "TSV",
+      "sha256": "d6e21482005c82ae047e0c7231ed54c8f1021acd31d7956538f9c9a97e34a2ef",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-ko-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.ko.tab.txt",
+      "format": "TSV",
+      "sha256": "460af986ffebe30975e3116640d15b8337072b97b7ac91163fdf5437fadd1f02",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-pfam-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.pfam.tab.txt",
+      "format": "TSV",
+      "sha256": "0e8f50f96629e49c0214d3409a614566381c4e6a7c340596efb941a0219480b4",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-signalp-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.signalp.tab.txt",
+      "format": "TSV",
+      "sha256": "f1acb5ca41fb4c95be046d3ac2ccaa1ab71361f0ff55e544df06f2fc7a723fef",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-tigrfam-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.tigrfam.tab.txt",
+      "format": "TSV",
+      "sha256": "c2d5123a3b0c84a479aa60787196dd0ba75d7d817057d289003981a108322067",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "jgi-img-bacillus-tmhmm-table",
+      "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.tmhmm.tab.txt",
+      "format": "TSV",
+      "sha256": "bd6e40d7288d04141e82d78498c187836e590ac4edee73d96f8629e04323d333",
       "validators": {
         "genometools": {
           "verdict": "not_checked",

@@ -1,0 +1,6 @@
+Ga0423362_01	INFERNAL 1.1.2 (July 2016)	ncRNA	26603	26868	208.9	-	.	ID=Ga0423362_01_26603_26868;e-value=2.8e-38;model=RF01854;accession=Bacteria_large_SRP;model_start=1;model_end=255;ncRNA_class=SRP_RNA;product=large signal recognition particle RNA
+Ga0423362_02	INFERNAL 1.1.2 (July 2016)	ncRNA	633692	634033	301.3	-	.	ID=Ga0423362_02_633692_634033;e-value=8.7e-98;model=RF00010;accession=RNaseP_bact_a;model_start=1;model_end=367;ncRNA_class=RNase_P_RNA;product=RNase P class A
+Ga0423362_02	INFERNAL 1.1.2 (July 2016)	ncRNA	705340	705517	68.8	-	.	ID=Ga0423362_02_705340_705517;e-value=9.3e-14;model=RF00013;accession=6S;model_start=1;model_end=188;ncRNA_class=other;product=6S / SsrS RNA
+Ga0423362_02	INFERNAL 1.1.2 (July 2016)	ncRNA	709947	710138	58.5	-	.	ID=Ga0423362_02_709947_710138;e-value=3.1e-11;model=RF00013;accession=6S;model_start=1;model_end=188;ncRNA_class=other;product=6S / SsrS RNA
+Ga0423362_02	INFERNAL 1.1.2 (July 2016)	ncRNA	813405	813596	58.5	-	.	ID=Ga0423362_02_813405_813596;e-value=3.1e-11;model=RF00013;accession=6S;model_start=1;model_end=188;ncRNA_class=other;product=6S / SsrS RNA
+Ga0423362_02	INFERNAL 1.1.2 (July 2016)	tmRNA	1250883	1251241	157.5	-	.	ID=Ga0423362_02_1250883_1251241;e-value=1.4e-45;model=RF00023;accession=tmRNA;model_start=1;model_end=354;product=transfer-messenger RNA
