@@ -12,6 +12,8 @@ FEATURE_OVERRIDES = {
     'LocationPart ||--|| Contig : "seqid"': 'Contig ||--o{ LocationPart : "seqid"',
     'Feature ||--|| Contig : "seqid"': 'Contig ||--o{ Feature : "seqid"',
     'Feature ||--}o Feature : "parent"': 'Feature }o--o{ Feature : "parent"',
+    # Many contigs share one assembly or bin, and one contig can be in an assembly and a bin.
+    'Contig ||--}o ContigCollection : "member_of"': 'Contig }o--o{ ContigCollection : "member_of"',
 }
 # One Prodigal Sequence Data or FASTA header record sets the context for many records.
 SOURCE_DOCUMENT_OVERRIDES = {
@@ -25,6 +27,10 @@ def check_feature_slots(view):
     if not (seqid.required and not seqid.multivalued and seqid.range == 'Contig'
             and parent.multivalued and not parent.required and parent.range == 'Feature'):
         raise ValueError('Feature relationships changed; review the diagram cardinality overrides')
+    member_of = view.induced_slot('member_of', 'Contig')
+    if not (member_of.multivalued and not member_of.required and member_of.range == 'ContigCollection'
+            and not member_of.inlined):
+        raise ValueError('Contig.member_of changed; review the diagram cardinality override')
 
 
 def check_source_document_slots(view):

@@ -41,6 +41,8 @@ license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
   bfm: https://w3id.org/ber-data/gff-feature-model/
+  kb_cdm: http://kbase.github.io/cdm-schema/linkml/
+  MIXS: https://w3id.org/mixs/
   EDAM.DATA: http://edamontology.org/data_
 
 default_prefix: bfm
@@ -61,6 +63,7 @@ classes:
         of one class, rather than only validating its Contig and Feature entries one at a
         time. linkml-lint's tree_root_class check caught the absence of this class.
     slots:
+      - contig_collections
       - contigs
       - features
 
@@ -69,6 +72,7 @@ classes:
     description: A reference sequence, chromosome, scaffold, or contig that features are located on.
     slots:
       - contig_id
+      - member_of
       - length_bp
       - topology
       - translation_table
@@ -76,6 +80,33 @@ classes:
       - lineage_confidence
       - generated_by
       - source_files
+
+  ContigCollection:
+    title: Contig collection
+    description: A set of contigs that belong together, such as one isolate genome, one metagenome-assembled genome (MAG) bin, or one whole assembly.
+    exact_mappings:
+      - kb_cdm:ContigCollection
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/41, so that "same
+        organism" can be asked of features through their contigs. Mapped to the KBase CDM class
+        of the same name (kbase/cdm-schema src/linkml/cdm_bioentity.yaml, commit c1a59b9, read
+        2026-09-25). CDM records the same membership in its Contig_x_ContigCollection table,
+        defined in src/linkml/cdm_join_tables.yaml.
+      - Only isolate, mag, sag and virus collections stand for one organism. A metagenome or
+        metatranscriptome collection is a whole community, so a same-organism query filters on
+        collection_type.
+      - Assembly and bin statistics (N50, CheckM completeness and contamination) are left to
+        CDM and source catalogues; this model only records membership.
+    slots:
+      - collection_id
+      - collection_type
+      - name
+      - taxonomic_lineage
+      - generated_by
+      - source_files
+    slot_usage:
+      collection_id:
+        identifier: true
 
   Feature:
     title: Feature
@@ -88,6 +119,7 @@ classes:
         Terms) this same class also holds.
     slots:
       - feature_id
+      - stable_identifiers
       - seqid
       - source
       - type
@@ -187,6 +219,12 @@ slots:
     description: Exact upper endpoint or a bound before or after the reported coordinate.
     range: EndpointStatusEnum
     required: true
+  contig_collections:
+    title: Contig collections
+    multivalued: true
+    inlined_as_list: true
+    range: ContigCollection
+    description: Every ContigCollection that this dataset's Contigs name in member_of.
   contigs:
     title: Contigs
     multivalued: true
@@ -204,6 +242,28 @@ slots:
     title: Contig ID
     identifier: true
     description: Native NMDC or source-system identifier for the contig or scaffold.
+  member_of:
+    title: Member of
+    multivalued: true
+    range: ContigCollection
+    description: Contig collections this contig belongs to, for example its isolate genome, or both its assembly and its MAG bin.
+    notes:
+      - Multivalued because one metagenome contig belongs to its assembly and can also be binned
+        into a MAG. Membership in a bin is a statement by the binning workflow, so the bin's
+        own generated_by names that workflow rather than the assembly.
+  collection_id:
+    title: Collection ID
+    description: Identifier of the genome, bin or assembly, from the system that defined it.
+    notes:
+      - Examples are an NMDC assembly workflow execution (nmdc:wfmgas-...), an NMDC MAG bin name,
+        or a JGI IMG taxon or Data Portal record. Use a CURIE when the identifier has one.
+  collection_type:
+    title: Collection type
+    range: ContigCollectionTypeEnum
+    description: What kind of contig collection this is.
+  name:
+    title: Name
+    description: Human-readable name, such as an organism and strain or a bin label.
   length_bp:
     title: Length (bp)
     range: integer
@@ -233,6 +293,26 @@ slots:
   feature_id:
     title: Feature ID
     description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
+  stable_identifiers:
+    title: Stable identifiers
+    multivalued: true
+    description: Identifiers an authority assigns to this feature and keeps across releases, as opposed to feature_id, which only needs to be unique within this Dataset.
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/44. The AgBioData GFF3
+        recommendations advise "NOT using the ID attribute to specify the globally unique,
+        persistent identifier", and NCBI says its GFF3 IDs are "not intended to be used as stable
+        feature identifiers" (both read 2026-09-23). feature_id stays the file-local key.
+      - Use a CURIE when a prefix exists, such as an NCBI GeneID. A locus tag has no registered
+        prefix and is written as it appears. In the vendored RefSeq file
+        corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3, the gene with current locus tag
+        SC_RS27595 also carries old_locus_tag SCO5087; list the current and legacy locus tags.
+        That file has no GeneID Dbxrefs (checked 2026-09-25).
+      - NMDC annotation files carry no such identifier for their own genes. The IMG gene oid in
+        the KO and EC files (column 2 of Annotation KEGG Orthology, subject_gene_ids in KO_EC
+        Annotation GFF) identifies the reference gene the query was aligned to, not the
+        annotated gene, so it does not belong here. Checked 2026-09-25 on
+        nmdc:wfmgan-11-grwgtd27.2, where both files give 2776147680 for the hit of
+        nmdc:wfmgan-11-grwgtd27.2_0016_3_1208.
   seqid:
     title: Sequence ID
     range: Contig
@@ -340,7 +420,7 @@ slots:
       - See the Attribute class description for why this stays generic rather than typed.
   generated_by:
     title: Generated by
-    description: The workflow execution (or tool run) that produced this Contig or Feature.
+    description: The workflow execution (or tool run) that produced this ContigCollection, Contig or Feature.
     notes:
       - Confirmed 2026-09-18 against a real biosample's full sequencing, a Contig and the
         Features on it typically come from two DIFFERENT workflow executions, not one. A
@@ -399,6 +479,35 @@ slots:
         a data gap to fill in.
 
 enums:
+  ContigCollectionTypeEnum:
+    title: Contig collection type
+    description: Kind of contig collection, using the values and descriptions of KBase CDM ContigCollectionType.
+    notes:
+      - Values copied from kbase/cdm-schema src/linkml/cdm_bioentity.yaml at commit c1a59b9 (read
+        2026-09-25), which takes them from Genomics Standards Consortium checklists.
+      - Each meaning is a MIxS checklist (MIXS:0010011 is MIMAG, the checklist for a MAG
+        submission), as CDM has it, not a term for the kind of genome itself.
+    permissible_values:
+      isolate:
+        description: Sequences assembled from DNA of isolated organism.
+      mag:
+        title: Metagenome-Assembled Genome
+        description: Sequences assembled from DNA of mixed community and binned.
+        meaning: MIXS:0010011
+      metagenome:
+        description: Sequences assembled from DNA of mixed community.
+        meaning: MIXS:0010007
+      metatranscriptome:
+        description: Sequences assembled from RNA of mixed community.
+      sag:
+        title: Single Amplified Genome
+        description: Sequences assembled from DNA of single cell.
+        meaning: MIXS:0010010
+      virus:
+        description: Sequences assembled from uncultivated virus genome (DNA/RNA).
+        meaning: MIXS:0010012
+      marker:
+        description: Sequences from targeted region of DNA.
   ScoreTypeEnum:
     title: Score type
     description: Kind of number in a feature's score column.

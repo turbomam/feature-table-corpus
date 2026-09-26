@@ -8,7 +8,7 @@ description: >-
   from what the pipeline is known to write, not that a mapping is wrong.
 comments:
   - >-
-    Measured 2026-09-25 on two JGI isolate annotations (Clostridium acetobutylicum Ga0423362,
+    Measured 2026-09-25 on two JGI isolate annotations (Clostridium acetobutylicum DJ311 Ga0423362,
     4,439 rows; Methanococcus maripaludis S1 Ga0416744, 2,005 rows) and the vendored NMDC file.
     See model/examples/jgi-inputs.yaml for the isolate inputs.
   - >-

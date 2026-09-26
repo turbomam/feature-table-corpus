@@ -86,9 +86,10 @@ from what its producer is known to write, not that a mapping is wrong
 
 The first is [`img-functional-gff.yaml`](../model/dialects/img-functional-gff.yaml),
 for the JGI IMG pipeline's `*_functional_annotation.gff`. It was measured on 2026-09-25
-against two JGI isolate annotations (Clostridium acetobutylicum `Ga0423362`, 4,439 rows;
+against two JGI isolate annotations (Clostridium acetobutylicum DJ311 `Ga0423362`, 4,439 rows;
 Methanococcus maripaludis S1 `Ga0416744`, 2,005 rows), which need a JGI login to download
 ([#52](https://github.com/turbomam/feature-table-corpus/issues/52)), and the vendored NMDC file.
+The Clostridium file is now vendored too, as `corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff`.
 
 - `gff3-contig/1.0.0` rejects both isolate files at their first product name containing a
   comma (`product-cardinality`), for example "glutamate-1-semialdehyde 2,1-aminomutase".
@@ -146,6 +147,47 @@ direction on its own, and never overwrite an existing file. The reverse directio
 result forward again and refuses unless that reproduces the input Dataset, so a slot the
 dialect can't hold, such as `translated_sequence` or a contig length, is an error rather than
 a silent loss.
+
+### Phytozome gene_exons GFF3 and annotation_info
+
+Two more dialects describe a Phytozome genome's
+[`gene_exons.gff3`](../model/dialects/phytozome-gene-exons-gff3.yaml) and its per-transcript
+[`annotation_info.txt`](../model/dialects/phytozome-annotation-info.yaml), items 4 and 5 of
+https://github.com/turbomam/feature-table-corpus/issues/54. Both were measured on 2026-09-25
+against one genome only, Arabidopsis thaliana TAIR10 (`Phytozome-167` in
+[the JGI input list](jgi-inputs.md)): 532,682 GFF3 rows and 35,386 table rows. TAIR restricts
+redistributing substantial subsets of TAIR10, so no row of either file is in this repository;
+the tests use a [constructed fixture](../tests/fixtures/phytozome/README.md).
+
+- The GFF3 opens with `##gff-version 3` and `##annot-version TAIR10`, then gene blocks: a
+  gene row, then each mRNA row followed by its exon, CDS and UTR rows. There is no score, no
+  percent escape, and no comma in column 9, and each row type writes the same keys in the same
+  order.
+- Each part has its own ID, the mRNA's ID plus its type and a number, as in
+  `X.1.TAIR10.CDS.2`. Numbers run in transcription order, so on the minus strand coordinates
+  descend. A gene or mRNA ID is its Name plus `.TAIR10`.
+- Every mRNA row has `longest=0` or `longest=1`, and each gene has exactly one `longest=1`
+  (27,416 genes, 7,970 other isoforms). The flag is Phytozome's choice: in 16 of the 5,804
+  genes with more than one isoform, the flagged one does not have the longest CDS. How the
+  feature model should carry it is open in https://github.com/turbomam/feature-table-corpus/issues/48.
+- Each mRNA's `pacid` appears once in the table, as `PAC:<pacid>`, with the mRNA's Name as
+  `transcriptName` and its gene's Name as `locusName`. All 35,386 match in both directions.
+- In the table, one space separates values in `Pfam`, `Panther`, `ec`, `KOG`, `KO` and `GO`.
+  `ec` holds four-part EC numbers, plus the non-EC token `EC:PROLINE-MULTI` in six rows,
+  kept as written. Partial EC numbers such as `EC:1.1.1.-` are rejected, since none was read.
+- Both files use LF line endings and end with a newline; a carriage return, a missing final
+  newline, or a file with no data rows is rejected.
+
+`just dialect-validate-phytozome-gff3 FILE` reads plain or gzip-compressed GFF3 as a stream
+and validates rows in chunks of 5,000, so the whole genome is never one document. On the
+TAIR10 file it took 23.5 seconds of wall time on an Apple M5 Max on 2026-09-25.
+`just dialect-validate-phytozome-annotation FILE` validates the table, and
+`just dialect-join-phytozome GFF3 FILE` checks that the two files name the same transcripts.
+Beyond the schemas, the GFF3 checks cover ID construction, block order, part numbering, one
+`longest=1` per gene, and spans: an mRNA spans its exons, each CDS and UTR sits inside an exon,
+and a gene spans its mRNAs. Each writer, run on the TAIR10 files on 2026-09-25, reproduced them
+byte for byte. There is no conversion profile or linkml-map specification for these dialects
+yet.
 
 ## Attributes and authority
 
@@ -226,8 +268,9 @@ byte preservation, not an executable GTF-to-Dataset conversion profile.
 Explicit ordered parts, partial endpoints and circular references now have a bounded
 GenBank profile. Remote locations, between-base sites and ambiguous bounds remain
 unsupported. BED's block children retain their original profile meaning; they are
-not silently reinterpreted as the new location class. Additional NMDC/JGI, Prokka
-and Phytozome conventions remain candidates, not interchangeable dialect names.
+not silently reinterpreted as the new location class. Additional NMDC/JGI and Prokka
+conventions remain candidates, not interchangeable dialect names, and the Phytozome
+dialects above are validated but not yet converted.
 
 A new supported conversion must add a versioned contract, importer, reverse mapper,
 profile validation, real and generated round-trip cases, rejection controls and an

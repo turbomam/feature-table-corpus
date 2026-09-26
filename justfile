@@ -29,6 +29,8 @@ validate-schema:
     uv run --with linkml linkml-validate model/schema/attributes.yaml
     uv run --with linkml linkml-validate model/schema/source_document.yaml
     uv run --with linkml linkml-validate model/dialects/img-functional-gff.yaml
+    uv run --with linkml linkml-validate model/dialects/phytozome-gene-exons-gff3.yaml
+    uv run --with linkml linkml-validate model/dialects/phytozome-annotation-info.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
@@ -40,7 +42,7 @@ lint-schema:
 [doc("Run recommended lint with the declared naming exceptions.")]
 [group("Validation")]
 lint-schema-recommended:
-    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml
+    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml model/dialects/phytozome-gene-exons-gff3.yaml model/dialects/phytozome-annotation-info.yaml
 
 # Intentionally outside check: this reports the standard-naming exception by design.
 [doc("Run the strict audit; its strand-name finding is expected.")]
@@ -61,7 +63,7 @@ validate-example-closed example=feature_example:
 [doc("Run regression tests on real examples and negative controls.")]
 [group("Validation")]
 test:
-    uv run --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with duckdb python3 -m unittest discover -s tests -v
+    uv run --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with-requirements requirements-lakehouse.txt python3 -m unittest discover -s tests -v
 
 # ---- Corpus maintenance -----------------------------------------------------
 
@@ -155,6 +157,12 @@ flat-profile-audit schema=feature_schema:
 build-duckdb example=feature_example out=duckdb_path:
     mkdir -p "$(dirname "$2")"
     uv run --with linkml --with jsonschema --with duckdb python3 scripts/build_duckdb.py model/schema/ber_feature_model.yaml "$1" "$2"
+
+# The output directory must be new and under local/; checks run before it appears.
+[doc("Export a Dataset to one Parquet file per collection with linkml-store.")]
+[group("Queries")]
+lakehouse-export dataset out:
+    uv run --with-requirements requirements-lakehouse.txt python3 scripts/lakehouse_export.py model/schema/ber_feature_model.yaml "$1" "$2"
 
 # Keep the original recipe name/default; optional accessions filter the Pfam query.
 [doc("Find CDSs with multiple Pfams, optionally selecting accessions.")]
@@ -253,6 +261,21 @@ conversion-import input profile reference output *options:
 [group("Conversions")]
 dialect-validate-img-functional input:
     uv run --with-requirements requirements-conversion.txt python3 scripts/img_functional_gff.py validate "$1"
+
+[doc("Validate a Phytozome *.gene_exons.gff3 (or .gff3.gz) against its dialect schema.")]
+[group("Conversions")]
+dialect-validate-phytozome-gff3 input:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/phytozome_gene_exons.py validate "$1"
+
+[doc("Validate a Phytozome *.annotation_info.txt against its dialect schema.")]
+[group("Conversions")]
+dialect-validate-phytozome-annotation input:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/phytozome_annotation_info.py validate "$1"
+
+[doc("Check that a Phytozome GFF3 and annotation_info.txt name the same transcripts.")]
+[group("Conversions")]
+dialect-join-phytozome gff3 annotation:
+    uv run --with-requirements requirements-conversion.txt python3 scripts/phytozome_annotation_info.py join "$1" "$2"
 
 [doc("Map an IMG *_functional_annotation.gff to a Dataset JSON with linkml-map.")]
 [group("Conversions")]

@@ -4,8 +4,8 @@
 Usage: python scripts/validate_closed.py SCHEMA DATA_FILE TOP_CLASS
 
 JSON Schema covers types, required fields, enums and numeric bounds. Dataset checks
-also cover interval ordering, unique IDs, references, parent cycles and coordinate
-spaces. These checks are explicit: JSON Schema cannot compare two fields or resolve
+also cover interval ordering, unique IDs, references (including contig membership
+in declared collections), parent cycles and coordinate spaces. These checks are explicit: JSON Schema cannot compare two fields or resolve
 an identifier to another record's translated sequence.
 """
 import sys
@@ -40,7 +40,9 @@ def dataset_errors(data):
     """
     errors = []
     indexes = {}
-    for collection, key in (("contigs", "contig_id"), ("features", "feature_id")):
+    for collection, key in (
+        ("contig_collections", "collection_id"), ("contigs", "contig_id"), ("features", "feature_id")
+    ):
         index = {}
         for row in data.get(collection) or []:
             identifier = row[key]
@@ -49,7 +51,14 @@ def dataset_errors(data):
             index[identifier] = row
         indexes[collection] = index
     contigs, features = indexes["contigs"], indexes["features"]
+    collections = indexes["contig_collections"]
     for cid, contig in contigs.items():
+        members = contig.get("member_of") or []
+        if len(members) != len(set(members)):
+            errors.append(f"contig {cid!r}: duplicate member_of reference")
+        for collection_id in members:
+            if collection_id not in collections:
+                errors.append(f"contig {cid!r}: unknown member_of collection {collection_id!r}")
         table = contig.get("translation_table")
         if table is not None and table not in NCBI_GENETIC_CODES:
             errors.append(f"contig {cid!r}: translation_table {table} is not an assigned NCBI genetic code")
