@@ -373,20 +373,25 @@ def schema_problems(validator, header, chunk):
             for result in report.results]
 
 
+# Document fields that always pass, sent with every chunk after the first so the
+# real header is validated, and any problem in it reported, only once.
+CHECKED_HEADER = {"source_file": "", "gff_version": "3", "annot_version": "checked"}
+
+
 def check_stream(header, rows, validator=None):
     """Schema and cross-row problems for a header and an iterable of rows."""
     validator = validator or schema_validator()
     checks = CrossChecks(header.get("annot_version"))
-    found, chunk, count = [], [], 0
+    found, chunk, count, first = [], [], 0, True
     for row in rows:
         count += 1
         checks.feed(row)
         chunk.append(row)
         if len(chunk) == CHUNK:
-            found += schema_problems(validator, header, chunk)
-            chunk = []
-    if chunk or not count:
-        found += schema_problems(validator, header, chunk)
+            found += schema_problems(validator, header if first else CHECKED_HEADER, chunk)
+            chunk, first = [], False
+    if chunk or first:
+        found += schema_problems(validator, header if first else CHECKED_HEADER, chunk)
     return found + checks.finish(), count
 
 

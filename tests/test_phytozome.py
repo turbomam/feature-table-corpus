@@ -246,6 +246,19 @@ class GeneExonsRuleTests(Case):
         self.rejected(3, "longest=1", "longest=2", "2 is greater than the maximum of 1")
         self.rejected(3, "pacid=90000001", "pacid=090000001", "'090000001' does not match")
 
+    def test_a_bad_header_is_reported_once_across_chunks(self):
+        text = edited(GFF3, 0, "##gff-version 3", "##gff-version 3.1.26")
+        with mock.patch.object(gff3, "CHUNK", 5):
+            status, out = self.run_command(gff3.validate, [text], [".gff3"])
+        self.assertEqual(status, 1, out)
+        self.assertEqual(out.count("'3.1.26' does not match"), 1, out)
+        self.assertIn("22 rows, 1 problem(s)", out)
+
+    def test_row_problems_are_still_found_in_later_chunks(self):
+        text = edited(GFF3, 23, "phytozomev10", "phytozome")
+        with mock.patch.object(gff3, "CHUNK", 5):
+            self.assert_rejected(gff3.validate, [text], [".gff3"], "'phytozome' does not match")
+
     def test_schema_problems_name_the_source_line_across_chunks(self):
         with mock.patch.object(gff3, "CHUNK", 5):
             self.rejected(20, "phytozomev10", "phytozome", "/line 21")
