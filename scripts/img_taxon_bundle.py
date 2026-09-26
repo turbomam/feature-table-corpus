@@ -272,6 +272,12 @@ def write(document):
             files[f"{taxon}.{kind}.tab.txt"] = write_table(document[kind], kind)
     for name, text in files.items():
         kind = "gff" if name.endswith(".gff") else name[len(taxon) + 1:-len(".tab.txt")]
+        # The files are read as UTF-8, so text that can't be encoded, such as a lone
+        # surrogate, would reparse equal in memory and then fail when saved.
+        try:
+            text.encode("utf-8")
+        except UnicodeEncodeError as error:
+            raise DialectError(f"{name}: output can't be encoded as UTF-8: {error.reason} at {error.start}") from None
         lines = text.split("\n")
         reparsed = parse_gff_lines(lines) if kind == "gff" else parse_table_lines(lines, kind)
         original = document["rows"] if kind == "gff" else document[kind]

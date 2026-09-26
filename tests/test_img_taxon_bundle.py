@@ -61,6 +61,13 @@ class ParseTests(unittest.TestCase):
         with self.assertRaisesRegex(dialect.DialectError, "parses back differently"):
             dialect.write(document)
 
+    def test_writer_refuses_text_utf8_cannot_encode(self):
+        for kind, index, key in (("rows", 1, "product"), ("xref", 0, "id")):
+            document = dialect.parse(FIXTURE)
+            document[kind][index][key] = "a\ud800"
+            with self.assertRaisesRegex(dialect.DialectError, "can't be encoded as UTF-8"):
+                dialect.write(document)
+
     def test_table_columns_follow_the_schema(self):
         names = [name for name, _ in dialect.class_columns("KoHit")]
         self.assertEqual(names[-2:], ["EC", "img_ko_flag"])
