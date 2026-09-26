@@ -262,6 +262,9 @@ class GeneExonsRuleTests(Case):
     def test_gene_and_mrna_names(self):
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00011", "gene ID 'Exa01g00010.EXv1' is not Name")
         self.rejected(3, "Name=Exa01g00010.1;", "Name=Exa01g00010.1a;", "is not its gene's Name plus a number")
+        for suffix in ("0", "01"):
+            self.rejected(10, "Name=Exa01g00010.2;", f"Name=Exa01g00010.{suffix};",
+                          "is not its gene's Name plus a number")
         self.rejected(3, "ID=Exa01g00010.1.EXv1;", "ID=Exa01g00010.1.EXv2;", "mRNA ID 'Exa01g00010.1.EXv2'")
 
     def test_hierarchy(self):
@@ -349,7 +352,10 @@ class AnnotationInfoTests(Case):
         self.rejected(3, "PAC:90000003", "PAC:90000001", "pacId 'PAC:90000001' repeats")
         self.rejected(2, "Exa01g00010.2\tExa01g00010.2", "Exa01g00010.1\tExa01g00010.1",
                       "transcriptName 'Exa01g00010.1' repeats")
-        self.rejected(3, "Exa01g00020\t", "Exa01g00030\t", "does not start with locusName")
+        self.rejected(3, "Exa01g00020\t", "Exa01g00030\t", "is not locusName plus '.' and a number")
+        for suffix in ("", "foo", "0", "01", "1a"):
+            self.rejected(2, "Exa01g00010.2\tExa01g00010.2", f"Exa01g00010.{suffix}\tExa01g00010.{suffix}",
+                          "transcriptName is not locusName plus '.' and a number")
         self.rejected(1, "Exa01g00010.1\tPF00001", "Exa01g00010.9\tPF00001", "peptideName differs")
         self.rejected(1, "PF00001 PF00002", "PF00001 PF00001", "Pfam repeats a value")
         self.rejected(1, "Cre99.g999901\t", "\t", "Best-hit-clamy-defline without its name")

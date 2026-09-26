@@ -67,8 +67,8 @@ classes:
         required: true
         pattern: "^\\S+$"
         description: >-
-          The transcript, equal to the Name of the GFF3 mRNA row. It is locusName plus "." and
-          more. Unique in the file.
+          The transcript, equal to the Name of the GFF3 mRNA row. It is locusName plus "." and a
+          number from 1 without leading zeros. Unique in the file.
       peptideName:
         required: true
         pattern: "^\\S+$"

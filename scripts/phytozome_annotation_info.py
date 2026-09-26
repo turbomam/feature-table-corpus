@@ -119,8 +119,8 @@ def cross_checks(document):
             if row.get(slot) in values:
                 problems.append(f"{where}: {slot} {row.get(slot)!r} repeats")
             values.add(row.get(slot))
-        if not str(row.get("transcriptName")).startswith(f"{row.get('locusName')}."):
-            problems.append(f"{where}: transcriptName does not start with locusName plus '.'")
+        if not gff3.is_transcript_name(row.get("transcriptName"), row.get("locusName")):
+            problems.append(f"{where}: transcriptName is not locusName plus '.' and a number")
         if row.get("peptideName") != row.get("transcriptName"):
             problems.append(f"{where}: peptideName differs from transcriptName")
         for slot in LIST_SLOTS:

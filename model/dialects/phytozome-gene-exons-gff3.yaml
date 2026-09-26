@@ -106,7 +106,8 @@ classes:
       Name:
         pattern: "^\\S+$"
         description: >-
-          On gene and mRNA rows only. An mRNA's Name is its gene's Name plus "." and a number.
+          On gene and mRNA rows only. An mRNA's Name is its gene's Name plus "." and a number from
+          1 without leading zeros.
       Parent:
         pattern: "^\\S+$"
         description: >-

@@ -78,6 +78,12 @@ def integer(text):
     return int(text)
 
 
+def is_transcript_name(name, gene_name):
+    """A transcript is named for its gene plus "." and a number from 1, as all 35,386 are
+    in both measured TAIR10 files. Shared with the annotation_info dialect."""
+    return re.fullmatch(re.escape(f"{gene_name}.") + r"[1-9][0-9]*", str(name)) is not None
+
+
 def read_header(lines):
     """Read the two directive lines that open every file, from an iterator."""
     found = {}
@@ -274,7 +280,7 @@ class CrossChecks:
             self.add(row, "mRNA is not inside its gene on the same seqid and strand")
         if row.get("ID") != f"{row.get('Name')}{self.suffix}":
             self.add(row, f"mRNA ID {row.get('ID')!r} is not Name plus {self.suffix!r}")
-        if not re.fullmatch(re.escape(f"{gene.get('Name')}.") + r"\d+", str(row.get("Name"))):
+        if not is_transcript_name(row.get("Name"), gene.get("Name")):
             self.add(row, f"mRNA Name {row.get('Name')!r} is not its gene's Name plus a number")
         if row.get("pacid") in self.pacids:
             self.add(row, f"pacid {row.get('pacid')!r} repeats")
