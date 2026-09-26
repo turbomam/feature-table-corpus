@@ -126,6 +126,31 @@ jobs:
           echo "ok: rejected a README total that no longer matches the index"
           cp /tmp/README.good.md README.md
 
+          # A vendored JGI file must agree with the JGI input manifest, and
+          # every file in its directory must be indexed.
+          cp model/examples/jgi-inputs.yaml /tmp/jgi-inputs.good.yaml
+          sed -i 's/md5: 05c603dd179ca0c635338b3ffd919173/md5: 00000000000000000000000000000000/' model/examples/jgi-inputs.yaml
+          if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
+            echo "FAIL: verifier accepted an index that disagrees with the JGI manifest"
+            cat /tmp/out.txt; cp /tmp/jgi-inputs.good.yaml model/examples/jgi-inputs.yaml; exit 1
+          fi
+          grep -q "JGI-MISMATCH" /tmp/out.txt || {
+            echo "FAIL: rejected it without naming JGI-MISMATCH"; cat /tmp/out.txt
+            cp /tmp/jgi-inputs.good.yaml model/examples/jgi-inputs.yaml; exit 1; }
+          echo "ok: rejected an index that disagrees with the JGI manifest"
+          cp /tmp/jgi-inputs.good.yaml model/examples/jgi-inputs.yaml
+
+          echo "injected" > corpus/sources/jgi-img/IMG_AP-1268149/unindexed.gff
+          if uv run --with pyyaml python scripts/verify.py > /tmp/out.txt 2>&1; then
+            echo "FAIL: verifier accepted an unindexed JGI file"
+            cat /tmp/out.txt; rm corpus/sources/jgi-img/IMG_AP-1268149/unindexed.gff; exit 1
+          fi
+          grep -q "JGI-UNINDEXED" /tmp/out.txt || {
+            echo "FAIL: rejected it without naming JGI-UNINDEXED"; cat /tmp/out.txt
+            rm corpus/sources/jgi-img/IMG_AP-1268149/unindexed.gff; exit 1; }
+          echo "ok: rejected an unindexed JGI file"
+          rm corpus/sources/jgi-img/IMG_AP-1268149/unindexed.gff
+
       # git diff ignores untracked files, so a fixture deleted from the pull
       # request would be silently recreated and the step would pass. Staging
       # first makes additions, deletions and modifications all visible.

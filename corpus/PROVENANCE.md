@@ -219,3 +219,55 @@ records. It reconstructs their modeled locations and qualifiers separately from
 byte recovery; independent Biopython parsing checks the reconstructed feature
 meaning. No pre-existing source bytes were changed. The corpus now has 66 entries,
 30 vendored and 10 derived.
+
+## September 24 and 25, 2026: JGI IMG isolate annotation sets
+
+Every vendored IMG file before this came from an NMDC metagenome workflow. For
+https://github.com/turbomam/feature-table-corpus/issues/53, two public isolate records
+from the [JGI Data Portal](https://data.jgi.doe.gov/) are now retained under
+`corpus/sources/jgi-img/<record>/`, with the portal's file names:
+
+- Clostridium acetobutylicum DJ311 `IMG_AP-1268149` (`Ga0423362`): all 19 `Ga0423362_*.gff`
+  files, the per-method outputs and structural and functional roll-ups of the newer IMG
+  pipeline. Downloaded 2026-09-25 after a tape restore requested on 2026-09-24.
+- Bacillus sp. V-88 `IMG_AP-1121004`: `106476.assembled.gff` from IMG
+  pipeline 4.14.0 (the record's `106476.pipeline_version.info`, read 2026-09-25),
+  `2708743150.gff` from `img_core_v400`, and that taxon's seven `.tab.txt` side tables.
+  Downloaded 2026-09-24. The 8,587,401-byte `106476.assembled.gbk` is not retained:
+  5,541,445 of its bytes are ORIGIN sequence blocks (measured 2026-09-25), the corpus
+  already holds GenBank feature evidence, and it alone would have grown `corpus/` by
+  another 8.6 MB.
+
+Methanococcus maripaludis S1 `IMG_AP-1257706` came from the same tape restore and is
+left out: it is an archaeon, and the issue scopes this addition to the two bacterial
+records.
+
+Downloading needs a JGI login, so these files were fetched in a logged-in browser as
+described in [docs/jgi-inputs.md](../docs/jgi-inputs.md), placed under `local/jgi/`, and
+checked with `just jgi-verify`. Each file's size and md5 match the value the anonymous
+search API reports, recorded in `model/examples/jgi-inputs.yaml`, and were checked again
+after copying. The index records each file's portal `file_id`, its download URL, MD5 and
+SHA-256. No bytes were changed.
+
+Reuse terms, checked 2026-09-25: both records are `data_utilization_status: Unrestricted`
+and `visibility: public` in the search API. Their proposals were accepted on 2015-12-10
+(Clostridium, BrcProposal) and 2013-09-20 (Bacillus, Csp2014Proposal), before FY22, so the
+[JGI Legacy Data Policy](https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf)
+governs them, not the current
+[JGI Data Policy](https://jgi.doe.gov/data-policy-support/data-policy), which covers projects
+accepted FY22 and later. The first version of this section cited the current policy; review
+on https://github.com/turbomam/feature-table-corpus/pull/63 caught it. The legacy policy names
+no license and asks publications to carry JGI's acknowledgment. Each entry records the license
+as "JGI Legacy Data Policy (proposal accepted before FY22); data_utilization_status
+Unrestricted; attribution requested by this repository", with the acknowledgment and the dataset DOI
+(10.25585/1488021 and 10.25585/1488085).
+
+The first version also used the download folder's short name, BacspinBacteria_29, for the
+Bacillus record. The portal title, and the name used here, is Bacillus sp. V-88.
+
+The 28 files total 13,392,577 bytes. By `git ls-tree -r -l`, `corpus/` is 5,690,300 bytes
+before https://github.com/turbomam/feature-table-corpus/pull/63 and 19,135,385 bytes after it;
+the second figure also counts the growth of `index.yaml` and this file.
+The corpus now has 94 entries, 58 vendored. The 21 GFF files have measured validator
+cases in `model/validation/`; see the
+[validation report](../analyses/format-validation/README.md).

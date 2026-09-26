@@ -109,6 +109,8 @@ class CollectTests(unittest.TestCase):
         pages = {
             1: {"organisms": [{"id": "other"}], "next_page": 2},
             2: {"organisms": [{"id": "IMG_AP-2", "name": "Isolate", "data_utilization_status": "Unrestricted",
+                               "title": "Isolate strain X", "proposal_acceptance_date": "2015-12-10",
+                               "doi": "10.25585/0000000",
                                "files": [api_file("Ga1_pfam.gff", "b"), api_file("Ga1_cog.gff", "a"),
                                          api_file("Ga1_pfam.gff.gz", "c"), api_file("x_Ga1_a.gff", "d")]}],
                 "next_page": None},
@@ -117,6 +119,8 @@ class CollectTests(unittest.TestCase):
         self.assertEqual(calls, [1, 2])
         self.assertEqual([f["name"] for f in written["files"]], ["Ga1_cog.gff", "Ga1_pfam.gff"])
         self.assertEqual(written["name"], "Isolate")
+        self.assertEqual((written["title"], written["proposal_acceptance_date"], written["dataset_doi"]),
+                         ("Isolate strain X", "2015-12-10", "10.25585/0000000"))
         self.assertEqual((written["kind"], written["citation"]), ("hand-written", "hand-written"))
 
     def test_no_matching_file_fails(self):

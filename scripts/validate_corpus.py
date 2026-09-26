@@ -31,6 +31,7 @@ GT_RULES = {
     "inconsistent-id-type": r'the multi-feature with ID ".+" .* has a different type',
     "start-after-end": r"start '\d+' is larger then end '\d+'",
     "attribute-assignment": r"token .+ does not contain exactly one '='",
+    "unsupported-version": r"GFF version \S+ does not equal required version 3",
 }
 
 
