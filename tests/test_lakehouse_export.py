@@ -200,6 +200,23 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["keep"])
         self.assertEqual(list(keep.iterdir()), [])
 
+    def test_directory_created_during_export_is_not_replaced(self):
+        # Another process makes the empty target after the exists check and before
+        # publication. A plain rename would silently replace it.
+        target = self.work / "raced"
+        real = lakehouse.write_parquet
+
+        def write_then_race(view, data, out_dir):
+            written = real(view, data, out_dir)
+            target.mkdir()
+            return written
+        with patch.object(lakehouse, "write_parquet", write_then_race):
+            with self.assertRaisesRegex(ValueError, "already exists"):
+                lakehouse.export(SCHEMA, EXAMPLE, target)
+        self.assertTrue(target.is_dir())
+        self.assertEqual(list(target.iterdir()), [])
+        self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["raced"])
+
     def test_linkml_store_default_types_lose_values(self):
         # Negative control 3: without the type fixes, linkml-store's 4-byte FLOAT
         # changes scores, and the value check says so.

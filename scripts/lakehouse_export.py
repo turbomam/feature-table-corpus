@@ -205,6 +205,33 @@ def count_mismatches(view, schema_path, data_path, written, work):
     return problems
 
 
+def publish(staged, out_dir):
+    """Move staged files into a new out_dir without replacing anything.
+
+    os.mkdir fails if out_dir exists, even one made by another process after the
+    first check; os.rename of a directory would silently replace an empty one.
+    If a move fails, the files moved so far and out_dir itself are removed.
+    """
+    try:
+        os.mkdir(out_dir)
+    except FileExistsError:
+        raise ValueError(f"{out_dir} already exists; choose a new output directory") from None
+    moved = []
+    try:
+        for source in sorted(Path(staged).iterdir()):
+            destination = Path(out_dir) / source.name
+            os.rename(source, destination)
+            moved.append(destination)
+    except BaseException:
+        for path in moved:
+            path.unlink(missing_ok=True)
+        try:
+            os.rmdir(out_dir)  # left in place if another process has added to it
+        except OSError:
+            pass
+        raise
+
+
 def export(schema_path, data_path, out_dir):
     """Validate, export, check, then publish out_dir. Returns a summary dict."""
     # Resolve first, so a ".." cannot hide an existing directory from the exists
@@ -237,7 +264,7 @@ def export(schema_path, data_path, out_dir):
                 raise ValueError("Parquet export failed its checks: " + "; ".join(problems[:20]))
             summary = {name: {"rows": pq.read_metadata(path).num_rows, "bytes": path.stat().st_size}
                        for name, path in written.items()}
-            os.rename(staged, out_dir)
+            publish(staged, out_dir)
     except BaseException:
         for directory in created:  # innermost first; only directories this call made
             try:
