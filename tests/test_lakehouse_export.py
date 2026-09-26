@@ -179,14 +179,38 @@ class LakehouseExportTests(unittest.TestCase):
             store_mappings.TMAP["float"] = sqla.Float
         self.assertEqual([p.name for p in self.work.iterdir()], [])
 
-    def test_failures_leave_no_directories(self):
+    def notes(self, error):
+        return "\n".join(getattr(error, "__notes__", []))
+
+    def test_failures_leave_only_reported_new_directories(self):
+        # Validation runs before any mkdir, so an invalid Dataset creates nothing.
         invalid = self.write_json("invalid.json", {"features": [{"feature_id": "x"}]})
         with self.assertRaises(ValueError):
             lakehouse.export(SCHEMA, invalid, self.work / "a" / "b" / "out")
-        with patch.object(lakehouse, "value_mismatches", return_value=["features[0]: differs"]):
-            with self.assertRaises(ValueError):
-                lakehouse.export(SCHEMA, EXAMPLE, self.work / "c" / "d" / "out")
         self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["invalid.json"])
+        # A failed check removes the staging directory, but leaves the parents it
+        # made and names them.
+        with patch.object(lakehouse, "value_mismatches", return_value=["features[0]: differs"]):
+            with self.assertRaises(ValueError) as caught:
+                lakehouse.export(SCHEMA, EXAMPLE, self.work / "c" / "d" / "out")
+        self.assertEqual(list((self.work / "c" / "d").iterdir()), [])
+        notes = self.notes(caught.exception)
+        for made in (self.work / "c", self.work / "c" / "d"):
+            self.assertIn(f"left behind, remove if unwanted: {made.resolve()}", notes)
+
+    def test_make_parents_failure_reports_what_it_made(self):
+        blocked = (self.work / "p1" / "p2").resolve()
+
+        def mkdir(path, *args, **kwargs):
+            if Path(path) == blocked:
+                raise PermissionError("injected")
+            return REAL_MKDIR(path, *args, **kwargs)
+        with patch.object(os, "mkdir", mkdir):
+            with self.assertRaises(PermissionError) as caught:
+                lakehouse.export(SCHEMA, EXAMPLE, blocked / "out")
+        self.assertTrue((self.work / "p1").is_dir())
+        self.assertEqual(self.notes(caught.exception).count("left behind"), 1)
+        self.assertIn(f"left behind, remove if unwanted: {blocked.parent}", self.notes(caught.exception))
 
     def test_dot_dot_in_the_output_path(self):
         keep = self.work / "keep"
@@ -229,7 +253,7 @@ class LakehouseExportTests(unittest.TestCase):
 
     def test_file_added_to_the_new_directory_is_not_replaced(self):
         # Another process writes features.parquet into the output directory right
-        # after this call creates it and before the files are moved in.
+        # after this call creates it and before the files are linked in.
         target = self.work / "raced-file"
         theirs = target / "features.parquet"
         def mkdir(path, *args, **kwargs):
@@ -241,40 +265,58 @@ class LakehouseExportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "already exists"):
                 lakehouse.export(SCHEMA, EXAMPLE, target)
         self.assertEqual(theirs.read_bytes(), b"theirs")
-        self.assertEqual([p.name for p in target.iterdir()], ["features.parquet"])
+        # contigs.parquet was linked before the conflict; it stays, and is reported.
+        self.assertEqual(sorted(p.name for p in target.iterdir()), ["contigs.parquet", "features.parquet"])
 
-    def test_rollback_leaves_a_moved_file_another_process_replaced(self):
-        # contigs.parquet is moved in first. While features.parquet is being moved,
-        # another process replaces contigs.parquet, then the move fails. Rollback
-        # must leave the replacement, which has a different inode, in place.
-        target = self.work / "rollback"
+    def failing_link(self, target, replace_first=False):
+        """Patch os.link to fail on features.parquet, after contigs.parquet is linked."""
         real_link = os.link
 
         def link(source, destination, *args, **kwargs):
             if Path(destination).name == "features.parquet":
-                theirs = target / "contigs.parquet"
-                os.unlink(theirs)
-                theirs.write_bytes(b"theirs")
+                if replace_first:
+                    theirs = target / "contigs.parquet"
+                    os.unlink(theirs)
+                    theirs.write_bytes(b"theirs")
                 raise OSError("injected failure")
             return real_link(source, destination, *args, **kwargs)
-        with patch.object(os, "link", link):
+        return patch.object(os, "link", link)
+
+    def test_failure_after_partial_publication_leaves_and_reports(self):
+        target = self.work / "partial"
+        with self.failing_link(target):
             with self.assertRaisesRegex(OSError, "injected failure") as caught:
+                lakehouse.export(SCHEMA, EXAMPLE, target)
+        # Nothing in the target is deleted; the staging directory is gone.
+        self.assertEqual(pq.read_metadata(target / "contigs.parquet").num_rows, 3)
+        self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["partial"])
+        notes = self.notes(caught.exception)
+        for path in (target, target / "contigs.parquet"):
+            self.assertIn(f"left behind, remove if unwanted: {path.resolve()}", notes)
+        self.assertNotIn("features.parquet", notes)
+
+    def test_concurrent_replacement_survives_a_failure(self):
+        # Another process replaces the published contigs.parquet, then publication
+        # fails. The export deletes nothing in the target, so theirs survives.
+        target = self.work / "replaced"
+        with self.failing_link(target, replace_first=True):
+            with self.assertRaisesRegex(OSError, "injected failure"):
                 lakehouse.export(SCHEMA, EXAMPLE, target)
         self.assertEqual((target / "contigs.parquet").read_bytes(), b"theirs")
         self.assertEqual([p.name for p in target.iterdir()], ["contigs.parquet"])
-        notes = "\n".join(getattr(caught.exception, "__notes__", []))
-        self.assertIn("contigs.parquet: left in place", notes)
 
-    def test_parent_made_by_another_process_is_not_removed(self):
+    def test_parent_made_by_another_process_is_not_reported_as_ours(self):
         # "shared" is absent when the export starts; another process creates it just
-        # before this call's mkdir. A failed export must leave it in place.
+        # before this call's mkdir. Only "mine" is this run's and reported.
         shared = self.work / "shared"
-        with self.mkdir_with_race(shared, lambda: REAL_MKDIR(shared)):
+        with self.mkdir_with_race(shared.resolve(), lambda: REAL_MKDIR(shared)):
             with patch.object(lakehouse, "value_mismatches", return_value=["features[0]: differs"]):
-                with self.assertRaises(ValueError):
+                with self.assertRaises(ValueError) as caught:
                     lakehouse.export(SCHEMA, EXAMPLE, shared / "mine" / "out")
-        self.assertTrue(shared.is_dir())
-        self.assertEqual(list(shared.iterdir()), [])
+        self.assertEqual([p.name for p in shared.iterdir()], ["mine"])
+        notes = self.notes(caught.exception)
+        self.assertIn(f"left behind, remove if unwanted: {(shared / 'mine').resolve()}", notes)
+        self.assertNotIn(f"{shared.resolve()}\n", notes + "\n")
 
     def test_linkml_store_default_types_lose_values(self):
         # Negative control 3: without the type fixes, linkml-store's 4-byte FLOAT

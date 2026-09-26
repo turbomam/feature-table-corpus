@@ -15,19 +15,20 @@ just lakehouse-export local/ga0423362.json local/lakehouse/ga0423362
 ```
 
 `DIR` must not exist yet and must be under `local/`, so Parquet files never sit beside
-tracked files. Nothing appears at `DIR` unless the three checks below pass, and directories
-the export created are removed again when it fails.
+tracked files. Nothing appears at `DIR` unless the three checks below pass.
 
 **Concurrency contract.** The export writes a new directory under `local/`. Other processes
-writing to the same path at the same time are not supported. Within that, the export never
-replaces or deletes anything it did not create:
+writing to the same path at the same time are not supported. Within that:
 
-- it claims the output directory with `mkdir` and moves each file in with a hard link, and
-  both fail if the name already exists;
-- it creates missing parent directories one at a time and records only those whose `mkdir`
-  succeeded;
-- on failure it removes a recorded file or directory only if its device and inode numbers
-  (`st_dev`, `st_ino`) still match the ones it created, and names any it leaves in place.
+- Everything is written first to a private staging directory, created with a unique name
+  beside `DIR`. On any failure, that staging directory is the only thing removed.
+- `DIR` is claimed with `mkdir` and each file is linked in with `os.link`; both fail if the
+  name already exists, so nothing another process creates is replaced.
+- Missing parent directories are created one at a time, and only those whose `mkdir`
+  succeeded count as this run's.
+- The export never deletes or replaces anything in the target path. On failure it may
+  leave newly created parent directories, `DIR`, and files already linked into `DIR`; each
+  is named on its own line ("left behind, remove if unwanted: PATH") so you can remove it.
 
 ## Layout
 
@@ -102,7 +103,8 @@ child tables proposed there; this export does not produce them.
 
 ## Checks
 
-All three run before `DIR` is published, and a failure leaves no output:
+All three run before `DIR` is created, and a failure leaves no Parquet output (at most
+the reported parent directories):
 
 - **Column types.** Each file's column names and types, as DuckDB reads them, must equal
   those the schema gives. The value check can't see this: an `is_selected` rewritten as

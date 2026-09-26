@@ -27,8 +27,9 @@ https://github.com/turbomam/feature-table-corpus/issues/57; it ties the export t
 that existing mapping, so a collection one has and the other lacks is reported),
 and every value read back with pyarrow must equal the validated input. The
 output directory must not exist, and the command line requires it under local/
-so Parquet files are never staged beside tracked files. Directories the export
-created are removed again if it fails.
+so Parquet files are never staged beside tracked files. On failure the export
+may leave paths it newly created behind and reports each one; it never deletes
+or replaces anything in the target path.
 """
 import json
 import os
@@ -205,34 +206,16 @@ def count_mismatches(view, schema_path, data_path, written, work):
     return problems
 
 
-def identity(path):
-    """(st_dev, st_ino) of path itself, without following a symlink."""
-    st = os.lstat(path)
-    return st.st_dev, st.st_ino
-
-
-def remove_if_ours(path, ident, remove):
-    """Remove path only if it is still the object this export created.
-
-    Returns None when removed or already gone, and a description when the path
-    was left because another object now has that name or removal failed.
-    """
-    try:
-        if identity(path) != ident:
-            return f"{path}: left in place, it is no longer the one this export created"
-        remove(path)
-    except FileNotFoundError:
-        return None
-    except OSError as error:
-        return f"{path}: left in place ({error.strerror})"
-    return None
+def left_behind(paths):
+    return [f"left behind, remove if unwanted: {path}" for path in paths]
 
 
 def make_parents(directory):
-    """Create missing ancestors one at a time; return (path, identity) for those this call made.
+    """Create missing ancestors one at a time; return those this call made.
 
-    A FileExistsError means the directory is someone else's, even if it was
-    absent a moment earlier, so it is never recorded for cleanup.
+    A FileExistsError means the directory is someone else's. If a later mkdir
+    fails for another reason, the directories already made are left in place
+    and named in notes on the raised error.
     """
     made = []
     for path in reversed([directory, *directory.parents]):
@@ -240,65 +223,55 @@ def make_parents(directory):
             os.mkdir(path)
         except FileExistsError:
             continue
-        made.append((path, identity(path)))
+        except BaseException as error:
+            for note in left_behind(made):
+                error.add_note(note)
+            raise
+        made.append(path)
     return made
 
 
-def remove_made(directories):
-    """Remove recorded directories, innermost first, if empty and still ours."""
-    left = []
-    for path, ident in reversed(directories):
-        problem = remove_if_ours(path, ident, os.rmdir)
-        if problem:
-            left.append(problem)
-            break  # its ancestors are not empty either
-    return left
-
-
 def publish(staged, out_dir):
-    """Move staged files into a new out_dir without replacing anything.
+    """Link staged files into a new out_dir without replacing anything.
 
     os.mkdir fails if out_dir exists, and os.link fails if a file of the same
     name exists, so neither a directory nor a file another process creates
-    meanwhile is replaced. On failure, rollback removes a moved file or out_dir
-    only if its (st_dev, st_ino) still matches what this call created.
+    meanwhile is replaced. Nothing in out_dir is deleted on failure: out_dir
+    and the files already linked are left in place and named in notes on the
+    raised error. The staged copies are removed with the staging directory.
     """
     try:
         os.mkdir(out_dir)
     except FileExistsError:
         raise ValueError(f"{out_dir} already exists; choose a new output directory") from None
-    out_ident = identity(out_dir)
-    moved = []
+    published = [Path(out_dir)]
     try:
         for source in sorted(Path(staged).iterdir()):
             destination = Path(out_dir) / source.name
-            ident = identity(source)  # the link shares this inode
             try:
                 os.link(source, destination)
             except FileExistsError:
                 raise ValueError(f"{destination} already exists; another process wrote into {out_dir}") from None
-            moved.append((destination, ident))
-            os.unlink(source)
+            published.append(destination)
     except BaseException as error:
-        left = [p for p in (remove_if_ours(path, ident, os.unlink) for path, ident in moved) if p]
-        left += remove_made([(Path(out_dir), out_ident)])
-        for problem in left:
-            error.add_note(problem)
+        for note in left_behind(published):
+            error.add_note(note)
         raise
 
 
 def export(schema_path, data_path, out_dir):
     """Validate, export, check, then publish out_dir. Returns a summary dict.
 
-    Concurrency contract: the export writes a new directory under local/. Other
-    processes writing to the same path at the same time are not supported.
-    Within that, the export never replaces or deletes anything it did not
-    create: it claims names with os.mkdir and os.link, which fail if the name
-    exists, and on failure removes a file or directory only if its
-    (st_dev, st_ino) still matches the one it created, reporting any it leaves.
+    The export writes a new directory under local/. Other processes writing to
+    the same path at the same time are not supported. Everything is written
+    first to a private staging directory (tempfile.mkdtemp beside the target),
+    which is the only thing removed on failure. The target is claimed with
+    os.mkdir and filled with os.link, which fail if a name exists, so the
+    export never deletes or replaces anything in the target path. On failure it
+    may leave newly created parent directories, the target directory and
+    files already linked into it; each is named in a note on the raised error.
     """
-    # Resolve first, so a ".." cannot hide an existing directory from the exists
-    # check or put a directory this call did not make into the cleanup list.
+    # Resolve first, so a ".." cannot hide an existing directory from the exists check.
     out_dir = Path(out_dir).resolve()
     if out_dir.exists():
         raise ValueError(f"{out_dir} already exists; choose a new output directory")
@@ -307,10 +280,10 @@ def export(schema_path, data_path, out_dir):
     data = load_validated(schema_path, data_path)
     timings["validate_seconds"] = time.perf_counter() - started
     view = SchemaView(str(schema_path))
-    created = make_parents(out_dir.parent)
-    previous = {}
+    previous = widen_store_types()  # before any mkdir, so a changed type table creates nothing
+    made = []
     try:
-        previous = widen_store_types()
+        made = make_parents(out_dir.parent)
         with tempfile.TemporaryDirectory(prefix=f".{out_dir.name}.", dir=out_dir.parent) as work:
             staged = Path(work) / "export"
             staged.mkdir()
@@ -328,8 +301,8 @@ def export(schema_path, data_path, out_dir):
                        for name, path in written.items()}
             publish(staged, out_dir)
     except BaseException as error:
-        for problem in remove_made(created):
-            error.add_note(problem)
+        for note in left_behind(made):
+            error.add_note(note)
         raise
     finally:
         restore_store_types(previous)
