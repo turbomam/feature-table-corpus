@@ -46,6 +46,8 @@ class ValidationTests(unittest.TestCase):
         committed = document.split('```mermaid\n', 1)[1].split('```', 1)[0]
         self.assertEqual(result.stdout.strip(), committed.strip(),
                          'Regenerate the Mermaid block with just diagram')
+        # Many contigs share a collection, and a contig can name several collections.
+        self.assertIn('Contig }o--o{ ContigCollection : "member_of"', committed)
 
     def test_real_examples_and_source_manifest(self):
         manifest = yaml.safe_load((ROOT / "model/examples/source-artifacts.yaml").read_text())

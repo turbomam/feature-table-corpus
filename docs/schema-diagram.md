@@ -62,7 +62,7 @@ LocationPart {
     StrandEnum strand
 }
 
-Contig ||--o{ ContigCollection : "member_of"
+Contig }o--o{ ContigCollection : "member_of"
 Dataset ||--o{ Contig : "contigs"
 Dataset ||--o{ ContigCollection : "contig_collections"
 Dataset ||--o{ Feature : "features"
