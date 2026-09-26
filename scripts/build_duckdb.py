@@ -21,11 +21,11 @@ from validate_closed import load_validated
 
 CONTIG_COLUMNS = (
     "contig_id", "length_bp", "lineage_confidence", "taxonomic_lineage",
-    "generated_by", "source_files", "topology",
+    "generated_by", "source_files", "topology", "translation_table",
 )
 FEATURE_COLUMNS = (
     "feature_id", "seqid", "source", "type", "start", "end", "coordinate_system",
-    "score", "strand", "phase", "generated_by", "source_files", "is_selected",
+    "score", "score_type", "strand", "phase", "generated_by", "source_files", "is_selected",
     "product", "product_source", "translated_sequence", "parent", "attributes", "location",
 )
 
@@ -59,7 +59,8 @@ def _populate_database(data, db_path):
                 taxonomic_lineage VARCHAR[],
                 generated_by VARCHAR,
                 source_files VARCHAR[],
-                topology VARCHAR
+                topology VARCHAR,
+                translation_table INTEGER
             )
         """)
         con.execute("""
@@ -73,6 +74,7 @@ def _populate_database(data, db_path):
                 coordinate_system VARCHAR NOT NULL
                     CHECK (coordinate_system IN ('contig', 'protein')),
                 score DOUBLE,
+                score_type VARCHAR,
                 strand VARCHAR,
                 phase INTEGER CHECK (phase BETWEEN 0 AND 2),
                 generated_by VARCHAR,

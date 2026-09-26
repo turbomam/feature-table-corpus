@@ -106,6 +106,20 @@ class ValidationTests(unittest.TestCase):
             with self.subTest(expected=expected):
                 self.reject(change, expected)
 
+    def test_translation_table_bounds_and_score_type(self):
+        """Issue 46: NCBI genetic codes run 1 to 33; score_type is an optional CURIE."""
+        for value in (0, 34):
+            with self.subTest(translation_table=value):
+                self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", value), "imum")
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", "11"), "is not of type")
+        data = copy.deepcopy(self.example)
+        data["contigs"][0]["translation_table"] = 4
+        data["features"][0]["score_type"] = "EDAM:data_1772"
+        self.assertEqual(validation_errors(data, self.validator), [])
+        hmmer = [f for f in self.example["features"] if f.get("source", "").startswith("HMMER")]
+        self.assertTrue(hmmer)
+        self.assertEqual({f.get("score_type") for f in hmmer}, {"EDAM:data_2335"})
+
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
             for value in ('not-a-url', 'https://example.org/file name.gff'):
@@ -143,8 +157,9 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        self.assertEqual(len(rows), 39)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 28)
+        # translation_table and score_type (issue 46) are both scalar, so both are admissible.
+        self.assertEqual(len(rows), 41)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 30)
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
         self.assertIn(('Attribute', 'key'), rows)
@@ -274,6 +289,13 @@ class DatabaseTests(unittest.TestCase):
         con = duckdb.connect(str(self.db))
         self.addCleanup(con.close)
         return con
+
+    def test_score_type_and_translation_table_columns(self):
+        con = self.connect()
+        self.assertEqual(con.execute(
+            "SELECT count(*) FROM feature WHERE score_type = 'EDAM:data_2335'").fetchone()[0], 4)
+        self.assertEqual(con.execute(
+            "SELECT DISTINCT translation_table FROM contig WHERE translation_table IS NOT NULL").fetchall(), [(11,)])
 
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])

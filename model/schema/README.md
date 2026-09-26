@@ -105,3 +105,14 @@ between feature rows, in addition to document-level directives.
 
 Generated databases and test scratch files live under gitignored `local/`. No database
 binary is committed: the YAML examples and scripts are the reviewable, reproducible artifacts.
+
+## Translation tables and score types
+
+`Contig.translation_table` records the NCBI genetic code (1 to 33) a contig's coding features were
+translated with, and `Feature.score_type` says what kind of number `score` is, as an EDAM data term
+such as `EDAM:data_2335` (Bit score) or `EDAM:data_1667` (E-value)
+([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)). Unset `score_type` means
+no source states the meaning. In the worked example only the HMMER rows set it, because the
+bit-score reading is documented for NMDC's HMMER output; the lastal, Prodigal, GeneMark and INFERNAL
+scores are left unset. Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
+`gff3-contig` profile deliberately does not infer contig lengths from declared regions.

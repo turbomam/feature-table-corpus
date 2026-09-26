@@ -41,6 +41,7 @@ license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
   bfm: https://w3id.org/ber-data/gff-feature-model/
+  EDAM: http://identifiers.org/edam/
 
 default_prefix: bfm
 default_range: string
@@ -70,6 +71,7 @@ classes:
       - contig_id
       - length_bp
       - topology
+      - translation_table
       - taxonomic_lineage
       - lineage_confidence
       - generated_by
@@ -93,6 +95,7 @@ classes:
       - end
       - coordinate_system
       - score
+      - score_type
       - strand
       - phase
       - parent
@@ -132,6 +135,20 @@ slots:
   topology:
     description: Declared reference topology; circular locations also require length_bp.
     range: TopologyEnum
+  translation_table:
+    title: Translation table
+    range: integer
+    minimum_value: 1
+    maximum_value: 33
+    description: NCBI genetic code used to translate coding features on this contig, such as 11 for bacteria and archaea or 4 for Mycoplasma.
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/46. NMDC writes it per
+        CDS as a translation_table attribute, and Prodigal also writes transl_table in its
+        per-sequence Model Data comments (docs/source-documents.md). A CDS attribute stays in
+        attributes; this slot records the table the contig was translated with.
+      - The upper bound is the highest NCBI genetic code identifier in use, 33, as listed at
+        https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi (read 2026-09-25). Not every
+        number up to 33 is assigned.
   location:
     description: Explicit location parts; parent links and BED drawing blocks are separate concepts.
     range: FeatureLocation
@@ -269,6 +286,17 @@ slots:
       - The GFF3 specification itself says the semantics of the score are ill-defined.
         Meaning is tool-specific (an HMMER bit score, a Prodigal confidence value, and so
         on); do not compare scores across different `source` values.
+  score_type:
+    title: Score type
+    range: uriorcurie
+    description: What kind of number score is, as an EDAM data term where one exists.
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/46, so an e-value and a
+        bit score are not mistaken for each other. EDAM terms checked in OLS on 2026-09-25 are
+        EDAM:data_2335 (Bit score), EDAM:data_1667 (E-value), EDAM:data_1669 (P-value) and
+        EDAM:data_1772 (Score, for a tool-specific score of no more specific kind).
+      - Leave it unset when no source states what the score means. Unset says the meaning is
+        not recorded, not that the score is generic.
   strand:
     title: Strand
     range: StrandEnum

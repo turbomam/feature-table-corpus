@@ -20,6 +20,7 @@ Contig {
     uriList source_files
     stringList taxonomic_lineage
     TopologyEnum topology
+    integer translation_table
 }
 Dataset {
 
@@ -34,6 +35,7 @@ Feature {
     string product
     string product_source
     float score
+    uriorcurie score_type
     string source
     uriList source_files
     integer start
