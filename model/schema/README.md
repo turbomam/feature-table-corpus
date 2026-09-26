@@ -108,11 +108,16 @@ binary is committed: the YAML examples and scripts are the reviewable, reproduci
 
 ## Translation tables and score types
 
-`Contig.translation_table` records the NCBI genetic code (1 to 33) a contig's coding features were
-translated with, and `Feature.score_type` says what kind of number `score` is, as an EDAM data term
-such as `EDAM:data_2335` (Bit score) or `EDAM:data_1667` (E-value)
+`Contig.translation_table` records the assigned NCBI genetic code a contig's coding features were
+translated with, and `Feature.score_type` says what kind of number `score` is: `bit_score`,
+`e_value`, `p_value` or `score`, each mapped to an EDAM data term
 ([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)). Unset `score_type` means
-no source states the meaning. In the worked example only the HMMER rows set it, because the
-bit-score reading is documented for NMDC's HMMER output; the lastal, Prodigal, GeneMark and INFERNAL
-scores are left unset. Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
+no source states the meaning. In the worked example only the HMMER rows set it. nmdc-lakehouse
+documents NMDC's HMMER column 6 as a bit score
+(https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/pfam_annotation_gff.md), and on
+every vendored HMMER row that also has `full_sequence_bitscore`, column 6 is lower, so it reads as
+the per-domain bit score. The lastal, Prodigal, GeneMark and INFERNAL scores are left unset.
+
+Both slots are filled only by hand in the worked example. No converter derives them yet, and the
+validator does not check `translation_table` against each CDS's `translation_table` attribute. Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
 `gff3-contig` profile deliberately does not infer contig lengths from declared regions.

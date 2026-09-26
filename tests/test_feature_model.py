@@ -107,18 +107,24 @@ class ValidationTests(unittest.TestCase):
                 self.reject(change, expected)
 
     def test_translation_table_bounds_and_score_type(self):
-        """Issue 46: NCBI genetic codes run 1 to 33; score_type is an optional CURIE."""
-        for value in (0, 34):
-            with self.subTest(translation_table=value):
-                self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", value), "imum")
+        """Issue 46: assigned NCBI genetic codes only; score_type is a closed list of kinds."""
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 0), "minimum")
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 34), "maximum")
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 7), "not an assigned NCBI genetic code")
         self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", "11"), "is not of type")
+        for value in ("bit score", "EDAM:data_2335", ""):
+            with self.subTest(score_type=value):
+                self.reject(lambda d: d["features"][0].__setitem__("score_type", value), "is not one of")
         data = copy.deepcopy(self.example)
         data["contigs"][0]["translation_table"] = 4
-        data["features"][0]["score_type"] = "EDAM:data_1772"
+        data["features"][0]["score_type"] = "score"
         self.assertEqual(validation_errors(data, self.validator), [])
-        hmmer = [f for f in self.example["features"] if f.get("source", "").startswith("HMMER")]
-        self.assertTrue(hmmer)
-        self.assertEqual({f.get("score_type") for f in hmmer}, {"EDAM:data_2335"})
+        by_source = {}
+        for f in self.example["features"]:
+            by_source.setdefault(f.get("source", "").split(" ")[0], set()).add(f.get("score_type"))
+        # Only HMMER's score meaning is documented, so every other source leaves it unset.
+        self.assertEqual(by_source.pop("HMMER"), {"bit_score"})
+        self.assertEqual({v for values in by_source.values() for v in values}, {None})
 
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
@@ -293,7 +299,7 @@ class DatabaseTests(unittest.TestCase):
     def test_score_type_and_translation_table_columns(self):
         con = self.connect()
         self.assertEqual(con.execute(
-            "SELECT count(*) FROM feature WHERE score_type = 'EDAM:data_2335'").fetchone()[0], 4)
+            "SELECT count(*) FROM feature WHERE score_type = 'bit_score'").fetchone()[0], 4)
         self.assertEqual(con.execute(
             "SELECT DISTINCT translation_table FROM contig WHERE translation_table IS NOT NULL").fetchall(), [(11,)])
 

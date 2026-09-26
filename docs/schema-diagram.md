@@ -35,7 +35,7 @@ Feature {
     string product
     string product_source
     float score
-    uriorcurie score_type
+    ScoreTypeEnum score_type
     string source
     uriList source_files
     integer start

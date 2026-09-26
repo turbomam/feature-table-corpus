@@ -120,7 +120,7 @@ features:
     end: 248
     coordinate_system: protein
     score: 239.1
-    score_type: EDAM:data_2335 # HMMER bit score
+    score_type: bit_score # HMMER per-domain bit score
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
       - {key: fake_percent_id, value: "98.88"}
@@ -141,7 +141,7 @@ features:
     end: 249
     coordinate_system: protein
     score: 290.3
-    score_type: EDAM:data_2335 # HMMER bit score
+    score_type: bit_score # HMMER per-domain bit score
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
       - {key: fake_percent_id, value: "98.39"}
@@ -162,7 +162,7 @@ features:
     end: 249
     coordinate_system: protein
     score: 220.8
-    score_type: EDAM:data_2335 # HMMER bit score
+    score_type: bit_score # HMMER per-domain bit score
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
       - {key: Name, value: adh_short_C2}
@@ -182,7 +182,7 @@ features:
     end: 248
     coordinate_system: protein
     score: 280.3
-    score_type: EDAM:data_2335 # HMMER bit score
+    score_type: bit_score # HMMER per-domain bit score
     parent: [nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853]
     attributes:
       - {key: fake_percent_id, value: "97.57"}

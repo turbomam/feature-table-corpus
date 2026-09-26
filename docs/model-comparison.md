@@ -76,7 +76,8 @@ omitted entirely, or moved to a separate analysis table with three named scores.
 independent data points, since the lineage section above shows three of the models share text. But
 the handling is distinct in all four cases, and the specification's own admission that the semantics
 are ill-defined is the obvious common cause. A unified model should not reintroduce it as one
-column.
+column. The draft model keeps `score` but qualifies it with `score_type`
+([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)).
 
 Note what the source supports and what it does not: `gff-schema` defines a `score` slot and does not
 attach it to `genome feature`. That is what the file shows. Whether the omission was deliberate is

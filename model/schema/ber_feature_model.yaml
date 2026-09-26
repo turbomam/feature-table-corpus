@@ -41,7 +41,7 @@ license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
   bfm: https://w3id.org/ber-data/gff-feature-model/
-  EDAM: http://identifiers.org/edam/
+  EDAM.DATA: http://edamontology.org/data_
 
 default_prefix: bfm
 default_range: string
@@ -147,8 +147,8 @@ slots:
         per-sequence Model Data comments (docs/source-documents.md). A CDS attribute stays in
         attributes; this slot records the table the contig was translated with.
       - The upper bound is the highest NCBI genetic code identifier in use, 33, as listed at
-        https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi (read 2026-09-25). Not every
-        number up to 33 is assigned.
+        https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi (read 2026-09-25). Codes 7, 8
+        and 17 to 20 are unassigned; scripts/validate_closed.py rejects them.
   location:
     description: Explicit location parts; parent links and BED drawing blocks are separate concepts.
     range: FeatureLocation
@@ -288,13 +288,11 @@ slots:
         on); do not compare scores across different `source` values.
   score_type:
     title: Score type
-    range: uriorcurie
-    description: What kind of number score is, as an EDAM data term where one exists.
+    range: ScoreTypeEnum
+    description: What kind of number score is.
     notes:
       - Added for https://github.com/turbomam/feature-table-corpus/issues/46, so an e-value and a
-        bit score are not mistaken for each other. EDAM terms checked in OLS on 2026-09-25 are
-        EDAM:data_2335 (Bit score), EDAM:data_1667 (E-value), EDAM:data_1669 (P-value) and
-        EDAM:data_1772 (Score, for a tool-specific score of no more specific kind).
+        bit score are not mistaken for each other. Each value maps to an EDAM data term.
       - Leave it unset when no source states what the score means. Unset says the meaning is
         not recorded, not that the score is generic.
   strand:
@@ -391,6 +389,24 @@ slots:
         a data gap to fill in.
 
 enums:
+  ScoreTypeEnum:
+    title: Score type
+    description: Kind of number in a feature's score column.
+    notes:
+      - EDAM terms checked in OLS on 2026-09-25; none is obsolete.
+    permissible_values:
+      bit_score:
+        description: A score normalised so that scores from different searches compare, in bits.
+        meaning: EDAM.DATA:2335
+      e_value:
+        description: Expected number of hits at least this good by chance.
+        meaning: EDAM.DATA:1667
+      p_value:
+        description: Probability of a result at least this extreme by chance.
+        meaning: EDAM.DATA:1669
+      score:
+        description: A tool-specific score of no more specific kind.
+        meaning: EDAM.DATA:1772
   TopologyEnum:
     description: Reference topology used by location validation and distance queries.
     permissible_values:
