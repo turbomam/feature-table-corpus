@@ -305,6 +305,15 @@ class ValidateTests(unittest.TestCase):
         self.setUp()
         self.assert_rejected("'nan' is not a decimal number", ("cog", 1, "\t31.98\t", "\tnan\t"))
 
+    def test_oversized_integers_are_invalid_not_a_crash(self):
+        # Python refuses int() on more than 4,300 digits; each must be reported, not raised.
+        huge = "9" * 5000
+        self.assert_rejected("digits", ("gff", 2, "\t300\t950\t", f"\t{huge}\t950\t"))
+        self.setUp()
+        self.assert_rejected("digits", ("cog", 1, "\t216\t", f"\t{huge}\t"))
+        self.setUp()
+        self.assert_rejected("gene_oid", ("cog", 1, "9900000002\t", f"{huge}\t"))
+
     def test_evalue_spelling(self):
         self.assert_rejected("does not match", ("cog", 1, "3.0e-28", "3e-28"))
 

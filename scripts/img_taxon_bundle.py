@@ -60,6 +60,9 @@ NAMED_ACCESSIONS = {"cog": "cog", "pfam": "pfam", "tigrfam": "tigrfam", "ko": "k
 # ASCII digits only (\d also matches Arabic-Indic and full-width digits), no leading
 # zeros, and no trailing zeros in a fraction: IMG writes 118, never 0118 or 118.0.
 INTEGER = re.compile(r"0|[1-9][0-9]*")
+# Any 18-digit number fits a signed 64-bit integer, and it keeps int() under
+# Python's 4,300-digit conversion limit.
+MAX_DIGITS = 18
 DECIMAL = re.compile(r"(0|[1-9][0-9]*)(\.[0-9]*[1-9])?")
 
 
@@ -89,7 +92,9 @@ def convert(text, slot, where):
     """Numbers are unsigned decimals in every measured file; int() and float() accept more."""
     if slot.range == "integer":
         if not INTEGER.fullmatch(text):
-            raise DialectError(f"{where}: {text!r} is not an integer")
+            raise DialectError(f"{where}: {text[:40]!r} is not an integer")
+        if len(text) > MAX_DIGITS:
+            raise DialectError(f"{where}: integer has {len(text)} digits, more than {MAX_DIGITS}")
         return int(text)
     if slot.range == "float":
         # The spelling must also survive a float, so 31.123456789012345678 (too many
@@ -141,7 +146,9 @@ def parse_gff_row(number, text):
     for name in ("start", "end", "phase"):
         if name in row:
             if not INTEGER.fullmatch(row[name]):
-                raise DialectError(f"{where}: {name} {row[name]!r} is not a number")
+                raise DialectError(f"{where}: {name} {row[name][:40]!r} is not a number")
+            if len(row[name]) > MAX_DIGITS:
+                raise DialectError(f"{where}: {name} has {len(row[name])} digits, more than {MAX_DIGITS}")
             row[name] = int(row[name])
     if columns[8] == ".":
         return row
@@ -329,8 +336,9 @@ def table_checks(document):
             if gene not in cds:
                 problems.append(f"{where}: gene_oid {gene!r} is not a CDS ID in the GFF")
             # str.isdigit() accepts characters such as "²" that int() rejects.
+            # Canonical digit strings order by (length, text), with no int() to overflow.
             if (INTEGER.fullmatch(str(previous)) and INTEGER.fullmatch(str(gene))
-                    and int(gene) < int(previous)):
+                    and (len(gene), gene) < (len(previous), previous)):
                 problems.append(f"{where}: gene_oid {gene} comes after {previous}; rows are sorted by gene_oid")
             previous = gene if gene is not None else previous
             if "gene_length" in row:
