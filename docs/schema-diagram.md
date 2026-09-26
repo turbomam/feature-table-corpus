@@ -20,6 +20,7 @@ Contig {
     uriList source_files
     stringList taxonomic_lineage
     TopologyEnum topology
+    integer translation_table
 }
 ContigCollection {
     string name
@@ -42,6 +43,7 @@ Feature {
     string product
     string product_source
     float score
+    ScoreTypeEnum score_type
     string source
     uriList source_files
     stringList stable_identifiers
