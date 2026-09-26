@@ -243,6 +243,28 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual(theirs.read_bytes(), b"theirs")
         self.assertEqual([p.name for p in target.iterdir()], ["features.parquet"])
 
+    def test_rollback_leaves_a_moved_file_another_process_replaced(self):
+        # contigs.parquet is moved in first. While features.parquet is being moved,
+        # another process replaces contigs.parquet, then the move fails. Rollback
+        # must leave the replacement, which has a different inode, in place.
+        target = self.work / "rollback"
+        real_link = os.link
+
+        def link(source, destination, *args, **kwargs):
+            if Path(destination).name == "features.parquet":
+                theirs = target / "contigs.parquet"
+                os.unlink(theirs)
+                theirs.write_bytes(b"theirs")
+                raise OSError("injected failure")
+            return real_link(source, destination, *args, **kwargs)
+        with patch.object(os, "link", link):
+            with self.assertRaisesRegex(OSError, "injected failure") as caught:
+                lakehouse.export(SCHEMA, EXAMPLE, target)
+        self.assertEqual((target / "contigs.parquet").read_bytes(), b"theirs")
+        self.assertEqual([p.name for p in target.iterdir()], ["contigs.parquet"])
+        notes = "\n".join(getattr(caught.exception, "__notes__", []))
+        self.assertIn("contigs.parquet: left in place", notes)
+
     def test_parent_made_by_another_process_is_not_removed(self):
         # "shared" is absent when the export starts; another process creates it just
         # before this call's mkdir. A failed export must leave it in place.

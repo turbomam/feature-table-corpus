@@ -205,8 +205,31 @@ def count_mismatches(view, schema_path, data_path, written, work):
     return problems
 
 
+def identity(path):
+    """(st_dev, st_ino) of path itself, without following a symlink."""
+    st = os.lstat(path)
+    return st.st_dev, st.st_ino
+
+
+def remove_if_ours(path, ident, remove):
+    """Remove path only if it is still the object this export created.
+
+    Returns None when removed or already gone, and a description when the path
+    was left because another object now has that name or removal failed.
+    """
+    try:
+        if identity(path) != ident:
+            return f"{path}: left in place, it is no longer the one this export created"
+        remove(path)
+    except FileNotFoundError:
+        return None
+    except OSError as error:
+        return f"{path}: left in place ({error.strerror})"
+    return None
+
+
 def make_parents(directory):
-    """Create missing ancestors one at a time; return only those this call made.
+    """Create missing ancestors one at a time; return (path, identity) for those this call made.
 
     A FileExistsError means the directory is someone else's, even if it was
     absent a moment earlier, so it is never recorded for cleanup.
@@ -217,17 +240,19 @@ def make_parents(directory):
             os.mkdir(path)
         except FileExistsError:
             continue
-        made.append(path)
+        made.append((path, identity(path)))
     return made
 
 
 def remove_made(directories):
-    """Remove directories this call made, innermost first, if they are empty."""
-    for directory in reversed(directories):
-        try:
-            os.rmdir(directory)
-        except OSError:
-            break
+    """Remove recorded directories, innermost first, if empty and still ours."""
+    left = []
+    for path, ident in reversed(directories):
+        problem = remove_if_ours(path, ident, os.rmdir)
+        if problem:
+            left.append(problem)
+            break  # its ancestors are not empty either
+    return left
 
 
 def publish(staged, out_dir):
@@ -235,32 +260,43 @@ def publish(staged, out_dir):
 
     os.mkdir fails if out_dir exists, and os.link fails if a file of the same
     name exists, so neither a directory nor a file another process creates
-    meanwhile is replaced. On failure, only the links this call made and
-    out_dir itself (if empty) are removed.
+    meanwhile is replaced. On failure, rollback removes a moved file or out_dir
+    only if its (st_dev, st_ino) still matches what this call created.
     """
     try:
         os.mkdir(out_dir)
     except FileExistsError:
         raise ValueError(f"{out_dir} already exists; choose a new output directory") from None
+    out_ident = identity(out_dir)
     moved = []
     try:
         for source in sorted(Path(staged).iterdir()):
             destination = Path(out_dir) / source.name
+            ident = identity(source)  # the link shares this inode
             try:
                 os.link(source, destination)
             except FileExistsError:
                 raise ValueError(f"{destination} already exists; another process wrote into {out_dir}") from None
-            moved.append(destination)
+            moved.append((destination, ident))
             os.unlink(source)
-    except BaseException:
-        for path in moved:
-            os.unlink(path)
-        remove_made([out_dir])
+    except BaseException as error:
+        left = [p for p in (remove_if_ours(path, ident, os.unlink) for path, ident in moved) if p]
+        left += remove_made([(Path(out_dir), out_ident)])
+        for problem in left:
+            error.add_note(problem)
         raise
 
 
 def export(schema_path, data_path, out_dir):
-    """Validate, export, check, then publish out_dir. Returns a summary dict."""
+    """Validate, export, check, then publish out_dir. Returns a summary dict.
+
+    Concurrency contract: the export writes a new directory under local/. Other
+    processes writing to the same path at the same time are not supported.
+    Within that, the export never replaces or deletes anything it did not
+    create: it claims names with os.mkdir and os.link, which fail if the name
+    exists, and on failure removes a file or directory only if its
+    (st_dev, st_ino) still matches the one it created, reporting any it leaves.
+    """
     # Resolve first, so a ".." cannot hide an existing directory from the exists
     # check or put a directory this call did not make into the cleanup list.
     out_dir = Path(out_dir).resolve()
@@ -291,8 +327,9 @@ def export(schema_path, data_path, out_dir):
             summary = {name: {"rows": pq.read_metadata(path).num_rows, "bytes": path.stat().st_size}
                        for name, path in written.items()}
             publish(staged, out_dir)
-    except BaseException:
-        remove_made(created)
+    except BaseException as error:
+        for problem in remove_made(created):
+            error.add_note(problem)
         raise
     finally:
         restore_store_types(previous)
@@ -313,7 +350,7 @@ def main():
     try:
         summary = export(schema_path, data_path, out_dir)
     except (ValueError, yaml.YAMLError, duckdb.Error, sqla.exc.SQLAlchemyError, OSError) as error:
-        print(error, file=sys.stderr)
+        print(error, *getattr(error, "__notes__", []), sep="\n", file=sys.stderr)
         return 1
     print(json.dumps(summary, indent=2))
     return 0

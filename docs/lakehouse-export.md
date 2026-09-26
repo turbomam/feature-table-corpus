@@ -15,11 +15,19 @@ just lakehouse-export local/ga0423362.json local/lakehouse/ga0423362
 ```
 
 `DIR` must not exist yet and must be under `local/`, so Parquet files never sit beside
-tracked files. Nothing appears at `DIR` unless the three checks below pass, and directories the export
-created are removed again when it fails. The directory is claimed with `mkdir` and each file
-is moved in with a hard link; both fail if the name already exists, so a directory or file
-another process creates during the export is never replaced. Missing parent directories are
-created one at a time, and only those this run created are removed on failure.
+tracked files. Nothing appears at `DIR` unless the three checks below pass, and directories
+the export created are removed again when it fails.
+
+**Concurrency contract.** The export writes a new directory under `local/`. Other processes
+writing to the same path at the same time are not supported. Within that, the export never
+replaces or deletes anything it did not create:
+
+- it claims the output directory with `mkdir` and moves each file in with a hard link, and
+  both fail if the name already exists;
+- it creates missing parent directories one at a time and records only those whose `mkdir`
+  succeeded;
+- on failure it removes a recorded file or directory only if its device and inode numbers
+  (`st_dev`, `st_ino`) still match the ones it created, and names any it leaves in place.
 
 ## Layout
 
