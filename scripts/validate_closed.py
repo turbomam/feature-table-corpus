@@ -17,6 +17,11 @@ from linkml.generators.jsonschemagen import JsonSchemaGenerator
 from feature_locations import location_errors
 
 
+# Assigned NCBI genetic codes, from https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+# (read 2026-09-25). 7, 8 and 17 to 20 are unassigned.
+NCBI_GENETIC_CODES = frozenset([*range(1, 7), *range(9, 17), *range(21, 34)])
+
+
 def make_validator(schema_path, class_name="Dataset"):
     schema = JsonSchemaGenerator(str(schema_path), not_closed=False).generate()
     selected = {"$defs": schema["$defs"], "$ref": f"#/$defs/{class_name}"}
@@ -54,6 +59,9 @@ def dataset_errors(data):
         for collection_id in members:
             if collection_id not in collections:
                 errors.append(f"contig {cid!r}: unknown member_of collection {collection_id!r}")
+        table = contig.get("translation_table")
+        if table is not None and table not in NCBI_GENETIC_CODES:
+            errors.append(f"contig {cid!r}: translation_table {table} is not an assigned NCBI genetic code")
         if contig.get("topology") == "circular" and not contig.get("length_bp"):
             errors.append(f"contig {cid!r}: circular topology requires length_bp")
     for fid, feature in features.items():

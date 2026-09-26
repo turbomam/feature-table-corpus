@@ -142,6 +142,43 @@ class ValidationTests(unittest.TestCase):
         data["contigs"][0].pop("member_of")
         self.assertEqual(validation_errors(data, self.validator), [])
 
+    def test_translation_table_bounds_and_score_type(self):
+        """Issue 46: assigned NCBI genetic codes only; score_type is a closed list of kinds."""
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 0), "minimum")
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 34), "maximum")
+        for unassigned in (7, 8, 17, 20):
+            with self.subTest(translation_table=unassigned):
+                self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", unassigned),
+                            "not an assigned NCBI genetic code")
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", "11"), "is not of type")
+        for value in ("bit score", "EDAM:data_2335", ""):
+            with self.subTest(score_type=value):
+                self.reject(lambda d: d["features"][0].__setitem__("score_type", value), "is not one of")
+        data = copy.deepcopy(self.example)
+        # A score_type qualifies a score, so it can't appear without one; a bare score is fine.
+        self.reject(lambda d: next(f for f in d["features"] if f.get("score_type")).pop("score"),
+                    "'score' is a required property")
+        data["features"][0]["score_type"] = "score"
+        for assigned in (1, 4, 33):
+            data["contigs"][0]["translation_table"] = assigned
+            self.assertEqual(validation_errors(data, self.validator), [])
+        # Each score kind maps to EDAM's own IRI, not a resolver URL.
+        view = SchemaView(str(SCHEMA))
+        meanings = {name: view.expand_curie(value.meaning)
+                    for name, value in view.get_enum("ScoreTypeEnum").permissible_values.items()}
+        self.assertEqual(meanings, {
+            "bit_score": "http://edamontology.org/data_2335",
+            "e_value": "http://edamontology.org/data_1667",
+            "p_value": "http://edamontology.org/data_1669",
+            "score": "http://edamontology.org/data_1772",
+        })
+        by_source = {}
+        for f in self.example["features"]:
+            by_source.setdefault(f.get("source", "").split(" ")[0], set()).add(f.get("score_type"))
+        # Only HMMER's score meaning is documented, so every other source leaves it unset.
+        self.assertEqual(by_source.pop("HMMER"), {"bit_score"})
+        self.assertEqual({v for values in by_source.values() for v in values}, {None})
+
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
             for value in ('not-a-url', 'https://example.org/file name.gff'):
@@ -179,10 +216,11 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 48 pairs and 32 admissible since ContigCollection, member_of and stable_identifiers
-        # (issues 41 and 44); the membership and identifier lists flatten as child tables.
-        self.assertEqual(len(rows), 48)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 32)
+        # 50 pairs and 34 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
+        # score_type (issue 46).
+        self.assertEqual(len(rows), 50)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 34)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
@@ -330,6 +368,13 @@ class DatabaseTests(unittest.TestCase):
             WHERE len(coalesce(c.member_of, [])) = 0
         """).fetchone()[0]
         self.assertEqual(unresolved, 0)
+
+    def test_score_type_and_translation_table_columns(self):
+        con = self.connect()
+        self.assertEqual(con.execute(
+            "SELECT count(*) FROM feature WHERE score_type = 'bit_score'").fetchone()[0], 4)
+        self.assertEqual(con.execute(
+            "SELECT DISTINCT translation_table FROM contig WHERE translation_table IS NOT NULL").fetchall(), [(11,)])
 
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])

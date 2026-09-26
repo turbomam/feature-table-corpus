@@ -84,7 +84,7 @@ or all GFF3 grammar.
 CI also downloads the pinned, unvendored prior-art GFF schema and asserts its published
 19-admissible/13-rejected audit totals. Locally, set `PINNED_GFF_SCHEMA` to that downloaded
 schema's path to include this test; otherwise it is explicitly skipped. The current draft
-model's separate totals, 32 admissible of 48 class and slot pairs, are tested without network access.
+model's separate totals, 34 admissible of 50 class and slot pairs, are tested without network access.
 
 ContigCollection, Contig and Feature all expose `generated_by` and `source_files`. These remain optional
 for sources lacking workflow metadata, but every supplied example populates them.
@@ -125,3 +125,21 @@ between feature rows, in addition to document-level directives.
 
 Generated databases and test scratch files live under gitignored `local/`. No database
 binary is committed: the YAML examples and scripts are the reviewable, reproducible artifacts.
+
+## Translation tables and score types
+
+`Contig.translation_table` records the assigned NCBI genetic code a contig's coding features were
+translated with, and `Feature.score_type` says what kind of number `score` is: `bit_score`,
+`e_value`, `p_value` or `score`, each mapped to an EDAM data term
+([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)). Unset `score_type` means
+no source states the meaning, and a schema rule rejects a `score_type` on a feature with no
+`score`. In the worked example only the HMMER rows set it. nmdc-lakehouse
+documents NMDC's HMMER column 6 as a bit score
+(https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/pfam_annotation_gff.md). On all
+five vendored HMMER rows that also have `full_sequence_bitscore`, column 6 is lower, so it reads
+as the per-domain bit score. The lastal, Prodigal, GeneMark and INFERNAL scores are left unset.
+
+Both slots are filled only by hand in the worked example. No converter derives them yet, and the
+validator does not check `translation_table` against each CDS's `translation_table` attribute.
+Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
+`gff3-contig` profile deliberately does not infer contig lengths from declared regions.

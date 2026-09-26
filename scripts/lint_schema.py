@@ -25,6 +25,12 @@ DIALECT_NAMES = {
             "CleavageSiteNetwork": ("SignalP-noTM", "SignalP-TM"),
         },
     },
+    "img_per_method_gff": {
+        "slots": ("ID", "Name"),
+        "values": {
+            "ImgPerMethodStrand": (".",),
+        },
+    },
     "img_taxon_bundle": {
         "slots": ("ID", "EC"),
         "values": {
