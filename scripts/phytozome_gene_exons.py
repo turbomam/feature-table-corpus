@@ -119,8 +119,10 @@ def parse_row(line_number, text, slots):
         key, sep, value = pair.partition("=")
         if not sep:
             raise DialectError(f"line {line_number}: attribute {key!r} has no value")
-        for character, meaning in (("%", "a percent escape"), (",", "a second value")):
-            if character in value:
+        # The same set write() refuses, so whatever parses can be written back.
+        for character in VALUE_FORBIDDEN:
+            if character in key or character in value:
+                meaning = RESERVED_MEANING.get(character, f"a raw {character!r}")
                 raise DialectError(f"line {line_number}: {key} {value!r} has {meaning}; this dialect writes none")
         row["attribute_order"].append(key)
         if key in CORE:
@@ -163,6 +165,7 @@ def parse(path, slots=None):
 
 LINE_BREAKS = ("\t", "\n", "\r")
 VALUE_FORBIDDEN = LINE_BREAKS + (";", "=", ",", "%", "&")
+RESERVED_MEANING = {"%": "a percent escape", ",": "a second value"}
 
 
 def checked(text, where, forbidden):

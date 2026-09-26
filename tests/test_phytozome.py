@@ -224,6 +224,15 @@ class GeneExonsRuleTests(Case):
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010;start=5", "names a column")
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010;Name=Exa01g00010", "Name repeats")
 
+    def test_every_character_the_writer_refuses_is_rejected_when_parsing(self):
+        # Each value and key here parses without this rule and passes the schema.
+        self.rejected(15, "Parent=Exa01g00020.EXv1", "Parent=Exa01g00020.EXv1&x", "has a raw '&'")
+        self.rejected(15, "Parent=Exa01g00020.EXv1", "Parent=Exa01g00020.EXv1=x", "has a raw '='")
+        self.rejected(15, "Parent=Exa01g00020.EXv1", "Pa&rent=Exa01g00020.EXv1", "has a raw '&'")
+        for character in gff3.VALUE_FORBIDDEN:
+            with self.assertRaises(gff3.DialectError, msg=repr(character)):
+                gff3.parse_row(3, f"s\tphytozomev10\tgene\t1\t2\t.\t+\t.\tID=a{character}b;Name=a", gff3.row_slots())
+
     def test_schema_rules(self):
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010;Note=x", "'Note' was unexpected")
         self.rejected(2, "phytozomev10", "phytozome", "'phytozome' does not match")
