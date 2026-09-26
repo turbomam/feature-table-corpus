@@ -16,9 +16,10 @@ just lakehouse-export local/ga0423362.json local/lakehouse/ga0423362
 
 `DIR` must not exist yet and must be under `local/`, so Parquet files never sit beside
 tracked files. Nothing appears at `DIR` unless the three checks below pass, and directories the export
-created are removed again when it fails. The directory is claimed with `mkdir`, which fails
-if it already exists, so a directory another process creates during the export is never
-replaced.
+created are removed again when it fails. The directory is claimed with `mkdir` and each file
+is moved in with a hard link; both fail if the name already exists, so a directory or file
+another process creates during the export is never replaced. Missing parent directories are
+created one at a time, and only those this run created are removed on failure.
 
 ## Layout
 

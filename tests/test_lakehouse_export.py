@@ -1,5 +1,6 @@
 """Parquet written through linkml-store reads back equal to the Dataset, and the checks can fail."""
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -27,6 +28,7 @@ SCHEMA = ROOT / "model/schema/ber_feature_model.yaml"
 EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
 IMG_FIXTURE = ROOT / "tests/fixtures/img-functional-gff/constructed.gff"
 PHIX = ROOT / "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb"
+REAL_MKDIR = os.mkdir
 
 
 class LakehouseExportTests(unittest.TestCase):
@@ -216,6 +218,41 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertTrue(target.is_dir())
         self.assertEqual(list(target.iterdir()), [])
         self.assertEqual(sorted(p.name for p in self.work.iterdir()), ["raced"])
+
+    def mkdir_with_race(self, when, race):
+        """Patch os.mkdir so race() runs just before this call's mkdir of `when`."""
+        def mkdir(path, *args, **kwargs):
+            if Path(path) == when:
+                race()
+            return REAL_MKDIR(path, *args, **kwargs)
+        return patch.object(os, "mkdir", mkdir)
+
+    def test_file_added_to_the_new_directory_is_not_replaced(self):
+        # Another process writes features.parquet into the output directory right
+        # after this call creates it and before the files are moved in.
+        target = self.work / "raced-file"
+        theirs = target / "features.parquet"
+        def mkdir(path, *args, **kwargs):
+            result = REAL_MKDIR(path, *args, **kwargs)
+            if Path(path) == target:
+                theirs.write_bytes(b"theirs")
+            return result
+        with patch.object(os, "mkdir", mkdir):
+            with self.assertRaisesRegex(ValueError, "already exists"):
+                lakehouse.export(SCHEMA, EXAMPLE, target)
+        self.assertEqual(theirs.read_bytes(), b"theirs")
+        self.assertEqual([p.name for p in target.iterdir()], ["features.parquet"])
+
+    def test_parent_made_by_another_process_is_not_removed(self):
+        # "shared" is absent when the export starts; another process creates it just
+        # before this call's mkdir. A failed export must leave it in place.
+        shared = self.work / "shared"
+        with self.mkdir_with_race(shared, lambda: REAL_MKDIR(shared)):
+            with patch.object(lakehouse, "value_mismatches", return_value=["features[0]: differs"]):
+                with self.assertRaises(ValueError):
+                    lakehouse.export(SCHEMA, EXAMPLE, shared / "mine" / "out")
+        self.assertTrue(shared.is_dir())
+        self.assertEqual(list(shared.iterdir()), [])
 
     def test_linkml_store_default_types_lose_values(self):
         # Negative control 3: without the type fixes, linkml-store's 4-byte FLOAT

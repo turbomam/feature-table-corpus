@@ -205,12 +205,38 @@ def count_mismatches(view, schema_path, data_path, written, work):
     return problems
 
 
+def make_parents(directory):
+    """Create missing ancestors one at a time; return only those this call made.
+
+    A FileExistsError means the directory is someone else's, even if it was
+    absent a moment earlier, so it is never recorded for cleanup.
+    """
+    made = []
+    for path in reversed([directory, *directory.parents]):
+        try:
+            os.mkdir(path)
+        except FileExistsError:
+            continue
+        made.append(path)
+    return made
+
+
+def remove_made(directories):
+    """Remove directories this call made, innermost first, if they are empty."""
+    for directory in reversed(directories):
+        try:
+            os.rmdir(directory)
+        except OSError:
+            break
+
+
 def publish(staged, out_dir):
     """Move staged files into a new out_dir without replacing anything.
 
-    os.mkdir fails if out_dir exists, even one made by another process after the
-    first check; os.rename of a directory would silently replace an empty one.
-    If a move fails, the files moved so far and out_dir itself are removed.
+    os.mkdir fails if out_dir exists, and os.link fails if a file of the same
+    name exists, so neither a directory nor a file another process creates
+    meanwhile is replaced. On failure, only the links this call made and
+    out_dir itself (if empty) are removed.
     """
     try:
         os.mkdir(out_dir)
@@ -220,15 +246,16 @@ def publish(staged, out_dir):
     try:
         for source in sorted(Path(staged).iterdir()):
             destination = Path(out_dir) / source.name
-            os.rename(source, destination)
+            try:
+                os.link(source, destination)
+            except FileExistsError:
+                raise ValueError(f"{destination} already exists; another process wrote into {out_dir}") from None
             moved.append(destination)
+            os.unlink(source)
     except BaseException:
         for path in moved:
-            path.unlink(missing_ok=True)
-        try:
-            os.rmdir(out_dir)  # left in place if another process has added to it
-        except OSError:
-            pass
+            os.unlink(path)
+        remove_made([out_dir])
         raise
 
 
@@ -244,8 +271,7 @@ def export(schema_path, data_path, out_dir):
     data = load_validated(schema_path, data_path)
     timings["validate_seconds"] = time.perf_counter() - started
     view = SchemaView(str(schema_path))
-    created = [p for p in [out_dir.parent, *out_dir.parent.parents] if not p.exists()]
-    out_dir.parent.mkdir(parents=True, exist_ok=True)
+    created = make_parents(out_dir.parent)
     previous = {}
     try:
         previous = widen_store_types()
@@ -266,11 +292,7 @@ def export(schema_path, data_path, out_dir):
                        for name, path in written.items()}
             publish(staged, out_dir)
     except BaseException:
-        for directory in created:  # innermost first; only directories this call made
-            try:
-                directory.rmdir()
-            except OSError:
-                break
+        remove_made(created)
         raise
     finally:
         restore_store_types(previous)
