@@ -1,8 +1,12 @@
 description: JGI Data Portal files used to develop the organism-centric profiles. Downloads need a JGI
-  login, so these are not retained in the repository; see docs/jgi-inputs.md. `just jgi-collect` writes
-  `name`, `data_utilization_status` and `files` from the anonymous search API; the other fields are
-  maintained by hand.
+  login, so most are not retained in the repository; see docs/jgi-inputs.md. The selected IMG_AP-1268149
+  and IMG_AP-1121004 files are vendored unchanged under corpus/sources/jgi-img/. `just jgi-collect` writes
+  `name`, `title`, `proposal_acceptance_date`, `dataset_doi`, `data_utilization_status` and `files` from
+  the anonymous search API; the other fields, including `governing_policy`, are maintained by hand. The
+  current policy covers projects accepted FY22 (from 2021-10-01) and later; earlier ones fall under the
+  legacy policy, which asks publications to carry the JGI acknowledgment.
 policy_url: https://jgi.doe.gov/data-policy-support/data-policy
+legacy_policy_url: https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
 records:
 - record_id: IMG_AP-1268149
   query: Clostridium acetobutylicum
@@ -11,6 +15,10 @@ records:
   workflow: IMG annotation pipeline, per-method GFF set with structural and functional roll-ups
   citation: null
   name: Clostridium acetobutylicum
+  title: Clostridium acetobutylicum DJ311
+  proposal_acceptance_date: '2015-12-10'
+  dataset_doi: 10.25585/1488021
+  governing_policy: JGI Legacy Data Policy (proposal accepted before FY22)
   data_utilization_status: Unrestricted
   files:
   - name: Ga0423362_cath_funfam.gff
@@ -115,6 +123,10 @@ records:
   workflow: IMG annotation pipeline, per-method GFF set with structural and functional roll-ups
   citation: null
   name: Methanococcus maripaludis S1
+  title: Methanococcus maripaludis
+  proposal_acceptance_date: '2016-09-09'
+  dataset_doi: 10.25585/1488165
+  governing_policy: JGI Legacy Data Policy (proposal accepted before FY22)
   data_utilization_status: Unrestricted
   files:
   - name: Ga0416744_cath_funfam.gff
@@ -219,6 +231,10 @@ records:
   workflow: IMG pipeline 4.14 assembled GFF and GenBank, plus the img_core_v400 taxon GFF and side tables
   citation: null
   name: 'Bacillus sp. (in: Bacteria)'
+  title: Bacillus sp. V-88
+  proposal_acceptance_date: '2013-09-20'
+  dataset_doi: 10.25585/1488085
+  governing_policy: JGI Legacy Data Policy (proposal accepted before FY22)
   data_utilization_status: Unrestricted
   files:
   - name: 106476.assembled.gbk
@@ -278,6 +294,10 @@ records:
   workflow: img_core_v400 taxon bundle (GFF and side tables inside the tarball)
   citation: null
   name: Zymomonas mobilis subsp. mobilis ATCC 10988, Genomic DNA
+  title: Zymomonas mobilis mobilis T.H.Delft 1, ATCC 10988
+  proposal_acceptance_date: '2012-03-22T00:00:00.000-07:00'
+  dataset_doi: 10.25585/1487799
+  governing_policy: JGI Legacy Data Policy (proposal accepted before FY22)
   data_utilization_status: Unrestricted
   files:
   - name: 645058785.tar.gz
@@ -293,6 +313,11 @@ records:
   citation: 'Lamesch et al. 2012, The Arabidopsis Information Resource (TAIR): improved gene annotation
     and new tools. Nucleic Acids Research 40(D1):D1202-D1210. https://doi.org/10.1093/nar/gkr1090'
   name: Arabidopsis thaliana TAIR10
+  title: Arabidopsis thaliana
+  proposal_acceptance_date: null
+  dataset_doi: null
+  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html
+    file'
   data_utilization_status: Unrestricted
   files:
   - name: Athaliana_167_TAIR10.DataReleasePolicy.html
@@ -322,6 +347,11 @@ records:
   citation: 'Cheng et al. 2017, Araport11: a complete reannotation of the Arabidopsis thaliana reference
     genome. The Plant Journal 89(4):789-804. https://doi.org/10.1111/tpj.13415'
   name: Arabidopsis thaliana Araport11
+  title: Arabidopsis thaliana
+  proposal_acceptance_date: null
+  dataset_doi: null
+  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html
+    file'
   data_utilization_status: Unrestricted
   files:
   - name: Athaliana_447_Araport11.DataReleasePolicy.html
@@ -347,6 +377,11 @@ records:
   citation: Tuskan et al. 2006, The genome of black cottonwood, Populus trichocarpa (Torr. & Gray). Science
     313(5793):1596-1604. PMID 16973872
   name: Populus trichocarpa v4.1
+  title: Populus trichocarpa
+  proposal_acceptance_date: null
+  dataset_doi: null
+  governing_policy: 'undetermined: the search API gives no proposal_acceptance_date; see the DataReleasePolicy.html
+    file'
   data_utilization_status: Unrestricted
   files:
   - name: Ptrichocarpa_533_v4.1.DataReleasePolicy.html

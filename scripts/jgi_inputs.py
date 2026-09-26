@@ -10,9 +10,12 @@ checks what a person has placed under local/jgi/.
     python3 scripts/jgi_inputs.py collect               # refresh from the API
 
 `collect` is the only command that uses the network. From the Data Portal
-search API it rewrites three fields of each record: `name`,
-`data_utilization_status` and `files`. Every other field is written by hand
-and kept, including the `file_name_pattern` that selects the files.
+search API it rewrites six fields of each record: `name`, `title`,
+`proposal_acceptance_date`, `dataset_doi`, `data_utilization_status` and
+`files`. Every other field is written by hand and kept, including the
+`file_name_pattern` that selects the files. The acceptance date decides which
+JGI data policy governs a record: projects accepted before FY22 fall under
+the legacy policy.
 """
 import argparse
 import hashlib
@@ -144,6 +147,9 @@ def collect(manifest, path=MANIFEST):
         if not files:
             raise LookupError(f"{record['record_id']}: no file matches {record['file_name_pattern']!r}")
         record["name"] = organism["name"]
+        record["title"] = organism.get("title")
+        record["proposal_acceptance_date"] = organism.get("proposal_acceptance_date")
+        record["dataset_doi"] = organism.get("doi")
         record["data_utilization_status"] = organism.get("data_utilization_status")
         record["files"] = files
         print(f"{record['record_id']}: {len(files)} files", file=sys.stderr)

@@ -46,6 +46,8 @@ class ValidationTests(unittest.TestCase):
         committed = document.split('```mermaid\n', 1)[1].split('```', 1)[0]
         self.assertEqual(result.stdout.strip(), committed.strip(),
                          'Regenerate the Mermaid block with just diagram')
+        # Many contigs share a collection, and a contig can name several collections.
+        self.assertIn('Contig }o--o{ ContigCollection : "member_of"', committed)
 
     def test_real_examples_and_source_manifest(self):
         manifest = yaml.safe_load((ROOT / "model/examples/source-artifacts.yaml").read_text())
@@ -99,12 +101,46 @@ class ValidationTests(unittest.TestCase):
             (lambda d: d["features"][1]["parent"].append(d["features"][0]["feature_id"]), "duplicate parent"),
             (lambda d: d["features"].append(copy.deepcopy(d["features"][0])), "duplicate feature_id"),
             (lambda d: d["contigs"].append(copy.deepcopy(d["contigs"][0])), "duplicate contig_id"),
+            (lambda d: d["contigs"][0].update(member_of=["missing"]), "unknown member_of collection"),
+            (lambda d: d["contigs"][0]["member_of"].append(d["contigs"][0]["member_of"][0]), "duplicate member_of"),
+            (lambda d: d["contig_collections"].append(copy.deepcopy(d["contig_collections"][0])),
+             "duplicate collection_id"),
             (lambda d: d["features"][0].update(parent=[d["features"][0]["feature_id"]]), "parent cycle"),
             (lambda d: d["features"][0].update(parent=[d["features"][1]["feature_id"]]), "parent cycle"),
         )
         for change, expected in cases:
             with self.subTest(expected=expected):
                 self.reject(change, expected)
+
+    def test_circular_contig_needs_length_with_or_without_collections(self):
+        # Regression: once, adding the collection checks moved this one out of the contig loop,
+        # so it ran only when collections existed and crashed for collections with no contigs.
+        for with_collections in (False, True):
+            with self.subTest(with_collections=with_collections):
+                data = copy.deepcopy(self.example)
+                if not with_collections:
+                    data.pop("contig_collections")
+                    for contig in data["contigs"]:
+                        contig.pop("member_of", None)
+                data["contigs"][0].update(topology="circular")
+                data["contigs"][0].pop("length_bp", None)
+                errors = validation_errors(data, self.validator)
+                self.assertTrue(any("circular topology requires length_bp" in e for e in errors), errors)
+        data = {"contig_collections": [{"collection_id": "g", "collection_type": "mag"}], "contigs": []}
+        self.assertEqual(validation_errors(data, self.validator), [])
+
+    def test_membership_and_stable_identifiers_shapes(self):
+        """Issues 41 and 44: collection types are closed; stable identifiers are a list."""
+        self.reject(lambda d: d["contig_collections"][0].update(collection_type="genome"), "is not one of")
+        self.reject(lambda d: d["contig_collections"][0].pop("collection_id"), "required")
+        self.reject(lambda d: d["contig_collections"][0].update(member_of=["x"]), "Additional properties")
+        data = copy.deepcopy(self.example)
+        # Identifiers from one gene row of the vendored RefSeq file (issue 44).
+        data["features"][0]["stable_identifiers"] = ["SC_RS27595", "SCO5087"]
+        self.assertEqual(validation_errors(data, self.validator), [])
+        # A contig that belongs to nothing stays valid: membership is optional.
+        data["contigs"][0].pop("member_of")
+        self.assertEqual(validation_errors(data, self.validator), [])
 
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
@@ -143,8 +179,12 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        self.assertEqual(len(rows), 39)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 28)
+        # 48 pairs and 32 admissible since ContigCollection, member_of and stable_identifiers
+        # (issues 41 and 44); the membership and identifier lists flatten as child tables.
+        self.assertEqual(len(rows), 48)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 32)
+        self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
+        self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
         self.assertIn(('Attribute', 'key'), rows)
@@ -275,6 +315,22 @@ class DatabaseTests(unittest.TestCase):
         self.addCleanup(con.close)
         return con
 
+    def test_features_reach_their_collection_through_contigs(self):
+        con = self.connect()
+        rows = con.execute("""
+            SELECT DISTINCT cc.collection_id, cc.collection_type
+            FROM feature f
+            JOIN contig c ON f.seqid = c.contig_id
+            JOIN contig_collection cc ON list_contains(c.member_of, cc.collection_id)
+        """).fetchall()
+        self.assertEqual(rows, [("nmdc:wfmgas-11-19jh9v28.1", "metagenome")])
+        # Every feature in the example resolves to that one collection.
+        unresolved = con.execute("""
+            SELECT count(*) FROM feature f JOIN contig c ON f.seqid = c.contig_id
+            WHERE len(coalesce(c.member_of, [])) = 0
+        """).fetchone()[0]
+        self.assertEqual(unresolved, 0)
+
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])
 
@@ -336,7 +392,7 @@ class DatabaseTests(unittest.TestCase):
         self.assertIn("start must be <= end", result.stdout)
 
     def test_valid_rebuild_and_query_cli(self):
-        self.assertEqual(build_database(SCHEMA, EXAMPLE, self.db), (3, 15))
+        self.assertEqual(build_database(SCHEMA, EXAMPLE, self.db), (3, 15, 1))
         build_database(SCHEMA, PFAMS, self.db)
         result = subprocess.run([sys.executable, str(ROOT / "scripts/query_duckdb.py"),
                                  str(self.db), "pfams", "PF13358", "PF13592"],
@@ -372,7 +428,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stderr)
         self.assertNotIn('Traceback', result.stderr)
         self.assertEqual(set(self.work.iterdir()), before)
-        self.assertEqual(build_database(SCHEMA, EXAMPLE, fresh), (3, 15))
+        self.assertEqual(build_database(SCHEMA, EXAMPLE, fresh), (3, 15, 1))
+        # The CLI prints all three counts, including for an in-memory database.
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/build_duckdb.py'),
+                                 str(SCHEMA), str(EXAMPLE), ':memory:'],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('1 contig collections, 3 contigs, 15 features', result.stdout)
         self.assertEqual(set(self.work.iterdir()), before | {fresh})
 
     def test_destination_created_during_validation_is_preserved(self):

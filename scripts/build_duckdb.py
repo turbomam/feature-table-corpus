@@ -19,12 +19,15 @@ import duckdb
 from validate_closed import load_validated
 
 
+COLLECTION_COLUMNS = (
+    "collection_id", "collection_type", "name", "taxonomic_lineage", "generated_by", "source_files",
+)
 CONTIG_COLUMNS = (
     "contig_id", "length_bp", "lineage_confidence", "taxonomic_lineage",
-    "generated_by", "source_files", "topology",
+    "generated_by", "source_files", "topology", "member_of",
 )
 FEATURE_COLUMNS = (
-    "feature_id", "seqid", "source", "type", "start", "end", "coordinate_system",
+    "feature_id", "stable_identifiers", "seqid", "source", "type", "start", "end", "coordinate_system",
     "score", "strand", "phase", "generated_by", "source_files", "is_selected",
     "product", "product_source", "translated_sequence", "parent", "attributes", "location",
 )
@@ -51,6 +54,17 @@ def _populate_database(data, db_path):
         con.execute("BEGIN TRANSACTION")
         con.execute("DROP TABLE IF EXISTS feature")
         con.execute("DROP TABLE IF EXISTS contig")
+        con.execute("DROP TABLE IF EXISTS contig_collection")
+        con.execute("""
+            CREATE TABLE contig_collection (
+                collection_id VARCHAR PRIMARY KEY,
+                collection_type VARCHAR,
+                name VARCHAR,
+                taxonomic_lineage VARCHAR[],
+                generated_by VARCHAR,
+                source_files VARCHAR[]
+            )
+        """)
         con.execute("""
             CREATE TABLE contig (
                 contig_id VARCHAR PRIMARY KEY,
@@ -59,12 +73,14 @@ def _populate_database(data, db_path):
                 taxonomic_lineage VARCHAR[],
                 generated_by VARCHAR,
                 source_files VARCHAR[],
-                topology VARCHAR
+                topology VARCHAR,
+                member_of VARCHAR[]
             )
         """)
         con.execute("""
             CREATE TABLE feature (
                 feature_id VARCHAR PRIMARY KEY,
+                stable_identifiers VARCHAR[],
                 seqid VARCHAR NOT NULL REFERENCES contig(contig_id),
                 source VARCHAR,
                 type VARCHAR,
@@ -87,7 +103,9 @@ def _populate_database(data, db_path):
             )
         """)
         for table, collection, columns in (
-            ("contig", "contigs", CONTIG_COLUMNS), ("feature", "features", FEATURE_COLUMNS)
+            ("contig_collection", "contig_collections", COLLECTION_COLUMNS),
+            ("contig", "contigs", CONTIG_COLUMNS),
+            ("feature", "features", FEATURE_COLUMNS),
         ):
             # DuckDB interprets a Python dict with exactly key/value keys as a MAP.
             # Cast JSON explicitly so the generic attribute stays a STRUCT.
@@ -103,6 +121,7 @@ def _populate_database(data, db_path):
         counts = (
             con.execute("SELECT count(*) FROM contig").fetchone()[0],
             con.execute("SELECT count(*) FROM feature").fetchone()[0],
+            con.execute("SELECT count(*) FROM contig_collection").fetchone()[0],
         )
         con.execute("COMMIT")
         return counts
@@ -118,11 +137,11 @@ def main():
         print(__doc__, file=sys.stderr)
         return 2
     try:
-        n_contigs, n_features = build_database(*sys.argv[1:])
+        n_contigs, n_features, n_collections = build_database(*sys.argv[1:])
     except (ValueError, duckdb.Error, OSError) as error:
         print(error, file=sys.stderr)
         return 1
-    print(f"Wrote {sys.argv[3]}: {n_contigs} contigs, {n_features} features")
+    print(f"Wrote {sys.argv[3]}: {n_collections} contig collections, {n_contigs} contigs, {n_features} features")
     return 0
 
 

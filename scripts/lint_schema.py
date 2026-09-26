@@ -35,6 +35,17 @@ DIALECT_NAMES = {
             "XrefDatabase": ("GI", "GenBank/EMBL"),
         },
     },
+    "phytozome_gene_exons_gff3": {
+        "slots": ("ID", "Name", "Parent"),
+        "values": {
+            "PhytozomeFeatureType": ("mRNA", "CDS", "five_prime_UTR", "three_prime_UTR"),
+            "Strand": ("+", "-"),
+        },
+    },
+    "phytozome_annotation_info": {
+        "slots": ("pacId", "locusName", "transcriptName", "peptideName", "Pfam", "Panther", "KOG", "KO", "GO"),
+        "values": {},
+    },
 }
 for schema, names in DIALECT_NAMES.items():
     ALLOWED |= {(schema, "standard_naming", "warning", f"Slot has name '{name}'")

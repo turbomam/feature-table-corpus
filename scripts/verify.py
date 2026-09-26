@@ -230,9 +230,76 @@ def check_vendored(entries):
     return bad
 
 
+JGI_SOURCES = "corpus/sources/jgi-img/"
+JGI_MANIFEST = "model/examples/jgi-inputs.yaml"
+JGI_DOWNLOAD = "https://files.jgi.doe.gov/filedownload"
+
+
+def check_jgi_manifest(entries, root=ROOT):
+    """Tie each vendored JGI file to its record in the JGI input manifest.
+
+    The md5, size and file id of a JGI file, and its record's dataset DOI and
+    proposal acceptance date, come from the portal's search API and are kept
+    in model/examples/jgi-inputs.yaml. Without this pass the index could drift
+    from that manifest and every other check would pass. The attribution text
+    must name the DOI. Every file under corpus/sources/jgi-img/ must also be
+    indexed; dotfiles such as .DS_Store are ignored.
+    """
+    import urllib.parse
+    manifest = yaml.safe_load(open(os.path.join(root, JGI_MANIFEST)))
+    listed = {(r["record_id"], f["name"]): f for r in manifest["records"] for f in r["files"]}
+    records = {r["record_id"]: r for r in manifest["records"]}
+    bad = 0
+    indexed = set()
+    for e in entries:
+        p = e.get("path") or ""
+        if not p.startswith(JGI_SOURCES):
+            continue
+        indexed.add(p)
+        eid = e.get("id", "<missing id>")
+        parts = p[len(JGI_SOURCES):].split("/")
+        record = parts[0] if len(parts) == 2 else None
+        f = listed.get((record, parts[-1]))
+        if f is None:
+            print(f"JGI-UNLISTED    {eid}  {p} is not in {JGI_MANIFEST}")
+            bad += 1
+            continue
+        url = f"{JGI_DOWNLOAD}/{f['file_id']}/{urllib.parse.quote(f['name'])}"
+        r = records[record]
+        expected = {"origin_record": record, "origin_file_id": f["file_id"], "md5": f["md5"],
+                    "bytes": f["bytes"], "origin_url": url, "origin_requires_login": True,
+                    "dataset_doi": r.get("dataset_doi"),
+                    "proposal_acceptance_date": r.get("proposal_acceptance_date")}
+        for field, want in expected.items():
+            if e.get(field) != want:
+                print(f"JGI-MISMATCH    {eid}  {field}: index {e.get(field)!r}, manifest {want!r}")
+                bad += 1
+        doi = r.get("dataset_doi")
+        if not doi or doi not in (e.get("attribution") or ""):
+            print(f"JGI-MISMATCH    {eid}  attribution does not name dataset DOI {doi!r}")
+            bad += 1
+    base = os.path.join(root, JGI_SOURCES)
+    for dirpath, dirs, names in os.walk(base):
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
+        for name in names:
+            if name.startswith("."):
+                continue
+            rel = os.path.relpath(os.path.join(dirpath, name), root).replace(os.sep, "/")
+            if rel not in indexed:
+                print(f"JGI-UNINDEXED   {rel}")
+                bad += 1
+    print(f"jgi: {len(indexed)} vendored JGI files checked against {JGI_MANIFEST}, {bad} problem(s)")
+    return bad
+
+
 def check_links(entries):
     # A plain urlopen is refused by some of these hosts, so send a browser-ish
     # user agent. Without it the NMDC API answers 403 and the link looks dead.
+    # Entries marked origin_requires_login answer 401 without a login, and the
+    # JGI endpoint also answers 401 for a file id that does not exist, so a 401
+    # here says nothing about whether the file is there. check_jgi_manifest,
+    # which compares each file with the portal's search API listing, is what
+    # shows these files exist; this pass only labels the 401 as expected.
     for e in entries:
         url = e.get("origin_url")
         if not url:
@@ -251,6 +318,9 @@ def check_links(entries):
                 # GET keeps a live URL from being reported as dead.
                 if exc.code == 405 and method == "HEAD":
                     continue
+                if exc.code == 401 and e.get("origin_requires_login"):
+                    print(f"401  {eid}  {url}  (login required; expected)")
+                    break
                 print(f"{exc.code}  {eid}  {url}")
                 break
             except Exception as exc:
@@ -271,6 +341,8 @@ def main():
     bad += check_readme(doc)
     print()
     bad += check_vendored(entries)
+    print()
+    bad += check_jgi_manifest(entries)
     if args.links:
         print()
         check_links(entries)
