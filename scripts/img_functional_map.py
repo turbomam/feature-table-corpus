@@ -145,26 +145,29 @@ def reverse(dataset, source_file, transformers=None):
     # location, contig lengths ...). Map the result forward again and require the
     # input back, so nothing is dropped silently.
     again = forward(document, transformers)
-    if again != canonical(dataset):
+    if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
     return document
 
 
 def canonical(dataset):
-    return {"contigs": [present(c) for c in dataset.get("contigs", [])],
+    # contig_collections too: the dialect has no place for them, so a Dataset that has any
+    # must fail the round trip rather than lose them.
+    return {"contig_collections": [present(c) for c in dataset.get("contig_collections") or []],
+            "contigs": [present(c) for c in dataset.get("contigs", [])],
             "features": [present(f) for f in dataset.get("features", [])]}
 
 
 def difference(dataset, again):
     """Name the first record and fields that don't survive the round trip."""
-    before = canonical(dataset)
-    for kind in ("contigs", "features"):
+    before, again = canonical(dataset), canonical(again)
+    for kind in ("contig_collections", "contigs", "features"):
         if len(before[kind]) != len(again[kind]):
             return f"{len(before[kind])} {kind} in, {len(again[kind])} back"
         for a, b in zip(before[kind], again[kind]):
             if a != b:
                 fields = sorted(k for k in set(a) | set(b) if a.get(k) != b.get(k))
-                name = a.get("feature_id") or a.get("contig_id")
+                name = a.get("feature_id") or a.get("contig_id") or a.get("collection_id")
                 return f"{kind[:-1]} {name!r} loses or changes {fields}"
     return "unknown"
 

@@ -1,7 +1,7 @@
 # Draft feature schema
 
-[`ber_feature_model.yaml`](ber_feature_model.yaml) defines `Dataset`, `Contig`, and
-`Feature`. It imports the standalone [attribute module](attributes.yaml), which defines
+[`ber_feature_model.yaml`](ber_feature_model.yaml) defines `Dataset`, `ContigCollection`,
+`Contig`, and `Feature`. It imports the standalone [attribute module](attributes.yaml), which defines
 generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
 [the attribute contract](../../docs/attributes.md). The schema remains a draft, not a
 complete GFF3 interchange standard.
@@ -22,6 +22,24 @@ contracts with preservation/mapping records. GFF3 and BED12 use the same Dataset
 and generic Attribute classes; the latter also uses ordinary parent/child features
 for ordered blocks. The surrounding conversion bundle is validated by its executable
 profile contract, not by treating Dataset alone as a complete lossless serialization.
+
+## Genomes, bins, and stable identifiers
+
+A `ContigCollection` is a set of contigs that belong together: an isolate genome, a
+metagenome-assembled genome (MAG) bin, or a whole assembly. `Contig.member_of` lists the
+collections a contig belongs to, so a metagenome contig can name both its assembly and its bin.
+Features reach their genome or bin through their contig
+([issue 41](https://github.com/turbomam/feature-table-corpus/issues/41)). Only an `isolate`,
+`mag`, `sag` or `virus` collection stands for one organism, so a "same organism" query filters on
+`collection_type`; a `metagenome` collection is a whole community. The class maps
+exactly to KBase CDM `ContigCollection`, and `collection_type` uses CDM's `ContigCollectionType`
+values, read from kbase/cdm-schema at commit c1a59b9 on 2026-09-25.
+
+`Feature.stable_identifiers` holds identifiers an authority keeps across releases, such as an
+NCBI `GeneID`. `feature_id` stays the key within one Dataset, because GFF3 `ID` values are not
+meant to be persistent ([issue 44](https://github.com/turbomam/feature-table-corpus/issues/44)).
+NMDC annotation files have no such identifier for their own genes: the IMG gene oid in their KO
+and EC files names the reference gene a query was aligned to.
 
 `strict-lint-config.yaml` is a lint configuration, not a data model. Its documented
 exception is the four literal GFF3 strand symbols, which are preserved despite naming rules.
@@ -52,7 +70,7 @@ absent or null collections are treated as empty. These cases have regression cov
 The harmonized Dataset profile requires a contig reference, coordinate system, and positive
 1-based inclusive endpoints on every Feature; phase, when supplied, is 0, 1, or 2.
 `scripts/validate_closed.py` additionally enforces start ≤ end, unique IDs within each entity
-collection, resolved references, no parent cycles, and compatible parent coordinate spaces.
+collection, resolved references (including each `member_of` collection), no parent cycles, and compatible parent coordinate spaces.
 Contig intervals cannot exceed a known contig length. Protein intervals need a contig-relative
 CDS parent and cannot exceed a supplied translation. Missing translations are allowed; their
 upper bounds cannot be checked. Multiple parents must each be compatible with the child.
@@ -66,9 +84,9 @@ or all GFF3 grammar.
 CI also downloads the pinned, unvendored prior-art GFF schema and asserts its published
 19-admissible/13-rejected audit totals. Locally, set `PINNED_GFF_SCHEMA` to that downloaded
 schema's path to include this test; otherwise it is explicitly skipped. The current draft
-model's separate 20-admissible/8-rejected totals are tested without network access.
+model's separate totals, 32 admissible of 48 class and slot pairs, are tested without network access.
 
-Both Contig and Feature expose `generated_by` and `source_files`. These remain optional
+ContigCollection, Contig and Feature all expose `generated_by` and `source_files`. These remain optional
 for sources lacking workflow metadata, but every supplied example populates them.
 `generated_by` replaces the earlier Feature-only `predicted_by` field. The
 [source manifest](../examples/source-artifacts.yaml) records IDs and checksums for cited
@@ -80,11 +98,13 @@ the record's producer; they are not field-level provenance.
 BRIDGE's scalar-only prototype profile is not a requirement of this model. The loader uses
 native LIST columns for parents, lineages, and source files, and LIST of STRUCT for attributes.
 Structured locations use a JSON column, and references retain optional topology.
-`Feature.seqid` becomes a foreign key to Contig. The physical mapping is explicit Python/SQL;
+`Feature.seqid` becomes a foreign key to Contig. `Contig.member_of` is a LIST of collection IDs.
+The Dataset validator checks each one against the Dataset's `contig_collections` before loading;
+DuckDB itself has no constraint on it. The physical mapping is explicit Python/SQL;
 it is not a general LinkML database generator.
 
 `just build-duckdb` validates its supplied schema and Dataset before opening the output.
-It replaces the two model tables in one transaction, so validation or insertion failure
+It replaces the three model tables in one transaction, so validation or insertion failure
 preserves an existing database. DuckDB BIGINT columns impose a 64-bit storage limit beyond
 LinkML's integer type. New databases are staged beside their destination and published
 after success; insertion failures leave no output or staging directory. Publication

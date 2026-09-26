@@ -21,6 +21,14 @@ Contig {
     stringList taxonomic_lineage
     TopologyEnum topology
 }
+ContigCollection {
+    string name
+    string collection_id
+    ContigCollectionTypeEnum collection_type
+    string generated_by
+    uriList source_files
+    stringList taxonomic_lineage
+}
 Dataset {
 
 }
@@ -36,6 +44,7 @@ Feature {
     float score
     string source
     uriList source_files
+    stringList stable_identifiers
     integer start
     StrandEnum strand
     string translated_sequence
@@ -53,7 +62,9 @@ LocationPart {
     StrandEnum strand
 }
 
+Contig }o--o{ ContigCollection : "member_of"
 Dataset ||--o{ Contig : "contigs"
+Dataset ||--o{ ContigCollection : "contig_collections"
 Dataset ||--o{ Feature : "features"
 Feature ||--o| FeatureLocation : "location"
 Contig ||--o{ Feature : "seqid"

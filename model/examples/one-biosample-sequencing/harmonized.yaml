@@ -27,8 +27,21 @@
 #   mean "lost to a competing caller" or "filtered out despite no competitor"; this schema does not
 #   yet distinguish the two, which is worth raising as an open question.
 
+# Contig membership (https://github.com/turbomam/feature-table-corpus/issues/41). This assembly
+# produced no MAG bins in either binning run (see notes.md), so each contig belongs only to the
+# assembly. With a bin, the contig would also list the bin, whose generated_by is the binning run.
+# NMDC identifies an assembly by the workflow execution that produced it, so collection_id and
+# generated_by are the same ID here; the contigs FASTA data object is a separate record.
+contig_collections:
+  - collection_id: nmdc:wfmgas-11-19jh9v28.1
+    collection_type: metagenome
+    generated_by: nmdc:wfmgas-11-19jh9v28.1
+    source_files:
+      - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgas-11-19jh9v28.1/nmdc_wfmgas-11-19jh9v28.1_contigs.fna
+
 contigs:
   - contig_id: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1
+    member_of: [nmdc:wfmgas-11-19jh9v28.1]
     generated_by: nmdc:wfmgas-11-19jh9v28.1
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgas-11-19jh9v28.1/nmdc_wfmgas-11-19jh9v28.1_contigs.fna
@@ -38,6 +51,7 @@ contigs:
     lineage_confidence: 0.667 # from Scaffold Lineage tsv; shallower call than the per-gene phylogeny below
 
   - contig_id: nmdc:wfmgas-11-19jh9v28.1_scf_2_c1
+    member_of: [nmdc:wfmgas-11-19jh9v28.1]
     generated_by: nmdc:wfmgas-11-19jh9v28.1
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgas-11-19jh9v28.1/nmdc_wfmgas-11-19jh9v28.1_contigs.fna
@@ -47,6 +61,7 @@ contigs:
     lineage_confidence: 1.0
 
   - contig_id: nmdc:wfmgas-11-19jh9v28.1_scf_344_c1
+    member_of: [nmdc:wfmgas-11-19jh9v28.1]
     generated_by: nmdc:wfmgas-11-19jh9v28.1
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgas-11-19jh9v28.1/nmdc_wfmgas-11-19jh9v28.1_contigs.fna
