@@ -55,7 +55,7 @@ classes:
         description: One-based line number in the source file; line 1 is the header.
       pacId:
         required: true
-        pattern: "^PAC:[1-9]\\d*$"
+        pattern: "^PAC:[1-9][0-9]*$"
         description: >-
           Source column "#pacId". The GFF3 mRNA row with pacid=N has pacId PAC:N here.
           Unique in the file.
@@ -75,32 +75,32 @@ classes:
         description: Equal to transcriptName in every row read.
       Pfam:
         multivalued: true
-        pattern: "^PF\\d{5}$"
+        pattern: "^PF[0-9]{5}$"
         description: Pfam family accessions.
       Panther:
         multivalued: true
-        pattern: "^PTHR\\d{5}([.:]SF\\d+)?$"
+        pattern: "^PTHR[0-9]{5}([.:]SF[0-9]+)?$"
         description: >-
           PANTHER family and subfamily identifiers. Both PTHR10000.SF1 and PTHR10000:SF1
           spellings occur, often in one cell, and a cell can name more than one family.
       ec:
         multivalued: true
-        pattern: "^EC:(\\d+\\.\\d+\\.\\d+\\.\\d+|PROLINE-MULTI)$"
+        pattern: "^EC:([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+|PROLINE-MULTI)$"
         description: >-
           EC numbers, prefixed EC:. Every one read has four numeric parts, so partial forms such
           as EC:1.1.1.- are rejected until a file with one is read. Six rows read also have the
           token EC:PROLINE-MULTI, which is not an EC number; it is accepted as written.
       KOG:
         multivalued: true
-        pattern: "^KOG\\d{4}$"
+        pattern: "^KOG[0-9]{4}$"
         description: KOG accessions.
       KO:
         multivalued: true
-        pattern: "^K\\d{5}$"
+        pattern: "^K[0-9]{5}$"
         description: KEGG Orthology accessions, without the KO prefix that IMG files use.
       GO:
         multivalued: true
-        pattern: "^GO:\\d{7}$"
+        pattern: "^GO:[0-9]{7}$"
         description: Gene Ontology terms. The most read in one cell is 70.
       best_hit_clamy_name:
         pattern: "^\\S+$"
@@ -108,7 +108,7 @@ classes:
           Source column "Best-hit-clamy-name", the best Chlamydomonas reinhardtii hit. Present
           without a defline in 489 rows read.
       best_hit_clamy_defline:
-        pattern: "^\\(\\d+ of \\d+\\) \\S"
+        pattern: "^\\([0-9]+ of [0-9]+\\) \\S"
         description: >-
           Source column "Best-hit-clamy-defline", free text starting "(i of n) ". Never present
           without its name.
@@ -118,7 +118,7 @@ classes:
           Source column "Best-hit-rice-name", the best rice hit. Present without a defline in
           1,851 rows read.
       best_hit_rice_defline:
-        pattern: "^\\(\\d+ of \\d+\\) \\S"
+        pattern: "^\\([0-9]+ of [0-9]+\\) \\S"
         description: >-
           Source column "Best-hit-rice-defline", free text starting "(i of n) ". Never present
           without its name.

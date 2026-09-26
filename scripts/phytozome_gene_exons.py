@@ -363,7 +363,7 @@ def schema_validator():
     return Validator(str(SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
 
 
-ROW_PATH = re.compile(r"/rows/(\d+)")
+ROW_PATH = re.compile(r"/rows/([0-9]+)")
 
 
 def schema_problems(validator, header, chunk):

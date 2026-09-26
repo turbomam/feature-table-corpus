@@ -67,7 +67,7 @@ classes:
         pattern: "^\\S+$"
       source:
         required: true
-        pattern: "^phytozomev\\d+$"
+        pattern: "^phytozomev[0-9]+$"
         description: Column 2. Every row read has phytozomev10.
       type:
         description: Column 3.
@@ -114,7 +114,7 @@ classes:
           On every row except gene. An mRNA's Parent is the gene row just before its block, and a
           part's Parent is the mRNA row just before its block.
       pacid:
-        pattern: "^[1-9]\\d*$"
+        pattern: "^[1-9][0-9]*$"
         description: >-
           Phytozome's numeric transcript identifier, on mRNA rows and repeated on each of their
           parts. It is unique per mRNA, and annotation_info.txt has one row per pacid, keyed

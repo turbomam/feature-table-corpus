@@ -233,6 +233,10 @@ class GeneExonsRuleTests(Case):
             with self.assertRaises(gff3.DialectError, msg=repr(character)):
                 gff3.parse_row(3, f"s\tphytozomev10\tgene\t1\t2\t.\t+\t.\tID=a{character}b;Name=a", gff3.row_slots())
 
+    def test_pacid_takes_ascii_digits_only(self):
+        # The parser keeps pacid as text, so only the schema pattern guards it.
+        self.rejected(3, "pacid=90000001", "pacid=9000000\u0661", "does not match")
+
     def test_schema_rules(self):
         self.rejected(2, "Name=Exa01g00010", "Name=Exa01g00010;Note=x", "'Note' was unexpected")
         self.rejected(2, "phytozomev10", "phytozome", "'phytozome' does not match")
@@ -347,6 +351,14 @@ class AnnotationInfoTests(Case):
         self.rejected(1, "(1 of 1) PF00001", "PF00001", "'PF00001 - Example domain' does not match")
         self.rejected(2, "Cre99.g999902", "Cre99 g999902", "'Cre99 g999902' does not match")
         self.rejected(1, "\tExa01g00010\t", "\tExa01 g00010\t", "'Exa01 g00010' does not match")
+
+    def test_accessions_take_ascii_digits_only(self):
+        # "\u0661" is ARABIC-INDIC DIGIT ONE, which a backslash-d pattern would accept.
+        self.rejected(1, "PF00002", "PF0000\u0661", "does not match")
+        self.rejected(3, "GO:0000003", "GO:000000\u0661", "does not match")
+        self.rejected(1, "PAC:90000001", "PAC:9000000\u0661", "does not match")
+        self.rejected(1, "KOG0001", "KOG000\u0661", "does not match")
+        self.rejected(1, "EC:2.7.11.1", "EC:2.7.11.\u0661", "does not match")
 
     def test_row_rules(self):
         self.rejected(3, "PAC:90000003", "PAC:90000001", "pacId 'PAC:90000001' repeats")
