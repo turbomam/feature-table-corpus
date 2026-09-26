@@ -1,0 +1,152 @@
+id: https://w3id.org/ber-data/dialects/phytozome-gene-exons-gff3
+name: phytozome_gene_exons_gff3
+title: Phytozome gene_exons GFF3, parsed rows (draft dialect)
+description: >-
+  Rows of a Phytozome `*.gene_exons.gff3` file, as parsed by scripts/phytozome_gene_exons.py,
+  before any mapping to the feature model. Validating against this schema checks the input
+  against its own dialect, so a failure says the file differs from what Phytozome is known to
+  write, not that a mapping is wrong.
+comments:
+  - >-
+    Measured 2026-09-25 on one file only, Athaliana_167_TAIR10.gene_exons.gff3.gz (Phytozome-167,
+    md5 83f7e24dca4020e5cc0bc642301ee1c9, 532,684 lines, 62,518,934 bytes uncompressed), listed
+    in model/examples/jgi-inputs.yaml. Other Phytozome genomes may differ; none has been read.
+  - >-
+    TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
+    of that file is kept in this repository. The test fixture is constructed.
+  - >-
+    The file has LF line endings and a final newline, no score, no percent escapes, and no
+    commas in column 9, so a Parent never names two rows. The parser rejects each of these
+    rather than guessing what it would mean.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  phygff: https://w3id.org/ber-data/dialects/phytozome-gene-exons-gff3/
+default_prefix: phygff
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  PhytozomeGeneExonsDocument:
+    tree_root: true
+    description: One parsed gene_exons GFF3 file.
+    attributes:
+      source_file:
+        required: true
+        description: Path or URI of the parsed file.
+      gff_version:
+        required: true
+        pattern: "^3$"
+        description: Value of the `##gff-version` directive on line 1.
+      annot_version:
+        required: true
+        pattern: "^\\S+$"
+        description: >-
+          Value of the `##annot-version` directive on line 2, for example TAIR10. Every gene and
+          mRNA ID ends with it.
+      rows:
+        description: Every feature row, in file order.
+        range: PhytozomeGeneExonsRow
+        multivalued: true
+        inlined_as_list: true
+        required: true
+        minimum_cardinality: 1
+
+  PhytozomeGeneExonsRow:
+    description: One nine-column feature row.
+    attributes:
+      line:
+        range: integer
+        required: true
+        minimum_value: 1
+        description: One-based line number in the source file.
+      seqid:
+        description: Column 1, the chromosome or scaffold.
+        required: true
+        pattern: "^\\S+$"
+      source:
+        required: true
+        pattern: "^phytozomev[0-9]+$"
+        description: Column 2. Every row read has phytozomev10.
+      type:
+        description: Column 3.
+        range: PhytozomeFeatureType
+        required: true
+      start:
+        description: Column 4, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      end:
+        description: Column 5, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      strand:
+        description: Column 7. No row read is unstranded.
+        range: Strand
+        required: true
+      phase:
+        range: integer
+        minimum_value: 0
+        maximum_value: 2
+        description: Column 8, on CDS rows only; other types have ".", parsed as absent.
+      attribute_order:
+        multivalued: true
+        required: true
+        description: Column 9 keys in source order, so the row can be written back.
+      ID:
+        required: true
+        pattern: "^\\S+$"
+        description: >-
+          Unique in the file. A gene or mRNA ID is its Name plus "." and the annot-version.
+          A part's ID is its mRNA's ID, its type, and its number among that mRNA's parts of the
+          same type, for example X.1.TAIR10.CDS.2. scripts/phytozome_gene_exons.py checks these.
+      Name:
+        pattern: "^\\S+$"
+        description: >-
+          On gene and mRNA rows only. An mRNA's Name is its gene's Name plus "." and a number from
+          1 without leading zeros.
+      Parent:
+        pattern: "^\\S+$"
+        description: >-
+          On every row except gene. An mRNA's Parent is the gene row just before its block, and a
+          part's Parent is the mRNA row just before its block.
+      pacid:
+        pattern: "^[1-9][0-9]*$"
+        description: >-
+          Phytozome's numeric transcript identifier, on mRNA rows and repeated on each of their
+          parts. It is unique per mRNA, and annotation_info.txt has one row per pacid, keyed
+          PAC:<pacid>.
+      longest:
+        range: integer
+        minimum_value: 0
+        maximum_value: 1
+        description: >-
+          On mRNA rows only. 1 marks the one representative isoform of each gene, 0 the others.
+          In the file read, 27,416 mRNA rows have 1 and 7,970 have 0. The flag is Phytozome's
+          choice, not something to recompute: in 16 of the 5,804 genes with more than one
+          isoform, the flagged isoform does not have the longest CDS.
+
+enums:
+  PhytozomeFeatureType:
+    description: Column 3 values, with the row counts in the file read.
+    permissible_values:
+      gene:
+        description: 27,416 rows.
+      mRNA:
+        description: 35,386 rows.
+      exon:
+        description: 207,465 rows.
+      CDS:
+        description: 197,160 rows.
+      five_prime_UTR:
+        description: 34,621 rows.
+      three_prime_UTR:
+        description: 30,634 rows.
+  Strand:
+    description: Column 7 symbols.
+    permissible_values:
+      "+":
+      "-":

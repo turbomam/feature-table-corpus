@@ -1,0 +1,24 @@
+##gff-version 3
+##annot-version EXv1
+scaffold_1	phytozomev10	gene	1000	2400	.	+	.	ID=Exa01g00010.EXv1;Name=Exa01g00010
+scaffold_1	phytozomev10	mRNA	1000	2400	.	+	.	ID=Exa01g00010.1.EXv1;Name=Exa01g00010.1;pacid=90000001;longest=1;Parent=Exa01g00010.EXv1
+scaffold_1	phytozomev10	exon	1000	1300	.	+	.	ID=Exa01g00010.1.EXv1.exon.1;Parent=Exa01g00010.1.EXv1;pacid=90000001
+scaffold_1	phytozomev10	five_prime_UTR	1000	1099	.	+	.	ID=Exa01g00010.1.EXv1.five_prime_UTR.1;Parent=Exa01g00010.1.EXv1;pacid=90000001
+scaffold_1	phytozomev10	CDS	1100	1300	.	+	0	ID=Exa01g00010.1.EXv1.CDS.1;Parent=Exa01g00010.1.EXv1;pacid=90000001
+scaffold_1	phytozomev10	exon	1500	2400	.	+	.	ID=Exa01g00010.1.EXv1.exon.2;Parent=Exa01g00010.1.EXv1;pacid=90000001
+scaffold_1	phytozomev10	CDS	1500	2200	.	+	0	ID=Exa01g00010.1.EXv1.CDS.2;Parent=Exa01g00010.1.EXv1;pacid=90000001
+scaffold_1	phytozomev10	three_prime_UTR	2201	2400	.	+	.	ID=Exa01g00010.1.EXv1.three_prime_UTR.1;Parent=Exa01g00010.1.EXv1;pacid=90000001
+scaffold_1	phytozomev10	mRNA	1000	2100	.	+	.	ID=Exa01g00010.2.EXv1;Name=Exa01g00010.2;pacid=90000002;longest=0;Parent=Exa01g00010.EXv1
+scaffold_1	phytozomev10	exon	1000	2100	.	+	.	ID=Exa01g00010.2.EXv1.exon.1;Parent=Exa01g00010.2.EXv1;pacid=90000002
+scaffold_1	phytozomev10	five_prime_UTR	1000	1099	.	+	.	ID=Exa01g00010.2.EXv1.five_prime_UTR.1;Parent=Exa01g00010.2.EXv1;pacid=90000002
+scaffold_1	phytozomev10	CDS	1100	2100	.	+	0	ID=Exa01g00010.2.EXv1.CDS.1;Parent=Exa01g00010.2.EXv1;pacid=90000002
+scaffold_1	phytozomev10	gene	3000	4500	.	-	.	ID=Exa01g00020.EXv1;Name=Exa01g00020
+scaffold_1	phytozomev10	mRNA	3000	4500	.	-	.	ID=Exa01g00020.1.EXv1;Name=Exa01g00020.1;pacid=90000003;longest=1;Parent=Exa01g00020.EXv1
+scaffold_1	phytozomev10	exon	4200	4500	.	-	.	ID=Exa01g00020.1.EXv1.exon.1;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	five_prime_UTR	4200	4500	.	-	.	ID=Exa01g00020.1.EXv1.five_prime_UTR.1;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	exon	3800	4000	.	-	.	ID=Exa01g00020.1.EXv1.exon.2;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	five_prime_UTR	3951	4000	.	-	.	ID=Exa01g00020.1.EXv1.five_prime_UTR.2;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	CDS	3800	3950	.	-	0	ID=Exa01g00020.1.EXv1.CDS.1;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	exon	3000	3500	.	-	.	ID=Exa01g00020.1.EXv1.exon.3;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	CDS	3101	3500	.	-	2	ID=Exa01g00020.1.EXv1.CDS.2;Parent=Exa01g00020.1.EXv1;pacid=90000003
+scaffold_1	phytozomev10	three_prime_UTR	3000	3100	.	-	.	ID=Exa01g00020.1.EXv1.three_prime_UTR.1;Parent=Exa01g00020.1.EXv1;pacid=90000003
