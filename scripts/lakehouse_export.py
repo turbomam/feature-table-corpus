@@ -239,6 +239,7 @@ def publish(staged, out_dir):
     meanwhile is replaced. Nothing in out_dir is deleted on failure: out_dir
     and the files already linked are left in place and named in notes on the
     raised error. The staged copies are removed with the staging directory.
+    Returns the paths it created, out_dir first.
     """
     try:
         os.mkdir(out_dir)
@@ -257,6 +258,7 @@ def publish(staged, out_dir):
         for note in left_behind(published):
             error.add_note(note)
         raise
+    return published
 
 
 def export(schema_path, data_path, out_dir):
@@ -264,12 +266,13 @@ def export(schema_path, data_path, out_dir):
 
     The export writes a new directory under local/. Other processes writing to
     the same path at the same time are not supported. Everything is written
-    first to a private staging directory (tempfile.mkdtemp beside the target),
+    first to a private staging directory (tempfile.TemporaryDirectory beside the target),
     which is the only thing removed on failure. The target is claimed with
     os.mkdir and filled with os.link, which fail if a name exists, so the
     export never deletes or replaces anything in the target path. On failure it
     may leave newly created parent directories, the target directory and
-    files already linked into it; each is named in a note on the raised error.
+    files already linked into it, and the staging directory if removing it
+    fails; each is named in a note on the raised error.
     """
     # Resolve first, so a ".." cannot hide an existing directory from the exists check.
     out_dir = Path(out_dir).resolve()
@@ -282,9 +285,12 @@ def export(schema_path, data_path, out_dir):
     view = SchemaView(str(schema_path))
     previous = widen_store_types()  # before any mkdir, so a changed type table creates nothing
     made = []
+    published = []
+    staging = None
     try:
         made = make_parents(out_dir.parent)
         with tempfile.TemporaryDirectory(prefix=f".{out_dir.name}.", dir=out_dir.parent) as work:
+            staging = Path(work)
             staged = Path(work) / "export"
             staged.mkdir()
             started = time.perf_counter()
@@ -299,9 +305,14 @@ def export(schema_path, data_path, out_dir):
                 raise ValueError("Parquet export failed its checks: " + "; ".join(problems[:20]))
             summary = {name: {"rows": pq.read_metadata(path).num_rows, "bytes": path.stat().st_size}
                        for name, path in written.items()}
-            publish(staged, out_dir)
+            published = publish(staged, out_dir)
     except BaseException as error:
-        for note in left_behind(made):
+        # published is set only if publish() returned, so a failure removing the
+        # staging directory afterwards still names the complete output.
+        leftovers = made + published
+        if staging is not None and staging.exists():
+            leftovers.append(staging)
+        for note in left_behind(leftovers):
             error.add_note(note)
         raise
     finally:

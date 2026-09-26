@@ -295,6 +295,29 @@ class LakehouseExportTests(unittest.TestCase):
             self.assertIn(f"left behind, remove if unwanted: {path.resolve()}", notes)
         self.assertNotIn("features.parquet", notes)
 
+    def test_staging_cleanup_failure_after_publication_reports_everything(self):
+        # Publication succeeds, then removing the staging directory fails. The
+        # complete target, its files and the staging directory are all named.
+        target = self.work / "late"
+        real_cleanup = tempfile.TemporaryDirectory.cleanup
+
+        def cleanup(directory):
+            if Path(directory.name).name.startswith(".late."):
+                raise OSError("injected cleanup")
+            return real_cleanup(directory)
+        with patch.object(tempfile.TemporaryDirectory, "cleanup", cleanup):
+            with self.assertRaisesRegex(OSError, "injected cleanup") as caught:
+                lakehouse.export(SCHEMA, EXAMPLE, target)
+        notes = self.notes(caught.exception)
+        published = [target, *sorted(target.iterdir())]
+        self.assertEqual([p.name for p in published[1:]], ["contigs.parquet", "features.parquet"])
+        for path in published:
+            self.assertIn(f"left behind, remove if unwanted: {path.resolve()}", notes)
+        # The staging directory is named too. Its finalizer may remove it later,
+        # so the note is checked rather than the disk.
+        staging = [line for line in notes.splitlines() if f"{self.work.resolve()}/.late." in line]
+        self.assertEqual(len(staging), 1)
+
     def test_concurrent_replacement_survives_a_failure(self):
         # Another process replaces the published contigs.parquet, then publication
         # fails. The export deletes nothing in the target, so theirs survives.
