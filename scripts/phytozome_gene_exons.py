@@ -309,6 +309,13 @@ class CrossChecks:
                      else row.get("end", 0) < previous.get("start", 0))
             if not after:
                 self.add(row, f"{kind} does not follow the previous {kind} in transcription order")
+            if kind == "CDS" and "phase" in row and "phase" in previous:
+                # GFF3: bases to skip here are the previous CDS's phase minus its length, mod 3.
+                length = previous.get("end", 0) - previous.get("start", 0) + 1
+                frame = (previous["phase"] - length) % 3
+                if row["phase"] != frame:
+                    self.add(row, f"CDS phase {row['phase']} breaks the reading frame; "
+                                  f"the previous CDS makes it {frame}")
         same.append(row)
 
     def close_mrna(self):

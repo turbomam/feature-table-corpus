@@ -271,6 +271,9 @@ class GeneExonsRuleTests(Case):
         self.rejected(4, "\t1000\t1300\t", "\t1400\t1300\t", "start > end")
         self.rejected(4, "\t+\t.\tID", "\t+\t0\tID", "phase present on exon")
         self.rejected(6, "\t+\t0\tID", "\t+\t.\tID", "phase present on CDS or missing on CDS")
+        # The minus-strand CDS.1 is 151 bases at phase 0, so CDS.2 must be phase 2.
+        self.rejected(22, "\t-\t2\tID", "\t-\t1\tID", "CDS phase 1 breaks the reading frame; the previous CDS makes it 2")
+        self.rejected(8, "\t+\t0\tID", "\t+\t1\tID", "CDS phase 1 breaks the reading frame; the previous CDS makes it 0")
 
     def test_unique_ids_and_pacids(self):
         self.rejected(11, "ID=Exa01g00010.2.EXv1.exon.1", "ID=Exa01g00010.1.EXv1.exon.1", "repeats")
