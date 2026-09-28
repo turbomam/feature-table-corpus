@@ -27,7 +27,7 @@ source serialization. They do follow one rule for values that hold more than one
 
 ## Multivalued values
 
-Every converter in this repository follows one rule
+Every converter in this repository that reads GFF column 9 or GenBank qualifiers follows one rule
 (https://github.com/turbomam/feature-table-corpus/issues/39):
 
 - Each value of a multivalued attribute is its own `Attribute` entry, with the same key, in

@@ -119,12 +119,12 @@ class OtherDialectTests(unittest.TestCase):
 
     def test_phytozome_refuses_a_comma_or_escape_rather_than_guess(self):
         text = (ROOT / "tests/fixtures/phytozome/constructed.gene_exons.gff3").read_text()
-        header, first_row = text.splitlines()[:2], text.splitlines()[3]
+        header, mrna_row = text.splitlines()[:2], text.splitlines()[3]
         slots = phytozome.row_slots()
         for edit, meaning in (("Parent=Exa01g00010.EXv1,b", "a second value"),
                               ("Parent=Exa01g00010.EXv1%2Cb", "a percent escape")):
-            row = first_row.replace("Parent=Exa01g00010.EXv1", edit)
-            self.assertNotEqual(row, first_row)
+            row = mrna_row.replace("Parent=Exa01g00010.EXv1", edit)
+            self.assertNotEqual(row, mrna_row)
             with self.assertRaisesRegex(phytozome.DialectError, meaning):
                 phytozome.parse_lines([line + "\n" for line in (*header, row)], "edited", slots)
 

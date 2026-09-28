@@ -329,7 +329,7 @@ yet.
 The shared Attribute class still means a string key/value pair, independent of
 GFF column 9. BED display/name values and parsed comment metadata use it too.
 
-Every profile and dialect here follows one rule for multivalued values, stated in
+Every profile and dialect here that reads GFF column 9 or GenBank qualifiers follows one rule for multivalued values, stated in
 [reusable attributes](attributes.md#multivalued-values): each value is its own Attribute
 entry in source order, split before percent-decoding, and the source profile decides
 which keys are multivalued.
@@ -337,11 +337,15 @@ which keys are multivalued.
 | Source | Keys split on commas | Decoding | Example |
 |---|---|---|---|
 | `gff3-contig/2.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
+| `nmdc-pfam-protein/2.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
+| IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
 | IMG taxon bundle GFF | none; `ID`, `locus_tag` and `product` are single values | none | not yet mapped to `Feature` |
 | Phytozome gene_exons GFF3 | refuses any comma or `%` in column 9 | none | not yet mapped to `Feature` |
 | `insdc-locations/1.0.0` | none; a GenBank qualifier repeats instead | not applicable | two `/db_xref` lines are two entries |
+
+`bed12-blocks/1.0.0` writes only fixed `bed:*` attributes and Prodigal comment metadata is one value per key, so neither splits anything. Tables that are not GFF, such as the Phytozome annotation_info file (lists separated by spaces) and the IMG taxon bundle TSVs, follow their own dialect schemas and are outside this table.
 
 A literal comma in a `gff3-contig` value is a separator, so `product=a,b` is two products
 and is refused (`product-cardinality`). polars-bio `read_gff` splits nothing and decodes
