@@ -135,6 +135,16 @@ class ValidationTests(unittest.TestCase):
             upper = Path(tmp) / "dataset.JSON"
             upper.write_text(text)
             self.assertEqual(next(f for f in load_validated(SCHEMA, upper)["features"] if "score" in f)["score"], 1e-05)
+            # The walk and its error path are iterative: a value deeper than Python's
+            # recursion limit, which json.load still reads, is reported, not a traceback.
+            deep_inf = Path(tmp) / "deep-inf.json"
+            deep_inf.write_text("[" * 1500 + "1e400" + "]" * 1500)
+            with self.assertRaisesRegex(ValueError, r"data\[0\].*\.\.\.\(1490 more\)\.\.\..*is not a finite number"):
+                load_data(deep_inf)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(deep_inf), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn("Traceback", result.stderr)
             # Both loaders recurse; nesting past their limit is refused, not a traceback.
             for name in ("deep.json", "deep.yaml"):
                 deep = Path(tmp) / name

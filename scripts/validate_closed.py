@@ -136,37 +136,42 @@ def _check_values(data):
     """Refuse a non-finite float, or a container that contains itself (a YAML alias can build one).
 
     Iterative, with one iterator per nesting level, so this walk neither recurses
-    nor builds a list of every child. A container shared without a cycle, as a
-    repeated YAML alias makes, is checked once.
+    nor builds a list of every child. A problem's path is built from the frames
+    only when it is reported. A container shared without a cycle, as a repeated
+    YAML alias makes, is checked once.
     """
     def children(value):
         return iter(value.items()) if isinstance(value, dict) else enumerate(value)
 
-    def visit(value, where):
-        """Check one value; return a frame to descend into, or None."""
-        if isinstance(value, float) and not math.isfinite(value):
-            raise ValueError(f"{where()} is not a finite number")
-        if not isinstance(value, (dict, list)) or id(value) in done:
-            return None
-        if id(value) in active:
-            raise ValueError(f"{where()} contains itself")
-        active.add(id(value))
-        return value, children(value), where
+    def path(frames, key):
+        keys = [frame[2] for frame in frames[1:]] + ([key] if frames else [])
+        parts = [f"[{k!r}]" for k in keys]
+        if len(parts) > 20:
+            parts = parts[:5] + [f"...({len(parts) - 10} more)..."] + parts[-5:]
+        return "data" + "".join(parts)
 
     active, done = set(), set()
-    frames = [visit(data, lambda: "data")]
-    while frames and frames[-1] is not None:
-        value, items, where = frames[-1]
+    frames = []  # (container, iterator over its children, key it sits under)
+    pending = [(data, None)]
+    while pending or frames:
+        if pending:
+            value, key = pending.pop()
+            if isinstance(value, float) and not math.isfinite(value):
+                raise ValueError(f"{path(frames, key)} is not a finite number")
+            if isinstance(value, (dict, list)) and id(value) not in done:
+                if id(value) in active:
+                    raise ValueError(f"{path(frames, key)} contains itself")
+                active.add(id(value))
+                frames.append((value, children(value), key))
+            continue
+        container, items, _ = frames[-1]
         step = next(items, None)
         if step is None:
             frames.pop()
-            active.discard(id(value))
-            done.add(id(value))
-            continue
-        key, child = step
-        frame = visit(child, lambda where=where, key=key: f"{where()}[{key!r}]")
-        if frame is not None:
-            frames.append(frame)
+            active.discard(id(container))
+            done.add(id(container))
+        else:
+            pending.append((step[1], step[0]))
 
 
 def load_data(data_path):
