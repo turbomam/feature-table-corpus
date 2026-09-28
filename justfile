@@ -365,6 +365,21 @@ map-img-taxon-back input output:
 map-img-taxon-roundtrip gff:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_taxon_bundle_map.py roundtrip "$1"
 
+[doc("Map a Phytozome GFF3 and its annotation_info.txt together to one Dataset JSON.")]
+[group("Conversions")]
+map-phytozome-annotation gff3 table output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py forward "$1" "$2" "$3"
+
+[doc("Map a Phytozome Dataset JSON back to the GFF3 and annotation_info.txt.")]
+[group("Conversions")]
+map-phytozome-annotation-back input gff3 table:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py reverse "$1" "$2" "$3"
+
+[doc("Map a Phytozome GFF3 and annotation_info.txt forward and back; both must come back byte for byte.")]
+[group("Conversions")]
+map-phytozome-annotation-roundtrip gff3 table:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py roundtrip "$1" "$2"
+
 [doc("Map a Phytozome *.gene_exons.gff3 (or .gff3.gz) to a Dataset JSON with linkml-map.")]
 [group("Conversions")]
 map-phytozome-gff3 input output:
