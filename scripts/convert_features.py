@@ -305,7 +305,10 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
         rows.extend(features)
         mappings.append(mapping)
         for feature in features:
-            contigs.setdefault(feature["seqid"], {"contig_id": feature["seqid"]})
+            if feature["coordinate_system"] == "contig":
+                # A protein hit's seqid is its CDS; the protein profile takes its contigs from
+                # the supplied context instead.
+                contigs.setdefault(feature["seqid"], {"contig_id": feature["seqid"]})
     require(bool(rows), "no-features", "this profile requires at least one feature record")
     protein_ids = {m["feature_ids"][0]: m.get("protein_id") for m in mappings}
     for feature in rows:

@@ -71,10 +71,11 @@ def overlap(data, seqid, start, end, *, mode="exact"):
 
 def distance(left, right, contig):
     """Shortest count of intervening bases between exact occupied parts; 0 if adjacent/overlapping."""
-    if left["seqid"] != right["seqid"] or left["seqid"] != contig["contig_id"]:
-        raise ValueError("distance requires the same qualified reference")
+    # Coordinates first: a protein hit's seqid is its CDS (issue 40), so it has no contig to find.
     if left["coordinate_system"] != "contig" or right["coordinate_system"] != "contig":
         raise ValueError("genomic distance requires contig coordinates")
+    if contig is None or left["seqid"] != right["seqid"] or left["seqid"] != contig["contig_id"]:
+        raise ValueError("distance requires the same qualified reference")
     if is_partial(left) or is_partial(right):
         raise ValueError("exact distance is undefined for uncertain endpoints")
     offsets = [0]

@@ -31,7 +31,7 @@ def main():
         else:
             features = {f["feature_id"]: f for f in data["features"]}
             left, right = features[args.left], features[args.right]
-            contig = next(c for c in data["contigs"] if c["contig_id"] == left["seqid"])
+            contig = next((c for c in data["contigs"] if c["contig_id"] == left["seqid"]), None)
             result = {"intervening_bases": distance(left, right, contig), "reference": left["seqid"],
                       "metric": "minimum between occupied parts, circular shortest path when declared"}
         print(json.dumps(result, indent=2))

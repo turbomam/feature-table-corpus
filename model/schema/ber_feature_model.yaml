@@ -173,6 +173,7 @@ classes:
     slot_usage:
       seqid:
         range: Contig
+        description: The contig this part lies on; a part is always in contig coordinates.
       strand:
         required: true
 

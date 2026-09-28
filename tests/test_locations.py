@@ -222,6 +222,17 @@ class LocationTests(unittest.TestCase):
             self.assertNotEqual(subprocess.run(command, cwd=ROOT, capture_output=True).returncode, 0)
             self.assertEqual(path.read_bytes(), before)
 
+    def test_distance_between_protein_hits_is_refused_without_a_traceback(self):
+        """A protein hit's seqid is its CDS (issue 40), so it names no contig to measure along."""
+        example = ROOT / "model/examples/multiple-pfams/harmonized.yaml"
+        hits = ["nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091_168_312",
+                "nmdc:wfmgas-11-19jh9v28.1_scf_10_c1_63_1091_95_154"]
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/query_locations.py"), str(example),
+                                 "distance", *hits], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("genomic distance requires contig coordinates", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
