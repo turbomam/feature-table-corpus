@@ -1,0 +1,8 @@
+Ga0000001_101	HMMER 3.1b2 (February 2015)	rRNA	1	199	.	1	.	ID=Ga0000001_101.1;Name=23S rRNA. Bacterial LSU;Type=23S rRNA. Bacterial LSU;locus_tag=Ga0000001_1011;product=23S rRNA. Bacterial LSU;
+Ga0000001_101	Prodigal V2.6.3 February, 2016	CDS	300	950	.	-1	0	ID=Ga0000001_101.2;conf=100.00;gc_cont=0.450;locus_tag=Ga0000001_1012;
+Ga0000001_101	INFERNAL 1.0.2 (October 2009)	misc_bind	1000	1102	.	1	.	ID=Ga0000001_101.3;Model=TPP;RNA_Class_ID=RF00059;locus_tag=Ga0000001_1013;product=TPP riboswitch (THI element);
+Ga0000001_101	Prodigal V2.6.3 February, 2016	CDS	1120	1551	.	1	0	ID=Ga0000001_101.4;conf=99.13;gc_cont=0.378;locus_tag=Ga0000001_1014;
+Ga0000001_101	INFERNAL 1.0.2 (October 2009)	misc_feature	1600	1780	.	1	.	ID=Ga0000001_101.5;Model=T-box;RNA_Class_ID=RF00230;locus_tag=Ga0000001_1015;product=T-box leader;
+Ga0000001_101	INFERNAL 1.0.2 (October 2009)	misc_RNA	1900	2010	.	-1	.	ID=Ga0000001_101.6;Model=cspA;RNA_Class_ID=RF01766;locus_tag=Ga0000001_1016;product=cspA thermoregulator;
+Ga0000001_102	INFERNAL 1.1.1 (July 2014)	tRNA	18	93	.	1	.	ID=Ga0000001_102.2;codon=CAA;locus_tag=Ga0000001_1021;product=tRNA_Gln_TTG;
+Ga0000001_102	HMMER 3.1b2 (February 2015)	rRNA	200	1700	.	1	.	ID=Ga0000001_102.4;LowScore=0.526;LowScore=0.526;Name=16S rRNA. Bacterial SSU;Type=16S rRNA. Bacterial SSU;locus_tag=Ga0000001_1022;product=16S rRNA. Bacterial SSU;
