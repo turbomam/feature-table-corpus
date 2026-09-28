@@ -139,7 +139,15 @@ documents NMDC's HMMER column 6 as a bit score
 five vendored HMMER rows that also have `full_sequence_bitscore`, column 6 is lower, so it reads
 as the per-domain bit score. The lastal, Prodigal, GeneMark and INFERNAL scores are left unset.
 
-Both slots are filled only by hand in the worked example. No converter derives them yet, and the
-validator does not check `translation_table` against each CDS's `translation_table` attribute.
+The converters fill both slots
+([issue 72](https://github.com/turbomam/feature-table-corpus/issues/72); rules in
+[docs/conversion-profiles.md](../../docs/conversion-profiles.md#derived-slots)). `gff3-contig` and
+the IMG functional mapping set `translation_table` when every CDS on a contig names the same
+assigned code in its `translation_table` attribute, and refuse a contig whose CDS rows disagree.
+In the vendored NMDC structural annotation (`nmdc_wfmgan-11-5xxrm214.2`: 1,199 CDS on 1,045
+contigs, checked 2026-09-28) no contig mixes tables: 1,035 contigs get 11, 5 get 4, 3 get 15 and
+2 get 25. `nmdc-pfam-protein` sets `score_type: bit_score` on its HMMER rows, and no other profile
+sets `score_type`. `scripts/validate_closed.py` rejects a contig whose `translation_table`
+disagrees with the `translation_table` attribute of any contig-coordinate CDS on it.
 Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
 `gff3-contig` profile deliberately does not infer contig lengths from declared regions.

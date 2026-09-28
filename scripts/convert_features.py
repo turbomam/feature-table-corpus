@@ -18,6 +18,7 @@ from urllib.parse import quote, unquote, urlsplit
 import rfc3987
 
 from source_document import parse_bytes, replay_bytes, write_new
+from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -249,6 +250,10 @@ def protein_feature(columns, record_id, bindings):
     require(feature["end"] <= len(parent["translated_sequence"]),
             "protein-bound", f"{record_id}: hit exceeds the retained protein length")
     feature.update(seqid=parent["seqid"], coordinate_system="protein", parent=[parent["feature_id"]])
+    if "score" in feature:
+        # HMMER column 6 is a bit score; nmdc-lakehouse documents it for NMDC Pfam GFF
+        # (docs/pfam_annotation_gff.md). Reconstruction never reads this slot.
+        feature["score_type"] = "bit_score"
     mapping["protein_id"] = protein
     return rows, mapping
 
@@ -307,6 +312,10 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
             require(start <= feature["start"] <= feature["end"] <= end,
                     "declared-region", f"{feature['feature_id']} is outside a declared sequence region")
     dataset = {"contigs": list(contigs.values()), "features": rows}
+    if PROFILES[profile] == "gff3" and profile != PROTEIN:
+        # Derived from retained CDS attributes, so re-import reproduces it and export ignores it.
+        dataset["contigs"], conflicts = with_translation_tables(dataset["contigs"], rows)
+        require(not conflicts, "translation-table-conflict", "; ".join(conflicts))
     if profile == PROTEIN:
         require(set(protein_ids.values()) == set(bindings), "protein-context",
                 "protein context must cover exactly the source protein references")
