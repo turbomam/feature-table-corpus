@@ -132,16 +132,30 @@ def _no_constant(name):
     raise ValueError(f"{name} is not a JSON number")
 
 
-def _non_finite(value, where="data"):
-    """Where a loaded value holds nan or inf, or None."""
-    if isinstance(value, float) and not math.isfinite(value):
-        return where
-    items = value.items() if isinstance(value, dict) else enumerate(value) if isinstance(value, list) else ()
-    for key, item in items:
-        found = _non_finite(item, f"{where}[{key!r}]")
-        if found:
-            return found
-    return None
+def _check_values(data):
+    """Refuse a non-finite float, or a container that contains itself (a YAML alias can build one).
+
+    Iterative, so deep or cyclic data can't exhaust the call stack; a container
+    shared without a cycle, as a repeated YAML alias makes, is checked once.
+    """
+    pending = [(data, "data", False)]
+    active, done = set(), set()
+    while pending:
+        value, where, leaving = pending.pop()
+        if leaving:
+            active.discard(id(value))
+            done.add(id(value))
+        elif isinstance(value, float) and not math.isfinite(value):
+            raise ValueError(f"{where} is not a finite number")
+        elif isinstance(value, (dict, list)):
+            if id(value) in active:
+                raise ValueError(f"{where} contains itself")
+            if id(value) in done:
+                continue
+            active.add(id(value))
+            pending.append((value, where, True))
+            items = list(value.items() if isinstance(value, dict) else enumerate(value))
+            pending.extend((item, f"{where}[{key!r}]", False) for key, item in reversed(items))
 
 
 def load_data(data_path):
@@ -157,9 +171,7 @@ def load_data(data_path):
             data = json.load(handle, parse_constant=_no_constant)
     else:
         data = yaml.safe_load(path.read_text())
-    found = _non_finite(data)
-    if found:
-        raise ValueError(f"{found} is not a finite number")
+    _check_values(data)
     return data
 
 

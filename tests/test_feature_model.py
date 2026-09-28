@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_duckdb import build_database
 from flat_profile_audit import audit
 from query_duckdb import by_attribute, interval_overlap, multiple_pfams
-from validate_closed import load_validated, make_validator, validation_errors
+from validate_closed import load_data, load_validated, make_validator, validation_errors
 
 SCHEMA = ROOT / "model/schema/ber_feature_model.yaml"
 EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
@@ -120,6 +120,17 @@ class ValidationTests(unittest.TestCase):
             self.assertIn(".inf", yaml_path.read_text())
             with self.assertRaisesRegex(ValueError, "is not a finite number"):
                 load_validated(SCHEMA, yaml_path)
+            # A YAML alias can make a list contain itself; that is refused, not a RecursionError.
+            yaml_path.write_text("features: &f [*f]\n")
+            with self.assertRaisesRegex(ValueError, r"data\['features'\]\[0\] contains itself"):
+                load_validated(SCHEMA, yaml_path)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(yaml_path), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn("Traceback", result.stderr)
+            # The same alias used twice without a cycle is fine for the loader.
+            yaml_path.write_text("a: &x [1.5]\nb: *x\n")
+            self.assertEqual(load_data(yaml_path), {"a": [1.5], "b": [1.5]})
 
     def test_semantic_constraints(self):
         cases = (
