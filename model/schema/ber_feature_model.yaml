@@ -135,6 +135,7 @@ classes:
       - generated_by
       - source_files
       - is_selected
+      - is_representative
       - product
       - product_source
       - translated_sequence
@@ -454,6 +455,22 @@ slots:
         confidence. This schema does not yet distinguish \"lost to a competitor\" from
         \"filtered despite no competitor\"; a future revision may need a second field, or an
         enum instead of a boolean."
+  is_representative:
+    title: Is representative
+    range: boolean
+    description: >-
+      Whether the source names this transcript as its gene's representative isoform, the one to
+      use when a query wants a single transcript per gene.
+    notes:
+      - Phytozome writes longest=1 on one mRNA per gene. In Athaliana_167_TAIR10.gene_exons.gff3,
+        downloaded 2026-09-25, 27,416 of 35,386 mRNA rows carry it, one for each of the 27,416
+        genes. Other sources mark the same idea differently, for example Ensembl's
+        tag=Ensembl_canonical.
+      - Unset means the source does not say. A mapping may set false on a gene's other
+        transcripts only where the source marks exactly one per gene, as Phytozome does.
+      - Different from is_selected, which records which competing call an annotation pipeline
+        kept for a locus, not which of a gene's isoforms stands for it
+        (https://github.com/turbomam/feature-table-corpus/issues/48).
   product:
     title: Product
     description: Human-readable functional product name for a gene, e.g. "transposase".

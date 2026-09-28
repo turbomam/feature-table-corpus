@@ -316,6 +316,13 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(by_source.pop("HMMER"), {"bit_score"})
         self.assertEqual({v for values in by_source.values() for v in values}, {None})
 
+    def test_is_representative_is_an_optional_boolean(self):
+        """Issue 48: Phytozome's longest=1 has a typed home, separate from is_selected."""
+        data = copy.deepcopy(self.example)
+        data["features"][0]["is_representative"] = True
+        self.assertEqual(validation_errors(data, self.validator), [])
+        self.reject(lambda d: d["features"][0].__setitem__("is_representative", "1"), "is not of type")
+
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
             for value in ('not-a-url', 'https://example.org/file name.gff'):
@@ -353,11 +360,11 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 50 pairs and 34 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 51 pairs and 35 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
-        # score_type (issue 46).
-        self.assertEqual(len(rows), 50)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 34)
+        # score_type (issue 46), and the scalar is_representative (issue 48).
+        self.assertEqual(len(rows), 51)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 35)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')

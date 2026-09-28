@@ -151,3 +151,10 @@ sets `score_type`. `scripts/validate_closed.py` rejects a contig whose `translat
 disagrees with the `translation_table` attribute of any contig-coordinate CDS on it.
 Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
 `gff3-contig` profile deliberately does not infer contig lengths from declared regions.
+
+## Representative isoforms
+
+`Feature.is_representative` says whether the source names a transcript as its gene's representative
+isoform ([issue 48](https://github.com/turbomam/feature-table-corpus/issues/48)). Phytozome marks it
+with `longest=1` on one mRNA per gene. It is not `is_selected`, which records which competing call a
+pipeline kept for a locus. Unset means the source does not say.
