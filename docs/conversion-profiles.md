@@ -351,7 +351,8 @@ Gene, mRNA and part rows each become a `Feature`, joined by `parent`. `Name`, `p
 have no `Feature` slot and travel only as attributes; a typed home for the representative isoform
 is https://github.com/turbomam/feature-table-corpus/issues/48. The two directives are not model
 data: the reverse step writes `##gff-version 3` and recovers the annot-version from the gene IDs,
-which are the gene Name plus `.TAIR10`. It rebuilds each row's text and parses it with the
+each of which is the gene's Name, a dot, and the annot-version (`.TAIR10` in the Arabidopsis file,
+`.EXv1` in the fixture); all genes must agree. It rebuilds each row's text and parses it with the
 dialect's own row parser, then maps the result forward again and requires the Dataset back.
 
 `just map-phytozome-gff3-roundtrip FILE` requires the written file to equal the source byte for
@@ -377,7 +378,7 @@ which keys are multivalued.
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
 | IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
 | IMG taxon bundle GFF | none; `ID`, `locus_tag` and `product` are single values | none | not yet mapped to `Feature` |
-| Phytozome gene_exons GFF3 | refuses any comma or `%` in column 9 | none | not yet mapped to `Feature` |
+| Phytozome gene_exons GFF3 and its mapping | none; refuses any comma or `%` in column 9 | none | each key is one entry, for example `pacid=90000001` in the fixture |
 | `insdc-locations/1.0.0` | none; a GenBank qualifier repeats instead | not applicable | two `/db_xref` lines are two entries |
 
 `bed12-blocks/1.0.0` writes only fixed `bed:*` attributes and Prodigal comment metadata is one value per key, so neither splits anything. Tables that are not GFF, such as the Phytozome annotation_info file (lists separated by spaces) and the IMG taxon bundle TSVs, follow their own dialect schemas and are outside this table.
