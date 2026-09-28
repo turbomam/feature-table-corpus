@@ -143,6 +143,15 @@ class ProteinProfileTests(unittest.TestCase):
                 with self.subTest(key=key, mode=mode), self.assertRaises(ConversionError):
                     export_source(b, mode=mode, protein_context=self.context)
 
+    def test_bundle_from_the_previous_profile_version_is_refused(self):
+        """A 1.0.0 protein bundle is refused as unsupported, with or without its context."""
+        old = deepcopy(self.bundle)
+        old["profile"] = "nmdc-pfam-protein/1.0.0"
+        for context in (deepcopy(self.context), None):
+            with self.assertRaises(ConversionError) as caught:
+                export_source(old, mode="reconstruct", protein_context=context)
+            self.assertEqual(caught.exception.code, "unsupported-profile")
+
     def test_context_with_conflicting_cds_tables_is_refused(self):
         """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""
         c = deepcopy(self.context)

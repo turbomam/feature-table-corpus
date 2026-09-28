@@ -395,6 +395,10 @@ def mutable_object_ids(value):
 
 def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
     try:
+        # Check the version first, so a bundle from a retired profile version is reported as
+        # such rather than failing a check that belongs to another profile.
+        require(bundle["profile"] in PROFILES, "unsupported-profile",
+                f"no executable conversion profile {bundle['profile']!r}")
         if bundle["profile"] == PROTEIN:
             require(protein_context is not None, "protein-context-original",
                     "supply the independent original protein context for validation/export")
