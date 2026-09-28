@@ -300,6 +300,28 @@ yet.
 
 The shared Attribute class still means a string key/value pair, independent of
 GFF column 9. BED display/name values and parsed comment metadata use it too.
+
+Every profile and dialect here follows one rule for multivalued values, stated in
+[reusable attributes](attributes.md#multivalued-values): each value is its own Attribute
+entry in source order, split before percent-decoding, and the source profile decides
+which keys are multivalued.
+
+| Source | Keys split on commas | Decoding | Example |
+|---|---|---|---|
+| `gff3-contig/1.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
+| IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
+| IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
+| IMG taxon bundle GFF | none; `ID`, `locus_tag` and `product` are single values | none | not yet mapped to `Feature` |
+| Phytozome gene_exons GFF3 | refuses any comma or `%` in column 9 | none | not yet mapped to `Feature` |
+| `insdc-locations/1.0.0` | none; a GenBank qualifier repeats instead | not applicable | two `/db_xref` lines are two entries |
+
+A literal comma in a `gff3-contig` value is a separator, so `product=a,b` is two products
+and is refused (`product-cardinality`). polars-bio `read_gff` splits nothing and decodes
+first, so its output does not follow the rule. `tests/test_attribute_splitting.py` checks
+the first, second, third and fifth rows against the fixtures in
+`tests/fixtures/attribute-splitting/`; `tests/test_locations.py` checks repeated INSDC
+`db_xref` qualifiers. The taxon bundle row is read from its parser, not tested here.
+
 GFF occurrences and comma-separated values become ordered pairs; mappings retain
 the grouping indices, so `Note=a,b;Note=c` remains distinguishable from three
 assignments. Empty values remain strings, distinct from absent assignments.

@@ -1,0 +1,2 @@
+ctg_01	GeneMark.hmm-2 v1.05	CDS	1600	2199	88.0	+	0	ID=ctg_01_1600_2199;translation_table=11;start_type=GTG;product=glutamate-1-semialdehyde 2,1-aminomutase;product_source=KO:K01845;cog=COG1131,COG4152;ko=KO:K01990,KO:K01992;pfam=PF00005,PF13732
+ctg_01	tRNAscan-SE v.2.0.5 (October 2019)	tRNA	2400	2514	21.0	-	.	ID=ctg_01_2400_2514;product=tRNA_Xxx;codon=Pseudo;used_search_mode=Bacterial;note=x%2Cy

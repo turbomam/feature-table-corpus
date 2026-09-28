@@ -1,0 +1,4 @@
+##gff-version 3
+ctg_01	constructed	gene	100	1299	.	+	.	ID=a
+ctg_01	constructed	gene	100	1299	.	+	.	ID=b
+ctg_01	constructed	mRNA	100	1299	.	+	.	ID=m;Parent=a,b;Dbxref=A:1,B:2;Note=x%2Cy;product=glutamate-1-semialdehyde 2%2C1-aminomutase

@@ -23,6 +23,13 @@ classes:
       - Values retain their source string form in this initial profile. Typed values, units,
         nested structures, and per-attribute provenance are extension questions; this module
         does not define a parser, escaping rules, or a lossless serialization for any source format.
+      - Each value of a multivalued source attribute is its own Attribute entry, with the same key,
+        in source order; one entry never holds a joined list. Splitting happens before any
+        percent-decoding, so an encoded separator (a GFF %2C) stays inside one value. Which keys
+        are multivalued is a property of the source profile. A GFF3-conformant profile treats
+        every key as a comma list; a dialect whose writers do not encode commas declares its
+        multivalued keys and keeps every other value whole, literal commas included. See
+        docs/attributes.md and https://github.com/turbomam/feature-table-corpus/issues/39.
     attributes:
       key:
         title: Key
