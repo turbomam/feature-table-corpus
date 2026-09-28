@@ -20,8 +20,10 @@ allowed; absent values are not silently converted to empty strings.
 GFF column 9 is a minimal use case. The same module can carry annotation evidence,
 tabular metadata, or other source-reported properties. For example, a GFF parser can map
 a tag to `key`; an evidence importer can map `evalue` to `key` and preserve `1e-42` in
-`value`. These mappings do not define GFF escaping or a round trip back to the source
-serialization. They do follow one rule for values that hold more than one item, below.
+`value`. A value is the source's text for one item, not typed or normalized; if the source
+format escapes characters, the value holds the decoded text and the escaped spelling stays with
+the source serialization. These mappings do not define GFF escaping or a round trip back to the
+source serialization. They do follow one rule for values that hold more than one item, below.
 
 ## Multivalued values
 
