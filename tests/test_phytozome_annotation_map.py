@@ -77,7 +77,7 @@ class MappingTests(unittest.TestCase):
         cases = {
             "no url": (lambda d: self.mrna(d).pop("source_files"), "exactly one source_files"),
             "two urls": (lambda d: self.mrna(d, 1).update(source_files=["https://example.org/other"]),
-                         "different table URLs"),
+                         "name 2 different table URLs"),
             "value on a gene": (lambda d: next(f for f in d["features"] if f["type"] == "gene")["attributes"]
                                 .append({"key": "GO", "value": "GO:1"}), "only an mRNA"),
             "order": (lambda d: self.mrna(d)["attributes"].reverse(), "not all after|not in table column order"),
@@ -141,6 +141,24 @@ class MappingTests(unittest.TestCase):
                                                str(Path(tmp) / "no-such-dir" / "t.txt")]), 1)
                 self.assertFalse(first.exists())
             self.assertIn("different paths", err.getvalue())
+
+    def test_a_failed_write_leaves_neither_file(self):
+        # A write that fails after creating its file (a full disk, say) must not leave it behind.
+        from unittest import mock
+        real = mapping.write_output
+        def fail_second(path, text):
+            if str(path).endswith(".txt"):
+                Path(path).write_text("partial")
+                return 1
+            return real(path, text)
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset = Path(tmp) / "d.json"
+            with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(GFF3), str(TABLE), str(dataset)]), 0)
+                with mock.patch.object(mapping, "write_output", fail_second):
+                    self.assertEqual(mapping.main(["reverse", str(dataset), str(Path(tmp) / "g.gff3"),
+                                                   str(Path(tmp) / "t.txt")]), 1)
+            self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), ["d.json"])
 
     def test_commands_write_both_files_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:

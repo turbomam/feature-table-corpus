@@ -33,6 +33,7 @@ from validate_closed import make_validator, validation_errors
 MODEL = gff3_map.MODEL
 # Columns the Dataset carries as Attributes, in table order; the first four are the join.
 VALUE_COLUMNS = table_dialect.HEADER[4:]
+VALUE_COLUMN_SET = frozenset(VALUE_COLUMNS)
 SLOT = table_dialect.COLUMN_TO_SLOT
 LISTS = table_dialect.LIST_SLOTS
 
@@ -71,7 +72,7 @@ def forward(gff3_document, table_document, table_url, transformers=None):
         if (row.get("locusName"), row.get("transcriptName"), row.get("peptideName")) != (gene_name, name, name):
             raise ValueError(f"{where}: locusName, transcriptName and peptideName are not the gene's Name, "
                              f"the mRNA's Name and the mRNA's Name ({gene_name}, {name})")
-        clash = {a["key"] for a in mrna["attributes"]} & set(VALUE_COLUMNS)
+        clash = {a["key"] for a in mrna["attributes"]} & VALUE_COLUMN_SET
         if clash:
             raise ValueError(f"{where}: the GFF3 mRNA already has {sorted(clash)}, so a table value "
                              "would be indistinguishable from a GFF3 one")
@@ -128,7 +129,8 @@ def reverse(dataset, gff3_source, table_source, transformers=None):
             raise ValueError(f"{name}: {error}") from None
         stripped.append({**{k: v for k, v in feature.items() if k != "source_files"}, "attributes": gff3_part})
     if len(urls) > 1:
-        raise ValueError(f"mRNA name {len(urls)} different table URLs; one table per Dataset")
+        raise ValueError(f"the mRNA source_files name {len(urls)} different table URLs; "
+                         "a Dataset holds one annotation_info table")
     rows.sort(key=table_order)
     for number, row in enumerate(rows, start=2):
         row["line"] = number
@@ -254,9 +256,12 @@ def main(argv=None):
         written = []
         for path, text in texts.items():
             if write_output(path, text):
-                # Leave nothing half done: remove the file this call already wrote.
-                for done in written:
-                    done.unlink()
+                # Leave nothing half done: remove what this call wrote, including a file
+                # created and then left partly written by the failed write. Neither existed
+                # before, since existing paths were refused above.
+                for done in written + [path]:
+                    if done.exists():
+                        done.unlink()
                 return 1
             written.append(path)
         return 0
