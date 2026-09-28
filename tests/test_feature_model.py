@@ -131,6 +131,20 @@ class ValidationTests(unittest.TestCase):
             # The same alias used twice without a cycle is fine for the loader.
             yaml_path.write_text("a: &x [1.5]\nb: *x\n")
             self.assertEqual(load_data(yaml_path), {"a": [1.5], "b": [1.5]})
+            # The suffix is matched in any case, so .JSON keeps 1e-05 a number too.
+            upper = Path(tmp) / "dataset.JSON"
+            upper.write_text(text)
+            self.assertEqual(next(f for f in load_validated(SCHEMA, upper)["features"] if "score" in f)["score"], 1e-05)
+            # Both loaders recurse; nesting past their limit is refused, not a traceback.
+            for name in ("deep.json", "deep.yaml"):
+                deep = Path(tmp) / name
+                deep.write_text("[" * 100000 + "]" * 100000)
+                with self.assertRaisesRegex(ValueError, "nested too deeply to load"):
+                    load_data(deep)
+                result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                         str(SCHEMA), str(deep), "Dataset"], capture_output=True, text=True)
+                self.assertEqual(result.returncode, 1)
+                self.assertNotIn("Traceback", result.stderr)
 
     def test_semantic_constraints(self):
         cases = (

@@ -135,42 +135,57 @@ def _no_constant(name):
 def _check_values(data):
     """Refuse a non-finite float, or a container that contains itself (a YAML alias can build one).
 
-    Iterative, so deep or cyclic data can't exhaust the call stack; a container
-    shared without a cycle, as a repeated YAML alias makes, is checked once.
+    Iterative, with one iterator per nesting level, so this walk neither recurses
+    nor builds a list of every child. A container shared without a cycle, as a
+    repeated YAML alias makes, is checked once.
     """
-    pending = [(data, "data", False)]
+    def children(value):
+        return iter(value.items()) if isinstance(value, dict) else enumerate(value)
+
+    def visit(value, where):
+        """Check one value; return a frame to descend into, or None."""
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError(f"{where()} is not a finite number")
+        if not isinstance(value, (dict, list)) or id(value) in done:
+            return None
+        if id(value) in active:
+            raise ValueError(f"{where()} contains itself")
+        active.add(id(value))
+        return value, children(value), where
+
     active, done = set(), set()
-    while pending:
-        value, where, leaving = pending.pop()
-        if leaving:
+    frames = [visit(data, lambda: "data")]
+    while frames and frames[-1] is not None:
+        value, items, where = frames[-1]
+        step = next(items, None)
+        if step is None:
+            frames.pop()
             active.discard(id(value))
             done.add(id(value))
-        elif isinstance(value, float) and not math.isfinite(value):
-            raise ValueError(f"{where} is not a finite number")
-        elif isinstance(value, (dict, list)):
-            if id(value) in active:
-                raise ValueError(f"{where} contains itself")
-            if id(value) in done:
-                continue
-            active.add(id(value))
-            pending.append((value, where, True))
-            items = list(value.items() if isinstance(value, dict) else enumerate(value))
-            pending.extend((item, f"{where}[{key!r}]", False) for key, item in reversed(items))
+            continue
+        key, child = step
+        frame = visit(child, lambda where=where, key=key: f"{where()}[{key!r}]")
+        if frame is not None:
+            frames.append(frame)
 
 
 def load_data(data_path):
-    """A .json file is read as JSON, anything else as YAML.
+    """A file whose suffix is .json, in any case, is read as JSON, anything else as YAML.
 
     PyYAML follows YAML 1.1, which reads 1e-05 (as json.dumps writes it) as a string.
     NaN and Infinity, which json.load accepts by default, are not JSON and are refused,
     and so is any non-finite float either format yields (1e400 in JSON, .inf in YAML).
+    Both loaders recurse, so nesting deeper than they can follow is a ValueError too.
     """
     path = Path(data_path)
-    if path.suffix == ".json":
-        with open(path, encoding="utf-8") as handle:
-            data = json.load(handle, parse_constant=_no_constant)
-    else:
-        data = yaml.safe_load(path.read_text())
+    try:
+        if path.suffix.lower() == ".json":
+            with open(path, encoding="utf-8") as handle:
+                data = json.load(handle, parse_constant=_no_constant)
+        else:
+            data = yaml.safe_load(path.read_text())
+    except RecursionError:
+        raise ValueError(f"{path}: nested too deeply to load") from None
     _check_values(data)
     return data
 
