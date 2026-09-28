@@ -1,4 +1,5 @@
 """IMG per-method hits map to protein-coordinate Features on their CDS and back, and loss is refused."""
+from collections import Counter
 import contextlib
 import copy
 import io
@@ -49,11 +50,15 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(problems, [])
         self.assertEqual([f["method"] for f in report["files"]], list(METHODS))
 
-    def test_vendored_isolate_round_trips(self):
-        paths = [REAL / f"Ga0423362_{method}.gff" for method in ("pfam", "ko_ec")]
+    def test_vendored_isolate_round_trips_with_every_method_in_one_dataset(self):
+        """Issue 98: all seven files of Ga0423362 share one Dataset, although 1,138 source IDs repeat."""
+        paths = [REAL / f"Ga0423362_{method}.gff" for method in METHODS]
         problems, report = mapping.roundtrip(REAL / "Ga0423362_functional_annotation.gff", paths)
         self.assertEqual(problems, [])
-        self.assertEqual([f["hits"] for f in report["files"]], [4891, 1797])
+        self.assertEqual([f["method"] for f in report["files"]], list(METHODS))
+        self.assertEqual(sum(f["hits"] for f in report["files"]), 22872)
+        counts = Counter(row["ID"] for path in paths for row in dialect.parse(path)["rows"])
+        self.assertEqual(sum(1 for n in counts.values() if n > 1), 1138)
 
     def test_a_hit_is_on_its_cds(self):
         hits = [f for f in self.dataset["features"] if f["coordinate_system"] == "protein"]
@@ -76,15 +81,21 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(ids, ko["rows"][0]["subject_gene_ids"])
         self.assertGreater(len(ids), 1)
         _, back = self.back(dataset)
-        self.assertEqual(back["rows"], ko["rows"])
+        self.assertEqual([d["rows"] for d in back], [ko["rows"]])
 
-    def test_one_dataset_holds_one_method(self):
+    def test_one_dataset_holds_several_methods_with_qualified_ids(self):
         cog = dialect.parse(HITS / "constructed_cog.gff")
-        both = copy.deepcopy(self.dataset)
-        both["features"] += [f for f in mapping.forward(self.functional, cog, self.transformers)["features"]
-                             if f["coordinate_system"] == "protein"]
-        with self.assertRaisesRegex(ValueError, "hits of one method; found \\['cog', 'pfam'\\]"):
-            self.back(both)
+        both = mapping.forward(self.functional, [self.pfam, cog], self.transformers)
+        hits = [f for f in both["features"] if f["coordinate_system"] == "protein"]
+        self.assertEqual(len(hits), len(self.pfam["rows"]) + len(cog["rows"]))
+        self.assertEqual(len({f["feature_id"] for f in both["features"]}), len(both["features"]))
+        for hit in hits:
+            source_id = next(a["value"] for a in hit["attributes"] if a["key"] == "ID")
+            method = "pfam" if hit["type"].startswith("PF") else "cog"
+            self.assertEqual(hit["feature_id"], f"{source_id}|{method}|{hit['type']}")
+        _, back = self.back(both)
+        self.assertEqual([d["method"] for d in back], ["pfam", "cog"])
+        self.assertEqual([d["rows"] for d in back], [self.pfam["rows"], cog["rows"]])
 
     def test_reverse_refuses_what_the_dialects_cannot_hold(self):
         def hit(dataset):
@@ -94,7 +105,9 @@ class MappingTests(unittest.TestCase):
             "score_type": (lambda f: f.update(score_type="bit_score"), "without loss"),
             "product": (lambda f: f.update(product="kinase"), "without loss"),
             "type": (lambda f: f.update(type="Q12345"), "not an accession of any IMG method"),
-            "ID": (lambda f: f.update(feature_id=f["feature_id"] + "x"), "ID is"),
+            "feature_id": (lambda f: f.update(feature_id=f["feature_id"] + "x"), "feature_id should be"),
+            "ID": (lambda f: f.update(attributes=[a for a in f["attributes"] if a["key"] != "ID"]),
+                   "exactly one ID attribute"),
             "comma": (lambda f: f["attributes"][1].update(value="a,b"), "contains ','"),
             "semicolon": (lambda f: f["attributes"][1].update(value="a;b"), "contains ';'"),
         }
@@ -116,7 +129,7 @@ class MappingTests(unittest.TestCase):
             contig.pop("translation_table", None)
         functional_back, hits_back = self.back(dataset)
         self.assertEqual(functional_back["rows"], self.functional["rows"])
-        self.assertEqual(hits_back["rows"], self.pfam["rows"])
+        self.assertEqual([d["rows"] for d in hits_back], [self.pfam["rows"]])
 
     def test_a_hit_without_a_score_is_named(self):
         dataset = copy.deepcopy(self.dataset)
@@ -144,7 +157,8 @@ class MappingTests(unittest.TestCase):
     def test_commands_write_both_files_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             dataset, prefix = Path(tmp) / "dataset.json", Path(tmp) / "genome"
-            run = ["forward", self.functional_path, HITS / "constructed_pfam.gff", dataset]
+            run = ["forward", self.functional_path, HITS / "constructed_pfam.gff", HITS / "constructed_cog.gff",
+                   dataset]
             err = io.StringIO()
             with contextlib.redirect_stderr(err):
                 self.assertEqual(mapping.main([str(a) for a in run]), 0, err.getvalue())
@@ -153,10 +167,12 @@ class MappingTests(unittest.TestCase):
             self.assertIn("already exists", err.getvalue())
             written = Path(tmp) / "genome_pfam.gff"
             self.assertEqual(dialect.parse(written)["rows"], self.pfam["rows"])
+            cog = dialect.parse(HITS / "constructed_cog.gff")
+            self.assertEqual(dialect.parse(Path(tmp) / "genome_cog.gff")["rows"], cog["rows"])
             self.assertEqual(functional_dialect.parse(Path(tmp) / "genome_functional_annotation.gff")["rows"],
                              self.functional["rows"])
             self.assertEqual(len(json.loads(dataset.read_text())["features"]),
-                             len(self.functional["rows"]) + len(self.pfam["rows"]))
+                             len(self.functional["rows"]) + len(self.pfam["rows"]) + len(cog["rows"]))
 
     def test_clean_round_trip_prints_nothing_to_stderr(self):
         result = subprocess.run([sys.executable, str(ROOT / "scripts/img_per_method_map.py"), "roundtrip",

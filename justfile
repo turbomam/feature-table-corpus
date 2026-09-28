@@ -318,10 +318,10 @@ map-img-functional-back input output:
 map-img-functional-roundtrip input:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py roundtrip "$1"
 
-[doc("Map one IMG per-method hit GFF, with its genome's functional annotation GFF, to a Dataset JSON.")]
+[doc("Map IMG per-method hit GFFs (one per method), with their genome's functional annotation GFF, to one Dataset JSON; the last argument is the output.")]
 [group("Conversions")]
-map-img-per-method functional hits output:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py forward "$1" "$2" "$3"
+map-img-per-method functional +hits_then_output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py forward "$@"
 
 [doc("Map a per-method Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff.")]
 [group("Conversions")]

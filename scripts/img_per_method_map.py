@@ -1,13 +1,15 @@
 """Map an IMG per-method hit GFF, with its genome's functional annotation GFF, to the feature model and back.
 
-    python3 scripts/img_per_method_map.py forward FUNCTIONAL_GFF HIT_GFF DATASET_JSON
+    python3 scripts/img_per_method_map.py forward FUNCTIONAL_GFF HIT_GFF... DATASET_JSON
     python3 scripts/img_per_method_map.py reverse DATASET_JSON OUT_PREFIX
     python3 scripts/img_per_method_map.py roundtrip FUNCTIONAL_GFF HIT_GFF...
 
-One Dataset holds one hit file. A hit's ID is <gene>_<start>_<end>, unique within
-its file but shared by hits of different methods on the same span, and feature_id
-only needs to be unique within a Dataset, so combining methods would need new IDs.
-`roundtrip` accepts several hit files and checks each in its own Dataset.
+One Dataset can hold every method's hit file for a genome. A hit's source ID is
+<gene>_<start>_<end>, unique within its file but shared by hits of different methods
+on the same span, so a hit's feature_id is <ID>|<method>|<type> and the source ID
+stays as its ID attribute (https://github.com/turbomam/feature-table-corpus/issues/98,
+the rule nmdc-lakehouse uses for NMDC hits). The rule applies to a single file too,
+so a hit's feature_id doesn't depend on which other files share its Dataset.
 
 A hit is on protein coordinates: its seqid is the CDS whose translation its
 positions count along, and that CDS is its only parent (docs/protein-coordinates.md).
@@ -77,13 +79,22 @@ def hit_attributes(row):
     return out
 
 
-def forward(functional_document, hit_document, transformers=None):
+def hit_feature_id(source_id, method, accession):
+    """The feature_id of a hit: source ID, method and accession, joined by |."""
+    return f"{source_id}|{method}|{accession}"
+
+
+def forward(functional_document, hit_documents, transformers=None):
+    """Map the functional annotation and one or more hit documents (one per method) to one Dataset."""
     functional_transformers, (to_model, _) = transformers or _transformers()
     dataset = functional.forward(functional_document, functional_transformers)
-    for document in [hit_document]:
+    if isinstance(hit_documents, dict):
+        hit_documents = [hit_documents]
+    for document in hit_documents:
         for row in document["rows"]:
             feature = present(to_model.map_object({k: v for k, v in row.items() if k not in LEXICAL},
                                                   source_type=ROW))
+            feature["feature_id"] = hit_feature_id(row["ID"], document["method"], feature["type"])
             feature["coordinate_system"] = "protein"
             # The CDS a hit's positions count along is both its seqid and its parent.
             feature["parent"] = [row["seqid"]]
@@ -111,7 +122,9 @@ def column9(attributes, where):
 
 
 def reverse(dataset, source_prefix, transformers=None):
-    """Return (functional_document, hit_document) that forward maps back to dataset."""
+    """Return (functional_document, hit_documents) that forward maps back to dataset.
+
+    hit_documents has one document per method, in the order the methods first appear."""
     transformers = transformers or _transformers()
     functional_transformers, (_, to_dialect) = transformers
     slots = dialect.row_slots()
@@ -129,11 +142,18 @@ def reverse(dataset, source_prefix, transformers=None):
         if feature.get("parent") != [feature.get("seqid")]:
             raise ValueError(f"{name}: parent {feature.get('parent')!r} is not its seqid; "
                              "a hit's only parent is the CDS it is on")
+        source_ids = [a["value"] for a in feature.get("attributes", []) if a["key"] == "ID"]
+        if len(source_ids) != 1:
+            raise ValueError(f"{name}: a hit needs exactly one ID attribute, its source ID")
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system", "parent")}
+        core["feature_id"] = source_ids[0]
         mapped = present(to_dialect.map_object(core, source_type="Feature"))
         method = dialect.method_of(mapped.get("type"))
         if method is None:
             raise ValueError(f"{name}: type {mapped.get('type')!r} is not an accession of any IMG method")
+        expected = hit_feature_id(source_ids[0], method, feature.get("type"))
+        if name != expected:
+            raise ValueError(f"{name}: feature_id should be {expected!r}, the ID attribute, method and type")
         document = documents.setdefault(method, {"source_file": f"{source_prefix}_{method}.gff",
                                                  "method": method, "rows": []})
         number = len(document["rows"]) + 1
@@ -152,13 +172,13 @@ def reverse(dataset, source_prefix, transformers=None):
         document["rows"].append(row)
     # Map everything forward again and require the input back, so a slot the
     # dialects can't hold is refused rather than dropped.
-    if len(documents) != 1:
-        raise ValueError(f"a Dataset holds hits of one method; found {sorted(documents) or 'none'}")
-    hit_document = next(iter(documents.values()))
-    again = without_rederived_tables(forward(functional_document, hit_document, transformers), dataset)
+    if not documents:
+        raise ValueError("no protein-coordinate features: a per-method Dataset needs hits")
+    hit_documents = list(documents.values())
+    again = without_rederived_tables(forward(functional_document, hit_documents, transformers), dataset)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(dataset, again)}")
-    return functional_document, hit_document
+    return functional_document, hit_documents
 
 
 def parse_inputs(functional_path, hit_paths):
@@ -210,36 +230,36 @@ def compare(before, after, module, path):
 
 
 def roundtrip(functional_path, hit_paths):
-    """Return (problems, report): each hit file, with the functional annotation, in its own Dataset."""
+    """Return (problems, report): every hit file, with the functional annotation, in one Dataset."""
     report = {"functional": str(functional_path), "files": []}
     functional_document, hit_documents, problems = parse_inputs(functional_path, hit_paths)
     if problems:
         return problems, report
     transformers = _transformers()
-    validator = make_validator(str(MODEL))
+    try:
+        dataset = forward(functional_document, hit_documents, transformers)
+    except ValueError as error:  # for example CDS translation tables that disagree
+        return [f"{functional_path}: model: {error}"], report
+    problems = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+    if problems:
+        return problems, report
+    try:
+        back_functional, back_hits = reverse(dataset, "roundtrip", transformers)
+    except Exception as error:  # linkml-map raises its own TransformationError
+        return [f"reverse: {error}"], report
+    back_by_method = {d["method"]: d for d in back_hits}
+    found_functional, functional_spelling = compare(functional_document, back_functional,
+                                                    functional_dialect, functional_path)
+    problems += found_functional
+    report["features"] = len(dataset["features"])
+    report["functional_lines_differing_only_in_number_spelling"] = functional_spelling
     for hit_document, path in zip(hit_documents, hit_paths):
-        try:
-            dataset = forward(functional_document, hit_document, transformers)
-        except ValueError as error:  # for example CDS translation tables that disagree
-            problems.append(f"{path}: model: {error}")
-            continue
-        errors = [f"{path}: model: {m}" for m in validation_errors(dataset, validator)]
-        if errors:
-            problems += errors
-            continue
-        try:
-            back_functional, back_hits = reverse(dataset, "roundtrip", transformers)
-        except Exception as error:  # linkml-map raises its own TransformationError
-            problems.append(f"{path}: reverse: {error}")
-            continue
-        found, spelling = compare(hit_document, back_hits, dialect, path)
-        found_functional, functional_spelling = compare(functional_document, back_functional,
-                                                        functional_dialect, functional_path)
-        problems += found + found_functional
+        back = back_by_method.get(hit_document["method"], {"rows": []})
+        found, spelling = compare(hit_document, back, dialect, path)
+        problems += found
         report["files"].append({"file": str(path), "method": hit_document["method"],
-                                "hits": len(hit_document["rows"]), "features": len(dataset["features"]),
-                                "hit_lines_differing_only_in_number_spelling": spelling,
-                                "functional_lines_differing_only_in_number_spelling": functional_spelling})
+                                "hits": len(hit_document["rows"]),
+                                "hit_lines_differing_only_in_number_spelling": spelling})
     return problems, report
 
 
@@ -249,7 +269,7 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command", required=True)
     fwd = commands.add_parser("forward")
     fwd.add_argument("functional", type=Path)
-    fwd.add_argument("hit", type=Path)
+    fwd.add_argument("hits", type=Path, nargs="+", help="one hit GFF per method")
     fwd.add_argument("output", type=Path)
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
@@ -259,11 +279,11 @@ def main(argv=None):
     trip.add_argument("hits", type=Path, nargs="+")
     args = parser.parse_args(argv)
     if args.command == "forward":
-        functional_document, hit_documents, errors = parse_inputs(args.functional, [args.hit])
+        functional_document, hit_documents, errors = parse_inputs(args.functional, args.hits)
         dataset = None
         if not errors:
             try:
-                dataset = forward(functional_document, hit_documents[0])
+                dataset = forward(functional_document, hit_documents)
             except ValueError as error:  # for example CDS translation tables that disagree
                 errors = [f"model: {error}"]
             else:
@@ -281,11 +301,11 @@ def main(argv=None):
         outputs = {}
         if not errors:
             try:
-                functional_document, hit_document = reverse(dataset, args.prefix)
+                functional_document, hit_documents = reverse(dataset, args.prefix)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:
-                pieces = [(functional_dialect, functional_document), (dialect, hit_document)]
+                pieces = [(functional_dialect, functional_document)] + [(dialect, d) for d in hit_documents]
                 for module, document in pieces:
                     errors += [f"{document['source_file']}: {m}" for m in module.problems(document)]
                     if not errors:

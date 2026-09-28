@@ -297,6 +297,12 @@ slots:
   feature_id:
     title: Feature ID
     description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
+    notes:
+      - A protein-coordinate hit's feature_id is <source ID>|<method>|<type>, and its source ID
+        stays in attributes (https://github.com/turbomam/feature-table-corpus/issues/98). Hit
+        files from different methods reuse one source ID for hits on the same span (1,138 IDs in
+        one IMG isolate's seven files, counted 2026-09-28), so the bare ID would collide once the
+        methods share a Dataset or a table. nmdc-lakehouse uses the same form for NMDC hits.
   stable_identifiers:
     title: Stable identifiers
     multivalued: true
