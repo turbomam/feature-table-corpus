@@ -47,6 +47,17 @@ class ParseTests(unittest.TestCase):
             again = dialect.parse_lines(dialect.write(document).splitlines(keepends=True), fixture(method))
             self.assertEqual(again["rows"], document["rows"])
 
+    def test_a_form_feed_in_a_value_is_written_back_unchanged(self):
+        text = fixture("pfam").read_text().replace("3.1b2 (February", "3.1b2\x0c(February")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "case_pfam.gff"
+            path.write_text(text)
+            document = dialect.parse(path)
+            # write() raises unless its text parses back to the same rows.
+            written = dialect.write(document)
+        self.assertIn("3.1b2\x0c(February", written)
+        self.assertEqual(written.count("\n"), len(lines("pfam")))
+
 
 class ValidateTests(unittest.TestCase):
     def run_on(self, text, name):

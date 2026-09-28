@@ -31,6 +31,15 @@ DIALECT_NAMES = {
             "ImgPerMethodStrand": (".",),
         },
     },
+    "img_tmhmm_signalp_gff": {
+        "slots": ("ID", "D_score"),
+        "values": {
+            "ImgTopologyFeatureType": ("Inside", "Outside", "TMhelix"),
+            "ImgTopologyStrand": (".",),
+            "SignalpNetwork": ("SignalP-noTM", "SignalP-TM"),
+            "SignalpOrganismType": ("gram-",),
+        },
+    },
     "img_taxon_bundle": {
         "slots": ("ID", "EC"),
         "values": {

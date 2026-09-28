@@ -211,8 +211,36 @@ The other per-genome files were measured on the same date to place them:
   validate (checked 2026-09-28). The NMDC GeneMark file has no header lines.
 - `_tmh` (TMHMM topology, column 3 `Inside`, `Outside` or `TMhelix`, score `.`) and
   `_cleavage_sites` (SignalP, column 3 `cleavage_site`, no `ID`) are on protein positions like
-  the hit files, but their column 3 is not an accession and their keys differ. They need their
-  own dialect.
+  the hit files, but their column 3 is not an accession and their keys differ. They have their
+  own dialect, below.
+
+### IMG TMHMM and SignalP files
+
+[`img-tmhmm-signalp-gff.yaml`](../model/dialects/img-tmhmm-signalp-gff.yaml) covers `_tmh.gff`
+(TMHMM topology, written by `decodeanhmm 1.1g`) and `_cleavage_sites.gff` (SignalP 4.1),
+https://github.com/turbomam/feature-table-corpus/issues/76. It was measured on 2026-09-28 against
+both isolates: 9,710 and 4,078 TMHMM rows on 1,066 and 436 genes, and 146 and 79 SignalP rows.
+All four files validate, and the Clostridium pair is vendored.
+
+- A TMHMM file lists only genes with at least one helix. Each gene's segments are one block
+  that starts at residue 1, runs without gaps, alternates between `TMhelix` and `Inside` or
+  `Outside`, begins and ends outside a helix, and switches side across every helix. Rows carry
+  only an `ID` of `<gene ID>_<start>_<end>` and no score.
+- The last segment ends at the protein's length, a third of the gene span less the stop codon,
+  except in two Methanococcus genes where it ends one residue later. The check requires one
+  of those two, so a file cut short inside a gene is rejected.
+- A SignalP row spans the two residues around the cleavage, so its end is start + 1, and a gene
+  has at most one. Keys are `D-score`, `network` and `organism_type` in that order. Column 6 is a
+  score between 0 and 1 that differs from the D-score in every row.
+- `organism_type` is `gram-` in every row, including the Gram-positive Clostridium's and the
+  archaeal Methanococcus's. It is kept as written, not interpreted.
+
+The parser infers the method from the first row's column 3 and requires every row, and a file
+name ending `_tmh.gff` or `_cleavage_sites.gff`, to agree. `just dialect-validate-img-tmhmm-signalp
+FILE` runs it. The writer reproduces both TMHMM files byte for byte; in the SignalP files it
+respells a trailing zero (`0.670` as `0.67`) on 49 of 225 lines, so their round trip is checked
+by parsed rows, as in the other IMG dialects. The tests edit single rows of
+[constructed fixtures](../tests/fixtures/img-tmhmm-signalp-gff/README.md).
 
 ### IMG taxon bundle
 
