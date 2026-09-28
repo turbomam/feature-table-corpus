@@ -1,6 +1,6 @@
 # Validator expectations for the conversion contract model/profiles/nmdc-pfam-protein.yaml.
 # Kept out of the contract so its checksum in the conversion report stays stable.
-profile: nmdc-pfam-protein/1.0.0
+profile: nmdc-pfam-protein/1.1.0
 # Independent validator observations; reproduce with just validity-check.
 validation:
   scope: Exact rule sets for the listed retained corpus inputs, including negative controls. These are

@@ -22,7 +22,7 @@ from build_duckdb import build_database
 from query_duckdb import by_attribute, interval_overlap
 import conversion_report
 
-GFF = "gff3-contig/1.0.0"
+GFF = "gff3-contig/2.0.0"
 BED = "bed12-blocks/1.0.0"
 PRODIGAL = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff"
 BED_SOURCE = ROOT / "corpus/sources/biopython/blat_34_hg19.bed"
@@ -264,6 +264,17 @@ class ConversionTests(unittest.TestCase):
             with self.subTest(content=content):
                 self.assert_rejects(content, "translation-table-conflict")
         self.assertNotIn("translation_table", bundle(BED_SOURCE.read_bytes(), BED)["dataset"]["contigs"][0])
+        # A digit string past int()'s limit is read as text, so it can't crash the import.
+        self.assertIsNone(table(gff("ID=a;translation_table=" + "1" * 5000)))
+        self.assertEqual(table(gff("ID=a;translation_table=" + "0" * 5000 + "11")), 11)
+
+    def test_bundle_from_the_previous_profile_version_is_refused(self):
+        """Issue 72 changed gff3-contig's output and domain, so 1.0.0 bundles aren't validated as 2.0.0."""
+        old = deepcopy(bundle(PRODIGAL.read_bytes(), metadata_profile="prodigal"))
+        old["profile"] = "gff3-contig/1.0.0"
+        with self.assertRaises(ConversionError) as caught:
+            export_source(old, mode="reconstruct")
+        self.assertEqual(caught.exception.code, "unsupported-profile")
 
     def test_translation_tables_on_the_vendored_nmdc_structural_annotation(self):
         """Measured 2026-09-28: 1,199 CDS on 1,045 contigs, no contig mixes tables."""

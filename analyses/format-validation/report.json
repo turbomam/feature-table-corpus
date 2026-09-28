@@ -71,7 +71,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cath_funfam.gff",
       "format": "GFF3",
       "sha256": "388b3d16bad8ff4732fa7ec2d51a5b1ed206d70bbb73111c969e84791827e90e",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -131,7 +131,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff",
       "format": "GFF3",
       "sha256": "19e836a28bd0f5dc9975a30ee12a290b019b525ff8480870ea8927e5273d509c",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -191,7 +191,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-ghk5e506.1_cog.gff",
       "format": "GFF3",
       "sha256": "42027b8f56c875c497644d4fc6b0356d4a40acd2bc1294d8426fba25d6b4e08f",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -311,7 +311,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-prsstp65.1_genemark.gff",
       "format": "GFF3",
       "sha256": "3e0a7296e873924080bb1e850dd6160ac0c4692115f7f87712619b550270c218",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -371,7 +371,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-v44mx103.1_ko_ec.gff",
       "format": "GFF3",
       "sha256": "7d6d67e1362a81a3ccbc48e4366421c82a90dc79228b6a3aab9de25b2cd799ab",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -431,7 +431,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff",
       "format": "GFF3",
       "sha256": "6f5169770fe29313d5448f74ea0354a8d54169e181afea30ca420985b624511c",
-      "profile": "nmdc-pfam-protein/1.0.0",
+      "profile": "nmdc-pfam-protein/1.1.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -491,7 +491,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
       "format": "GFF3",
       "sha256": "ee015a12d640e9f1468f8f264574a55d97432f81eddc27f62effc96123d77a35",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -535,7 +535,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_rfam.gff",
       "format": "GFF3",
       "sha256": "07e17ff18f67e6602c6e8a74382e5b6b937e8fc7b035722ac9f9b46099b5742c",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -595,7 +595,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-1sz9qv06.1_smart.gff",
       "format": "GFF3",
       "sha256": "e4c9c736dc2b50877f6b1f4006f0c7b7811e58e722895369138e2424e8b69ec3",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -667,7 +667,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5pdxej61.1_supfam.gff",
       "format": "GFF3",
       "sha256": "f7781867dcec850433026931c538f5873ef4498818de9ef578a10d86857fa969",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -727,7 +727,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_structural_annotation.gff",
       "format": "GFF3",
       "sha256": "b80f799456401f217d6a0531a7891cf4d79d50681ea7e474e185a70eb39c67bf",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -775,7 +775,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-8qy5m271.1_tigrfam.gff",
       "format": "GFF3",
       "sha256": "283070345c8006ff66c33994fc38dcf4c4fa2ea372face8275144c1dffc6bab1",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -847,7 +847,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-p2fy8323.1_trna.gff",
       "format": "GFF3",
       "sha256": "11f1866cf7bc19a4acf3a6e90f3a66929421f6a1934588e8cbfed7a0b6ff0e5b",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -955,7 +955,7 @@
       "path": "corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff",
       "format": "GFF3",
       "sha256": "bdf7fffd02143906ac82a88f4d8e1723af03d57d70d59d0b30ffcd02e599f9b6",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -984,7 +984,7 @@
       "path": "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff",
       "format": "GFF3",
       "sha256": "768fc26e30d6137497216cf289eb53cef1302bfd5fff456b82552526085199e2",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -1108,7 +1108,7 @@
       "path": "corpus/fixtures/malformed/cds_phase_illegal.gff3",
       "format": "GFF3 (invalid)",
       "sha256": "8547bbf71cc99241abaf6787156af30c84a820eb61526675ab6ba0109c60be56",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1157,7 +1157,7 @@
       "path": "corpus/fixtures/malformed/dangling_parent.gff3",
       "format": "GFF3 (invalid)",
       "sha256": "e6818ae4e41b043fa38d350f83edd244a1b45bc9e19c01da47449762fa99a3a0",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1191,7 +1191,7 @@
       "path": "corpus/fixtures/malformed/duplicate_id.gff3",
       "format": "GFF3 (invalid)",
       "sha256": "5d5164d4ec7287d331313294af06e7732c564d0b00de52a3009c281466424d99",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1240,7 +1240,7 @@
       "path": "corpus/fixtures/malformed/no_version_pragma.gff3",
       "format": "GFF3 (invalid)",
       "sha256": "8e97d9d6ae28b4f91f855a1974a35ac5cfba4dc9d297c945d6b36f49216e7c63",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1289,7 +1289,7 @@
       "path": "corpus/fixtures/malformed/start_after_end.gff3",
       "format": "GFF3 (invalid)",
       "sha256": "7701ee86336fd65af740af502bfa18d91a63966a2b02199565913fed8ff770af",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1350,7 +1350,7 @@
       "path": "corpus/fixtures/malformed/unescaped_semicolon.gff3",
       "format": "GFF3 (invalid)",
       "sha256": "1d0b78b3209a59f905c5e3e52c75ed4a02ee8e77d01b2126c6f25dbda34aa373",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1411,7 +1411,7 @@
       "path": "corpus/fixtures/edge-cases/cds_phase_biologically_wrong.gff3",
       "format": "GFF3 (valid; wrong or refused in practice)",
       "sha256": "c3f358689024ce5931653eb0238c793390b90aac03b40e03dbf1511ff00f7107",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -1441,7 +1441,7 @@
       "path": "corpus/fixtures/edge-cases/multiple_parents.gff3",
       "format": "GFF3 (valid; wrong or refused in practice)",
       "sha256": "ef9a46d5716ba4a73039a8759ddefb6385b05e615be38ddb38801d23fbc3b9aa",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -1471,7 +1471,7 @@
       "path": "corpus/fixtures/edge-cases/unescaped_semicolon_silent.gff3",
       "format": "GFF3 (valid; wrong or refused in practice)",
       "sha256": "416ba3fa5c1eb9e06a0a780c35f5ccf86b60a073fc23edd107f0c25b152df1e1",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -1541,7 +1541,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
       "format": "GFF3",
       "sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
-      "profile": "nmdc-pfam-protein/1.0.0",
+      "profile": "nmdc-pfam-protein/1.1.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1601,7 +1601,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff",
       "format": "GFF3",
       "sha256": "38340ec5f87db113c0c14a98fe58e1d1081a0d7f71d1a85891b59690cb7355ca",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1681,7 +1681,7 @@
       "path": "corpus/sources/ncbi-refseq/NC_003888.3_2026-09-21.gff3",
       "format": "GFF3",
       "sha256": "e49de7213e25d075e0b79541f8a49288a055ae87bdd355931d129c0573026858",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -1737,7 +1737,7 @@
       "path": "corpus/derived-examples/actinorhodin.gff3",
       "format": "GFF3",
       "sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -1802,7 +1802,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cath_funfam.gff",
       "format": "GFF3",
       "sha256": "25bfc4fa96d4bc36d5e1b6c09c8c2e6ed29b856609989a6db72a90b9c383086b",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1862,7 +1862,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cleavage_sites.gff",
       "format": "GFF3",
       "sha256": "142c39926b279ac7e96a20d44d27cd872b9ded71f2395e6de34f6d9265be54d3",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1934,7 +1934,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cog.gff",
       "format": "GFF3",
       "sha256": "cf2d624dfb7d691d9825ac2b1ef0ca29bf62243dd45c3b1c613b3137250609bf",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2006,7 +2006,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_crt.gff",
       "format": "GFF3",
       "sha256": "a3d42be8d21e9e32e2a6edcee9382a92d24c989804583f3df4b97ee7feebcddc",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2150,7 +2150,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_genemark.gff",
       "format": "GFF3 (declares ##gff-version 2)",
       "sha256": "d4653a8edbd6d2c68922a842c5269dd558701cf6d85e626e8faef4648c85338a",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2198,7 +2198,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_ko_ec.gff",
       "format": "GFF3",
       "sha256": "6949c6eda98e544d62556d67efa152d3219b57bcf9b966083ea27b7c445afbd2",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2270,7 +2270,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_pfam.gff",
       "format": "GFF3",
       "sha256": "1d9e3a23141ef750964b8b18591bf16bb41eeb035bb7a14b2aa6f7a7a06dc151",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2330,7 +2330,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_prodigal.gff",
       "format": "GFF3",
       "sha256": "1b5352af9a8722e743c07fe152c43ffddd01dd4e7fc468785f21f4526dfc25fc",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",
@@ -2359,7 +2359,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam.gff",
       "format": "GFF3",
       "sha256": "2fc7df38b341339352a3252c3c118d0da544be32cface6418f3c7f57a87bda0b",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2419,7 +2419,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_misc_bind_misc_feature_regulatory.gff",
       "format": "GFF3",
       "sha256": "7e62e1d79ddb04641bd6a8e4ce5598322e65579f13abe370b8c68efdfca1fa1a",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2479,7 +2479,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_ncrna_tmrna.gff",
       "format": "GFF3",
       "sha256": "0f5c2ef75e78aed9f40c728189840ea5170ce39d431ec270a92d848340985446",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2527,7 +2527,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_rfam_rrna.gff",
       "format": "GFF3",
       "sha256": "228990f4a7f67dcd009083f4d9a8279a9a5579ad9b9dfcbfd6c21e20b04220e3",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2575,7 +2575,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_smart.gff",
       "format": "GFF3",
       "sha256": "f927403d5d60401e3e596047729f2ddaf438710c82a28d6162af346ff05238ad",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2647,7 +2647,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_structural_annotation.gff",
       "format": "GFF3",
       "sha256": "b05e90d843235abad80a4e491f652e5d7f4cf384b21fe89921cbbce21fcf5157",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2731,7 +2731,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_supfam.gff",
       "format": "GFF3",
       "sha256": "95f7b5fdf782386f240e831b06eaf8cd1790d5b55ea98c537b0a10d1a21d95c6",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2791,7 +2791,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tigrfam.gff",
       "format": "GFF3",
       "sha256": "e3da798f08b67970d0b667d3c53e9518d190443576de3aad7805293cd2a2d387",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2863,7 +2863,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tmh.gff",
       "format": "GFF3",
       "sha256": "4a848198f45e3244549c93dccabec89a99f5a9a73c7d2e7677f08159f52f1c1c",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2923,7 +2923,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_trna.gff",
       "format": "GFF3",
       "sha256": "340969f36a687dfb657553a70e471a757cfaf841ff3e33f4f300d5de0e2b46af",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -2971,7 +2971,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff",
       "format": "GFF3",
       "sha256": "e97219b1d1f70724b0b95c3652e4342c36a096c7ee1e2f6af68a92f3552fea4d",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -3067,7 +3067,7 @@
       "path": "corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff",
       "format": "GFF3",
       "sha256": "79b7b72c28a46f63aabf897b1813836121e60a3a909ed80d932059983b0a093c",
-      "profile": "gff3-contig/1.0.0",
+      "profile": "gff3-contig/2.0.0",
       "validators": {
         "genometools": {
           "verdict": "accepted",

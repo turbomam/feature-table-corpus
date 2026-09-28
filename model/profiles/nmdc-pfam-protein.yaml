@@ -1,4 +1,4 @@
-id: nmdc-pfam-protein/1.0.0
+id: nmdc-pfam-protein/1.1.0
 format: gff3
 status: experimental
 scope: NMDC HMMER Pfam protein-relative annotation rows with an explicit CDS/FASTA context

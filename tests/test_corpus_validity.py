@@ -175,7 +175,7 @@ class ValidatorExecutionTests(unittest.TestCase):
 
     def test_all_profiles_declare_expectations_and_duplicates_fail(self):
         cases = validity.load_expectations()
-        self.assertEqual(cases["nmdc-pfam"]["profile"], "nmdc-pfam-protein/1.0.0")
+        self.assertEqual(cases["nmdc-pfam"]["profile"], "nmdc-pfam-protein/1.1.0")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = (validity.VALIDATION / "nmdc-pfam-protein.yaml").read_text()

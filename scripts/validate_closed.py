@@ -8,6 +8,7 @@ also cover interval ordering, unique IDs, references (including contig membershi
 in declared collections), parent cycles and coordinate spaces. These checks are explicit: JSON Schema cannot compare two fields or resolve
 an identifier to another record's translated sequence.
 """
+import re
 import sys
 from pathlib import Path
 
@@ -20,6 +21,16 @@ from feature_locations import location_errors
 # Assigned NCBI genetic codes, from https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
 # (read 2026-09-25). 7, 8 and 17 to 20 are unassigned.
 NCBI_GENETIC_CODES = frozenset([*range(1, 7), *range(9, 17), *range(21, 34)])
+
+
+def table_value(text):
+    """A translation_table attribute as an integer when it is one, else its text.
+
+    Leading zeros are ignored, so 011 is 11. Only up to three digits are read as a number:
+    codes stop at 33, and a longer digit string would otherwise reach int()'s digit limit.
+    """
+    match = re.fullmatch(r"0*([0-9]{1,3})", text)
+    return int(match.group(1)) if match else text
 
 
 def make_validator(schema_path, class_name="Dataset"):
@@ -71,10 +82,14 @@ def dataset_errors(data):
             errors.append(f"contig {cid!r}: translation_table {table} is not an assigned NCBI genetic code")
         if contig.get("topology") == "circular" and not contig.get("length_bp"):
             errors.append(f"contig {cid!r}: circular topology requires length_bp")
+        cds_values = cds_tables.get(cid, [])
+        if len({table_value(value) for _, value in cds_values}) > 1:
+            # The same conflict the converters refuse, whether or not the contig has a table.
+            listed = ", ".join(f"{value!r} on {fid!r}" for fid, value in cds_values)
+            errors.append(f"contig {cid!r}: CDS translation_table attributes disagree ({listed})")
         if table is not None:
-            for fid, value in cds_tables.get(cid, []):
-                # Attribute values are text; 11 and 011 name the same table.
-                if not (value.isascii() and value.isdigit() and int(value) == table):
+            for fid, value in cds_values:
+                if table_value(value) != table:
                     errors.append(f"contig {cid!r}: translation_table {table} disagrees with "
                                   f"CDS {fid!r} translation_table attribute {value!r}")
     for fid, feature in features.items():

@@ -100,7 +100,7 @@ class ProteinProfileTests(unittest.TestCase):
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
         with self.assertRaises(ConversionError):
-            import_source(PFAM.read_bytes(), profile="gff3-contig/1.0.0", reference_context=REFERENCE,
+            import_source(PFAM.read_bytes(), profile="gff3-contig/2.0.0", reference_context=REFERENCE,
                           source_uri="urn:test", protein_context=self.context)
 
     def test_provenance_uses_complete_absolute_uris(self):

@@ -159,12 +159,21 @@ class ValidationTests(unittest.TestCase):
         self.reject(lambda d: cds_attributes(d)[0].__setitem__("value", "x"), "attribute 'x'")
         self.reject(lambda d: cds_attributes(d)[0].__setitem__("value", ""), "attribute ''")
         data = copy.deepcopy(self.example)
-        # 011 names table 11; a contig with no table set is not compared.
+        # 011 names table 11, however many leading zeros it has.
         cds_attributes(data)[0]["value"] = "011"
         self.assertEqual(validation_errors(data, self.validator), [])
+        cds_attributes(data)[0]["value"] = "0" * 5000 + "11"
+        self.assertEqual(validation_errors(data, self.validator), [])
+        # CDS rows that disagree are rejected even when the contig has no table, as the
+        # converters refuse them.
         data["contigs"][0].pop("translation_table")
         cds_attributes(data)[0]["value"] = "4"
-        self.assertEqual(validation_errors(data, self.validator), [])
+        errors = validation_errors(data, self.validator)
+        self.assertTrue(any("CDS translation_table attributes disagree" in e for e in errors), errors)
+        # A digit string too long for int() is compared as text, not parsed.
+        cds_attributes(data)[0]["value"] = "1" * 5000
+        errors = validation_errors(data, self.validator)
+        self.assertTrue(any("CDS translation_table attributes disagree" in e for e in errors), errors)
         # Only CDS rows count: the same attribute on another feature type is not compared.
         data = copy.deepcopy(self.example)
         other = next(f for f in data["features"] if f["seqid"] == first and f["type"] != "CDS")

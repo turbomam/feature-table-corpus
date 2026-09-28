@@ -3,7 +3,7 @@ cases:
     path: corpus/derived-examples/actinorhodin.gff3
     case_kind: selected-real-source-rows
     format: gff3
-    profile: gff3-contig/1.0.0
+    profile: gff3-contig/2.0.0
     metadata_profile: ncbi
     reference_context: refseq:NC_003888.3
     expected: supported
@@ -11,7 +11,7 @@ cases:
     path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
     case_kind: observed
     format: gff3
-    profile: nmdc-pfam-protein/1.0.0
+    profile: nmdc-pfam-protein/1.1.0
     reference_context: nmdc:wfmgas-11-19jh9v28.1
     protein_context: model/examples/conversions/nmdc-pfam-context.json
     expected: supported
@@ -19,7 +19,7 @@ cases:
     path: corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
     case_kind: observed
     format: gff3
-    profile: gff3-contig/1.0.0
+    profile: gff3-contig/2.0.0
     metadata_profile: prodigal
     reference_context: nmdc:wfmgan-11-9ya9xh30.1 source-scoped scaffold identifiers
     expected: supported
@@ -27,14 +27,14 @@ cases:
     path: corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff
     case_kind: observed
     format: gff3
-    profile: gff3-contig/1.0.0
+    profile: gff3-contig/2.0.0
     reference_context: nmdc:wfmgan-11-bvg4py20.1 source-scoped scaffold identifiers
     expected: supported
   - id: refseq-lambda
     path: corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff
     case_kind: observed
     format: gff3
-    profile: gff3-contig/1.0.0
+    profile: gff3-contig/2.0.0
     metadata_profile: ncbi
     reference_context: NCBI_Assembly:GCF_000840245.1
     expected: supported
@@ -42,7 +42,7 @@ cases:
     path: corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff
     case_kind: observed
     format: gff3
-    profile: gff3-contig/1.0.0
+    profile: gff3-contig/2.0.0
     metadata_profile: ncbi
     reference_context: NCBI_Assembly:GCF_000819615.1
     expected: unsupported
@@ -79,7 +79,7 @@ cases:
     path: tests/fixtures/conversions/discontinuous.gff3
     case_kind: constructed-negative-control
     format: gff3
-    profile: gff3-contig/1.0.0
+    profile: gff3-contig/2.0.0
     reference_context: synthetic:c
     expected: unsupported
     expected_code: dataset-invalid

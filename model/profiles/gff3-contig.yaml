@@ -1,4 +1,4 @@
-id: gff3-contig/1.0.0
+id: gff3-contig/2.0.0
 kind: source-dialect
 source_format: gff3
 implementation: scripts/convert_features.py

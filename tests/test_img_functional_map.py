@@ -323,7 +323,7 @@ class AgreementTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             bundle = Path(tmp) / "bundle.json"
             subprocess.run([sys.executable, str(ROOT / "scripts/convert_features.py"), "import", str(NMDC),
-                            "--profile", "gff3-contig/1.0.0", "--reference-context", "nmdc:test",
+                            "--profile", "gff3-contig/2.0.0", "--reference-context", "nmdc:test",
                             "--output", str(bundle)], check=True, capture_output=True)
             reference = json.loads(bundle.read_text())["dataset"]
         mapped = mapping.forward(dialect.parse(NMDC))

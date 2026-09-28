@@ -8,13 +8,11 @@ the contig, so it is set there only when the evidence is complete and consistent
 - that integer is an assigned NCBI genetic code.
 
 Values that disagree on one contig are a conflict for the caller to report; this module
-never picks one. A contig with a CDS lacking the attribute, or with one non-integer or
-unassigned value, is left unset. The attribute itself stays in Feature.attributes, so a
+never picks one. A contig is left unset when any CDS on it lacks the attribute, or when
+all its CDS name the same non-integer or unassigned value. The attribute itself stays in Feature.attributes, so a
 round trip that writes attributes back never needs the derived slot.
 """
-import re
-
-from validate_closed import NCBI_GENETIC_CODES
+from validate_closed import NCBI_GENETIC_CODES, table_value
 
 KEY = "translation_table"
 
@@ -30,9 +28,8 @@ def contig_translation_tables(features):
             incomplete.add(feature["seqid"])
         values = seen.setdefault(feature["seqid"], {})
         for value in found:
-            # 11 and 011 name the same table; a non-integer is compared by its text.
-            number = int(value) if re.fullmatch(r"[0-9]+", value) else value
-            values.setdefault(number, feature["feature_id"])
+            # 11 and 011 name the same table; anything else is compared by its text.
+            values.setdefault(table_value(value), feature["feature_id"])
     tables, conflicts = {}, []
     for contig, values in seen.items():
         if len(values) > 1:

@@ -4,7 +4,7 @@ These files were authored here on 2026-09-21, under the repository's CC0 terms.
 They are not producer observations and were not copied from a vendored artifact.
 
 - `discontinuous.gff3` describes two segments with the same feature ID. GFF3 can
-  express this; the `gff3-contig/1.0.0` adapter rejects it because the core model
+  express this; the `gff3-contig/2.0.0` adapter rejects it because the core model
   currently uses one interval per identity.
 - `empty.bed` tests an insertion interval of zero length. BED permits such
   intervals; `bed12-blocks/1.0.0` requires nonempty intervals and positive blocks.
