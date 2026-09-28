@@ -1,0 +1,2 @@
+ctg_01_100_1299	signalp 4.1	cleavage_site	25	26	0.231	.	.	D-score=0.646;network=SignalP-noTM;organism_type=gram-
+ctg_01_1600_2199	signalp 4.1	cleavage_site	21	22	0.450	.	.	D-score=0.710;network=SignalP-TM;organism_type=gram-

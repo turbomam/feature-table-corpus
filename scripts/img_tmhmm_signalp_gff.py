@@ -1,13 +1,13 @@
-"""Parse an IMG per-method hit GFF (`*_pfam.gff`, `*_cog.gff` ...) into dialect rows, and validate them.
+"""Parse an IMG TMHMM (`*_tmh.gff`) or SignalP (`*_cleavage_sites.gff`) file into dialect rows, and validate them.
 
-    python3 scripts/img_per_method_gff.py parse FILE [--output JSON]
-    python3 scripts/img_per_method_gff.py validate FILE [--max-errors N]
+    python3 scripts/img_tmhmm_signalp_gff.py parse FILE [--output JSON]
+    python3 scripts/img_tmhmm_signalp_gff.py validate FILE [--max-errors N]
 
-The dialect schema is model/dialects/img-per-method-gff.yaml. Column 1 is a
-gene ID and columns 4 and 5 are protein positions; column 3 is an accession.
-This step checks the input against its own dialect only. Number parsing, the
-writer's escaping limits and the error type come from scripts/img_functional_gff.py,
-the first IMG dialect, so the two report problems the same way.
+The dialect schema is model/dialects/img-tmhmm-signalp-gff.yaml. Column 1 is a
+gene ID and columns 4 and 5 are protein positions; column 3 is a TMHMM segment
+or a SignalP cleavage site. Number parsing, the writer's escaping limits and the
+error type come from scripts/img_functional_gff.py, the first IMG dialect, so the
+IMG dialects report problems the same way.
 """
 import argparse
 import io
@@ -20,42 +20,23 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, integer, value_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = ROOT / "model/dialects/img-per-method-gff.yaml"
-TARGET = "ImgPerMethodGffDocument"
-ROW_CLASS = "ImgPerMethodGffRow"
+SCHEMA = ROOT / "model/dialects/img-tmhmm-signalp-gff.yaml"
+TARGET = "ImgTmhmmSignalpGffDocument"
+ROW_CLASS = "ImgTmhmmSignalpGffRow"
 COLUMNS = ("seqid", "source", "type", "start", "end", "score", "strand", "phase")
 CORE = {"line", "attribute_order", *COLUMNS}
 
-# Source keys that are not valid slot names, mapped one by one.
-KEY_TO_SLOT = {
-    "e-value": "e_value",
-    "independent_domain_e-value": "independent_domain_e_value",
-    "full_sequence_e-value": "full_sequence_e_value",
-}
+KEY_TO_SLOT = {"D-score": "D_score"}
 SLOT_ONLY_NAMES = {slot: key for key, slot in KEY_TO_SLOT.items()}
 
-_HMMER_DOMAIN = ("ID", "fake_percent_id", "alignment_length", "independent_domain_e-value",
-                 "full_sequence_e-value", "full_sequence_bitscore", "model_start", "model_end")
-# Per method: column 3 accession, column 2 source, and the exact column 9 key
-# order. Each was the only form seen in its method's files, measured 2026-09-25.
-# Tool versions are left open on purpose: every HMMER row measured is
-# "HMMER 3.1b2 (February 2015)" and lastal is 983 or 1456, but versions change.
+# Per method: column 3 values, column 2 tool, and the exact column 9 key order.
+# Each was the only form seen in its method's files, measured 2026-09-28.
 METHODS = {
-    "pfam": (r"PF\d{5}", r"HMMER .+",
-             ("ID", "Name", "fake_percent_id", "alignment_length", "e-value", "model_start", "model_end")),
-    "cog": (r"COG\d{4}", r"", _HMMER_DOMAIN),
-    "ko_ec": (r"KO:K\d{5}(_KO:K\d{5})*(__EC:\d+(\.(\d+|-)){1,3}(_EC:\d+(\.(\d+|-)){1,3})*)?", r"lastal \d+",
-              ("ID", "subject_gene_ids", "subject_start", "subject_end", "evalue", "percent_identity",
-               "alignment_length", "query_gene_length", "subject_gene_length")),
-    "tigrfam": (r"TIGR\d{5}", r"",
-                ("ID", "fake_percent_id", "alignment_length", "e-value", "model_start", "model_end")),
-    "smart": (r"SM\d{5}", r"", _HMMER_DOMAIN),
-    "supfam": (r"\d+", r"HMMER .+", _HMMER_DOMAIN),
-    "cath_funfam": (r"\d+\.\d+\.\d+\.\d+", r"HMMER .+", _HMMER_DOMAIN),
+    "tmh": ({"Inside", "Outside", "TMhelix"}, "decodeanhmm", ("ID",)),
+    "cleavage_sites": ({"cleavage_site"}, "signalp", ("D-score", "network", "organism_type")),
 }
 GENE = re.compile(r"^\S+_(\d+)_(\d+)$")
-# Only a known method suffix counts, so "my_sample_cog.gff" is read as cog.
-FILE_METHOD = re.compile(r"_(" + "|".join(sorted(METHODS, key=len, reverse=True)) + r")\.gff$")
+FILE_METHOD = re.compile(r"_(tmh|cleavage_sites)\.gff$")
 
 
 def row_slots(schema=SCHEMA):
@@ -69,10 +50,9 @@ def slot_name(key):
     return KEY_TO_SLOT.get(key, key)
 
 
-def method_of(accession):
-    """The one method whose column 3 form matches, or None."""
-    found = [name for name, (pattern, _, _) in METHODS.items() if re.fullmatch(pattern, accession or "")]
-    return found[0] if len(found) == 1 else None
+def method_of(feature_type):
+    found = [name for name, (types, _, _) in METHODS.items() if feature_type in types]
+    return found[0] if found else None
 
 
 def parse_row(line_number, text, slots):
@@ -81,14 +61,15 @@ def parse_row(line_number, text, slots):
         raise DialectError(f"line {line_number}: {len(columns)} columns, expected 9")
     row = {"line": line_number, "attribute_order": []}
     for name, value in zip(COLUMNS, columns[:8]):
-        if value == "." and name == "phase":
+        if value == "." and name in ("score", "phase"):
             continue
         row[name] = value
     for name, kind in (("start", integer), ("end", integer), ("score", finite)):
-        try:
-            row[name] = kind(row[name])
-        except ValueError:
-            raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
+        if name in row:
+            try:
+                row[name] = kind(row[name])
+            except ValueError:
+                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
     for pair in columns[8].split(";"):
         if not pair:
             raise DialectError(f"line {line_number}: empty attribute")
@@ -109,10 +90,7 @@ def parse_row(line_number, text, slots):
             row[name] = value
             continue
         try:
-            if slot.multivalued:
-                row[name] = [convert(part, slot) for part in value.split(",")]
-            else:
-                row[name] = convert(value, slot)
+            row[name] = convert(value, slot)
         except ValueError:
             raise DialectError(f"line {line_number}: {key} {value!r} is not a {slot.range}") from None
     return row
@@ -138,7 +116,7 @@ def parse_lines(lines, source_file, slots=None):
         raise DialectError("no rows; an empty file has no method to check")
     method = method_of(rows[0]["type"])
     if method is None:
-        raise DialectError(f"line 1: column 3 {rows[0]['type']!r} is not an accession of any known method")
+        raise DialectError(f"line 1: column 3 {rows[0]['type']!r} is not a TMHMM segment or SignalP site")
     return {"source_file": str(source_file), "method": method, "rows": rows}
 
 
@@ -157,14 +135,11 @@ def write_row(row):
     where = f"line {row.get('line', '?')}"
     parts = []
     for key in row["attribute_order"]:
-        value = row[slot_name(key)]
-        values = value if isinstance(value, list) else [value]
-        forbidden = LINE_BREAKS + (";",) + ((",",) if isinstance(value, list) else ())
-        texts = [checked(value_text(v), f"{where} {key}", forbidden) for v in values]
-        parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}=" + ",".join(texts))
+        text = checked(value_text(row[slot_name(key)]), f"{where} {key}", LINE_BREAKS + (";",))
+        parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}={text}")
     columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
-               value_text(row["score"]), row["strand"], str(row["phase"]) if "phase" in row else ".",
-               ";".join(parts)]
+               value_text(row["score"]) if "score" in row else ".", row["strand"],
+               str(row["phase"]) if "phase" in row else ".", ";".join(parts)]
     for column in columns[:8]:
         checked(column, where, LINE_BREAKS)
     return "\t".join(columns)
@@ -187,56 +162,101 @@ def write(document):
     return text
 
 
-def cross_checks(document):
-    """Rules a schema can't express, each measured on the isolate and NMDC files.
+def residues(seqid):
+    """Codons in the gene span that the gene ID records, or None if it records none."""
+    gene = GENE.match(seqid or "")
+    return (abs(int(gene.group(2)) - int(gene.group(1))) + 1) // 3 if gene else None
 
-    Every row has the document's method: its column 3 form, its column 2 source
-    and its exact key order. A file named *_<method>.gff must hold that method.
-    IDs are <seqid>_<start>_<end> and unique. start <= end, alignment_length is
-    end - start + 1, and the hit ends within the protein, whose length is at most
-    a third of the gene's contig span read from the seqid. Model and subject
-    positions are in order, and a KO/EC hit ends within query_gene_length.
-    """
+
+def row_checks(row, method, seen):
+    """Problems in one row: its method's form, its ID, and its positions."""
+    where = f"line {row['line']}"
+    types, tool, order = METHODS[method]
     problems = []
-    method = document.get("method")
-    pattern, source, order = METHODS.get(method, (None, None, None))
-    name = Path(str(document.get("source_file", ""))).name
-    suffix = FILE_METHOD.search(name)
-    if suffix and suffix.group(1) != method:
-        problems.append(f"{name}: file name says {suffix.group(1)} but rows are {method}")
-    seen = set()
-    for row in document["rows"]:
-        where = f"line {row['line']}"
-        if pattern is not None:
-            if not re.fullmatch(pattern, row.get("type", "")):
-                problems.append(f"{where}: column 3 {row.get('type')!r} is not a {method} accession")
-            if not re.fullmatch(source, row.get("source", "")):
-                problems.append(f"{where}: source {row.get('source')!r} is not what {method} files write")
-            if tuple(row.get("attribute_order", ())) != order:
-                problems.append(f"{where}: keys {row.get('attribute_order')} are not the {method} order {list(order)}")
-        start, end = row.get("start", 0), row.get("end", 0)
-        if start > end:
-            problems.append(f"{where}: start > end")
+    if row.get("type") not in types:
+        problems.append(f"{where}: column 3 {row.get('type')!r} is not a {method} row")
+    if not str(row.get("source", "")).startswith(tool + " "):
+        problems.append(f"{where}: source {row.get('source')!r} is not what {method} files write")
+    if tuple(row.get("attribute_order", ())) != order:
+        problems.append(f"{where}: keys {row.get('attribute_order')} are not the {method} order {list(order)}")
+    if ("score" in row) != (method == "cleavage_sites"):
+        problems.append(f"{where}: {'SignalP rows need a score' if method == 'cleavage_sites' else 'TMHMM rows have no score'}")
+    start, end = row.get("start", 0), row.get("end", 0)
+    if start > end:
+        problems.append(f"{where}: start > end")
+    length = residues(row.get("seqid"))
+    if length is not None and end > length:
+        problems.append(f"{where}: end {end} is past the {length} codons of gene {row['seqid']}")
+    if method == "tmh":
         expected = f"{row.get('seqid')}_{start}_{end}"
         if row.get("ID") != expected:
             problems.append(f"{where}: ID {row.get('ID')!r} is not {expected!r}")
         if row.get("ID") in seen:
             problems.append(f"{where}: ID {row.get('ID')!r} repeats")
         seen.add(row.get("ID"))
-        if "alignment_length" in row and row["alignment_length"] != end - start + 1:
-            problems.append(f"{where}: alignment_length {row['alignment_length']} is not end - start + 1")
-        gene = GENE.match(row.get("seqid", ""))
-        if gene:
-            residues = (abs(int(gene.group(2)) - int(gene.group(1))) + 1) // 3
-            if end > residues:
-                problems.append(f"{where}: end {end} is past the {residues} codons of gene {row['seqid']}")
-        for first, last in (("model_start", "model_end"), ("subject_start", "subject_end")):
-            if first in row and last in row and row[first] > row[last]:
-                problems.append(f"{where}: {first} > {last}")
-        if "subject_end" in row and "subject_gene_length" in row and row["subject_end"] > row["subject_gene_length"]:
-            problems.append(f"{where}: subject_end is past subject_gene_length")
-        if "query_gene_length" in row and end > row["query_gene_length"]:
-            problems.append(f"{where}: end is past query_gene_length")
+    elif end != start + 1:
+        problems.append(f"{where}: a cleavage site spans two residues, so end is start + 1")
+    return problems
+
+
+def gene_checks(seqid, rows):
+    """Problems in one gene's TMHMM segments, which tile its protein from residue 1."""
+    where = f"line {rows[0]['line']}: gene {seqid}"
+    problems = []
+    if rows[0].get("start") != 1:
+        problems.append(f"{where}: first segment starts at {rows[0].get('start')}, not 1")
+    for before, after in zip(rows, rows[1:]):
+        if after.get("start") != before.get("end", 0) + 1:
+            problems.append(f"line {after['line']}: segment does not start right after the one before")
+        if (before.get("type") == "TMhelix") == (after.get("type") == "TMhelix"):
+            problems.append(f"line {after['line']}: two helix or two non-helix segments in a row")
+    if not any(row.get("type") == "TMhelix" for row in rows):
+        problems.append(f"{where}: no TMhelix; genes without one are not listed")
+    if "TMhelix" in (rows[0].get("type"), rows[-1].get("type")):
+        problems.append(f"{where}: begins or ends with a helix")
+    sides = [row for row in rows if row.get("type") != "TMhelix"]
+    for before, after in zip(sides, sides[1:]):
+        if before.get("type") == after.get("type"):
+            problems.append(f"line {after['line']}: {after.get('type')} on both sides of a helix")
+    return problems
+
+
+def cross_checks(document):
+    """Rules a schema can't express, each holding on every row of the measured files.
+
+    Every row has the document's method: its column 3 values, its column 2 tool
+    and its exact key order, and a file named *_tmh.gff or *_cleavage_sites.gff
+    must hold that method. Positions end within the protein, whose length is at
+    most a third of the gene span that the gene ID records. TMHMM IDs are
+    <seqid>_<start>_<end> and unique, and each gene's segments form one block;
+    SignalP rows are two residues wide and one per gene.
+    """
+    method = document.get("method")
+    if method not in METHODS:
+        return []
+    problems = []
+    name = Path(str(document.get("source_file", ""))).name
+    suffix = FILE_METHOD.search(name)
+    if suffix and suffix.group(1) != method:
+        problems.append(f"{name}: file name says {suffix.group(1)} but rows are {method}")
+    seen = set()
+    blocks = []
+    for row in document["rows"]:
+        problems.extend(row_checks(row, method, seen))
+        if blocks and blocks[-1][0] == row.get("seqid"):
+            blocks[-1][1].append(row)
+        else:
+            blocks.append((row.get("seqid"), [row]))
+    genes = set()
+    for seqid, rows in blocks:
+        if seqid in genes:
+            kind = "segments are not in one block" if method == "tmh" else "has more than one cleavage site"
+            problems.append(f"line {rows[0]['line']}: gene {seqid} {kind}")
+        genes.add(seqid)
+        if method == "tmh":
+            problems.extend(gene_checks(seqid, rows))
+        elif len(rows) > 1:
+            problems.append(f"line {rows[1]['line']}: gene {seqid} has more than one cleavage site")
     return problems
 
 
@@ -278,25 +298,22 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "validate":
         return validate(args.file, args.max_errors)
-    if args.output and args.output.exists():
-        print(f"refusing to overwrite {args.output}", file=sys.stderr)
-        return 2
     try:
         document = parse(args.file)
     except DialectError as error:
         print(f"INVALID  {args.file}: {error}")
         return 1
     text = json.dumps(document, indent=1)
-    if args.output:
-        try:
-            with open(args.output, "x", encoding="utf-8") as handle:
-                handle.write(text + "\n")
-        except OSError as error:
-            # A missing directory, or a file created since the check above.
-            print(f"can't write {args.output}: {error}", file=sys.stderr)
-            return 2
-    else:
+    if not args.output:
         print(text)
+        return 0
+    try:
+        # Mode "x" never overwrites, including a file created since the command started.
+        with open(args.output, "x", encoding="utf-8") as handle:
+            handle.write(text + "\n")
+    except OSError as error:
+        print(f"can't write {args.output}: {error}", file=sys.stderr)
+        return 2
     return 0
 
 
