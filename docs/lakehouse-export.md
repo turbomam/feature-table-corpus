@@ -48,8 +48,10 @@ linkml-store creates each table from the schema. Released linkml-store 0.3.2 map
 scalar ranges to types that lose values, so `requirements-lakehouse.txt` pins commit
 [`22bc4d7`](https://github.com/turbomam/linkml-store/commit/22bc4d7e6ac103b800d2be7e2b54dd7914881df0)
 on branch `fix/duckdb-scalar-types` of https://github.com/turbomam/linkml-store, which maps them without loss.
-That is a personal fork, not a linkml-store release; the pin goes back to a released version
-once the fix is merged and released upstream. The export checks the installed type table before it writes
+That is a personal fork, not a linkml-store release. The problem is reported in
+https://github.com/linkml/linkml-store/issues/85 and the fix proposed in
+https://github.com/linkml/linkml-store/pull/86; the pin goes back to a released version once
+that is merged and released. The export checks the installed type table before it writes
 anything and stops on a lossy one. It then casts every column to the type the schema gives
 when writing, which turns inlined objects into nested Parquet types.
 
