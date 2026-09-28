@@ -14,7 +14,8 @@ These are source records, not synthetic hits. The CDS boundary, score, strand, a
 come from `prodigal.gff`; its product comes from `functional_annotation.gff`; its translation
 comes from `proteins.faa`. Contig length was computed from its `contigs.fna` FASTA record.
 Pfam source IDs, intervals, scores, and attributes come from `pfam.gff`, with its gene-valued
-column 1 represented as `parent` and the CDS's contig as `seqid`. Each record cites the full
+column 1 represented as the CDS, in both `seqid` and `parent`
+([protein coordinates](../../../docs/protein-coordinates.md)). Each record cites the full
 source URLs; [the manifest](../source-artifacts.yaml) supplies DataObject IDs and checksums.
 Sources are NMDC public data under [CC BY 4.0](https://microbiomedata.org/nmdc-data-use-policy/).
 

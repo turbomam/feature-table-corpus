@@ -3,7 +3,10 @@
 
 Use SchemaView to resolve imported definitions, inherited slots, mixins and slot
 usage before classifying a field. Range expressions remain outside this audit's
-scope and are rejected rather than guessed.
+scope and are rejected rather than guessed, with one exception: an any_of whose
+branches each name only an identified class. Every branch then stores the same
+thing, a string identifier, so the field is a scalar id column that no single
+foreign key can check.
 
 Usage:
     uv run --with linkml-runtime python scripts/flat_profile_audit.py [path-or-url]
@@ -57,6 +60,21 @@ def effective_slots(view, class_name):
         yield slot
 
 
+def identified_union(slot, classes, slots):
+    """The class names of an any_of that only names identified classes, else None."""
+    names = []
+    for branch in slot.any_of:
+        # Depending on how the schema was loaded, a branch is an expression object or a dict.
+        fields = branch if isinstance(branch, dict) else {k: v for k, v in vars(branch).items() if v}
+        target = fields.get("range")
+        if set(fields) != {"range"} or target not in classes:
+            return None
+        if not any(s.identifier for s in slots[target]):
+            return None
+        names.append(target)
+    return names
+
+
 def audit(view):
     # Materialize imports in memory so isolated contexts retain their definitions.
     view.merge_imports()
@@ -66,10 +84,20 @@ def audit(view):
     for cn in classes:
         for slot in slots[cn]:
             present = [key for key in RANGE_EXPRESSIONS if getattr(slot, key, None)]
-            if present:
+            union = identified_union(slot, classes, slots) if present == ["any_of"] else None
+            if present and union is None:
                 raise ValueError(f"{cn}.{slot.name} uses {', '.join(present)}; range expressions are not resolved")
             rng = slot.range or "string"
             mv = bool(slot.multivalued)
+            if union and rng not in union:
+                # The union is the range: no narrower class_range was set in slot_usage.
+                if rng != (view.schema.default_range or "string"):
+                    raise ValueError(f"{cn}.{slot.name} has range {rng!r} outside its any_of")
+                if mv:
+                    raise ValueError(f"{cn}.{slot.name} is a multivalued union; not resolved")
+                rows.append((cn, slot.name, "union", mv, " | ".join(union),
+                             "identified class reference", "scalar id column, checked outside SQL"))
+                continue
             if rng in classes:
                 kind = "class"
             elif rng in enums:

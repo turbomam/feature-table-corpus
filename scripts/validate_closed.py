@@ -55,7 +55,8 @@ def dataset_errors(data):
     Structured parts are checked for order, overlap, envelope agreement and
     endpoint status; origin crossings require a circular reference of known length.
     This validates the harmonized model, not every source-format representation.
-    Protein positions refer to a direct, contig-relative CDS parent. Translation
+    Protein positions refer to a contig-relative CDS, named both as seqid and as the
+    only parent (issue 40). Translation
     may be absent; then its upper bound cannot be checked and is not guessed.
     """
     errors = []
@@ -128,12 +129,24 @@ def dataset_errors(data):
 
         if feature["start"] > feature["end"]:
             error("start must be <= end")
-        contig = contigs.get(feature["seqid"])
-        if contig is None:
-            error(f"unknown seqid {feature['seqid']!r}")
+        space, seqid = feature["coordinate_system"], feature["seqid"]
+        if space == "protein":
+            # Protein positions are measured along the translation of the CDS that seqid names,
+            # so seqid is that CDS and its contig is one step further (issue 40).
+            landmark = features.get(seqid)
+            contig = contigs.get(landmark["seqid"]) if landmark else None
+            if landmark is None:
+                hint = "; protein coordinates need their CDS as seqid, not a contig" if seqid in contigs else ""
+                error(f"unknown protein seqid {seqid!r}{hint}")
+            elif landmark.get("type") != "CDS" or landmark["coordinate_system"] != "contig":
+                error(f"protein seqid {seqid!r} must be a contig-relative CDS")
+        else:
+            contig = contigs.get(seqid)
+            if contig is None:
+                hint = "; contig coordinates need a contig as seqid" if seqid in features else ""
+                error(f"unknown seqid {seqid!r}{hint}")
         for problem in location_errors(feature, contig):
             error(problem)
-        space = feature["coordinate_system"]
         if space == "contig" and contig and contig.get("length_bp") is not None:
             if feature["end"] > contig["length_bp"]:
                 error("end exceeds contig length_bp")
@@ -147,7 +160,9 @@ def dataset_errors(data):
             if parent is None:
                 error(f"unknown parent {pid!r}")
                 continue
-            if parent["seqid"] != feature["seqid"]:
+            if space == "protein" and pid != seqid:
+                error(f"protein parent {pid!r} must be the CDS named by seqid {seqid!r}")
+            elif space != "protein" and parent["seqid"] != seqid:
                 error(f"parent {pid!r} is on a different contig")
             if space == "protein":
                 if parent.get("type") != "CDS" or parent["coordinate_system"] != "contig":

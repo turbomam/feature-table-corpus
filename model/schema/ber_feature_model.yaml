@@ -171,6 +171,8 @@ classes:
       - start_status
       - end_status
     slot_usage:
+      seqid:
+        range: Contig
       strand:
         required: true
 
@@ -316,9 +318,20 @@ slots:
         nmdc:wfmgan-11-grwgtd27.2_0016_3_1208.
   seqid:
     title: Sequence ID
-    range: Contig
+    any_of:
+      - range: Contig
+      - range: Feature
     required: true
-    description: Reference sequence identity, such as GFF3 column 1 or BED chrom; interpreted within its assembly context.
+    description: >-
+      The reference sequence that start and end are measured along, such as GFF3 column 1 or BED
+      chrom; interpreted within its assembly context. A contig for contig coordinates; for
+      protein coordinates, the CDS whose translation they count residues of.
+    notes:
+      - Decided 2026-09-28 (https://github.com/turbomam/feature-table-corpus/issues/40); before,
+        a protein-coordinate hit named its contig. GFF3 defines column 1 as the landmark that
+        establishes the coordinate system, and NMDC's hit files put the protein there.
+        docs/protein-coordinates.md gives the rule, queries, and the alternatives considered.
+      - A protein-coordinate feature's parent is the same CDS. LocationPart.seqid stays a Contig.
   source:
     title: Source
     description: GFF3 column 2, the producing tool and version, e.g. "Prodigal v2.6.3_patched".

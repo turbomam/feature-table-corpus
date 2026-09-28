@@ -1,14 +1,15 @@
 # Protein-relative annotation profile
 
-`nmdc-pfam-protein/2.0.0` supports **NMDC Pfam/HMMER output**, one producer
+`nmdc-pfam-protein/3.0.0` supports **NMDC Pfam/HMMER output**, one producer
 convention. It does not detect arbitrary GFF dialects or make NMDC conventions
 universal requirements. Generic attributes remain independent of GFF column 9.
 
 The unchanged full Pfam source has **416 hits on 397 proteins**. With supporting
 CDSs, the Dataset contains **813 features**. Source column 1 identifies a protein;
 columns 4–5 are one-based inclusive amino-acid offsets. Model hits have
-`coordinate_system: protein`, a direct CDS `parent`, and that CDS's contig as
-`seqid`. Source protein identity is retained as an explicit semantic mapping.
+`coordinate_system: protein` and their CDS as both `seqid` and `parent`
+([protein coordinates](protein-coordinates.md)). Source protein identity is retained as an
+explicit semantic mapping.
 
 ## Evidence and context
 
@@ -45,7 +46,7 @@ positions.
 mkdir -p local/protein-demo
 just conversion-import \
   corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff \
-  nmdc-pfam-protein/2.0.0 nmdc:wfmgas-11-19jh9v28.1 \
+  nmdc-pfam-protein/3.0.0 nmdc:wfmgas-11-19jh9v28.1 \
   local/protein-demo/bundle.json \
   --protein-context model/examples/conversions/nmdc-pfam-context.json
 just conversion-export local/protein-demo/bundle.json local/protein-demo/exact.gff exact \

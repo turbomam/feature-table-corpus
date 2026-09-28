@@ -82,7 +82,9 @@ def _populate_database(data, db_path):
             CREATE TABLE feature (
                 feature_id VARCHAR PRIMARY KEY,
                 stable_identifiers VARCHAR[],
-                seqid VARCHAR NOT NULL REFERENCES contig(contig_id),
+                -- A contig, or for protein coordinates the CDS they are measured along (issue 40).
+                -- One column cannot reference two tables, so validate_closed checks it instead.
+                seqid VARCHAR NOT NULL,
                 source VARCHAR,
                 type VARCHAR,
                 start BIGINT NOT NULL CHECK (start >= 1),

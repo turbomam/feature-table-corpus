@@ -22,7 +22,7 @@ from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTEIN = "nmdc-pfam-protein/2.0.0"
+PROTEIN = "nmdc-pfam-protein/3.0.0"
 PROFILES = {"gff3-contig/2.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 
@@ -249,7 +249,9 @@ def protein_feature(columns, record_id, bindings):
     parent = bindings[protein]
     require(feature["end"] <= len(parent["translated_sequence"]),
             "protein-bound", f"{record_id}: hit exceeds the retained protein length")
-    feature.update(seqid=parent["seqid"], coordinate_system="protein", parent=[parent["feature_id"]])
+    # The hit's coordinates are measured along the CDS translation, so the CDS is its seqid
+    # as well as its parent (issue 40); the contig is the CDS's own seqid.
+    feature.update(seqid=parent["feature_id"], coordinate_system="protein", parent=[parent["feature_id"]])
     if "score" in feature:
         # HMMER column 6 is a bit score; nmdc-lakehouse documents it for NMDC Pfam GFF
         # (docs/pfam_annotation_gff.md). Reconstruction never reads this slot.
@@ -339,8 +341,9 @@ def reconstruct_record(profile, by_id, mapping):
     """
     feature = by_id[mapping["feature_ids"][0]]
     if profile == PROTEIN:
-        require(feature["coordinate_system"] == "protein" and len(feature.get("parent", [])) == 1,
-                "protein-profile", "protein features require one explicit CDS parent")
+        require(feature["coordinate_system"] == "protein" and len(feature.get("parent", [])) == 1
+                and feature["seqid"] == feature["parent"][0],
+                "protein-profile", "protein features require one explicit CDS, as both seqid and parent")
         # Protein identity is a semantic reference mapping, not a retained source
         # cell. The contextual CDS relationship is not a source Parent tag.
         projected = {**feature, "seqid": mapping["protein_id"]}

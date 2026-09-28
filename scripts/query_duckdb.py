@@ -31,7 +31,10 @@ def multiple_pfams(con, accessions=()):
 
 
 def interval_overlap(con, sequence_id, start, end, coordinate_system="contig"):
-    """Inclusive overlap: sequence_id is a contig ID or a parent CDS ID, respectively."""
+    """Inclusive overlap on one reference: a contig ID, or for protein coordinates a CDS ID.
+
+    Both are seqid, so the join is the same in either space; coordinate_system still has to
+    match, since a CDS is also a contig-coordinate feature."""
     if type(start) is not int or type(end) is not int:
         raise ValueError("Interval endpoints must be integers (not booleans or floats)")
     if start < 1 or end < start:
@@ -51,10 +54,9 @@ def interval_overlap(con, sequence_id, start, end, coordinate_system="contig"):
           AND ((location IS NULL AND start <= ? AND "end" >= ?)
             OR EXISTS (SELECT 1 FROM json_each(location, '$.parts') p
                        WHERE CAST(p.value->>'start' AS BIGINT) <= ? AND CAST(p.value->>'end' AS BIGINT) >= ?))
-          AND ((coordinate_system = 'contig' AND seqid = ?)
-            OR (coordinate_system = 'protein' AND list_contains(parent, ?)))
+          AND seqid = ?
         ORDER BY feature_id
-    """, [coordinate_system, end, start, end, start, sequence_id, sequence_id]).fetchall()
+    """, [coordinate_system, end, start, end, start, sequence_id]).fetchall()
 
 
 def by_attribute(con, key, value):

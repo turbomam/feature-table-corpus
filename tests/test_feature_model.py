@@ -188,7 +188,15 @@ class ValidationTests(unittest.TestCase):
             (lambda d: d["features"][1].update(parent=["missing"]), "unknown parent"),
             (lambda d: d["features"][1].pop("parent"), "require a parent CDS"),
             (lambda d: d["features"][1].update(end=250), "translated_sequence length"),
-            (lambda d: d["features"][1].update(seqid=d["contigs"][1]["contig_id"]), "different contig"),
+            # Issue 40: a protein hit's seqid is its CDS. The old shape, its contig, is refused.
+            (lambda d: d["features"][1].update(seqid=d["features"][0]["seqid"]),
+             "protein coordinates need their CDS as seqid"),
+            (lambda d: d["features"][1].update(seqid=d["contigs"][1]["contig_id"]),
+             "protein coordinates need their CDS as seqid"),
+            (lambda d: d["features"].append(dict(d["features"][0], feature_id="other_cds"))
+             or d["features"][1].update(seqid="other_cds"), "must be the CDS named by seqid"),
+            (lambda d: d["features"][0].update(seqid=d["features"][1]["feature_id"]),
+             "contig coordinates need a contig as seqid"),
             (lambda d: d["features"][0].update(type="gene"), "must be a contig-relative CDS"),
             (lambda d: d["features"][1]["parent"].append(d["features"][0]["feature_id"]), "duplicate parent"),
             (lambda d: d["features"].append(copy.deepcopy(d["features"][0])), "duplicate feature_id"),
@@ -272,7 +280,9 @@ class ValidationTests(unittest.TestCase):
         self.assertTrue(any("CDS translation_table attributes disagree" in e for e in errors), errors)
         # Only CDS rows count: the same attribute on another feature type is not compared.
         data = copy.deepcopy(self.example)
-        other = next(f for f in data["features"] if f["seqid"] == first and f["type"] != "CDS")
+        # A protein hit's seqid is its CDS (issue 40), so reach the contig through it.
+        on_first = {first} | {f["feature_id"] for f in data["features"] if f["seqid"] == first}
+        other = next(f for f in data["features"] if f["seqid"] in on_first and f["type"] != "CDS")
         other.setdefault("attributes", []).append({"key": "translation_table", "value": "4"})
         self.assertEqual(validation_errors(data, self.validator), [])
         # Every per-contig check still runs for every contig, before and after this one.
@@ -412,6 +422,9 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
+        # Issue 40: a protein hit's seqid is its CDS, so Feature.seqid is a union; parts stay on contigs.
+        self.assertEqual(rows['Feature', 'seqid'][2:5], ('union', False, 'Contig | Feature'))
+        self.assertEqual(rows['LocationPart', 'seqid'][2:5], ('class', False, 'Contig'))
         self.assertIn(('Attribute', 'key'), rows)
         view = SchemaView('''
 id: https://example.org/test
@@ -512,6 +525,40 @@ classes:
                 self.assertTrue(validation_errors(data, attribute, 'Attribute'))
             self.assertTrue(validation_errors({'key': 'name', 'value': 'text'}, counter, 'Counter'))
 
+    def test_flat_audit_accepts_only_unions_of_identified_classes(self):
+        def schema(branches, extra=''):
+            return SchemaView(f'''
+id: https://example.org/union
+name: union-test
+imports: [linkml:types]
+prefixes:
+  linkml: https://w3id.org/linkml/
+default_range: string
+classes:
+  A:
+    attributes:
+      a_id: {{identifier: true}}
+  B:
+    attributes:
+      b_id: {{identifier: true}}
+  Plain:
+    attributes:
+      label: {{}}
+  Holder:
+    attributes:
+      ref:
+        any_of: {branches}{extra}
+''')
+        rows = {(r[0], r[1]): r for r in audit(schema('[{range: A}, {range: B}]'))}
+        self.assertEqual(rows['Holder', 'ref'][4:6], ('A | B', 'identified class reference'))
+        for branches, extra, why in (
+                ('[{range: A}, {range: Plain}]', '', 'a class with no identifier'),
+                ('[{range: A}, {range: string}]', '', 'a type'),
+                ('[{range: A}, {range: B, required: true}]', '', 'a branch with more than a range'),
+                ('[{range: A}, {range: B}]', '\n        multivalued: true', 'a multivalued union')):
+            with self.subTest(why), self.assertRaises(ValueError):
+                audit(schema(branches, extra))
+
     def test_missing_import_is_reported_without_traceback(self):
         scratch = ROOT / 'local/test-tmp'
         scratch.mkdir(parents=True, exist_ok=True)
@@ -549,12 +596,16 @@ class DatabaseTests(unittest.TestCase):
             JOIN contig_collection cc ON list_contains(c.member_of, cc.collection_id)
         """).fetchall()
         self.assertEqual(rows, [("nmdc:wfmgas-11-19jh9v28.1", "metagenome")])
-        # Every feature in the example resolves to that one collection.
+        # Every feature resolves to that one collection, a protein hit through its CDS (issue 40).
         unresolved = con.execute("""
-            SELECT count(*) FROM feature f JOIN contig c ON f.seqid = c.contig_id
+            SELECT count(*) FROM feature f
+            LEFT JOIN feature cds ON f.coordinate_system = 'protein' AND f.seqid = cds.feature_id
+            LEFT JOIN contig c ON c.contig_id = coalesce(cds.seqid, f.seqid)
             WHERE len(coalesce(c.member_of, [])) = 0
         """).fetchone()[0]
         self.assertEqual(unresolved, 0)
+        self.assertGreater(con.execute(
+            "SELECT count(*) FROM feature WHERE coordinate_system = 'protein'").fetchone()[0], 0)
 
     def test_score_type_and_translation_table_columns(self):
         con = self.connect()

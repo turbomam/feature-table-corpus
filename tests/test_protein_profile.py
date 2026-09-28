@@ -52,7 +52,8 @@ class ProteinProfileTests(unittest.TestCase):
         hits = [f for f in features if f.get("parent") == [GENE]]
         self.assertEqual(sorted((f["type"], f["start"], f["end"]) for f in hits),
                          [("PF13358", 168, 312), ("PF13518", 17, 70), ("PF13592", 95, 154)])
-        self.assertTrue(all(f["coordinate_system"] == "protein" and f["seqid"] == parent["seqid"] for f in hits))
+        # Issue 40: a hit's seqid is its CDS, measured along the translation; the contig is the CDS's.
+        self.assertTrue(all(f["coordinate_system"] == "protein" and f["seqid"] == GENE for f in hits))
 
     def test_real_roundtrips_and_reconstruction_without_source_text(self):
         b = self.bundle
@@ -144,13 +145,17 @@ class ProteinProfileTests(unittest.TestCase):
                     export_source(b, mode=mode, protein_context=self.context)
 
     def test_bundle_from_the_previous_profile_version_is_refused(self):
-        """A 1.0.0 protein bundle is refused as unsupported, with or without its context."""
-        old = deepcopy(self.bundle)
-        old["profile"] = "nmdc-pfam-protein/1.0.0"
-        for context in (deepcopy(self.context), None):
-            with self.assertRaises(ConversionError) as caught:
-                export_source(old, mode="reconstruct", protein_context=context)
-            self.assertEqual(caught.exception.code, "unsupported-profile")
+        """1.0.0 and 2.0.0 protein bundles are refused as unsupported, with or without context.
+
+        2.0.0 is the last version whose hits named their contig as seqid (issue 40)."""
+        for version in ("1.0.0", "2.0.0"):
+            old = deepcopy(self.bundle)
+            old["profile"] = f"nmdc-pfam-protein/{version}"
+            for context in (deepcopy(self.context), None):
+                with self.subTest(version=version, context=context is not None):
+                    with self.assertRaises(ConversionError) as caught:
+                        export_source(old, mode="reconstruct", protein_context=context)
+                    self.assertEqual(caught.exception.code, "unsupported-profile")
 
     def test_context_with_conflicting_cds_tables_is_refused(self):
         """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""

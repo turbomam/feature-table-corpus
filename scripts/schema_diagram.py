@@ -10,8 +10,13 @@ ROOT = Path(__file__).resolve().parents[1]
 # the same target. Correct those edges and orient right-hand crow's feet.
 FEATURE_OVERRIDES = {
     'LocationPart ||--|| Contig : "seqid"': 'Contig ||--o{ LocationPart : "seqid"',
-    'Feature ||--|| Contig : "seqid"': 'Contig ||--o{ Feature : "seqid"',
-    'Feature ||--}o Feature : "parent"': 'Feature }o--o{ Feature : "parent"',
+    # Feature.seqid is any_of Contig or Feature (issue 40), which the renderer shows as a
+    # plain string. Draw both targets instead: a contig for contig coordinates, and the CDS
+    # a protein-coordinate hit is measured along.
+    '    string seqid  \n': '',
+    'Feature ||--}o Feature : "parent"': ('Feature }o--o{ Feature : "parent"\n'
+                                         'Contig ||--o{ Feature : "seqid"\n'
+                                         'Feature ||--o{ Feature : "seqid (protein coordinates)"'),
     # Many contigs share one assembly or bin, and one contig can be in an assembly and a bin.
     'Contig ||--}o ContigCollection : "member_of"': 'Contig }o--o{ ContigCollection : "member_of"',
 }
@@ -24,7 +29,8 @@ SOURCE_DOCUMENT_OVERRIDES = {
 def check_feature_slots(view):
     seqid = view.induced_slot('seqid', 'Feature')
     parent = view.induced_slot('parent', 'Feature')
-    if not (seqid.required and not seqid.multivalued and seqid.range == 'Contig'
+    targets = [branch.range for branch in seqid.any_of or []]
+    if not (seqid.required and not seqid.multivalued and targets == ['Contig', 'Feature']
             and parent.multivalued and not parent.required and parent.range == 'Feature'):
         raise ValueError('Feature relationships changed; review the diagram cardinality overrides')
     member_of = view.induced_slot('member_of', 'Contig')
