@@ -1,6 +1,6 @@
 # Protein-relative annotation profile
 
-`nmdc-pfam-protein/1.1.0` supports **NMDC Pfam/HMMER output**, one producer
+`nmdc-pfam-protein/2.0.0` supports **NMDC Pfam/HMMER output**, one producer
 convention. It does not detect arbitrary GFF dialects or make NMDC conventions
 universal requirements. Generic attributes remain independent of GFF column 9.
 
@@ -45,7 +45,7 @@ positions.
 mkdir -p local/protein-demo
 just conversion-import \
   corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff \
-  nmdc-pfam-protein/1.1.0 nmdc:wfmgas-11-19jh9v28.1 \
+  nmdc-pfam-protein/2.0.0 nmdc:wfmgas-11-19jh9v28.1 \
   local/protein-demo/bundle.json \
   --protein-context model/examples/conversions/nmdc-pfam-context.json
 just conversion-export local/protein-demo/bundle.json local/protein-demo/exact.gff exact \

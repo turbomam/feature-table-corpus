@@ -143,6 +143,19 @@ class ProteinProfileTests(unittest.TestCase):
                 with self.subTest(key=key, mode=mode), self.assertRaises(ConversionError):
                     export_source(b, mode=mode, protein_context=self.context)
 
+    def test_context_with_conflicting_cds_tables_is_refused(self):
+        """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""
+        c = deepcopy(self.context)
+        by_contig = {}
+        for f in c["dataset"]["features"]:
+            if f.get("type") == "CDS" and any(a["key"] == "translation_table" for a in f.get("attributes", [])):
+                by_contig.setdefault(f["seqid"], []).append(f)
+        shared = next(features for features in by_contig.values() if len(features) > 1)
+        next(a for a in shared[0]["attributes"] if a["key"] == "translation_table")["value"] = "4"
+        with self.assertRaises(ConversionError) as caught:
+            imported(PFAM.read_bytes(), c)
+        self.assertIn("CDS translation_table attributes disagree", str(caught.exception))
+
     def test_hmmer_scores_are_typed_as_bit_scores(self):
         """Issue 72: column 6 of NMDC HMMER Pfam rows is a bit score; context CDS scores stay untyped."""
         hits = [f for f in self.bundle["dataset"]["features"] if f["coordinate_system"] == "protein"]

@@ -22,7 +22,7 @@ from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTEIN = "nmdc-pfam-protein/1.1.0"
+PROTEIN = "nmdc-pfam-protein/2.0.0"
 PROFILES = {"gff3-contig/2.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 

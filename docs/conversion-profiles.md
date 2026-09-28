@@ -43,7 +43,7 @@ internally consistent artifact; it cannot pass comparison with the old original.
 | Profile | Forward mapping | Reverse mapping and bounds |
 |---|---|---|
 | [`insdc-locations/1.0.0`](../model/profiles/insdc-locations.yaml) | GenBank nucleotide records with qualified references, ordered parts, partial endpoints, circular topology and generic qualifiers. | Reconstruct feature-table blocks from modeled locations and qualifiers; preserve header/sequence text in SourceDocument. Remote, between-base, unknown and mixed-strand locations are refused. |
-| [`nmdc-pfam-protein/1.1.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
+| [`nmdc-pfam-protein/2.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
 | [`gff3-contig/2.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
 
@@ -56,7 +56,7 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/1.1.0`,
+The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/2.0.0`,
 adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
 original contracts unchanged. Supporting CDSs are not exported as additional
 Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.
@@ -328,10 +328,16 @@ Two model slots are filled from retained source values rather than read from a c
   No other profile sets it: nothing retained says what Prodigal, GeneMark, lastal, INFERNAL or
   BED scores are.
 
-Adding these slots changed both profiles' output, so their versions moved: `gff3-contig` to
-2.0.0, because it now refuses conflicting input that 1.0.0 accepted, and `nmdc-pfam-protein` to
-1.1.0, because it only adds a field. A bundle made under 1.0.0 is refused as an unsupported
-profile rather than validated against the new rules.
+Adding these slots changed both profiles, so both moved to 2.0.0: each adds output, and each
+now refuses input 1.0.0 accepted (conflicting CDS tables, in the imported file for `gff3-contig`
+and in the protein context for `nmdc-pfam-protein`). A bundle made under 1.0.0 is refused as an
+unsupported profile rather than validated against the new rules.
+
+The Dataset validator rejects conflicting CDS tables, as the converters do, but it accepts a
+contig table that no CDS attribute backs, for example one a source states in a pragma or a
+Prodigal sequence comment. The IMG functional mapping cannot write such a table back, so its
+reverse step refuses it as a loss; that refusal is about what the dialect can hold, not a
+validity rule.
 
 Neither slot is read by export, so exact and reconstructed bytes do not change. Re-import
 derives them again, so removing or editing one is an edit like any other and is refused.

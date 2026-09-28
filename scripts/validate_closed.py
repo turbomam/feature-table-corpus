@@ -26,11 +26,14 @@ NCBI_GENETIC_CODES = frozenset([*range(1, 7), *range(9, 17), *range(21, 34)])
 def table_value(text):
     """A translation_table attribute as an integer when it is one, else its text.
 
-    Leading zeros are ignored, so 011 is 11. Only up to three digits are read as a number:
-    codes stop at 33, and a longer digit string would otherwise reach int()'s digit limit.
+    Leading zeros are ignored, so 011 is 11 and 01000 equals 1000. Only up to three digits are
+    read as a number: codes stop at 33, and a longer digit string would otherwise reach int()'s
+    digit limit, so it stays text with its leading zeros removed.
     """
-    match = re.fullmatch(r"0*([0-9]{1,3})", text)
-    return int(match.group(1)) if match else text
+    if not re.fullmatch(r"[0-9]+", text):
+        return text
+    digits = text.lstrip("0") or "0"
+    return int(digits) if len(digits) <= 3 else digits
 
 
 def make_validator(schema_path, class_name="Dataset"):

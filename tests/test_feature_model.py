@@ -164,6 +164,10 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(validation_errors(data, self.validator), [])
         cds_attributes(data)[0]["value"] = "0" * 5000 + "11"
         self.assertEqual(validation_errors(data, self.validator), [])
+        # Leading zeros are ignored past three digits too, where the value stays text.
+        from validate_closed import table_value
+        self.assertEqual(table_value("01000"), table_value("1000"))
+        self.assertEqual(table_value("0" * 5000 + "1" * 5000), "1" * 5000)
         # CDS rows that disagree are rejected even when the contig has no table, as the
         # converters refuse them.
         data["contigs"][0].pop("translation_table")

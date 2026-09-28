@@ -11,7 +11,7 @@ cases:
     path: corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
     case_kind: observed
     format: gff3
-    profile: nmdc-pfam-protein/1.1.0
+    profile: nmdc-pfam-protein/2.0.0
     reference_context: nmdc:wfmgas-11-19jh9v28.1
     protein_context: model/examples/conversions/nmdc-pfam-context.json
     expected: supported
