@@ -153,9 +153,14 @@ class ValidateTests(unittest.TestCase):
                                   self.taxon(change=lambda line: line.replace("_1012", "_9999")))
         self.assert_text_rejected(fixture, "line 2: CDS Ga0000001_1012 is not in the taxon GFF",
                                   self.taxon(skip="Ga0000001_1012"))
-        self.assert_text_rejected(fixture, "not a nine-column row with a locus_tag",
+        # Read with the taxon dialect's parser: short rows, repeated keys and a missing header are refused.
+        self.assert_text_rejected(fixture, "--taxon: gff line 8: 5 columns, expected 9",
                                   self.taxon() + "Ga0000001_101\timg_core_v400\tCDS\t1\t3\n")
-        self.assert_text_rejected(fixture, "has no rows with a locus_tag", "##gff-version 3\n")
+        self.assert_text_rejected(fixture, "locus_tag repeats",
+                                  self.taxon(change=lambda line: line + ";locus_tag=Ga0000001_9999"))
+        self.assert_text_rejected(fixture, "--taxon: gff: header only", "##gff-version 3\n")
+        self.assert_text_rejected(fixture, "no locus_tag",
+                                  self.taxon(change=lambda line: line.replace(";locus_tag=Ga0000001_1012", "")))
         taxon = self.taxon()
         self.assert_text_rejected(fixture, "locus_tag Ga0000001_1012 repeats in the taxon GFF",
                                   taxon + next(line for line in taxon.splitlines() if "_1012" in line) + "\n")

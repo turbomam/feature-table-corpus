@@ -297,8 +297,8 @@ and a second file may break some of them.
   plus 39 `misc_bind` and 26 `misc_feature` rows that the taxon GFF drops; its 39 `misc_RNA`
   rows are the taxon GFF's `RNA`.
 
-`just dialect-validate-img-assembled FILE [TAXON_GFF]` runs it. With the taxon GFF it also checks
-both directions: every taxon row is here at the same coordinates, strand and type (`RNA` there is
+`just dialect-validate-img-assembled FILE [TAXON_GFF]` runs it. With the taxon GFF, read with the
+taxon bundle dialect's own parser, it also checks both directions: every taxon row is here at the same coordinates, strand and type (`RNA` there is
 `misc_RNA` here), and every row here but misc_bind and misc_feature is in the taxon GFF. The parser
 accepts only canonical numbers (no leading zeros) and the measured two- and three-decimal
 spellings, so the writer reproduces any valid file byte for byte. The tests edit

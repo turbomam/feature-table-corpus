@@ -264,29 +264,27 @@ def cross_checks(document):
 def taxon_checks(document, taxon_path):
     """The taxon GFF from the same bundle holds the same features, less misc_bind and misc_feature.
 
-    Every taxon row has a locus tag found here, with the same coordinates and
-    strand and the corresponding type (the taxon GFF writes misc_RNA as RNA), and
-    every row here except misc_bind and misc_feature is in the taxon GFF.
+    The taxon GFF is read with its own dialect's parser (scripts/img_taxon_bundle.py),
+    which refuses malformed rows and repeated keys. Every taxon row has a locus tag
+    found here, on the same contig at the same coordinates and strand, with the
+    corresponding type (the taxon GFF writes misc_RNA as RNA), and every row here
+    except misc_bind and misc_feature is in the taxon GFF.
     """
+    import img_taxon_bundle as taxon_dialect
+    try:
+        rows = taxon_dialect.parse_gff_lines(taxon_dialect.text_lines(taxon_path))
+    except taxon_dialect.DialectError as error:
+        return [f"--taxon: {error}"]
     strands = {"1": "+", "-1": "-"}
     here = {row.get("locus_tag"): row for row in document["rows"]}
     problems = []
-    try:
-        with open(taxon_path, encoding="utf-8") as handle:
-            lines = handle.read().split("\n")
-    except (OSError, UnicodeDecodeError) as error:
-        return [f"--taxon: can't read {taxon_path}: {error}"]
     taken = set()
-    for number, text in enumerate(lines, start=1):
-        if not text or text.startswith("#"):
+    for taxon in rows:
+        where = f"{Path(taxon_path).name} line {taxon['line']}"
+        tag = taxon.get("locus_tag")
+        if tag is None:
+            problems.append(f"{where}: no locus_tag")
             continue
-        where = f"{Path(taxon_path).name} line {number}"
-        columns = text.split("\t")
-        match = re.search(r"(?:^|;)locus_tag=([^;]+)", columns[-1]) if len(columns) == 9 else None
-        if not match:
-            problems.append(f"{where}: not a nine-column row with a locus_tag")
-            continue
-        tag = match.group(1)
         if tag in taken:
             problems.append(f"{where}: locus_tag {tag} repeats in the taxon GFF")
             continue
@@ -294,13 +292,11 @@ def taxon_checks(document, taxon_path):
         row = here.get(tag)
         if row is None:
             problems.append(f"{where}: locus_tag {tag} is not in this file")
-        elif (row.get("seqid"), str(row.get("start")), str(row.get("end")), strands.get(row.get("strand"))) != (
-                columns[0], columns[3], columns[4], columns[6]):
+        elif (row.get("seqid"), row.get("start"), row.get("end"), strands.get(row.get("strand"))) != (
+                taxon.get("seqid"), taxon.get("start"), taxon.get("end"), taxon.get("strand")):
             problems.append(f"{where}: locus_tag {tag} has another contig, coordinates or strand here")
-        elif TAXON_TYPE.get(row.get("type")) != columns[2]:
-            problems.append(f"{where}: locus_tag {tag} is {columns[2]} there but {row.get('type')} here")
-    if not taken:
-        problems.append(f"--taxon: {taxon_path} has no rows with a locus_tag")
+        elif TAXON_TYPE.get(row.get("type")) != taxon.get("type"):
+            problems.append(f"{where}: locus_tag {tag} is {taxon.get('type')} there but {row.get('type')} here")
     for row in document["rows"]:
         if row.get("type") in TAXON_TYPE and row.get("locus_tag") not in taken:
             problems.append(f"line {row['line']}: {row.get('type')} {row.get('locus_tag')} is not in the taxon GFF")
