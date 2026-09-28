@@ -106,6 +106,20 @@ class ValidationTests(unittest.TestCase):
             path.write_text(text.replace("1e-05", "NaN", 1))
             with self.assertRaisesRegex(ValueError, "NaN is not a JSON number"):
                 load_validated(SCHEMA, path)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(path), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertIn("NaN is not a JSON number", result.stderr)
+            # An exponent past the float range parses as inf without calling parse_constant.
+            path.write_text(text.replace("1e-05", "1e400", 1))
+            with self.assertRaisesRegex(ValueError, r"\['score'\] is not a finite number"):
+                load_validated(SCHEMA, path)
+            yaml_path = Path(tmp) / "dataset.yaml"
+            yaml_path.write_text(yaml.safe_dump(data).replace("1.0e-05", ".inf", 1))
+            self.assertIn(".inf", yaml_path.read_text())
+            with self.assertRaisesRegex(ValueError, "is not a finite number"):
+                load_validated(SCHEMA, yaml_path)
 
     def test_semantic_constraints(self):
         cases = (

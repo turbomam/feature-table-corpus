@@ -9,6 +9,7 @@ in declared collections), parent cycles and coordinate spaces. These checks are 
 an identifier to another record's translated sequence.
 """
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -131,17 +132,35 @@ def _no_constant(name):
     raise ValueError(f"{name} is not a JSON number")
 
 
+def _non_finite(value, where="data"):
+    """Where a loaded value holds nan or inf, or None."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return where
+    items = value.items() if isinstance(value, dict) else enumerate(value) if isinstance(value, list) else ()
+    for key, item in items:
+        found = _non_finite(item, f"{where}[{key!r}]")
+        if found:
+            return found
+    return None
+
+
 def load_data(data_path):
     """A .json file is read as JSON, anything else as YAML.
 
     PyYAML follows YAML 1.1, which reads 1e-05 (as json.dumps writes it) as a string.
-    NaN and Infinity, which json.load accepts by default, are not JSON and are refused.
+    NaN and Infinity, which json.load accepts by default, are not JSON and are refused,
+    and so is any non-finite float either format yields (1e400 in JSON, .inf in YAML).
     """
     path = Path(data_path)
     if path.suffix == ".json":
         with open(path, encoding="utf-8") as handle:
-            return json.load(handle, parse_constant=_no_constant)
-    return yaml.safe_load(path.read_text())
+            data = json.load(handle, parse_constant=_no_constant)
+    else:
+        data = yaml.safe_load(path.read_text())
+    found = _non_finite(data)
+    if found:
+        raise ValueError(f"{found} is not a finite number")
+    return data
 
 
 def load_validated(schema_path, data_path):
@@ -157,7 +176,11 @@ def main():
         print(__doc__, file=sys.stderr)
         return 2
     schema_path, data_path, top_class = sys.argv[1:4]
-    data = load_data(data_path)
+    try:
+        data = load_data(data_path)
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        print(f"{data_path}: {error}", file=sys.stderr)
+        return 1
     errors = validation_errors(data, make_validator(schema_path, top_class), top_class)
     for error in errors:
         print(f"ERROR: {error}")
