@@ -13,9 +13,10 @@ comments:
     constant "contig"; Dataset.contigs holds one Contig per distinct seqid; and mirror_source is
     restored on the inverted strand mapping.
   - >-
-    Name, pacid and longest have no Feature slot and travel only as attributes. Whether the model
-    should give the representative-isoform flag (longest=1) a typed home is open in
-    https://github.com/turbomam/feature-table-corpus/issues/48; this mapping makes no model decision.
+    longest also sets Feature.is_representative in the script (1 true, 0 false, absent unset),
+    because linkml-map can't invert an expression. Like ID and Parent, it keeps its attribute copy,
+    which holds its position in column 9; the reverse step requires the two to agree. Name and pacid
+    have no Feature slot and travel only as attributes.
 source_schema:
   name: phytozome_gene_exons_gff3
   source_file: model/dialects/phytozome-gene-exons-gff3.yaml

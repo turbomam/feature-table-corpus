@@ -348,9 +348,10 @@ byte for byte. There is no conversion profile for these dialects yet.
 [`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)
 maps the GFF3 rows to `Feature` with linkml-map, the same way as the IMG functional annotation
 above, and `scripts/phytozome_gene_exons_map.py` adds the same four things linkml-map can't do.
-Gene, mRNA and part rows each become a `Feature`, joined by `parent`. `Name`, `pacid` and `longest`
-have no `Feature` slot and travel only as attributes; a typed home for the representative isoform
-is https://github.com/turbomam/feature-table-corpus/issues/48. The two directives are not model
+Gene, mRNA and part rows each become a `Feature`, joined by `parent`. `longest` sets
+`Feature.is_representative` (`1` true, `0` false) and, like `ID` and `Parent`, keeps its attribute
+copy, which the reverse step requires to agree; `Name` and `pacid` have no `Feature` slot and travel
+only as attributes. The two directives are not model
 data: the reverse step writes `##gff-version 3` and recovers the annot-version from the gene IDs,
 each of which is the gene's Name, a dot, and the annot-version (`.TAIR10` in the Arabidopsis file,
 `.EXv1` in the fixture); all genes must agree. It rebuilds each row's text and parses it with the

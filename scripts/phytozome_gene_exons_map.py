@@ -7,8 +7,9 @@
 The core columns go through model/transforms/phytozome-gene-exons-gff3.transform.yaml
 forward, and through `linkml-map invert` of that same file in reverse. As in
 scripts/img_functional_map.py, this module adds only what linkml-map 0.5.4 can't
-do here (see the transform file's comments). Name, pacid and longest travel as
-attributes; a typed home for longest=1 is open in issue 48.
+do here (see the transform file's comments). longest also sets
+Feature.is_representative (1 true, 0 false); Name, pacid and longest travel as
+attributes, as every column 9 key does.
 
 The reverse direction rebuilds each row's text and parses it with the dialect's
 own row parser, so a Dataset the dialect can't hold is refused, not reinterpreted.
@@ -62,6 +63,10 @@ def forward(document, transformers=None):
                                               source_type=ROW))
         feature["coordinate_system"] = "contig"
         feature["attributes"] = [{"key": key, "value": str(row[key])} for key in row["attribute_order"]]
+        # longest=1 marks the gene's representative isoform and longest=0 the others;
+        # a row without the key says nothing, so the slot stays unset.
+        if "longest" in row:
+            feature["is_representative"] = row["longest"] == 1
         features.append(feature)
     contigs = [{"contig_id": seqid} for seqid in dict.fromkeys(row["seqid"] for row in document["rows"])]
     return {"contigs": contigs, "features": features}
@@ -107,6 +112,11 @@ def reverse(dataset, source_file, transformers=None):
             if mapped.get(key) != row.get(key):
                 raise ValueError(f"{name}: {key} is {mapped.get(key)!r} in the Feature but "
                                  f"{row.get(key)!r} in its attributes")
+        # So must is_representative and the longest attribute it comes from.
+        expected = row["longest"] == 1 if "longest" in row else None
+        if feature.get("is_representative") != expected:
+            raise ValueError(f"{name}: is_representative is {feature.get('is_representative')!r} but its "
+                             f"longest attribute gives {expected!r}")
         rows.append(row)
     try:
         version = annot_version(rows)

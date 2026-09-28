@@ -41,6 +41,31 @@ class MappingTests(unittest.TestCase):
         self.assertNotIn("phase", next(f for f in self.dataset["features"] if f["type"] == "exon"))
         self.assertEqual(self.dataset["contigs"], [{"contig_id": "scaffold_1"}])
 
+    def test_longest_sets_is_representative(self):
+        by_type = {}
+        for feature in self.dataset["features"]:
+            by_type.setdefault(feature["type"], []).append(feature)
+        flags = {f["feature_id"]: f["is_representative"] for f in by_type["mRNA"]}
+        longest = {f["feature_id"]: next(a["value"] for a in f["attributes"] if a["key"] == "longest")
+                   for f in by_type["mRNA"]}
+        self.assertEqual(flags, {k: v == "1" for k, v in longest.items()})
+        self.assertEqual(sorted(set(flags.values())), [False, True])
+        # Rows without longest say nothing, so the slot stays unset.
+        for kind in ("gene", "exon", "CDS"):
+            self.assertTrue(all("is_representative" not in f for f in by_type[kind]), kind)
+
+    def test_reverse_refuses_is_representative_that_disagrees_with_longest(self):
+        for change, expected in ((lambda f: f.update(is_representative=not f["is_representative"]), "longest attribute gives"),
+                                 (lambda f: f.pop("is_representative"), "is None but"),):
+            dataset = copy.deepcopy(self.dataset)
+            change(next(f for f in dataset["features"] if f["type"] == "mRNA"))
+            with self.subTest(expected), self.assertRaisesRegex(ValueError, expected):
+                self.back(dataset)
+        dataset = copy.deepcopy(self.dataset)
+        next(f for f in dataset["features"] if f["type"] == "exon")["is_representative"] = False
+        with self.assertRaisesRegex(ValueError, "longest attribute gives None"):
+            self.back(dataset)
+
     def test_annot_version_is_recovered_from_gene_ids(self):
         self.assertEqual(self.back(self.dataset)["annot_version"], "EXv1")
         genes_only_parts = copy.deepcopy(self.dataset)
