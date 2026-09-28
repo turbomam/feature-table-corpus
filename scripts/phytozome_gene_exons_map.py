@@ -22,7 +22,7 @@ from pathlib import Path
 import sys
 
 import phytozome_gene_exons as dialect
-from img_functional_map import canonical, difference, present, report_errors, write_output
+from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -169,6 +169,7 @@ def roundtrip(path):
 
 
 def main(argv=None):
+    quiet_linkml_map()
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
     fwd = commands.add_parser("forward")

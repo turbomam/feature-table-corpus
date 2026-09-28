@@ -16,8 +16,12 @@ comments:
     Name, pacid and longest have no Feature slot and travel only as attributes. Whether the model
     should give the representative-isoform flag (longest=1) a typed home is open in
     https://github.com/turbomam/feature-table-corpus/issues/48; this mapping makes no model decision.
-source_schema: model/dialects/phytozome-gene-exons-gff3.yaml
-target_schema: model/schema/ber_feature_model.yaml
+source_schema:
+  name: phytozome_gene_exons_gff3
+  source_file: model/dialects/phytozome-gene-exons-gff3.yaml
+target_schema:
+  name: ber-feature-model
+  source_file: model/schema/ber_feature_model.yaml
 class_derivations:
   Feature:
     populated_from: PhytozomeGeneExonsRow

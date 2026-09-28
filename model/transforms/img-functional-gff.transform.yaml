@@ -16,8 +16,12 @@ comments:
     drops mirror_source from the StrandEnum derivation below, so the script restores it. The
     script also derives Contig.translation_table from the CDS rows' translation_table attributes
     (scripts/translation_tables.py), which needs the Attribute list from (1).
-source_schema: model/dialects/img-functional-gff.yaml
-target_schema: model/schema/ber_feature_model.yaml
+source_schema:
+  name: img_functional_gff
+  source_file: model/dialects/img-functional-gff.yaml
+target_schema:
+  name: ber-feature-model
+  source_file: model/schema/ber_feature_model.yaml
 class_derivations:
   Feature:
     populated_from: ImgFunctionalGffRow

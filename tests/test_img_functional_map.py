@@ -333,6 +333,14 @@ class AgreementTests(unittest.TestCase):
             self.assertNotIn("product_source", theirs)
             self.assertEqual(ours, theirs)
 
+    def test_clean_round_trip_prints_nothing_to_stderr(self):
+        # linkml-map logs a warning per record, and a bare-string schema reference is
+        # deprecated; neither may reach the terminal on a clean run.
+        import subprocess
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/img_functional_map.py"), "roundtrip", str(FIXTURE)],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertEqual(result.stderr, "")
 
 if __name__ == "__main__":
     unittest.main()

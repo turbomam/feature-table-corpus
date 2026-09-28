@@ -18,6 +18,7 @@ equal. The written text may differ from the source only in number spelling.
 """
 import argparse
 import json
+import logging
 from pathlib import Path
 import sys
 
@@ -261,7 +262,17 @@ def write_output(path, text):
     return 0
 
 
+def quiet_linkml_map():
+    """Keep linkml-map's per-record warnings off stderr, so a run prints only its own result.
+
+    linkml-map 0.5.4 logs "Unexpected: <id> for type ..." and "Unknown target range ..."
+    for every record it maps; errors still show.
+    """
+    logging.getLogger("linkml_map").setLevel(logging.ERROR)
+
+
 def main(argv=None):
+    quiet_linkml_map()
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
     fwd = commands.add_parser("forward")
