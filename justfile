@@ -36,6 +36,7 @@ validate-schema:
     uv run --with linkml linkml-validate model/dialects/phytozome-gene-exons-gff3.yaml
     uv run --with linkml linkml-validate model/dialects/phytozome-annotation-info.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
+    uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/phytozome-gene-exons-gff3.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
@@ -315,6 +316,21 @@ map-img-functional-back input output:
 [group("Conversions")]
 map-img-functional-roundtrip input:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py roundtrip "$1"
+
+[doc("Map a Phytozome *.gene_exons.gff3 (or .gff3.gz) to a Dataset JSON with linkml-map.")]
+[group("Conversions")]
+map-phytozome-gff3 input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py forward "$1" "$2"
+
+[doc("Map a Dataset JSON back to Phytozome gene_exons GFF3 text.")]
+[group("Conversions")]
+map-phytozome-gff3-back input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py reverse "$1" "$2"
+
+[doc("Map a Phytozome gene_exons GFF3 forward and back; the file must come back byte for byte.")]
+[group("Conversions")]
+map-phytozome-gff3-roundtrip input:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py roundtrip "$1"
 
 [doc("Export exact bytes or reconstruct fields; refuse edited bundles.")]
 [group("Conversions")]
