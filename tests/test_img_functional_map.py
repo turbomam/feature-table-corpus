@@ -36,6 +36,20 @@ class MappingTests(unittest.TestCase):
         problems, _ = mapping.roundtrip(NMDC)
         self.assertEqual(problems, [])
 
+    def test_a_form_feed_before_a_respelled_number_round_trips(self):
+        # 011 comes back as 11 after the form feed, so a line split at the form feed would
+        # leave a one-column fragment that differs and can't be parsed.
+        import tempfile
+        rows = FIXTURE.read_text().split("\n")
+        rows[0] = (rows[0].replace("translation_table=11;", "", 1).replace("semialdehyde", "semi\x0caldehyde", 1)
+                   + ";translation_table=011")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "form-feed.gff"
+            path.write_text("\n".join(rows))
+            problems, report = mapping.roundtrip(path)
+        self.assertEqual(problems, [])
+        self.assertEqual(report["lines_differing_only_in_number_spelling"], 2)
+
     def test_roundtrip_reports_instead_of_raising(self):
         import tempfile
         with tempfile.TemporaryDirectory() as tmp:
