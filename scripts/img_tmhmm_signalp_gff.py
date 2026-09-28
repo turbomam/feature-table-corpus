@@ -214,6 +214,12 @@ def gene_checks(seqid, rows):
         problems.append(f"{where}: no TMhelix; genes without one are not listed")
     if "TMhelix" in (rows[0].get("type"), rows[-1].get("type")):
         problems.append(f"{where}: begins or ends with a helix")
+    length = residues(seqid)
+    # The last segment reaches the protein's end: the residues before the stop codon
+    # in every measured gene but two, which end one residue later.
+    if length is not None and rows[-1].get("end") not in (length - 1, length):
+        problems.append(f"line {rows[-1]['line']}: gene {seqid} ends at residue {rows[-1].get('end')}, "
+                        f"not at its protein's end ({length - 1} or {length})")
     sides = [row for row in rows if row.get("type") != "TMhelix"]
     for before, after in zip(sides, sides[1:]):
         if before.get("type") == after.get("type"):

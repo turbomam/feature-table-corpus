@@ -227,7 +227,8 @@ All four files validate, and the Clostridium pair is vendored.
   `Outside`, begins and ends outside a helix, and switches side across every helix. Rows carry
   only an `ID` of `<gene ID>_<start>_<end>` and no score.
 - The last segment ends at the protein's length, a third of the gene span less the stop codon,
-  except in two Methanococcus genes where it ends one residue later; the check allows both.
+  except in two Methanococcus genes where it ends one residue later. The check requires one
+  of those two, so a file cut short inside a gene is rejected.
 - A SignalP row spans the two residues around the cleavage, so its end is start + 1, and a gene
   has at most one. Keys are `D-score`, `network` and `organism_type` in that order. Column 6 is a
   score between 0 and 1 that differs from the D-score in every row.

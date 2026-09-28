@@ -112,6 +112,10 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected("tmh", 2, "\tInside\t", "\tTMhelix\t", "two helix or two non-helix segments")
         self.assert_rejected("tmh", 0, "\tOutside\t", "\tTMhelix\t", "begins or ends with a helix")
         self.assert_rejected("tmh", 4, "\tOutside\t", "\tInside\t", "Inside on both sides of a helix")
+        self.assert_rejected("tmh", 4, "\t84\t399\t.\t.\t.\tID=ctg_01_100_1299_84_399",
+                             "\t84\t398\t.\t.\t.\tID=ctg_01_100_1299_84_398", "ends at residue 398, not at its protein's end")
+        rows = lines("tmh")
+        self.assert_text_rejected("\n".join(rows[:3]) + "\n", "line 3: gene ctg_01_100_1299 ends at residue 60")
 
     def test_each_gene_is_one_block_with_a_helix(self):
         rows = lines("tmh")
