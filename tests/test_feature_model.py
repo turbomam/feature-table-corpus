@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_duckdb import build_database
 from flat_profile_audit import audit
 from query_duckdb import by_attribute, interval_overlap, multiple_pfams
-from validate_closed import load_validated, make_validator, validation_errors
+from validate_closed import _check_values, load_data, load_validated, make_validator, validation_errors
 
 SCHEMA = ROOT / "model/schema/ber_feature_model.yaml"
 EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
@@ -87,6 +87,73 @@ class ValidationTests(unittest.TestCase):
             with self.subTest(missing=field):
                 self.reject(lambda d: d["features"][0].pop(field), "required")
         self.reject(lambda d: d["contigs"][0].__setitem__("length_bp", 0), "minimum")
+
+    def test_json_datasets_keep_exponent_floats_and_refuse_nan(self):
+        # json.dumps writes 1e-05, which PyYAML's YAML 1.1 rules read as a string.
+        data = copy.deepcopy(self.example)
+        feature = next(f for f in data["features"] if "score" in f)
+        feature["score"] = 1e-05
+        text = json.dumps(data)
+        self.assertIn("1e-05", text)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "dataset.json"
+            path.write_text(text)
+            loaded = load_validated(SCHEMA, path)
+            self.assertEqual(next(f for f in loaded["features"] if "score" in f)["score"], 1e-05)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(path), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            path.write_text(text.replace("1e-05", "NaN", 1))
+            with self.assertRaisesRegex(ValueError, "NaN is not a JSON number"):
+                load_validated(SCHEMA, path)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(path), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertIn("NaN is not a JSON number", result.stderr)
+            # An exponent past the float range parses as inf without calling parse_constant.
+            path.write_text(text.replace("1e-05", "1e400", 1))
+            with self.assertRaisesRegex(ValueError, r"\['score'\] is not a finite number"):
+                load_validated(SCHEMA, path)
+            yaml_path = Path(tmp) / "dataset.yaml"
+            yaml_path.write_text(yaml.safe_dump(data).replace("1.0e-05", ".inf", 1))
+            self.assertIn(".inf", yaml_path.read_text())
+            with self.assertRaisesRegex(ValueError, "is not a finite number"):
+                load_validated(SCHEMA, yaml_path)
+            # A YAML alias can make a list contain itself; that is refused, not a RecursionError.
+            yaml_path.write_text("features: &f [*f]\n")
+            with self.assertRaisesRegex(ValueError, r"data\['features'\]\[0\] contains itself"):
+                load_validated(SCHEMA, yaml_path)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(yaml_path), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn("Traceback", result.stderr)
+            # The same alias used twice without a cycle is fine for the loader.
+            yaml_path.write_text("a: &x [1.5]\nb: *x\n")
+            self.assertEqual(load_data(yaml_path), {"a": [1.5], "b": [1.5]})
+            # The suffix is matched in any case, so .JSON keeps 1e-05 a number too.
+            upper = Path(tmp) / "dataset.JSON"
+            upper.write_text(text)
+            self.assertEqual(next(f for f in load_validated(SCHEMA, upper)["features"] if "score" in f)["score"], 1e-05)
+            # The walk and its error path are iterative, so a value nested deeper than the
+            # recursion limit is reported, not a RecursionError. Built in memory, since
+            # where the JSON loader's own limit falls differs between Python builds.
+            depth = sys.getrecursionlimit() + 500
+            deep_inf = float("inf")
+            for _ in range(depth):
+                deep_inf = [deep_inf]
+            with self.assertRaisesRegex(ValueError, rf"data\[0\].*\.\.\.\({depth - 10} more\)\.\.\..*is not a finite number"):
+                _check_values(deep_inf)
+            # Both loaders recurse; nesting past their limit is refused, not a traceback.
+            for name in ("deep.json", "deep.yaml"):
+                deep = Path(tmp) / name
+                deep.write_text("[" * 100000 + "]" * 100000)
+                with self.assertRaisesRegex(ValueError, "nested too deeply to load"):
+                    load_data(deep)
+                result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                         str(SCHEMA), str(deep), "Dataset"], capture_output=True, text=True)
+                self.assertEqual(result.returncode, 1)
+                self.assertNotIn("Traceback", result.stderr)
 
     def test_semantic_constraints(self):
         cases = (

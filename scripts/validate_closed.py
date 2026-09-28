@@ -8,6 +8,8 @@ also cover interval ordering, unique IDs, references (including contig membershi
 in declared collections), parent cycles and coordinate spaces. These checks are explicit: JSON Schema cannot compare two fields or resolve
 an identifier to another record's translated sequence.
 """
+import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -157,8 +159,75 @@ def validation_errors(data, validator, class_name="Dataset"):
     return errors
 
 
+def _no_constant(name):
+    raise ValueError(f"{name} is not a JSON number")
+
+
+def _check_values(data):
+    """Refuse a non-finite float, or a container that contains itself (a YAML alias can build one).
+
+    Iterative, with one iterator per nesting level, so this walk neither recurses
+    nor builds a list of every child. A problem's path is built from the frames
+    only when it is reported. A container shared without a cycle, as a repeated
+    YAML alias makes, is checked once.
+    """
+    def children(value):
+        return iter(value.items()) if isinstance(value, dict) else enumerate(value)
+
+    def path(frames, key):
+        keys = [frame[2] for frame in frames[1:]] + ([key] if frames else [])
+        parts = [f"[{k!r}]" for k in keys]
+        if len(parts) > 20:
+            parts = parts[:5] + [f"...({len(parts) - 10} more)..."] + parts[-5:]
+        return "data" + "".join(parts)
+
+    active, done = set(), set()
+    frames = []  # (container, iterator over its children, key it sits under)
+    pending = [(data, None)]
+    while pending or frames:
+        if pending:
+            value, key = pending.pop()
+            if isinstance(value, float) and not math.isfinite(value):
+                raise ValueError(f"{path(frames, key)} is not a finite number")
+            if isinstance(value, (dict, list)) and id(value) not in done:
+                if id(value) in active:
+                    raise ValueError(f"{path(frames, key)} contains itself")
+                active.add(id(value))
+                frames.append((value, children(value), key))
+            continue
+        container, items, _ = frames[-1]
+        step = next(items, None)
+        if step is None:
+            frames.pop()
+            active.discard(id(container))
+            done.add(id(container))
+        else:
+            pending.append((step[1], step[0]))
+
+
+def load_data(data_path):
+    """A file whose suffix is .json, in any case, is read as JSON, anything else as YAML.
+
+    PyYAML follows YAML 1.1, which reads 1e-05 (as json.dumps writes it) as a string.
+    NaN and Infinity, which json.load accepts by default, are not JSON and are refused,
+    and so is any non-finite float either format yields (1e400 in JSON, .inf in YAML).
+    Both loaders recurse, so nesting deeper than they can follow is a ValueError too.
+    """
+    path = Path(data_path)
+    try:
+        if path.suffix.lower() == ".json":
+            with open(path, encoding="utf-8") as handle:
+                data = json.load(handle, parse_constant=_no_constant)
+        else:
+            data = yaml.safe_load(path.read_text())
+    except RecursionError:
+        raise ValueError("nested too deeply to load") from None
+    _check_values(data)
+    return data
+
+
 def load_validated(schema_path, data_path):
-    data = yaml.safe_load(Path(data_path).read_text())
+    data = load_data(data_path)
     errors = validation_errors(data, make_validator(schema_path))
     if errors:
         raise ValueError("Invalid Dataset:\n" + "\n".join(errors))
@@ -170,7 +239,11 @@ def main():
         print(__doc__, file=sys.stderr)
         return 2
     schema_path, data_path, top_class = sys.argv[1:4]
-    data = yaml.safe_load(Path(data_path).read_text())
+    try:
+        data = load_data(data_path)
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        print(f"{data_path}: {error}", file=sys.stderr)
+        return 1
     errors = validation_errors(data, make_validator(schema_path, top_class), top_class)
     for error in errors:
         print(f"ERROR: {error}")
