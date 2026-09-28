@@ -309,7 +309,8 @@ rows and every table with positions to `Feature`, one linkml-map derivation per 
   names. Its `feature_id` follows https://github.com/turbomam/feature-table-corpus/issues/98:
   `<gene_oid>_<start>_<end>|<table>|<type>`, since table rows have no ID. `score` is `bit_score`
   where the table has one, with `score_type: bit_score`, because the README names the column so.
-  Every other column is an Attribute in column order, as the dialect writes it.
+  Every other column is an Attribute in column order, as the dialect writes it. A list cell,
+  InterPro `go_info`, is one Attribute per `|`-separated member, in cell order.
 - A KO hit that lists several EC numbers is written as one row per number (126 extra rows in
   Bacillus, 79 in Zymomonas). It becomes one Feature with one `EC` Attribute per row; the rows
   must be adjacent and agree in every other column, or the bundle is refused.
@@ -454,7 +455,7 @@ which keys are multivalued.
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
 | IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
-| IMG taxon bundle GFF | none; `ID`, `locus_tag` and `product` are single values | none | not yet mapped to `Feature` |
+| IMG taxon bundle and its mapping | only the InterPro table's `go_info`, split on `\|`; GFF `ID`, `locus_tag` and `product` are single values | none | `GO:0006807\|GO:0016810` in the fixture is two entries |
 | Phytozome gene_exons GFF3 and its mapping | none; refuses any comma or `%` in column 9 | none | each key is one entry, for example `pacid=90000001` in the fixture |
 | `insdc-locations/1.0.0` | none; a GenBank qualifier repeats instead | not applicable | two `/db_xref` lines are two entries |
 

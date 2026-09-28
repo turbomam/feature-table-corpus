@@ -129,6 +129,17 @@ class MappingTests(unittest.TestCase):
         for kind in kinds:
             self.assertEqual(back[kind], self.document[kind], kind)
 
+    def test_a_list_cell_is_one_attribute_per_member(self):
+        ipr = self.feature(self.dataset, "9900000006_30_40|ipr|PS00001")
+        self.assertEqual([a["value"] for a in ipr["attributes"] if a["key"] == "go_info"],
+                         ["GO:0006807", "GO:0016810"])
+        self.assertEqual(self.back(self.dataset)["ipr"], self.document["ipr"])
+        dataset = copy.deepcopy(self.dataset)
+        cog = next(f for f in dataset["features"] if "|cog|" in f["feature_id"])
+        cog["attributes"].append(dict(next(a for a in cog["attributes"] if a["key"] == "cog_name")))
+        with self.assertRaisesRegex(ValueError, "without loss"):
+            self.back(dataset)
+
     def test_a_repeated_hit_id_outside_ko_is_refused(self):
         document = copy.deepcopy(self.document)
         twin = dict(document["cog"][0], subj_start=document["cog"][0]["subj_start"] + 1)
@@ -170,6 +181,25 @@ class MappingTests(unittest.TestCase):
             for name in written:
                 self.assertEqual((out.parent / name).read_bytes(), (source / name).read_bytes(), name)
 
+
+    def test_a_failed_write_removes_the_partial_file_and_the_earlier_ones(self):
+        # A write that fails after creating its file (a full disk, say) must leave no bundle file.
+        from unittest import mock
+        real, calls = mapping.write_new, []
+        def fail_third(path, text):
+            calls.append(path)
+            if len(calls) == 3:
+                Path(path).write_text("partial")
+                return False, True
+            return real(path, text)
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, out = Path(tmp) / "d.json", Path(tmp) / "out" / "9900000001.gff"
+            out.parent.mkdir()
+            with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(FIXTURE), str(dataset)]), 0)
+                with mock.patch.object(mapping, "write_new", fail_third):
+                    self.assertEqual(mapping.main(["reverse", str(dataset), str(out)]), 1)
+            self.assertEqual(list(out.parent.iterdir()), [])
 
 if __name__ == "__main__":
     unittest.main()

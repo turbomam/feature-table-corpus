@@ -35,6 +35,7 @@ import sys
 
 import img_taxon_bundle as dialect
 from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
+from phytozome_annotation_map import write_new
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -173,8 +174,12 @@ def forward(document, transformers=None):
                         if member_cells["EC"] != "" or len(group) > 1:
                             attributes.append({"key": "EC", "value": member_cells["EC"]})
                     continue
-                if cell != "":
-                    attributes.append({"key": name, "value": cell})
+                if cell == "":
+                    continue
+                # A list cell (InterPro go_info) is one Attribute per member, in cell order.
+                parts = row[name] if isinstance(row.get(name), list) else [None]
+                attributes.extend({"key": name, "value": cell if part is None else dialect.value_text(part)}
+                                  for part in parts)
             feature["attributes"] = attributes
             features.append(feature)
     contigs = [{"contig_id": s} for s in dict.fromkeys(r["seqid"] for r in document["rows"] if r.get("type") != "CRISPR")]
@@ -234,14 +239,17 @@ def reverse(dataset, gff_path, transformers=None):
         if feature.get("score_type") != ("bit_score" if score else None):
             raise ValueError(f"{name}: score_type should be {'bit_score' if score else 'unset'}")
         values = {n: dialect.value_text(v) for n, v in mapped.items()}
-        ec = []
+        ec, kept = [], {}
         for attribute in feature.get("attributes", []):
             if kind == "ko" and attribute["key"] == "EC":
                 ec.append(attribute["value"])
             elif attribute["key"] in values or attribute["key"] not in columns(kind):
                 raise ValueError(f"{name}: attribute {attribute['key']!r} is not a {kind} column the Feature leaves out")
             else:
-                values[attribute["key"]] = attribute["value"]
+                kept.setdefault(attribute["key"], []).append(attribute["value"])
+        # Repeats of one column rejoin into its list cell; the forward check below refuses
+        # repeats of a column that holds one value.
+        values.update({key: dialect.LIST_SEPARATOR.join(parts) for key, parts in kept.items()})
         for value in (ec or [None]):
             row_values = dict(values, **({"EC": value} if value is not None else {}))
             try:
@@ -393,11 +401,14 @@ def main(argv=None):
             return 1
         written = []
         for path, text in paths.items():
-            if write_output(path, text):
+            ok, created = write_new(path, text)
+            if created:
+                written.append(path)
+            if not ok:
+                # Remove only files this call created, including a partly written one.
                 for done in written:
                     done.unlink()
                 return 1
-            written.append(path)
         return 0
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:
