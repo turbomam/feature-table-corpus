@@ -43,8 +43,8 @@ internally consistent artifact; it cannot pass comparison with the old original.
 | Profile | Forward mapping | Reverse mapping and bounds |
 |---|---|---|
 | [`insdc-locations/1.0.0`](../model/profiles/insdc-locations.yaml) | GenBank nucleotide records with qualified references, ordered parts, partial endpoints, circular topology and generic qualifiers. | Reconstruct feature-table blocks from modeled locations and qualifiers; preserve header/sequence text in SourceDocument. Remote, between-base, unknown and mixed-strand locations are refused. |
-| [`nmdc-pfam-protein/1.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
-| [`gff3-contig/1.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
+| [`nmdc-pfam-protein/2.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
+| [`gff3-contig/2.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
 
 These restrictions belong to these adapters, not to the full input formats.
@@ -56,7 +56,7 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/1.0.0`,
+The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/2.0.0`,
 adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
 original contracts unchanged. Supporting CDSs are not exported as additional
 Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.
@@ -91,7 +91,7 @@ Methanococcus maripaludis S1 `Ga0416744`, 2,005 rows), which need a JGI login to
 ([#52](https://github.com/turbomam/feature-table-corpus/issues/52)), and the vendored NMDC file.
 The Clostridium file is now vendored too, as `corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff`.
 
-- `gff3-contig/1.0.0` rejects both isolate files at their first product name containing a
+- `gff3-contig/2.0.0` rejects both isolate files at their first product name containing a
   comma (`product-cardinality`), for example "glutamate-1-semialdehyde 2,1-aminomutase".
   96 product names in the two files have one. The dialect splits commas only for the keys it
   types as lists (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`,
@@ -211,8 +211,36 @@ The other per-genome files were measured on the same date to place them:
   validate (checked 2026-09-28). The NMDC GeneMark file has no header lines.
 - `_tmh` (TMHMM topology, column 3 `Inside`, `Outside` or `TMhelix`, score `.`) and
   `_cleavage_sites` (SignalP, column 3 `cleavage_site`, no `ID`) are on protein positions like
-  the hit files, but their column 3 is not an accession and their keys differ. They need their
-  own dialect.
+  the hit files, but their column 3 is not an accession and their keys differ. They have their
+  own dialect, below.
+
+### IMG TMHMM and SignalP files
+
+[`img-tmhmm-signalp-gff.yaml`](../model/dialects/img-tmhmm-signalp-gff.yaml) covers `_tmh.gff`
+(TMHMM topology, written by `decodeanhmm 1.1g`) and `_cleavage_sites.gff` (SignalP 4.1),
+https://github.com/turbomam/feature-table-corpus/issues/76. It was measured on 2026-09-28 against
+both isolates: 9,710 and 4,078 TMHMM rows on 1,066 and 436 genes, and 146 and 79 SignalP rows.
+All four files validate, and the Clostridium pair is vendored.
+
+- A TMHMM file lists only genes with at least one helix. Each gene's segments are one block
+  that starts at residue 1, runs without gaps, alternates between `TMhelix` and `Inside` or
+  `Outside`, begins and ends outside a helix, and switches side across every helix. Rows carry
+  only an `ID` of `<gene ID>_<start>_<end>` and no score.
+- The last segment ends at the protein's length, a third of the gene span less the stop codon,
+  except in two Methanococcus genes where it ends one residue later. The check requires one
+  of those two, so a file cut short inside a gene is rejected.
+- A SignalP row spans the two residues around the cleavage, so its end is start + 1, and a gene
+  has at most one. Keys are `D-score`, `network` and `organism_type` in that order. Column 6 is a
+  score between 0 and 1 that differs from the D-score in every row.
+- `organism_type` is `gram-` in every row, including the Gram-positive Clostridium's and the
+  archaeal Methanococcus's. It is kept as written, not interpreted.
+
+The parser infers the method from the first row's column 3 and requires every row, and a file
+name ending `_tmh.gff` or `_cleavage_sites.gff`, to agree. `just dialect-validate-img-tmhmm-signalp
+FILE` runs it. The writer reproduces both TMHMM files byte for byte; in the SignalP files it
+respells a trailing zero (`0.670` as `0.67`) on 49 of 225 lines, so their round trip is checked
+by parsed rows, as in the other IMG dialects. The tests edit single rows of
+[constructed fixtures](../tests/fixtures/img-tmhmm-signalp-gff/README.md).
 
 ### IMG taxon bundle
 
@@ -341,13 +369,25 @@ Two model slots are filled from retained source values rather than read from a c
 - `Contig.translation_table`, in `gff3-contig` and the IMG functional mapping, when every CDS
   on the contig carries a `translation_table` attribute and all of them name the same assigned
   NCBI genetic code (`011` counts as 11). CDS values that disagree, within one row or across
-  rows, are refused with `translation-table-conflict`. A contig with a CDS lacking the
-  attribute, or naming an unassigned or non-integer table, is left unset.
+  rows, are refused with `translation-table-conflict`. A contig is left unset when any CDS on
+  it lacks the attribute, or when all its CDS name the same unassigned or non-integer value.
+  The Dataset validator rejects the same disagreements, whether or not the contig has a table.
 - `Feature.score_type` is `bit_score` on `nmdc-pfam-protein` rows that have a score, because
   nmdc-lakehouse documents NMDC's HMMER column 6 as a bit score
   (https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/pfam_annotation_gff.md).
   No other profile sets it: nothing retained says what Prodigal, GeneMark, lastal, INFERNAL or
   BED scores are.
+
+Adding these slots changed both profiles, so both moved to 2.0.0: each adds output, and each
+now refuses input 1.0.0 accepted (conflicting CDS tables, in the imported file for `gff3-contig`
+and in the protein context for `nmdc-pfam-protein`). A bundle made under 1.0.0 is refused as an
+unsupported profile rather than validated against the new rules.
+
+The Dataset validator rejects conflicting CDS tables, as the converters do, but it accepts a
+contig table that no CDS attribute backs, for example one a source states in a pragma or a
+Prodigal sequence comment. The IMG functional mapping cannot write such a table back, so its
+reverse step refuses it as a loss; that refusal is about what the dialect can hold, not a
+validity rule.
 
 Neither slot is read by export, so exact and reconstructed bytes do not change. Re-import
 derives them again, so removing or editing one is an edit like any other and is refused.
@@ -371,7 +411,7 @@ jsonschema 4.26.0, PyYAML 6.0.3, rfc3987 1.3.8 and Biopython 1.85. Use new outpu
 ```sh
 just conversion-import \
   corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
-  gff3-contig/1.0.0 nmdc:wfmgan-11-9ya9xh30.1 \
+  gff3-contig/2.0.0 nmdc:wfmgan-11-9ya9xh30.1 \
   local/conversions/prodigal.json --metadata-profile prodigal
 just conversion-validate local/conversions/prodigal.json \
   --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
