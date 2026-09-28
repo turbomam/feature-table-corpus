@@ -59,7 +59,7 @@ class MappingTests(unittest.TestCase):
         cases = {
             "score": (lambda f: f.update(score=1.5), "without loss"),
             "coordinate_system": (lambda f: f.update(coordinate_system="protein"), "only contig"),
-            "strand": (lambda f: f.update(strand="."), ""),
+            "strand": (lambda f: f.update(strand="."), "loses or changes \\['strand'\\]"),
             "ID": (lambda f: f.update(feature_id="Ga0000001_101.9"), "feature_id is"),
             "product": (lambda f: f.update(product="kinase"), "product is 'kinase' in the Feature"),
             "conf spelling": (lambda f: f["attributes"][1].update(value="100.0"), "decimals"),
