@@ -84,7 +84,7 @@ or all GFF3 grammar.
 CI also downloads the pinned, unvendored prior-art GFF schema and asserts its published
 19-admissible/13-rejected audit totals. Locally, set `PINNED_GFF_SCHEMA` to that downloaded
 schema's path to include this test; otherwise it is explicitly skipped. The current draft
-model's separate totals, 34 admissible of 50 class and slot pairs, are tested without network access.
+model's separate totals, 35 admissible of 51 class and slot pairs, are tested without network access.
 
 ContigCollection, Contig and Feature all expose `generated_by` and `source_files`. These remain optional
 for sources lacking workflow metadata, but every supplied example populates them.
@@ -151,3 +151,13 @@ sets `score_type`. `scripts/validate_closed.py` rejects a contig whose `translat
 disagrees with the `translation_table` attribute of any contig-coordinate CDS on it.
 Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
 `gff3-contig` profile deliberately does not infer contig lengths from declared regions.
+
+## Representative isoforms
+
+`Feature.is_representative` says whether the source names a transcript as its gene's representative
+isoform ([issue 48](https://github.com/turbomam/feature-table-corpus/issues/48)). Phytozome marks it
+with `longest=1` on one mRNA per gene. It is not `is_selected`, which records which competing call a
+pipeline kept for a locus. Unset means the source does not say, and false only means what the
+source states, as Phytozome's `longest=0` does. The Dataset validator refuses two representatives
+under one parent, and a mark, true or false, on a feature with no parent or with a parent that has a parent of
+its own, such as an exon under an mRNA.

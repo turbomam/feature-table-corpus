@@ -29,7 +29,7 @@ CONTIG_COLUMNS = (
 FEATURE_COLUMNS = (
     "feature_id", "stable_identifiers", "seqid", "source", "type", "start", "end", "coordinate_system",
     "score", "score_type", "strand", "phase", "generated_by", "source_files", "is_selected",
-    "product", "product_source", "translated_sequence", "parent", "attributes", "location",
+    "is_representative", "product", "product_source", "translated_sequence", "parent", "attributes", "location",
 )
 
 
@@ -96,6 +96,7 @@ def _populate_database(data, db_path):
                 generated_by VARCHAR,
                 source_files VARCHAR[],
                 is_selected BOOLEAN,
+                is_representative BOOLEAN,
                 product VARCHAR,
                 product_source VARCHAR,
                 translated_sequence VARCHAR,

@@ -25,6 +25,20 @@ EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
 PFAMS = ROOT / "model/examples/multiple-pfams/harmonized.yaml"
 
 
+def with_isoforms(example, count=2):
+    """A copy of the example with `count` mRNA children under its first feature, as a gene."""
+    data = copy.deepcopy(example)
+    gene = data["features"][0]["feature_id"]
+    isoforms = []
+    for number in range(1, count + 1):
+        isoform = copy.deepcopy(data["features"][0])
+        isoform.update(feature_id=f"{gene}.mRNA{number}", type="mRNA", parent=[gene], attributes=[])
+        isoform.pop("is_selected", None)
+        isoforms.append(isoform)
+    data["features"].extend(isoforms)
+    return data, gene, isoforms
+
+
 class ValidationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -316,6 +330,42 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(by_source.pop("HMMER"), {"bit_score"})
         self.assertEqual({v for values in by_source.values() for v in values}, {None})
 
+    def test_is_representative_is_an_optional_boolean(self):
+        """Issue 48: Phytozome's longest=1 has a typed home, separate from is_selected."""
+        data, gene, isoforms = with_isoforms(self.example)
+        isoforms[0]["is_representative"] = True
+        self.assertEqual(validation_errors(data, self.validator), [])
+        isoforms[0]["is_representative"] = "1"
+        self.assertTrue(any("is not of type" in e for e in validation_errors(data, self.validator)))
+        # A mark without a parent says nothing about a gene's isoforms.
+        self.reject(lambda d: d["features"][0].__setitem__("is_representative", False),
+                    "is_representative needs a parent gene")
+        # A mark on an exon under the mRNA names an mRNA, not a gene, as its parent.
+        isoforms[0]["is_representative"] = True
+        exon = copy.deepcopy(isoforms[0])
+        exon.update(feature_id=f"{isoforms[0]['feature_id']}.exon1", type="exon",
+                    parent=[isoforms[0]["feature_id"]])
+        data["features"].append(exon)
+        # A parent ID with no row is refused like any unknown parent, marked or not.
+        orphan = copy.deepcopy(isoforms[1])
+        orphan.update(feature_id="orphan.mRNA1", parent=["no-such-gene"], is_representative=True)
+        data["features"].append(orphan)
+        self.assertIn("feature 'orphan.mRNA1': unknown parent 'no-such-gene'",
+                      validation_errors(data, self.validator))
+        self.assertIn(f"feature {exon['feature_id']!r}: is_representative parent "
+                      f"{isoforms[0]['feature_id']!r} is not a top-level feature, so it is not a gene",
+                      validation_errors(data, self.validator))
+
+    def test_a_gene_has_at_most_one_representative_isoform(self):
+        data, gene, isoforms = with_isoforms(self.example)
+        isoforms[0]["is_representative"] = True
+        isoforms[1]["is_representative"] = False
+        self.assertEqual(validation_errors(data, self.validator), [])
+        isoforms[1]["is_representative"] = True
+        self.assertIn(f"feature {gene!r}: more than one representative isoform "
+                      f"({isoforms[0]['feature_id']!r}, {isoforms[1]['feature_id']!r})",
+                      validation_errors(data, self.validator))
+
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
             for value in ('not-a-url', 'https://example.org/file name.gff'):
@@ -353,11 +403,11 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 50 pairs and 34 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 51 pairs and 35 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
-        # score_type (issue 46).
-        self.assertEqual(len(rows), 50)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 34)
+        # score_type (issue 46), and the scalar is_representative (issue 48).
+        self.assertEqual(len(rows), 51)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 35)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
@@ -554,6 +604,16 @@ class DatabaseTests(unittest.TestCase):
         data = yaml.safe_load(EXAMPLE.read_text())
         row = con.execute("SELECT generated_by, source_files, attributes FROM feature WHERE feature_id = ?", [gene]).fetchone()
         self.assertEqual(row, tuple(data["features"][0][k] for k in ("generated_by", "source_files", "attributes")))
+
+    def test_is_representative_round_trips_true_false_and_unset(self):
+        data, gene, isoforms = with_isoforms(yaml.safe_load(EXAMPLE.read_text()), count=3)
+        isoforms[0]["is_representative"] = True
+        isoforms[1]["is_representative"] = False
+        marked = self.work / "representative.yaml"
+        marked.write_text(yaml.safe_dump(data))
+        build_database(SCHEMA, marked, self.db)
+        rows = dict(self.connect().execute("SELECT feature_id, is_representative FROM feature").fetchall())
+        self.assertEqual([rows[i["feature_id"]] for i in isoforms], [True, False, None])
 
     def test_failed_validation_preserves_existing_database(self):
         data = yaml.safe_load(EXAMPLE.read_text())

@@ -38,6 +38,7 @@ Feature {
     integer end
     string feature_id
     string generated_by
+    boolean is_representative
     boolean is_selected
     integer phase
     string product

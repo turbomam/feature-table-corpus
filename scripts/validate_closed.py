@@ -79,6 +79,27 @@ def dataset_errors(data):
             for attribute in feature.get("attributes") or []:
                 if attribute["key"] == "translation_table":
                     cds_tables.setdefault(feature["seqid"], []).append((fid, attribute["value"]))
+    # A gene has at most one representative isoform (issue 48); unset marks are allowed. A mark,
+    # true or false, is about a transcript's place among its gene's isoforms, so it needs a parent
+    # gene. Gene type names vary by source, so a gene is recognized by structure instead: a
+    # top-level feature, one with no parent of its own. An exon or CDS under an mRNA fails this.
+    representatives = {}
+    for fid, feature in features.items():
+        if feature.get("is_representative") is None:
+            continue
+        parents = feature.get("parent") or []
+        if not parents:
+            errors.append(f"feature {fid!r}: is_representative needs a parent gene")
+        for pid in parents:
+            if (features.get(pid) or {}).get("parent"):
+                errors.append(f"feature {fid!r}: is_representative parent {pid!r} is not a top-level "
+                              "feature, so it is not a gene")
+        if feature.get("is_representative") is True:
+            for pid in feature.get("parent") or []:
+                representatives.setdefault(pid, []).append(fid)
+    for pid, fids in representatives.items():
+        if len(fids) > 1:
+            errors.append(f"feature {pid!r}: more than one representative isoform ({', '.join(map(repr, fids))})")
     for cid, contig in contigs.items():
         members = contig.get("member_of") or []
         if len(members) != len(set(members)):
