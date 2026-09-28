@@ -19,7 +19,7 @@ import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, integer, value_text  # noqa: E402
+from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, value_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "model/dialects/img-assembled-gff.yaml"
@@ -40,6 +40,12 @@ TYPES = {
     "misc_feature": _RFAM,
 }
 COMPLEMENT = str.maketrans("ACGT", "TGCA")
+# Canonical spellings only, so every accepted value is written back the same way:
+# no sign, no leading zero, ASCII digits (int() also takes "0300", "-0" and "²").
+CANONICAL = re.compile(r"0|[1-9][0-9]*")
+DIGITS = re.compile(r"[0-9]+")
+# Taxon GFF column 3 for each assembled type the taxon GFF keeps, measured 2026-09-28.
+TAXON_TYPE = {"CDS": "CDS", "tRNA": "tRNA", "rRNA": "rRNA", "misc_RNA": "RNA"}
 # Keys written with a fixed number of decimals in every measured row. The parser
 # requires that spelling and the writer reproduces it, so these round-trip byte for byte.
 DECIMALS = {"conf": 2, "gc_cont": 3}
@@ -67,10 +73,9 @@ def parse_row(line_number, text, slots):
         row[name] = value
     for name in ("start", "end", "phase"):
         if name in row:
-            try:
-                row[name] = integer(row[name])
-            except ValueError:
-                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
+            if not CANONICAL.fullmatch(row[name]):
+                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number")
+            row[name] = int(row[name])
     if not columns[8].endswith(";"):
         raise DialectError(f"line {line_number}: column 9 does not end with ';'")
     for pair in columns[8][:-1].split(";"):
@@ -90,7 +95,7 @@ def parse_row(line_number, text, slots):
             row[key] = value
             continue
         places = DECIMALS.get(key)
-        if places is not None and not re.fullmatch(rf"[0-9]+\.[0-9]{{{places}}}", value):
+        if places is not None and not re.fullmatch(rf"(0|[1-9][0-9]*)\.[0-9]{{{places}}}", value):
             raise DialectError(f"line {line_number}: {key} {value!r} is not written with {places} decimals")
         try:
             typed = convert(value, slot)
@@ -237,7 +242,7 @@ def cross_checks(document):
                 problems.append(f"{where}: locus_tag {row.get('locus_tag')!r} is not {seqid}{count}")
             number = str(row.get("ID", "")).rsplit(".", 1)[-1]
             if previous is not None:
-                if not number.isdigit() or not previous[0].isdigit() or int(number) <= int(previous[0]):
+                if not DIGITS.fullmatch(number) or not DIGITS.fullmatch(previous[0]) or int(number) <= int(previous[0]):
                     problems.append(f"{where}: ID number does not increase within {seqid}")
                 if row.get("start", 0) < previous[1]:
                     problems.append(f"{where}: start is before the previous row's on {seqid}")
@@ -246,7 +251,12 @@ def cross_checks(document):
 
 
 def taxon_checks(document, taxon_path):
-    """Every locus tag of the taxon GFF is here, at the same coordinates and strand."""
+    """The taxon GFF from the same bundle holds the same features, less misc_bind and misc_feature.
+
+    Every taxon row has a locus tag found here, with the same coordinates and
+    strand and the corresponding type (the taxon GFF writes misc_RNA as RNA), and
+    every row here except misc_bind and misc_feature is in the taxon GFF.
+    """
     strands = {"1": "+", "-1": "-"}
     here = {row.get("locus_tag"): row for row in document["rows"]}
     problems = []
@@ -255,23 +265,30 @@ def taxon_checks(document, taxon_path):
             lines = handle.read().split("\n")
     except (OSError, UnicodeDecodeError) as error:
         return [f"--taxon: can't read {taxon_path}: {error}"]
-    found = 0
+    taken = set()
     for number, text in enumerate(lines, start=1):
         if not text or text.startswith("#"):
             continue
-        columns = text.split("\t")
-        match = re.search(r"(?:^|;)locus_tag=([^;]+)", columns[-1])
-        if len(columns) != 9 or not match:
-            continue
-        found += 1
-        row = here.get(match.group(1))
         where = f"{Path(taxon_path).name} line {number}"
+        columns = text.split("\t")
+        match = re.search(r"(?:^|;)locus_tag=([^;]+)", columns[-1]) if len(columns) == 9 else None
+        if not match:
+            problems.append(f"{where}: not a nine-column row with a locus_tag")
+            continue
+        tag = match.group(1)
+        taken.add(tag)
+        row = here.get(tag)
         if row is None:
-            problems.append(f"{where}: locus_tag {match.group(1)} is not in this file")
+            problems.append(f"{where}: locus_tag {tag} is not in this file")
         elif (str(row.get("start")), str(row.get("end")), strands.get(row.get("strand"))) != tuple(columns[3:5] + [columns[6]]):
-            problems.append(f"{where}: locus_tag {match.group(1)} has other coordinates or strand here")
-    if not found:
+            problems.append(f"{where}: locus_tag {tag} has other coordinates or strand here")
+        elif TAXON_TYPE.get(row.get("type")) != columns[2]:
+            problems.append(f"{where}: locus_tag {tag} is {columns[2]} there but {row.get('type')} here")
+    if not taken:
         problems.append(f"--taxon: {taxon_path} has no rows with a locus_tag")
+    for row in document["rows"]:
+        if row.get("type") in TAXON_TYPE and row.get("locus_tag") not in taken:
+            problems.append(f"line {row['line']}: {row.get('type')} {row.get('locus_tag')} is not in the taxon GFF")
     return problems
 
 

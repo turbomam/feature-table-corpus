@@ -2,6 +2,8 @@
 import contextlib
 import importlib.util
 import io
+import shutil
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -113,15 +115,55 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected(7, "LowScore=0.526;LowScore=0.526;", "LowScore=0.526;LowScore=0.6;", "LowScore values differ")
         self.assert_rejected(5, "Model=cspA;", "Model=TPP;", "Model 'TPP' has two accessions")
 
-    def test_taxon_gff_must_match(self):
-        row = "Ga0000001_101\timg_core_v400\tCDS\t300\t950\t.\t-\t0\tID=1;locus_tag=Ga0000001_1012;product=x\n"
-        status, out = self.run_on(FIXTURE.read_text(), "##gff-version 3\n" + row)
+    def taxon(self, skip=None, change=None):
+        """A taxon GFF for the fixture: its rows less misc_bind and misc_feature, as the taxon GFF writes them."""
+        out = ["##gff-version 3"]
+        for row in dialect.parse(FIXTURE)["rows"]:
+            kind = dialect.TAXON_TYPE.get(row["type"])
+            if kind is None or row["locus_tag"] == skip:
+                continue
+            strand = {"1": "+", "-1": "-"}[row["strand"]]
+            line = f"{row['seqid']}\timg_core_v400\t{kind}\t{row['start']}\t{row['end']}\t.\t{strand}\t.\tID=1;locus_tag={row['locus_tag']}"
+            out.append(change(line) if change and row["locus_tag"] == "Ga0000001_1012" else line)
+        return "\n".join(out) + "\n"
+
+    def test_taxon_gff_must_match_both_ways(self):
+        status, out = self.run_on(FIXTURE.read_text(), self.taxon())
         self.assertEqual(status, 0, out)
-        self.assert_text_rejected(FIXTURE.read_text(), "has other coordinates or strand here",
-                                  "##gff-version 3\n" + row.replace("\t-\t", "\t+\t"))
-        self.assert_text_rejected(FIXTURE.read_text(), "locus_tag Ga0000001_9999 is not in this file",
-                                  "##gff-version 3\n" + row.replace("_1012;", "_9999;"))
-        self.assert_text_rejected(FIXTURE.read_text(), "has no rows with a locus_tag", "##gff-version 3\n")
+        fixture = FIXTURE.read_text()
+        self.assert_text_rejected(fixture, "has other coordinates or strand here",
+                                  self.taxon(change=lambda line: line.replace("\t-\t", "\t+\t")))
+        self.assert_text_rejected(fixture, "is tRNA there but CDS here",
+                                  self.taxon(change=lambda line: line.replace("\tCDS\t", "\ttRNA\t")))
+        self.assert_text_rejected(fixture, "locus_tag Ga0000001_9999 is not in this file",
+                                  self.taxon(change=lambda line: line.replace("_1012", "_9999")))
+        self.assert_text_rejected(fixture, "line 2: CDS Ga0000001_1012 is not in the taxon GFF",
+                                  self.taxon(skip="Ga0000001_1012"))
+        self.assert_text_rejected(fixture, "not a nine-column row with a locus_tag",
+                                  self.taxon() + "Ga0000001_101\timg_core_v400\tCDS\t1\t3\n")
+        self.assert_text_rejected(fixture, "has no rows with a locus_tag", "##gff-version 3\n")
+
+    def test_only_canonical_numbers_are_accepted(self):
+        # Each would parse to the same value but be written back differently, or crash int().
+        self.assert_rejected(1, "conf=100.00;", "conf=0100.00;", "is not written with 2 decimals")
+        self.assert_rejected(1, "\t300\t950\t", "\t0300\t950\t", "start '0300' is not a number")
+        self.assert_rejected(1, "\t-1\t0\t", "\t-1\t-0\t", "phase '-0' is not a number")
+        self.assert_rejected(3, "ID=Ga0000001_101.4;", "ID=Ga0000001_101.\u00b2;", "does not match")
+        self.assert_rejected(3, "ID=Ga0000001_101.4;", "ID=Ga0000001_101.\u0664;", "does not match")
+
+    @unittest.skipUnless(shutil.which("just"), "just is not installed")
+    def test_recipe_passes_the_taxon_path_as_one_argument(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            taxon = Path(tmp) / "dir with space" / "tax on.gff"
+            taxon.parent.mkdir()
+            taxon.write_text(self.taxon())
+            marker = Path(tmp) / "injected"
+            for extra in ([str(taxon)], [f"{taxon}; touch {marker}"], []):
+                result = subprocess.run(["just", "dialect-validate-img-assembled", str(FIXTURE), *extra],
+                                        cwd=ROOT, capture_output=True, text=True)
+                if extra == [str(taxon)] or not extra:
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertFalse(marker.exists())
 
     def test_line_shape(self):
         text = FIXTURE.read_text()

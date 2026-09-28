@@ -278,8 +278,8 @@ dialect-validate-img-tmhmm-signalp input:
 
 [doc("Validate an IMG 4.14 *.assembled.gff against its dialect schema; pass the taxon GFF to cross-check it.")]
 [group("Conversions")]
-dialect-validate-img-assembled input *taxon:
-    uv run --with-requirements requirements-conversion.txt python3 scripts/img_assembled_gff.py validate "$1" {{ if taxon == "" { "" } else { "--taxon " + taxon } }}
+dialect-validate-img-assembled input taxon="":
+    uv run --with-requirements requirements-conversion.txt python3 scripts/img_assembled_gff.py validate "$1" ${2:+--taxon "$2"}
 
 [doc("Validate an IMG taxon bundle, <taxon_oid>.gff and the .tab.txt tables beside it.")]
 [group("Conversions")]

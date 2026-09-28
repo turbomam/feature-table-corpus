@@ -13,9 +13,10 @@ comments:
     may break some of them.
   - >-
     The taxon GFF beside it (2708743150.gff, dialect model/dialects/img-taxon-bundle.yaml) has
-    4,628 of these rows: every one of its locus tags is here, at the same coordinates and strand.
-    The other 65 rows here are the misc_bind and misc_feature rows the taxon GFF drops.
-    `scripts/img_assembled_gff.py validate FILE --taxon TAXON_GFF` checks that.
+    4,628 of these rows: every one of its locus tags is here, at the same coordinates, strand and
+    type (it writes misc_RNA as RNA). The other 65 rows here are the misc_bind and misc_feature
+    rows the taxon GFF drops. `scripts/img_assembled_gff.py validate FILE --taxon TAXON_GFF`
+    checks both directions.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -53,7 +54,7 @@ classes:
       seqid:
         required: true
         description: Column 1, the contig ID, <IMG project>_<number>.
-        pattern: "^Ga\\d+_\\d+$"
+        pattern: "^Ga[0-9]+_[0-9]+$"
       source:
         required: true
         description: >-
@@ -91,13 +92,13 @@ classes:
           key order; two rRNA rows add LowScore twice.
       ID:
         required: true
-        pattern: "^Ga\\d+_\\d+\\.\\d+$"
+        pattern: "^Ga[0-9]+_[0-9]+\\.[0-9]+$"
         description: >-
           <seqid>.<n>. n increases within a contig; on two contigs it skips a number, so it is
           not the row's position.
       locus_tag:
         required: true
-        pattern: "^Ga\\d+_\\d+$"
+        pattern: "^Ga[0-9]+_[0-9]+$"
         description: >-
           The contig ID followed directly by a counter that runs 1, 2, 3 within the contig in
           file order, for example Ga0139071_1013 for the third row on Ga0139071_101.
@@ -117,7 +118,7 @@ classes:
       Model:
         description: Rfam model name, on misc_RNA, misc_bind and misc_feature rows.
       RNA_Class_ID:
-        pattern: "^RF\\d{5}$"
+        pattern: "^RF[0-9]{5}$"
         description: Rfam accession of Model; each Model has one in the measured file.
       Name:
         description: rRNA only; always the same text as Type and product.
