@@ -190,6 +190,27 @@ name ending `_<method>.gff`, to agree. `just dialect-validate-img-per-method FIL
 tests edit single rows of [constructed fixtures](../tests/fixtures/img-per-method-gff/README.md),
 one per method.
 
+[`img-per-method-gff.transform.yaml`](../model/transforms/img-per-method-gff.transform.yaml)
+maps hit rows to `Feature` with linkml-map, and `scripts/img_per_method_map.py` adds what
+linkml-map can't do, as for the functional annotation. A hit is on [protein
+coordinates](protein-coordinates.md): its `seqid` is the CDS whose translation its positions count
+along, and that CDS is its only `parent`. The hit files hold no CDS rows, so the mapping takes the
+same genome's `_functional_annotation.gff` too, which supplies the contigs and CDS features; every
+hit gene in both isolates is a CDS there. `type` is the accession, as `nmdc-pfam-protein` does, and
+`score_type` stays unset because nothing retained says what kind of score column 6 is.
+
+One Dataset holds one hit file. A hit's ID is `<gene>_<start>_<end>`, unique within its file but
+shared by hits of different methods on the same span, and `feature_id` only needs to be unique
+within a Dataset, so putting two methods in one Dataset would need new IDs. In Ga0423362's
+seven files, 1,138 hit IDs appear in more than one file (counted 2026-09-28).
+
+`just map-img-per-method-roundtrip FUNCTIONAL HIT...` maps each hit file forward with the
+functional annotation, validates the Dataset, maps back, and requires every row of both files to
+come back equal, with written text differing only in number spelling. On 2026-09-28 it held for all
+seven methods of both isolates (Ga0423362: 22,872 hits; Ga0416744: 10,991). `just
+map-img-per-method FUNCTIONAL HIT OUT` and `just map-img-per-method-back DATASET PREFIX` run each
+direction, and never overwrite a file.
+
 The other per-genome files were measured on the same date to place them:
 
 - `_crt`, `_trna`, `_rfam`, `_rfam_rrna`, `_rfam_ncrna_tmrna`,

@@ -37,6 +37,7 @@ validate-schema:
     uv run --with linkml linkml-validate model/dialects/phytozome-annotation-info.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/phytozome-gene-exons-gff3.transform.yaml
+    uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-per-method-gff.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
@@ -316,6 +317,21 @@ map-img-functional-back input output:
 [group("Conversions")]
 map-img-functional-roundtrip input:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py roundtrip "$1"
+
+[doc("Map one IMG per-method hit GFF, with its genome's functional annotation GFF, to a Dataset JSON.")]
+[group("Conversions")]
+map-img-per-method functional hits output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py forward "$1" "$2" "$3"
+
+[doc("Map a per-method Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff.")]
+[group("Conversions")]
+map-img-per-method-back input prefix:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py reverse "$1" "$2"
+
+[doc("Map each IMG per-method hit GFF, with the functional annotation GFF, forward and back.")]
+[group("Conversions")]
+map-img-per-method-roundtrip functional +hits:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py roundtrip "$@"
 
 [doc("Map a Phytozome *.gene_exons.gff3 (or .gff3.gz) to a Dataset JSON with linkml-map.")]
 [group("Conversions")]

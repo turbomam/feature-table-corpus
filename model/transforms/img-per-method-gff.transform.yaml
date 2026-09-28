@@ -1,0 +1,52 @@
+id: https://w3id.org/ber-data/transforms/img-per-method-gff-to-feature-model
+title: IMG per-method protein hit GFF rows to the feature model
+description: >-
+  linkml-map specification from the img_per_method_gff dialect (model/dialects/img-per-method-gff.yaml)
+  to Feature in model/schema/ber_feature_model.yaml, for the per-method hit files (_pfam, _cog,
+  _ko_ec, _tigrfam, _smart, _supfam, _cath_funfam). The reverse specification is generated from this
+  one with `linkml-map invert`, not written by hand.
+comments:
+  - >-
+    A hit is on protein coordinates: its seqid is the CDS whose translation its positions count
+    along, and that CDS is also its only parent (docs/protein-coordinates.md). The hit files carry
+    no CDS rows, so scripts/img_per_method_map.py maps them together with the same genome's
+    functional annotation GFF, which supplies the contigs and CDS features.
+  - >-
+    As for the IMG functional annotation, the script adds what linkml-map 0.5.4 can't express:
+    column 9 as one Attribute per value in file order, as text; the constant coordinate_system
+    ("protein"); the parent, which is the seqid; and mirror_source on the inverted strand mapping.
+  - >-
+    score_type is left unset: nothing retained from these files says what kind of score column 6
+    is, and the model sets it only where a source documents it (docs/conversion-profiles.md,
+    Derived slots).
+source_schema:
+  name: img_per_method_gff
+  source_file: model/dialects/img-per-method-gff.yaml
+target_schema:
+  name: ber-feature-model
+  source_file: model/schema/ber_feature_model.yaml
+class_derivations:
+  Feature:
+    populated_from: ImgPerMethodGffRow
+    slot_derivations:
+      feature_id:
+        populated_from: ID
+      seqid:
+        populated_from: seqid
+      source:
+        populated_from: source
+      type:
+        # An expression, so the accession is passed through as its text.
+        expr: type
+      start:
+        populated_from: start
+      end:
+        populated_from: end
+      score:
+        populated_from: score
+      strand:
+        populated_from: strand
+enum_derivations:
+  StrandEnum:
+    populated_from: ImgPerMethodStrand
+    mirror_source: true
