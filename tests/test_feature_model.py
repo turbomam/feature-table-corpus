@@ -155,6 +155,17 @@ class ValidationTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 1)
                 self.assertNotIn("Traceback", result.stderr)
 
+    def test_unknown_class_or_missing_schema_is_a_usage_error(self):
+        with self.assertRaisesRegex(ValueError, "'StrandEnum' is not a class in .*classes: .*Dataset"):
+            make_validator(SCHEMA, "StrandEnum")
+        for schema, top_class, expected in ((SCHEMA, "Nope", "'Nope' is not a class"),
+                                            (ROOT / "model/schema/missing.yaml", "Dataset", "No such file")):
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(schema), str(EXAMPLE), top_class], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertIn(expected, result.stderr)
+
     def test_semantic_constraints(self):
         cases = (
             (lambda d: d["features"][0].update(start=854), "start must be <= end"),
