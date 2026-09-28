@@ -38,7 +38,8 @@ The Dataset validator (`scripts/validate_closed.py`) refuses:
 - one whose `seqid` names anything but a contig-coordinate CDS;
 - one whose `parent` is not that same CDS;
 - a contig-coordinate feature whose `seqid` names a feature;
-- a hit that ends past its CDS's `translated_sequence`, when the translation is present.
+- a hit that ends past its CDS's `translated_sequence`, when the translation is present;
+- an ID used as both a `contig_id` and a `feature_id`.
 
 ## Why
 
@@ -51,13 +52,15 @@ The Dataset validator (`scripts/validate_closed.py`) refuses:
 - NMDC's own hit files already put the protein in column 1. Keeping it there needs no
   re-interpretation of the source.
 - A tool that joins on `seqid`, `start` and `end` without looking at `coordinate_system`, such as
-  polars-bio's `overlap`, now cannot compare amino-acid offsets with contig bases, because a CDS
-  ID never equals a contig ID. Under the old shape that join was wrong unless the caller knew to
-  add `coordinate_system` to the key. This is read from polars-bio's join signature, not run on
-  our data.
+  polars-bio's `overlap`, now cannot compare amino-acid offsets with contig bases in a validated
+  Dataset: the validator refuses an ID used as both a contig and a feature, so a CDS ID never
+  matches a contig ID. Under the old shape that join was wrong unless the caller knew to add
+  `coordinate_system` to the key. The polars-bio behavior is read from its join signature, not
+  run on our data.
 - Hits are most of NMDC's feature data: about 62.7M of 85.8M sampled rows, measured in
-  https://github.com/microbiomedata/nmdc-lakehouse/pull/364. None had been loaded into BERDL when
-  this was decided, so changing the shape cost a regenerated export, not a migration.
+  https://github.com/microbiomedata/nmdc-lakehouse/pull/364. That PR wrote Parquet locally and
+  left loading into BERDL out of scope, and none had been loaded when this was decided on
+  2026-09-28, so changing the shape cost a regenerated export, not a migration.
 
 ## Querying
 

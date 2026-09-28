@@ -197,6 +197,8 @@ class ValidationTests(unittest.TestCase):
              or d["features"][1].update(seqid="other_cds"), "must be the CDS named by seqid"),
             (lambda d: d["features"][0].update(seqid=d["features"][1]["feature_id"]),
              "contig coordinates need a contig as seqid"),
+            (lambda d: d["features"].append(dict(d["features"][0], feature_id=d["contigs"][0]["contig_id"])),
+             "is both a contig_id and a feature_id"),
             (lambda d: d["features"][0].update(type="gene"), "must be a contig-relative CDS"),
             (lambda d: d["features"][1]["parent"].append(d["features"][0]["feature_id"]), "duplicate parent"),
             (lambda d: d["features"].append(copy.deepcopy(d["features"][0])), "duplicate feature_id"),
@@ -642,6 +644,11 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(interval_overlap(con, contig, 13, 13, "protein"), [])
         self.assertEqual(interval_overlap(con, gene, 13, 13, "contig"), [])
         self.assertEqual(interval_overlap(con, gene, 250, 250, "protein"), [])
+        # Issue 40: protein overlap is found by seqid alone, so a hit whose parent list is empty
+        # (unvalidated data) is still found under the CDS it names.
+        con.execute("""INSERT INTO feature (feature_id, seqid, type, start, "end", coordinate_system, parent)
+                       VALUES ('orphan_hit', ?, 'PF00001', 13, 13, 'protein', [])""", [gene])
+        self.assertIn("orphan_hit", [r[0] for r in interval_overlap(con, gene, 13, 13, "protein")])
         for start, end in ((0, 1), (2, 1), (True, 2), (1, False), (1.5, 2),
                            (1, 2.0), (float("nan"), 2), (1, float("inf")), ("1", 2), (1, None)):
             with self.assertRaises(ValueError):
