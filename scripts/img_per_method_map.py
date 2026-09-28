@@ -228,7 +228,7 @@ def write_spellings(dataset, documents, scores=None):
     hits = {}
     for feature in dataset["features"]:
         if feature.get("coordinate_system") == "protein":
-            hits.setdefault(feature["feature_id"].split("|")[1], []).append(feature)
+            hits.setdefault(feature["feature_id"].rsplit("|", 2)[-2], []).append(feature)
     return [functional.dataset_spellings(contig if i == 0 else hits.get(d.get("method"), []), scores)
             for i, d in enumerate(documents)]
 

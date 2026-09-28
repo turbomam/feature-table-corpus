@@ -105,6 +105,16 @@ class MappingTests(unittest.TestCase):
         _, back = self.back(interleaved)
         self.assertEqual([d["rows"] for d in back], [self.pfam["rows"], cog["rows"]])
 
+    def test_a_source_id_containing_a_bar_keeps_its_method(self):
+        # IMG IDs are any non-space text, so a contig ctg|01 gives hit IDs with an extra |.
+        with tempfile.TemporaryDirectory() as tmp:
+            functional_path, pfam_path = Path(tmp) / "g_functional_annotation.gff", Path(tmp) / "g_pfam.gff"
+            functional_path.write_text(self.functional_path.read_text().replace("ctg_", "ctg|"))
+            pfam_path.write_text((HITS / "constructed_pfam.gff").read_text().replace("ctg_", "ctg|"))
+            problems, report = mapping.roundtrip(functional_path, [pfam_path])
+        self.assertEqual(problems, [])
+        self.assertEqual([f["method"] for f in report["files"]], ["pfam"])
+
     def test_reverse_refuses_what_the_dialects_cannot_hold(self):
         def hit(dataset):
             return next(f for f in dataset["features"] if f["coordinate_system"] == "protein")
