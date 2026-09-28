@@ -79,9 +79,12 @@ def dataset_errors(data):
             for attribute in feature.get("attributes") or []:
                 if attribute["key"] == "translation_table":
                     cds_tables.setdefault(feature["seqid"], []).append((fid, attribute["value"]))
-    # A gene has at most one representative isoform (issue 48); unset marks are allowed.
+    # A gene has at most one representative isoform (issue 48); unset marks are allowed. A mark,
+    # true or false, is about a transcript's place among its gene's isoforms, so it needs a parent.
     representatives = {}
     for fid, feature in features.items():
+        if feature.get("is_representative") is not None and not feature.get("parent"):
+            errors.append(f"feature {fid!r}: is_representative needs a parent gene")
         if feature.get("is_representative") is True:
             for pid in feature.get("parent") or []:
                 representatives.setdefault(pid, []).append(fid)
