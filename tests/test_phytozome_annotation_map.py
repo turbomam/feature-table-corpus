@@ -120,6 +120,28 @@ class MappingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Best-hit-clamy-name has 2 values"):
             self.back(dataset)
 
+    def test_rows_sort_by_locus_then_transcript_number_not_text(self):
+        # TAIR10 has a gene with a .10 transcript; as text it would sort before .9.
+        rows = [{"locusName": "AT1G1", "transcriptName": f"AT1G1.{n}"} for n in (10, 9, 2, 1)]
+        rows.append({"locusName": "AT1G0", "transcriptName": "AT1G0.1"})
+        self.assertEqual([r["transcriptName"] for r in sorted(rows, key=mapping.table_order)],
+                         ["AT1G0.1", "AT1G1.1", "AT1G1.2", "AT1G1.9", "AT1G1.10"])
+
+    def test_reverse_refuses_one_path_for_both_files_and_leaves_nothing_half_written(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset = Path(tmp) / "d.json"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(GFF3), str(TABLE), str(dataset)]), 0)
+                same = Path(tmp) / "same.out"
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(same), str(same)]), 1)
+                self.assertFalse(same.exists())
+                first = Path(tmp) / "part.gff3"
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(first),
+                                               str(Path(tmp) / "no-such-dir" / "t.txt")]), 1)
+                self.assertFalse(first.exists())
+            self.assertIn("different paths", err.getvalue())
+
     def test_commands_write_both_files_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             dataset, gff3, table = Path(tmp) / "d.json", Path(tmp) / "back.gff3", Path(tmp) / "back.txt"

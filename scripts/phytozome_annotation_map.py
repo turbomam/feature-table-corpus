@@ -229,6 +229,8 @@ def main(argv=None):
             report_errors([f"input: {error}"])
             return 1
         errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        if args.gff3_output.resolve() == args.table_output.resolve():
+            errors.append("output: the GFF3 and the table need different paths")
         texts = {}
         if not errors:
             try:
@@ -249,9 +251,14 @@ def main(argv=None):
             errors.append(f"output: already exists, not overwritten: {existing}")
         if report_errors(errors):
             return 1
+        written = []
         for path, text in texts.items():
             if write_output(path, text):
+                # Leave nothing half done: remove the file this call already wrote.
+                for done in written:
+                    done.unlink()
                 return 1
+            written.append(path)
         return 0
     problems, report = roundtrip(args.gff3, args.table)
     for problem in problems[:20]:
