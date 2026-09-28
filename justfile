@@ -40,6 +40,7 @@ validate-schema:
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-per-method-gff.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-assembled-gff.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-taxon-bundle.transform.yaml
+    uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-tmhmm-signalp-gff.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
@@ -334,6 +335,21 @@ map-img-per-method-back input prefix:
 [group("Conversions")]
 map-img-per-method-roundtrip functional +hits:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py roundtrip "$@"
+
+[doc("Map IMG TMHMM (_tmh.gff) and SignalP (_cleavage_sites.gff) files, with their genome's functional annotation GFF, to one Dataset JSON; the last argument is the output.")]
+[group("Conversions")]
+map-img-tmhmm-signalp functional +files_then_output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_tmhmm_signalp_map.py forward "$@"
+
+[doc("Map a TMHMM/SignalP Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff.")]
+[group("Conversions")]
+map-img-tmhmm-signalp-back input prefix:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_tmhmm_signalp_map.py reverse "$1" "$2"
+
+[doc("Map IMG TMHMM and SignalP files, with the functional annotation GFF, forward and back.")]
+[group("Conversions")]
+map-img-tmhmm-signalp-roundtrip functional +files:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_tmhmm_signalp_map.py roundtrip "$@"
 
 [doc("Map an IMG 4.14 *.assembled.gff to a Dataset JSON with linkml-map.")]
 [group("Conversions")]
