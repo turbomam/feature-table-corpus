@@ -199,17 +199,21 @@ same genome's `_functional_annotation.gff` too, which supplies the contigs and C
 hit gene in both isolates is a CDS there. `type` is the accession, as `nmdc-pfam-protein` does, and
 `score_type` stays unset because nothing retained says what kind of score column 6 is.
 
-One Dataset holds one hit file. A hit's ID is `<gene>_<start>_<end>`, unique within its file but
-shared by hits of different methods on the same span, and `feature_id` only needs to be unique
-within a Dataset, so putting two methods in one Dataset would need new IDs. In Ga0423362's
-seven files, 1,138 hit IDs appear in more than one file (counted 2026-09-28).
+One Dataset can hold every method of a genome. A hit's source ID is `<gene>_<start>_<end>`, unique
+within its file but shared by hits of different methods on the same span: in Ga0423362's seven
+files, 1,138 hit IDs appear in more than one file (counted 2026-09-28). So a hit's `feature_id` is
+`<ID>|<method>|<type>`, for example `Ga0423362_01_1001207_1001923_10_228|pfam|PF03306`, and the source ID stays
+as its `ID` attribute ([issue 98](https://github.com/turbomam/feature-table-corpus/issues/98)). The
+rule holds for a single file too, so a hit's `feature_id` doesn't depend on which other files share
+its Dataset, and it is the form nmdc-lakehouse uses for NMDC hits. The reverse step refuses a hit
+whose `feature_id` doesn't match its `ID` attribute, method and type.
 
-`just map-img-per-method-roundtrip FUNCTIONAL HIT...` maps each hit file forward with the
-functional annotation, validates the Dataset, maps back, and requires every row of both files to
+`just map-img-per-method-roundtrip FUNCTIONAL HIT...` maps the hit files forward into one Dataset
+with the functional annotation, validates it, maps back, and requires every row of every file to
 come back equal, with written text differing only in number spelling. On 2026-09-28 it held for all
-seven methods of both isolates (Ga0423362: 22,872 hits; Ga0416744: 10,991). `just
-map-img-per-method FUNCTIONAL HIT OUT` and `just map-img-per-method-back DATASET PREFIX` run each
-direction, and never overwrite a file.
+seven methods of Ga0423362 in one Dataset (22,872 hits). `just map-img-per-method FUNCTIONAL
+HIT... OUT` and `just map-img-per-method-back DATASET PREFIX` run each direction, and never
+overwrite a file.
 
 The other per-genome files were measured on the same date to place them:
 

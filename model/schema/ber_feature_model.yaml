@@ -297,6 +297,14 @@ slots:
   feature_id:
     title: Feature ID
     description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
+    notes:
+      - A mapping whose Datasets can hold hits of several methods forms a hit's feature_id as
+        <source ID>|<method>|<type> and keeps the source ID in attributes
+        (https://github.com/turbomam/feature-table-corpus/issues/98). Hit files from different
+        methods reuse one source ID for hits on the same span (1,138 IDs in one IMG isolate's
+        seven files, counted 2026-09-28), so the bare ID would collide. The IMG per-method
+        mapping and nmdc-lakehouse use this form. nmdc-pfam-protein reads one Pfam file, whose
+        IDs are unique, and keeps the source ID as feature_id.
   stable_identifiers:
     title: Stable identifiers
     multivalued: true
