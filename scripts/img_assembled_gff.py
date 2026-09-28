@@ -43,7 +43,8 @@ COMPLEMENT = str.maketrans("ACGT", "TGCA")
 # Canonical spellings only, so every accepted value is written back the same way:
 # no sign, no leading zero, ASCII digits (int() also takes "0300", "-0" and "²").
 CANONICAL = re.compile(r"0|[1-9][0-9]{0,17}")  # at most 18 digits: fits int64, far below int()'s limit
-DIGITS = re.compile(r"[0-9]+")
+# ID numbers: canonical, positive and at most 18 digits, so (length, text) orders them numerically.
+ID_NUMBER = re.compile(r"[1-9][0-9]{0,17}")
 # Taxon GFF column 3 for each assembled type the taxon GFF keeps, measured 2026-09-28.
 TAXON_TYPE = {"CDS": "CDS", "tRNA": "tRNA", "rRNA": "rRNA", "misc_RNA": "RNA"}
 # Keys written with a fixed number of decimals in every measured row. The parser
@@ -219,13 +220,18 @@ def cross_checks(document):
     problems = []
     blocks = []
     models = {}
-    seen = set()
+    seen, tags = set(), set()
     for row in document["rows"]:
         problems.extend(row_checks(row))
         where = f"line {row['line']}"
         if row.get("ID") in seen:
             problems.append(f"{where}: ID {row.get('ID')!r} repeats")
         seen.add(row.get("ID"))
+        if not ID_NUMBER.fullmatch(str(row.get("ID", "")).rsplit(".", 1)[-1]):
+            problems.append(f"{where}: ID {str(row.get('ID'))[:60]!r} does not end in a number from 1, without leading zeros")
+        if row.get("locus_tag") in tags:
+            problems.append(f"{where}: locus_tag {row.get('locus_tag')!r} repeats")
+        tags.add(row.get("locus_tag"))
         if "Model" in row:
             if models.setdefault(row["Model"], row.get("RNA_Class_ID")) != row.get("RNA_Class_ID"):
                 problems.append(f"{where}: Model {row['Model']!r} has two accessions")
@@ -246,7 +252,7 @@ def cross_checks(document):
             number = str(row.get("ID", "")).rsplit(".", 1)[-1]
             if previous is not None:
                 # Digit strings order by (length, text), with no int() to overflow.
-                if (not DIGITS.fullmatch(number) or not DIGITS.fullmatch(previous[0])
+                if (not ID_NUMBER.fullmatch(number) or not ID_NUMBER.fullmatch(previous[0])
                         or (len(number), number) <= (len(previous[0]), previous[0])):
                     problems.append(f"{where}: ID number does not increase within {seqid}")
                 if row.get("start", 0) < previous[1]:
@@ -281,6 +287,9 @@ def taxon_checks(document, taxon_path):
             problems.append(f"{where}: not a nine-column row with a locus_tag")
             continue
         tag = match.group(1)
+        if tag in taken:
+            problems.append(f"{where}: locus_tag {tag} repeats in the taxon GFF")
+            continue
         taken.add(tag)
         row = here.get(tag)
         if row is None:

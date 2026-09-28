@@ -92,16 +92,18 @@ classes:
           key order; two rRNA rows add LowScore twice.
       ID:
         required: true
-        pattern: "^Ga[0-9]+_[0-9]+\\.[0-9]+$"
+        pattern: "^Ga[0-9]+_[0-9]+\\.[1-9][0-9]*$"
         description: >-
-          <seqid>.<n>. n increases within a contig; on two contigs it skips a number, so it is
-          not the row's position.
+          <seqid>.<n>, n written without leading zeros. n increases within a contig; on two
+          contigs it skips a number, so it is not the row's position.
       locus_tag:
         required: true
         pattern: "^Ga[0-9]+_[0-9]+$"
         description: >-
           The contig ID followed directly by a counter that runs 1, 2, 3 within the contig in
-          file order, for example Ga0139071_1013 for the third row on Ga0139071_101.
+          file order, for example Ga0139071_1013 for the third row on Ga0139071_101. Unique in
+          the file, which the counter alone does not ensure (row 11 of Ga1_1 and row 1 of Ga1_11
+          would both be Ga1_111).
       conf:
         range: float
         minimum_value: 0

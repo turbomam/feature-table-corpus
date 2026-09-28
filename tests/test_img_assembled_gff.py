@@ -101,6 +101,18 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected(3, "ID=Ga0000001_101.4;", "ID=Ga0000001_101.2;", "ID number does not increase")
         self.assert_rejected(3, "ID=Ga0000001_101.4;", "ID=Ga0000001_101.2;", "'Ga0000001_101.2' repeats")
         self.assert_rejected(3, "locus_tag=Ga0000001_1014;", "locus_tag=Ga0000001_1015;", "is not Ga0000001_1014")
+        # A leading zero would order .01 after .2 by length and text.
+        rows = lines()
+        rows[7] = rows[7].replace("ID=Ga0000001_102.4;", "ID=Ga0000001_102.01;")
+        self.assert_text_rejected("\n".join(rows) + "\n", "does not end in a number from 1, without leading zeros")
+        # The per-contig counter lets two contigs produce one tag: row 11 of Ga1_1 and row 1 of Ga1_11.
+        clash = []
+        for n in range(1, 12):
+            clash.append(f"Ga1_1\tProdigal V2.6.3 February, 2016\tCDS\t{n * 10}\t{n * 10 + 8}\t.\t1\t0\t"
+                         f"ID=Ga1_1.{n};conf=99.00;gc_cont=0.500;locus_tag=Ga1_1{n};")
+        clash.append("Ga1_11\tProdigal V2.6.3 February, 2016\tCDS\t10\t18\t.\t1\t0\t"
+                     "ID=Ga1_11.1;conf=99.00;gc_cont=0.500;locus_tag=Ga1_111;")
+        self.assert_text_rejected("\n".join(clash) + "\n", "line 12: locus_tag 'Ga1_111' repeats")
 
     def test_row_order(self):
         rows = lines()
@@ -144,6 +156,9 @@ class ValidateTests(unittest.TestCase):
         self.assert_text_rejected(fixture, "not a nine-column row with a locus_tag",
                                   self.taxon() + "Ga0000001_101\timg_core_v400\tCDS\t1\t3\n")
         self.assert_text_rejected(fixture, "has no rows with a locus_tag", "##gff-version 3\n")
+        taxon = self.taxon()
+        self.assert_text_rejected(fixture, "locus_tag Ga0000001_1012 repeats in the taxon GFF",
+                                  taxon + next(line for line in taxon.splitlines() if "_1012" in line) + "\n")
 
     def test_only_canonical_numbers_are_accepted(self):
         # Each would parse to the same value but be written back differently, or crash int().
