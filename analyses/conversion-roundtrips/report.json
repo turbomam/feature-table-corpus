@@ -13,17 +13,17 @@
       "path": "model/profiles/bed12-blocks.yaml",
       "sha256": "b20a579e641d99d1a36a6fdd8cc8e203d0b6fe38ae432feb9710211153dd622d"
     },
-    "gff3-contig/2.0.0": {
+    "gff3-contig/3.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
-      "sha256": "685dc7288e00bfdf31ef5aa83709d0e0605eb0a22f3b089ccea93ce4a3ad3e59"
+      "sha256": "289aa0088619955438fcb44a3338d0698de1a5df8ca4d75f12440824aa86ba47"
     },
     "insdc-locations/1.0.0": {
       "path": "model/profiles/insdc-locations.yaml",
       "sha256": "812fe071016d23f2a2bdbdfe099ee8bc32037107b4ab0d36e98e1f4a2c986bea"
     },
-    "nmdc-pfam-protein/3.0.0": {
+    "nmdc-pfam-protein/4.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
-      "sha256": "cfa8ed35f9d320dbf98329ec086582a26c196f85d80ae92a1720b9c8828f69c1"
+      "sha256": "a982266f9e4e67818f4020b0f8e0cfaacd29fd36c91c5485ccb4d88a3ef8a593"
     }
   },
   "query_performance": "not-measured",
@@ -33,7 +33,7 @@
       "id": "refseq-actinorhodin-excerpt",
       "path": "corpus/derived-examples/actinorhodin.gff3",
       "format": "gff3",
-      "profile": "gff3-contig/2.0.0",
+      "profile": "gff3-contig/3.0.0",
       "source_sha256": "2eaa1468d850ccfa147343148030182bbb95b0cd78d1e49d538c46697f3af14c",
       "case_kind": "selected-real-source-rows",
       "losses": [],
@@ -63,7 +63,7 @@
       "id": "nmdc-biosample-pfam",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
       "format": "gff3",
-      "profile": "nmdc-pfam-protein/3.0.0",
+      "profile": "nmdc-pfam-protein/4.0.0",
       "source_sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
       "case_kind": "observed",
       "losses": [],
@@ -90,7 +90,7 @@
       "id": "nmdc-prodigal",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff",
       "format": "gff3",
-      "profile": "gff3-contig/2.0.0",
+      "profile": "gff3-contig/3.0.0",
       "source_sha256": "ee015a12d640e9f1468f8f264574a55d97432f81eddc27f62effc96123d77a35",
       "case_kind": "observed",
       "losses": [],
@@ -120,7 +120,7 @@
       "id": "nmdc-crt",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-bvg4py20.1_crt.gff",
       "format": "gff3",
-      "profile": "gff3-contig/2.0.0",
+      "profile": "gff3-contig/3.0.0",
       "source_sha256": "19e836a28bd0f5dc9975a30ee12a290b019b525ff8480870ea8927e5273d509c",
       "case_kind": "observed",
       "losses": [],
@@ -146,7 +146,7 @@
       "id": "refseq-lambda",
       "path": "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff",
       "format": "gff3",
-      "profile": "gff3-contig/2.0.0",
+      "profile": "gff3-contig/3.0.0",
       "source_sha256": "768fc26e30d6137497216cf289eb53cef1302bfd5fff456b82552526085199e2",
       "case_kind": "observed",
       "losses": [],
@@ -172,7 +172,7 @@
       "id": "refseq-phix-circular",
       "path": "corpus/sources/ncbi-refseq/ncbi_refseq_phix174_GCF_000819615.1.gff",
       "format": "gff3",
-      "profile": "gff3-contig/2.0.0",
+      "profile": "gff3-contig/3.0.0",
       "source_sha256": "bdf7fffd02143906ac82a88f4d8e1723af03d57d70d59d0b30ffcd02e599f9b6",
       "case_kind": "observed",
       "losses": [],
@@ -294,7 +294,7 @@
       "id": "constructed-discontinuous-gff",
       "path": "tests/fixtures/conversions/discontinuous.gff3",
       "format": "gff3",
-      "profile": "gff3-contig/2.0.0",
+      "profile": "gff3-contig/3.0.0",
       "source_sha256": "3ef4bec2a897282d5b7b3948700a680f6608f37869b8f7e504ae2755391f54b3",
       "case_kind": "constructed-negative-control",
       "losses": [],

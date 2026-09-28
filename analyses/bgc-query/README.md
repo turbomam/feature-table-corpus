@@ -62,7 +62,7 @@ Selection is by the publication's locus tags, not inferred biological exclusion.
 The complete source remains available to reproduce and inspect the selection.
 Both files pass the pinned GenomeTools validator.
 
-`gff3-contig/2.0.0` converts this declared excerpt with reference context
+`gff3-contig/3.0.0` converts this declared excerpt with reference context
 `refseq:NC_003888.3`. Exact export recovers **the excerpt** byte for byte.
 Reconstruction derives its feature rows from modeled fields and semantic mappings,
 then reimports with identical fields and relationships. This does not claim that
@@ -88,7 +88,7 @@ just bgc-check    # read-only selection, conversion, query and report verificati
 just bgc-report   # explicitly regenerate the derived excerpt and measured report
 mkdir -p local/bgc-demo
 just conversion-import corpus/derived-examples/actinorhodin.gff3 \
-  gff3-contig/2.0.0 refseq:NC_003888.3 local/bgc-demo/bundle.json --metadata-profile ncbi
+  gff3-contig/3.0.0 refseq:NC_003888.3 local/bgc-demo/bundle.json --metadata-profile ncbi
 just conversion-export local/bgc-demo/bundle.json local/bgc-demo/exact.gff3 exact
 just conversion-export local/bgc-demo/bundle.json local/bgc-demo/reconstructed.gff3 reconstruct
 ```
