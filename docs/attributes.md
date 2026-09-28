@@ -34,7 +34,7 @@ Every converter in this repository follows one rule
 - Splitting happens before percent-decoding. An encoded comma, `%2C`, stays inside one value:
   `Note=x%2Cy` is one entry, `x,y`.
 - Which keys are multivalued is a property of the source profile, not of the key.
-  A GFF3-conformant profile, such as `gff3-contig/1.0.0`, treats every key as a comma list,
+  A GFF3-conformant profile, such as `gff3-contig/2.0.0`, treats every key as a comma list,
   because GFF3 says commas separate values and a literal comma must be written `%2C`.
   A dialect whose writers do not encode commas, such as IMG functional annotation from JGI and
   NMDC, must declare its multivalued keys in its dialect schema. Every other key's value is

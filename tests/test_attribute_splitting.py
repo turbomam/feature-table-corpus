@@ -36,7 +36,7 @@ def values(feature, key):
 
 
 def gff3_bundle(content):
-    return import_source(content, profile="gff3-contig/1.0.0", reference_context="test:reference",
+    return import_source(content, profile="gff3-contig/2.0.0", reference_context="test:reference",
                          source_uri="https://example.org/attribute-splitting")
 
 

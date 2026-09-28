@@ -336,7 +336,7 @@ which keys are multivalued.
 
 | Source | Keys split on commas | Decoding | Example |
 |---|---|---|---|
-| `gff3-contig/1.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
+| `gff3-contig/2.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
 | IMG taxon bundle GFF | none; `ID`, `locus_tag` and `product` are single values | none | not yet mapped to `Feature` |
