@@ -528,6 +528,32 @@ classes:
                 self.assertTrue(validation_errors(data, attribute, 'Attribute'))
             self.assertTrue(validation_errors({'key': 'name', 'value': 'text'}, counter, 'Counter'))
 
+    def test_gff3_and_biolink_mappings(self):
+        """Issue 43: columns and reserved tags map to GFF3 and Biolink, and every prefix is declared."""
+        view = SchemaView(str(SCHEMA))
+        expected = {
+            "seqid": ["gff3:seqid"], "source": ["gff3:source"], "type": ["gff3:type"],
+            "start": ["gff3:start", "biolink:start_coordinate"], "end": ["gff3:end", "biolink:end_coordinate"],
+            "score": ["gff3:score"], "strand": ["gff3:strand", "biolink:strand"],
+            "phase": ["gff3:phase", "biolink:phase"], "parent": ["gff3:Parent"], "name": ["gff3:Name", "biolink:name"],
+            "note": ["gff3:Note"], "dbxref": ["gff3:Dbxref"], "ontology_term": ["gff3:Ontology_term"],
+        }
+        for slot, mappings in expected.items():
+            with self.subTest(slot=slot):
+                self.assertEqual(list(view.induced_slot(slot, "Feature").exact_mappings), mappings)
+        # One-based coordinates: Biolink's interbase slots would be off by one.
+        self.assertEqual(list(view.induced_slot("start", "Feature").close_mappings), ["faldo:begin"])
+        self.assertEqual(list(view.induced_slot("dbxref", "Feature").broad_mappings), ["biolink:xref"])
+        self.assertEqual(list(view.induced_slot("feature_id", "Feature").close_mappings), ["gff3:ID"])
+        self.assertEqual(list(view.get_class("Feature").close_mappings), ["SO:0000110"])
+        # name is only the GFF3 Name on Feature.
+        self.assertEqual(list(view.induced_slot("name", "ContigCollection").exact_mappings), [])
+        prefixes = set(view.schema.prefixes)
+        used = {m.split(":")[0] for element in [*view.all_slots().values(), *view.all_classes().values()]
+                for kind in ("exact_mappings", "close_mappings", "broad_mappings", "narrow_mappings", "related_mappings")
+                for m in getattr(element, kind) or []}
+        self.assertLessEqual(used, prefixes)
+
     def test_flat_audit_accepts_only_unions_of_identified_classes(self):
         def schema(branches, extra=''):
             return SchemaView(f'''
