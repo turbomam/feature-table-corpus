@@ -138,6 +138,10 @@ classes:
       - is_representative
       - product
       - product_source
+      - name
+      - note
+      - dbxref
+      - ontology_term
       - translated_sequence
       - location
     slot_usage:
@@ -267,7 +271,32 @@ slots:
     description: What kind of contig collection this is.
   name:
     title: Name
-    description: Human-readable name, such as an organism and strain or a bin label.
+    description: >-
+      Human-readable name, not an identifier and not unique: for a contig collection an organism
+      and strain or a bin label; for a feature the GFF3 Name, its display name.
+  note:
+    title: Note
+    multivalued: true
+    description: GFF3 Note values, free-text remarks about the feature, in source order.
+  dbxref:
+    title: Database cross-reference
+    multivalued: true
+    description: >-
+      GFF3 Dbxref values, db:id references to records in other databases, in source order. Unlike
+      stable_identifiers, a cross-reference can point at a related record rather than at this
+      feature itself, such as a GeneID on a CDS.
+  ontology_term:
+    title: Ontology term
+    multivalued: true
+    description: GFF3 Ontology_term values, ontology term CURIEs such as GO:0003677, in source order.
+    notes:
+      - name, note, dbxref and ontology_term hold the GFF3 reserved tags of the same names
+        (https://github.com/turbomam/feature-table-corpus/issues/43). gff3-contig fills them and
+        keeps every occurrence in attributes as well, as it does for ID, Parent and product; export
+        refuses a Feature whose typed and generic copies disagree. Measured 2026-09-28 across the
+        51 GFF files in corpus/, Name is on 21,240 rows and never repeated, Note on 412, Dbxref on
+        8,315 (182 rows with more than one), and Ontology_term on 4,750 (3,567 with more than one).
+        Alias and Derives_from occur in none of them, so they stay in attributes.
   length_bp:
     title: Length (bp)
     range: integer
@@ -297,6 +326,14 @@ slots:
   feature_id:
     title: Feature ID
     description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
+    notes:
+      - A mapping whose Datasets can hold hits of several methods forms a hit's feature_id as
+        <source ID>|<method>|<type> and keeps the source ID in attributes
+        (https://github.com/turbomam/feature-table-corpus/issues/98). Hit files from different
+        methods reuse one source ID for hits on the same span (1,138 IDs in one IMG isolate's
+        seven files, counted 2026-09-28), so the bare ID would collide. The IMG per-method
+        mapping and nmdc-lakehouse use this form. nmdc-pfam-protein reads one Pfam file, whose
+        IDs are unique, and keeps the source ID as feature_id.
   stable_identifiers:
     title: Stable identifiers
     multivalued: true

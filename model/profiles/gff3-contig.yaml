@@ -1,4 +1,4 @@
-id: gff3-contig/2.0.0
+id: gff3-contig/3.0.0
 kind: source-dialect
 source_format: gff3
 implementation: scripts/convert_features.py
@@ -14,7 +14,7 @@ supported:
   - Lexical numeric forms, missing versus empty source/attributes, BOM, CR/LF/CRLF and absent final newline.
 mapping:
   core: seqid, source and type decode percent escapes; start/end become integers; finite decimal score becomes float.
-  typed_attributes: ID -> feature_id; Parent -> parent; product -> product.
+  typed_attributes: ID -> feature_id; Parent -> parent; product -> product; Name -> name; Note -> note; Dbxref -> dbxref; Ontology_term -> ontology_term (the last four from 3.0.0, issue 43).
   generic_attributes: All occurrences, including promoted ones, remain ordered key/value pairs; comma groups retain indices.
   missing_id: Assign urn:ftc:line-N; never insert an ID on reverse export; collision with a real ID is rejected.
   translation_table: Contig.translation_table is set when every CDS on the contig carries one assigned NCBI code in a translation_table attribute; disagreeing CDS values are refused; export never reads the slot.

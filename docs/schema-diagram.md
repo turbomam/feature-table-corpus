@@ -34,12 +34,16 @@ Dataset {
 
 }
 Feature {
+    string name
     CoordinateSystemEnum coordinate_system
+    stringList dbxref
     integer end
     string feature_id
     string generated_by
     boolean is_representative
     boolean is_selected
+    stringList note
+    stringList ontology_term
     integer phase
     string product
     string product_source

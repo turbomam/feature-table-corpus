@@ -163,3 +163,11 @@ pipeline kept for a locus. Unset means the source does not say, and false only m
 source states, as Phytozome's `longest=0` does. The Dataset validator refuses two representatives
 under one parent, and a mark, true or false, on a feature with no parent or with a parent that has a parent of
 its own, such as an exon under an mRNA.
+
+## GFF3 reserved tags
+
+`Feature.name`, `note`, `dbxref` and `ontology_term` hold the GFF3 reserved tags `Name`, `Note`,
+`Dbxref` and `Ontology_term` ([issue 43](https://github.com/turbomam/feature-table-corpus/issues/43)).
+`gff3-contig` fills them and keeps every occurrence in `attributes` too, as it already did for `ID`,
+`Parent` and `product`, so a query can use either. `Alias` and `Derives_from` occur in no corpus
+file and have no slots yet.

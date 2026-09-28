@@ -101,7 +101,7 @@ class ProteinProfileTests(unittest.TestCase):
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
         with self.assertRaises(ConversionError):
-            import_source(PFAM.read_bytes(), profile="gff3-contig/2.0.0", reference_context=REFERENCE,
+            import_source(PFAM.read_bytes(), profile="gff3-contig/3.0.0", reference_context=REFERENCE,
                           source_uri="urn:test", protein_context=self.context)
 
     def test_provenance_uses_complete_absolute_uris(self):
@@ -145,10 +145,11 @@ class ProteinProfileTests(unittest.TestCase):
                     export_source(b, mode=mode, protein_context=self.context)
 
     def test_bundle_from_the_previous_profile_version_is_refused(self):
-        """1.0.0 and 2.0.0 protein bundles are refused as unsupported, with or without context.
+        """1.0.0, 2.0.0 and 3.0.0 protein bundles are refused as unsupported, with or without context.
 
-        2.0.0 is the last version whose hits named their contig as seqid (issue 40)."""
-        for version in ("1.0.0", "2.0.0"):
+        2.0.0 is the last version whose hits named their contig as seqid (issue 40), and 3.0.0 the
+        last without typed reserved-tag slots (issue 43)."""
+        for version in ("1.0.0", "2.0.0", "3.0.0"):
             old = deepcopy(self.bundle)
             old["profile"] = f"nmdc-pfam-protein/{version}"
             for context in (deepcopy(self.context), None):
@@ -156,6 +157,20 @@ class ProteinProfileTests(unittest.TestCase):
                     with self.assertRaises(ConversionError) as caught:
                         export_source(old, mode="reconstruct", protein_context=context)
                     self.assertEqual(caught.exception.code, "unsupported-profile")
+
+    def test_context_reserved_tags_must_match_their_typed_slots(self):
+        """Issue 43: a context CDS's generic Name, Note, Dbxref or Ontology_term needs its typed copy."""
+        for key, slot, value in (("Name", "name", "x"), ("Note", "note", ["x"]),
+                                 ("Dbxref", "dbxref", ["db:1"]), ("Ontology_term", "ontology_term", ["GO:1"])):
+            c = deepcopy(self.context)
+            cds = next(f for f in c["dataset"]["features"] if f["type"] == "CDS")
+            text = value if isinstance(value, str) else value[0]
+            cds.setdefault("attributes", []).append({"key": key, "value": text})
+            with self.subTest(key=key), self.assertRaises(ConversionError) as caught:
+                imported(PFAM.read_bytes(), c)
+            self.assertIn(f"context {key} attribute disagrees", str(caught.exception))
+            cds[slot] = value
+            imported(PFAM.read_bytes(), c)
 
     def test_context_with_conflicting_cds_tables_is_refused(self):
         """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""

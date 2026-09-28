@@ -43,8 +43,8 @@ internally consistent artifact; it cannot pass comparison with the old original.
 | Profile | Forward mapping | Reverse mapping and bounds |
 |---|---|---|
 | [`insdc-locations/1.0.0`](../model/profiles/insdc-locations.yaml) | GenBank nucleotide records with qualified references, ordered parts, partial endpoints, circular topology and generic qualifiers. | Reconstruct feature-table blocks from modeled locations and qualifiers; preserve header/sequence text in SourceDocument. Remote, between-base, unknown and mixed-strand locations are refused. |
-| [`nmdc-pfam-protein/3.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
-| [`gff3-contig/2.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
+| [`nmdc-pfam-protein/4.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
+| [`gff3-contig/3.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, `product`, `Name`, `Note`, `Dbxref`, and `Ontology_term` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
 
 These restrictions belong to these adapters, not to the full input formats.
@@ -56,7 +56,7 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/3.0.0`,
+The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/4.0.0`,
 adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
 original contracts unchanged. Supporting CDSs are not exported as additional
 Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.
@@ -91,7 +91,7 @@ Methanococcus maripaludis S1 `Ga0416744`, 2,005 rows), which need a JGI login to
 ([#52](https://github.com/turbomam/feature-table-corpus/issues/52)), and the vendored NMDC file.
 The Clostridium file is now vendored too, as `corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff`.
 
-- `gff3-contig/2.0.0` rejects both isolate files at their first product name containing a
+- `gff3-contig/3.0.0` rejects both isolate files at their first product name containing a
   comma (`product-cardinality`), for example "glutamate-1-semialdehyde 2,1-aminomutase".
   96 product names in the two files have one. The dialect splits commas only for the keys it
   types as lists (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`,
@@ -199,17 +199,21 @@ same genome's `_functional_annotation.gff` too, which supplies the contigs and C
 hit gene in both isolates is a CDS there. `type` is the accession, as `nmdc-pfam-protein` does, and
 `score_type` stays unset because nothing retained says what kind of score column 6 is.
 
-One Dataset holds one hit file. A hit's ID is `<gene>_<start>_<end>`, unique within its file but
-shared by hits of different methods on the same span, and `feature_id` only needs to be unique
-within a Dataset, so putting two methods in one Dataset would need new IDs. In Ga0423362's
-seven files, 1,138 hit IDs appear in more than one file (counted 2026-09-28).
+One Dataset can hold every method of a genome. A hit's source ID is `<gene>_<start>_<end>`, unique
+within its file but shared by hits of different methods on the same span: in Ga0423362's seven
+files, 1,138 hit IDs appear in more than one file (counted 2026-09-28). So a hit's `feature_id` is
+`<ID>|<method>|<type>`, for example `Ga0423362_01_1001207_1001923_10_228|pfam|PF03306`, and the source ID stays
+as its `ID` attribute ([issue 98](https://github.com/turbomam/feature-table-corpus/issues/98)). The
+rule holds for a single file too, so a hit's `feature_id` doesn't depend on which other files share
+its Dataset, and it is the form nmdc-lakehouse uses for NMDC hits. The reverse step refuses a hit
+whose `feature_id` doesn't match its `ID` attribute, method and type.
 
-`just map-img-per-method-roundtrip FUNCTIONAL HIT...` maps each hit file forward with the
-functional annotation, validates the Dataset, maps back, and requires every row of both files to
+`just map-img-per-method-roundtrip FUNCTIONAL HIT...` maps the hit files forward into one Dataset
+with the functional annotation, validates it, maps back, and requires every row of every file to
 come back equal, with written text differing only in number spelling. On 2026-09-28 it held for all
-seven methods of both isolates (Ga0423362: 22,872 hits; Ga0416744: 10,991). `just
-map-img-per-method FUNCTIONAL HIT OUT` and `just map-img-per-method-back DATASET PREFIX` run each
-direction, and never overwrite a file.
+seven methods of Ga0423362 in one Dataset (22,872 hits). `just map-img-per-method FUNCTIONAL
+HIT... OUT` and `just map-img-per-method-back DATASET PREFIX` run each direction, and never
+overwrite a file.
 
 The other per-genome files were measured on the same date to place them:
 
@@ -420,8 +424,8 @@ which keys are multivalued.
 
 | Source | Keys split on commas | Decoding | Example |
 |---|---|---|---|
-| `gff3-contig/2.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
-| `nmdc-pfam-protein/3.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
+| `gff3-contig/3.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
+| `nmdc-pfam-protein/4.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
 | IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
@@ -443,8 +447,12 @@ the grouping indices, so `Note=a,b;Note=c` remains distinguishable from three
 assignments. Empty values remain strings, distinct from absent assignments.
 Original lexical cells retain escaping, delimiters and numeric spelling.
 
-Typed GFF `feature_id`, `parent`, and `product` must agree with their retained
-generic `ID`, `Parent`, and `product` values. Reconstructed output uses the typed
+Typed GFF `feature_id`, `parent`, `product`, `name`, `note`, `dbxref` and `ontology_term` must
+agree with their retained generic `ID`, `Parent`, `product`, `Name`, `Note`, `Dbxref` and
+`Ontology_term` values. The last four are GFF3 reserved tags given typed slots in 3.0.0
+([issue 43](https://github.com/turbomam/feature-table-corpus/issues/43)); `Name` takes at most one
+value, and the other three keep every value in order. `Alias` and `Derives_from` appear in no
+corpus file and stay generic. Reconstructed output uses the typed
 slots for those assignments and rejects conflicting generic copies. Missing source
 IDs receive document-local synthetic IDs but remain missing in exported GFF. The
 model's attribute list now explicitly records that order is retained.
@@ -474,6 +482,11 @@ unsupported profile rather than validated against the new rules.
 `nmdc-pfam-protein` moved again, to 3.0.0, when a protein hit's `seqid` changed from the contig to
 its CDS ([protein coordinates](protein-coordinates.md)). A 2.0.0 bundle is refused the same way.
 
+Typed slots for the GFF3 reserved tags `Name`, `Note`, `Dbxref` and `Ontology_term`
+([issue 43](https://github.com/turbomam/feature-table-corpus/issues/43)) add output to both GFF3
+profiles, so `gff3-contig` moved to 3.0.0 and `nmdc-pfam-protein`, whose hits carry `Name`, to
+4.0.0. Bundles made under the earlier versions are refused as unsupported profiles.
+
 The Dataset validator rejects conflicting CDS tables, as the converters do, but it accepts a
 contig table that no CDS attribute backs, for example one a source states in a pragma or a
 Prodigal sequence comment. The IMG functional mapping cannot write such a table back, so its
@@ -502,7 +515,7 @@ jsonschema 4.26.0, PyYAML 6.0.3, rfc3987 1.3.8 and Biopython 1.85. Use new outpu
 ```sh
 just conversion-import \
   corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
-  gff3-contig/2.0.0 nmdc:wfmgan-11-9ya9xh30.1 \
+  gff3-contig/3.0.0 nmdc:wfmgan-11-9ya9xh30.1 \
   local/conversions/prodigal.json --metadata-profile prodigal
 just conversion-validate local/conversions/prodigal.json \
   --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff
