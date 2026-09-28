@@ -1,0 +1,52 @@
+id: https://w3id.org/ber-data/transforms/img-assembled-gff-to-feature-model
+title: IMG 4.14 assembled GFF rows to the feature model
+description: >-
+  linkml-map specification from the img_assembled_gff dialect (model/dialects/img-assembled-gff.yaml)
+  to Feature in model/schema/ber_feature_model.yaml. The reverse specification is generated from this
+  one with `linkml-map invert`, not written by hand.
+comments:
+  - >-
+    As for the other IMG and Phytozome mappings, scripts/img_assembled_gff_map.py adds what
+    linkml-map 0.5.4 can't express: column 9 as one Attribute per key occurrence in file order,
+    as the text the file writes; the constant coordinate_system ("contig"); and one Contig per
+    seqid.
+  - >-
+    Column 7 is written 1 or -1; the strand derivation maps them to + and -. `invert` keeps these
+    value derivations (checked 2026-09-28 with linkml-map 0.5.4), unlike mirror_source.
+source_schema:
+  name: img_assembled_gff
+  source_file: model/dialects/img-assembled-gff.yaml
+target_schema:
+  name: ber-feature-model
+  source_file: model/schema/ber_feature_model.yaml
+class_derivations:
+  Feature:
+    populated_from: ImgAssembledGffRow
+    slot_derivations:
+      feature_id:
+        populated_from: ID
+      seqid:
+        populated_from: seqid
+      source:
+        populated_from: source
+      type:
+        # An expression, so the source enum is passed through as its text.
+        expr: type
+      start:
+        populated_from: start
+      end:
+        populated_from: end
+      strand:
+        populated_from: strand
+      phase:
+        populated_from: phase
+      product:
+        populated_from: product
+enum_derivations:
+  StrandEnum:
+    populated_from: ImgAssembledStrand
+    permissible_value_derivations:
+      "+":
+        populated_from: "1"
+      "-":
+        populated_from: "-1"

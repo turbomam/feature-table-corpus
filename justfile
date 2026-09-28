@@ -38,6 +38,7 @@ validate-schema:
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-functional-gff.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/phytozome-gene-exons-gff3.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-per-method-gff.transform.yaml
+    uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-assembled-gff.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
@@ -332,6 +333,21 @@ map-img-per-method-back input prefix:
 [group("Conversions")]
 map-img-per-method-roundtrip functional +hits:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py roundtrip "$@"
+
+[doc("Map an IMG 4.14 *.assembled.gff to a Dataset JSON with linkml-map.")]
+[group("Conversions")]
+map-img-assembled input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_assembled_gff_map.py forward "$1" "$2"
+
+[doc("Map a Dataset JSON back to IMG 4.14 assembled GFF text.")]
+[group("Conversions")]
+map-img-assembled-back input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_assembled_gff_map.py reverse "$1" "$2"
+
+[doc("Map an IMG 4.14 assembled GFF forward and back; the file must come back byte for byte.")]
+[group("Conversions")]
+map-img-assembled-roundtrip input:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_assembled_gff_map.py roundtrip "$1"
 
 [doc("Map a Phytozome *.gene_exons.gff3 (or .gff3.gz) to a Dataset JSON with linkml-map.")]
 [group("Conversions")]
