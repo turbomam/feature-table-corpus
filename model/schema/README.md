@@ -180,6 +180,7 @@ They were read from biolink-model 4.4.4 on 2026-09-28, which also supplies the `
 `start` and `end` map to Biolink's one-based `start_coordinate` and `end_coordinate`, not its
 interbase slots, and only closely to faldo's `begin` and `end`, which link a region to a position
 object rather than to an integer. Biolink lists GFF3's `Dbxref` as narrower than its own `xref`, so `dbxref`
-maps broadly to `biolink:xref`. `feature_id` is only close to `gff3:ID`, because it can be
+maps broadly to `biolink:xref`. `attributes` is only close to GFF3's column 9, because it holds that column's ordered key/value pairs
+rather than its text. `feature_id` is only close to `gff3:ID`, because it can be
 synthetic or method-qualified, and `Feature` is only close to SO:0000110, sequence_feature, because
 a Feature can also be a joined location or a protein-coordinate hit.

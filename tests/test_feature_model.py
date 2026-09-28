@@ -545,6 +545,7 @@ classes:
         self.assertEqual(list(view.induced_slot("start", "Feature").close_mappings), ["faldo:begin"])
         self.assertEqual(list(view.induced_slot("dbxref", "Feature").broad_mappings), ["biolink:xref"])
         self.assertEqual(list(view.induced_slot("feature_id", "Feature").close_mappings), ["gff3:ID"])
+        self.assertEqual(list(view.induced_slot("attributes", "Feature").close_mappings), ["gff3:attributes"])
         self.assertEqual(list(view.get_class("Feature").close_mappings), ["SO:0000110"])
         # name is only the GFF3 Name on Feature.
         self.assertEqual(list(view.induced_slot("name", "ContigCollection").exact_mappings), [])

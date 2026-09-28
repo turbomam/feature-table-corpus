@@ -513,6 +513,9 @@ slots:
         have to be flattened into a join table.
   attributes:
     title: Attributes
+    # Close, not exact: column 9 is one text field, and this is its ordered key/value pairs.
+    close_mappings:
+      - gff3:attributes
     multivalued: true
     inlined_as_list: true
     list_elements_ordered: true
