@@ -39,6 +39,7 @@ validate-schema:
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/phytozome-gene-exons-gff3.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-per-method-gff.transform.yaml
     uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-assembled-gff.transform.yaml
+    uv run --with-requirements requirements-mapping.txt linkml-map validate-spec model/transforms/img-taxon-bundle.transform.yaml
 
 [doc("Run LinkML's default lint rules on the feature model.")]
 [group("Validation")]
@@ -348,6 +349,21 @@ map-img-assembled-back input output:
 [group("Conversions")]
 map-img-assembled-roundtrip input:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_assembled_gff_map.py roundtrip "$1"
+
+[doc("Map an IMG taxon bundle (<taxon_oid>.gff and the tables beside it) to a Dataset JSON.")]
+[group("Conversions")]
+map-img-taxon gff output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_taxon_bundle_map.py forward "$1" "$2"
+
+[doc("Map a Dataset JSON back to an IMG taxon bundle; OUTPUT is <taxon_oid>.gff, tables are written beside it.")]
+[group("Conversions")]
+map-img-taxon-back input output:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_taxon_bundle_map.py reverse "$1" "$2"
+
+[doc("Map an IMG taxon bundle forward and back; every file must come back byte for byte.")]
+[group("Conversions")]
+map-img-taxon-roundtrip gff:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_taxon_bundle_map.py roundtrip "$1"
 
 [doc("Map a Phytozome GFF3 and its annotation_info.txt together to one Dataset JSON.")]
 [group("Conversions")]

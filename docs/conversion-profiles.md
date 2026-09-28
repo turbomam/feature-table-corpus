@@ -301,6 +301,32 @@ GFF and every table beside it. Both bundles pass, and the writer reproduces all 
 for byte. The tests edit single rows of a
 [constructed bundle](../tests/fixtures/img-taxon-bundle/README.md) to show each rule rejects.
 
+[`img-taxon-bundle.transform.yaml`](../model/transforms/img-taxon-bundle.transform.yaml) maps the GFF
+rows and every table with positions to `Feature`, one linkml-map derivation per source class, and
+`scripts/img_taxon_bundle_map.py` adds the rest:
+
+- A table row is a hit on [protein coordinates](protein-coordinates.md), on the CDS its `gene_oid`
+  names. Its `feature_id` follows https://github.com/turbomam/feature-table-corpus/issues/98:
+  `<gene_oid>_<start>_<end>|<table>|<type>`, since table rows have no ID. `score` is `bit_score`
+  where the table has one, with `score_type: bit_score`, because the README names the column so.
+  Every other column is an Attribute in column order, as the dialect writes it. A list cell,
+  InterPro `go_info`, is one Attribute per `|`-separated member, in cell order.
+- A KO hit that lists several EC numbers is written as one row per number (126 extra rows in
+  Bacillus, 79 in Zymomonas). It becomes one Feature with one `EC` Attribute per row; the rows
+  must be adjacent and agree in every other column, or the bundle is refused.
+- `.xref.tab.txt` has no positions, so each row becomes a `stable_identifiers` entry on its CDS
+  (https://github.com/turbomam/feature-table-corpus/issues/102): `ncbigi:` for `GI`, `genbank:`
+  for `GenBank/EMBL`, both registered in the Bioregistry. The `GenBank/EMBL` IDs look like RefSeq
+  protein accessions (`ZP_`), but the label is IMG's and is kept.
+- CRISPR GFF rows are skipped and counted
+  (https://github.com/turbomam/feature-table-corpus/issues/101). All 48 are in Zymomonas, use two
+  start positions repeated on every contig, and 29 start past their contig's end.
+  https://github.com/turbomam/feature-table-corpus/issues/104 tracks recovering the real arrays.
+
+`just map-img-taxon-roundtrip GFF` requires every file back byte for byte, the GFF less any
+skipped rows. On 2026-09-28 it held for Bacillus (all 8 files, 36,555 hits, nothing skipped) and
+Zymomonas (all 9 files, 14,750 hits, 3,690 identifiers, 48 CRISPR rows skipped).
+
 ### IMG 4.14 assembled GFF
 
 [`img-assembled-gff.yaml`](../model/dialects/img-assembled-gff.yaml) covers `106476.assembled.gff`
@@ -429,7 +455,7 @@ which keys are multivalued.
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
 | IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
-| IMG taxon bundle GFF | none; `ID`, `locus_tag` and `product` are single values | none | not yet mapped to `Feature` |
+| IMG taxon bundle and its mapping | only the InterPro table's `go_info`, split on `\|`; GFF `ID`, `locus_tag` and `product` are single values | none | `GO:0006807\|GO:0016810` in the fixture is two entries |
 | Phytozome gene_exons GFF3 and its mapping | none; refuses any comma or `%` in column 9 | none | each key is one entry, for example `pacid=90000001` in the fixture |
 | `insdc-locations/1.0.0` | none; a GenBank qualifier repeats instead | not applicable | two `/db_xref` lines are two entries |
 

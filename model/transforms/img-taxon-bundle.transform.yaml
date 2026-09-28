@@ -1,0 +1,136 @@
+id: https://w3id.org/ber-data/transforms/img-taxon-bundle-to-feature-model
+title: IMG taxon bundle GFF and tables to the feature model
+description: >-
+  linkml-map specification from the img_taxon_bundle dialect (model/dialects/img-taxon-bundle.yaml)
+  to Feature in model/schema/ber_feature_model.yaml: one derivation for the GFF rows and one for each
+  table whose rows have positions. The reverse specification is generated from this one with
+  `linkml-map invert`, not written by hand.
+comments:
+  - >-
+    A table row is a hit on protein coordinates: its seqid is the CDS named by gene_oid, which is
+    also its only parent (docs/protein-coordinates.md). scripts/img_taxon_bundle_map.py adds what
+    linkml-map 0.5.4 can't express: the feature_id (issue 98's <source ID>|<method>|<type>, with
+    <gene_oid>_<start>_<end> as the source ID, since table rows have no ID), coordinate_system, the
+    parent, every other column as an Attribute in column order, score_type, the xref table as the
+    CDS's stable_identifiers, one Contig per seqid, and mirror_source on the inverted strand mapping.
+  - >-
+    score is bit_score where the table has one; the bundle's README names that column a bit score.
+source_schema:
+  name: img_taxon_bundle
+  source_file: model/dialects/img-taxon-bundle.yaml
+target_schema:
+  name: ber-feature-model
+  source_file: model/schema/ber_feature_model.yaml
+class_derivations:
+  - name: Feature
+    populated_from: ImgTaxonGffRow
+    slot_derivations:
+      feature_id:
+        populated_from: ID
+      seqid:
+        populated_from: seqid
+      source:
+        populated_from: source
+      type:
+        expr: type
+      start:
+        populated_from: start
+      end:
+        populated_from: end
+      strand:
+        populated_from: strand
+      phase:
+        populated_from: phase
+      product:
+        populated_from: product
+  - name: Feature
+    populated_from: CogHit
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        populated_from: cog_id
+      start:
+        populated_from: query_start
+      end:
+        populated_from: query_end
+      score:
+        populated_from: bit_score
+  - name: Feature
+    populated_from: PfamHit
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        populated_from: pfam_id
+      start:
+        populated_from: query_start
+      end:
+        populated_from: query_end
+      score:
+        populated_from: bit_score
+  - name: Feature
+    populated_from: TigrfamHit
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        populated_from: tigrfam_id
+      start:
+        populated_from: query_start
+      end:
+        populated_from: query_end
+      score:
+        populated_from: bit_score
+  - name: Feature
+    populated_from: KoHit
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        populated_from: ko_id
+      start:
+        populated_from: query_start
+      end:
+        populated_from: query_end
+      score:
+        populated_from: bit_score
+  - name: Feature
+    populated_from: IprHit
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        populated_from: domainid
+      start:
+        populated_from: query_start
+      end:
+        populated_from: query_end
+  - name: Feature
+    populated_from: SignalpFeature
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        # An expression, so the enum value is passed through as its text.
+        expr: feature_type
+      start:
+        populated_from: start_coord
+      end:
+        populated_from: end_coord
+  - name: Feature
+    populated_from: TmhmmFeature
+    slot_derivations:
+      seqid:
+        populated_from: gene_oid
+      type:
+        # An expression, so the enum value is passed through as its text.
+        expr: feature_type
+      start:
+        populated_from: start_coord
+      end:
+        populated_from: end_coord
+enum_derivations:
+  StrandEnum:
+    populated_from: Strand
+    mirror_source: true
