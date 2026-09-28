@@ -31,6 +31,7 @@ validate-schema:
     uv run --with linkml linkml-validate model/dialects/img-functional-gff.yaml
     uv run --with linkml linkml-validate model/dialects/img-per-method-gff.yaml
     uv run --with linkml linkml-validate model/dialects/img-tmhmm-signalp-gff.yaml
+    uv run --with linkml linkml-validate model/dialects/img-assembled-gff.yaml
     uv run --with linkml linkml-validate model/dialects/img-taxon-bundle.yaml
     uv run --with linkml linkml-validate model/dialects/phytozome-gene-exons-gff3.yaml
     uv run --with linkml linkml-validate model/dialects/phytozome-annotation-info.yaml
@@ -45,7 +46,7 @@ lint-schema:
 [doc("Run recommended lint with the declared naming exceptions.")]
 [group("Validation")]
 lint-schema-recommended:
-    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml model/dialects/phytozome-gene-exons-gff3.yaml model/dialects/phytozome-annotation-info.yaml model/dialects/img-per-method-gff.yaml model/dialects/img-taxon-bundle.yaml model/dialects/img-tmhmm-signalp-gff.yaml
+    uv run --with linkml python3 scripts/lint_schema.py model/schema/ber_feature_model.yaml model/schema/attributes.yaml model/schema/source_document.yaml model/dialects/img-functional-gff.yaml model/dialects/phytozome-gene-exons-gff3.yaml model/dialects/phytozome-annotation-info.yaml model/dialects/img-per-method-gff.yaml model/dialects/img-taxon-bundle.yaml model/dialects/img-tmhmm-signalp-gff.yaml model/dialects/img-assembled-gff.yaml
 
 # Intentionally outside check: this reports the standard-naming exception by design.
 [doc("Run the strict audit; its strand-name finding is expected.")]
@@ -274,6 +275,11 @@ dialect-validate-img-per-method input:
 [group("Conversions")]
 dialect-validate-img-tmhmm-signalp input:
     uv run --with-requirements requirements-conversion.txt python3 scripts/img_tmhmm_signalp_gff.py validate "$1"
+
+[doc("Validate an IMG 4.14 *.assembled.gff against its dialect schema; pass the taxon GFF to cross-check it.")]
+[group("Conversions")]
+dialect-validate-img-assembled input taxon="":
+    uv run --with-requirements requirements-conversion.txt python3 scripts/img_assembled_gff.py validate "$1" ${2:+--taxon "$2"}
 
 [doc("Validate an IMG taxon bundle, <taxon_oid>.gff and the .tab.txt tables beside it.")]
 [group("Conversions")]

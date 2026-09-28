@@ -40,6 +40,13 @@ DIALECT_NAMES = {
             "SignalpOrganismType": ("gram-",),
         },
     },
+    "img_assembled_gff": {
+        "slots": ("ID", "Model", "RNA_Class_ID", "Name", "Type", "LowScore"),
+        "values": {
+            "ImgAssembledFeatureType": ("CDS", "tRNA", "rRNA", "misc_RNA"),
+            "ImgAssembledStrand": ("1", "-1"),
+        },
+    },
     "img_taxon_bundle": {
         "slots": ("ID", "EC"),
         "values": {

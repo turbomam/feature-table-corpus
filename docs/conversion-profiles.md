@@ -276,12 +276,33 @@ GFF and every table beside it. Both bundles pass, and the writer reproduces all 
 for byte. The tests edit single rows of a
 [constructed bundle](../tests/fixtures/img-taxon-bundle/README.md) to show each rule rejects.
 
-`106476.assembled.gff`, in the Bacillus bundle, is a separate dialect and is not written yet. It
-is IMG pipeline 4.14.0 output with no `##gff-version` line: sources are the calling tools
-(Prodigal V2.6.3, INFERNAL, HMMER), strand is `1` or `-1`, IDs are `<seqid>.<n>`, CDS rows carry
-Prodigal's `conf` and `gc_cont`, and every column 9 ends with `;`. Its 4,693 rows include all
-4,628 taxon GFF rows by locus tag, at the same coordinates, plus 39 `misc_bind` and 26
-`misc_feature` rows that the taxon GFF drops; its 39 `misc_RNA` rows are the taxon GFF's `RNA`.
+### IMG 4.14 assembled GFF
+
+[`img-assembled-gff.yaml`](../model/dialects/img-assembled-gff.yaml) covers `106476.assembled.gff`
+in the Bacillus bundle, IMG pipeline 4.14.0 output,
+https://github.com/turbomam/feature-table-corpus/issues/77. It is the only file of this vintage
+known here, so every rule was measured on that one file (2026-09-28, 4,693 rows on 63 contigs)
+and a second file may break some of them.
+
+- There is no header. Column 2 names the calling tool (Prodigal for CDS, INFERNAL for tRNA and
+  the Rfam classes, HMMER for rRNA), column 6 is always `.`, strand is `1` or `-1`, phase is `0`
+  on every CDS and `.` elsewhere, and every column 9 ends with `;`.
+- Each type writes one key order; two rRNA rows add `LowScore` twice with the same value. CDS
+  rows carry Prodigal's `conf` with two decimals and `gc_cont` with three.
+- IDs are `<seqid>.<n>`, with n increasing within a contig; on two contigs it skips a number.
+  The locus tag is the contig ID followed by a counter that runs 1, 2, 3 within the contig.
+- A tRNA's `codon` is the reverse complement of the anticodon in its product, an rRNA's `Name`,
+  `Type` and `product` are the same text, and each Rfam `Model` has one accession.
+- Its rows include all 4,628 taxon GFF rows by locus tag, at the same coordinates and strand,
+  plus 39 `misc_bind` and 26 `misc_feature` rows that the taxon GFF drops; its 39 `misc_RNA`
+  rows are the taxon GFF's `RNA`.
+
+`just dialect-validate-img-assembled FILE [TAXON_GFF]` runs it. With the taxon GFF, read with the
+taxon bundle dialect's own parser, it also checks both directions: every taxon row is here at the same coordinates, strand and type (`RNA` there is
+`misc_RNA` here), and every row here but misc_bind and misc_feature is in the taxon GFF. The parser
+accepts only canonical numbers (no leading zeros) and the measured two- and three-decimal
+spellings, so the writer reproduces any valid file byte for byte. The tests edit
+single rows of a [constructed fixture](../tests/fixtures/img-assembled-gff/README.md).
 
 ### Phytozome gene_exons GFF3 and annotation_info
 

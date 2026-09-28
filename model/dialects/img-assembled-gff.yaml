@@ -1,0 +1,152 @@
+id: https://w3id.org/ber-data/dialects/img-assembled-gff
+name: img_assembled_gff
+title: IMG 4.14 assembled GFF, parsed rows (draft dialect)
+description: >-
+  Rows of the JGI IMG annotation pipeline 4.14 `<id>.assembled.gff` file, as parsed by
+  scripts/img_assembled_gff.py, before any mapping to the feature model. Column 2 names the tool
+  that called each feature, strand is written 1 or -1, and every column 9 ends with ";".
+comments:
+  - >-
+    Measured 2026-09-28 on the only file of this vintage known here,
+    corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff (Bacillus sp. V-88, 4,693 rows on
+    63 contigs). Every rule below held on every row of that file; a second file of this vintage
+    may break some of them.
+  - >-
+    The taxon GFF beside it (2708743150.gff, dialect model/dialects/img-taxon-bundle.yaml) has
+    4,628 of these rows: every one of its locus tags is here, at the same coordinates, strand and
+    type (it writes misc_RNA as RNA). The other 65 rows here are the misc_bind and misc_feature
+    rows the taxon GFF drops. `scripts/img_assembled_gff.py validate FILE --taxon TAXON_GFF`
+    checks both directions.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imgasm: https://w3id.org/ber-data/dialects/img-assembled-gff/
+default_prefix: imgasm
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  ImgAssembledGffDocument:
+    tree_root: true
+    description: One parsed assembled GFF file.
+    attributes:
+      source_file:
+        required: true
+        description: Path or URI of the parsed file.
+      rows:
+        description: Every row, in file order.
+        range: ImgAssembledGffRow
+        multivalued: true
+        inlined_as_list: true
+        required: true
+
+  ImgAssembledGffRow:
+    description: >-
+      One nine-column row. The file has no header or comment lines. Column 6 is always ".", so
+      the row has no score.
+    attributes:
+      line:
+        range: integer
+        required: true
+        minimum_value: 1
+        description: One-based line number in the source file.
+      seqid:
+        required: true
+        description: Column 1, the contig ID, <IMG project>_<number>.
+        pattern: "^Ga[0-9]+_[0-9]+$"
+      source:
+        required: true
+        description: >-
+          Column 2, the tool that called the feature: Prodigal for CDS, INFERNAL for tRNA and the
+          Rfam classes, HMMER for rRNA. Versions are left open, as in the other IMG dialects.
+        pattern: "^(Prodigal|INFERNAL|HMMER) .+$"
+      type:
+        required: true
+        range: ImgAssembledFeatureType
+        description: Column 3.
+      start:
+        description: Column 4, one-based inclusive; never greater than end.
+        range: integer
+        required: true
+        minimum_value: 1
+      end:
+        description: Column 5, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      strand:
+        description: Column 7, written 1 or -1 rather than + or -.
+        range: ImgAssembledStrand
+        required: true
+      phase:
+        description: Column 8; 0 on every CDS, whose length is a multiple of 3, and "." (absent) elsewhere.
+        range: integer
+        minimum_value: 0
+        maximum_value: 0
+      attribute_order:
+        multivalued: true
+        required: true
+        description: >-
+          Column 9 keys in source order, so the row can be written back. Each type writes one
+          key order; two rRNA rows add LowScore twice.
+      ID:
+        required: true
+        pattern: "^Ga[0-9]+_[0-9]+\\.[1-9][0-9]*$"
+        description: >-
+          <seqid>.<n>, n written without leading zeros. n increases within a contig; on two
+          contigs it skips a number, so it is not the row's position.
+      locus_tag:
+        required: true
+        pattern: "^Ga[0-9]+_[0-9]+$"
+        description: >-
+          The contig ID followed directly by a counter that runs 1, 2, 3 within the contig in
+          file order, for example Ga0139071_1013 for the third row on Ga0139071_101. Unique in
+          the file, which the counter alone does not ensure (row 11 of Ga1_1 and row 1 of Ga1_11
+          would both be Ga1_111).
+      conf:
+        range: float
+        minimum_value: 0
+        maximum_value: 100
+        description: CDS only. Prodigal's confidence, written with two decimals (50.00 to 100.00 measured).
+      gc_cont:
+        range: float
+        minimum_value: 0
+        maximum_value: 1
+        description: CDS only. GC content of the gene, written with three decimals.
+      codon:
+        pattern: "^[ACGT]{3}$"
+        description: tRNA only. The codon read, the reverse complement of the anticodon in product.
+      Model:
+        description: Rfam model name, on misc_RNA, misc_bind and misc_feature rows.
+      RNA_Class_ID:
+        pattern: "^RF[0-9]{5}$"
+        description: Rfam accession of Model; each Model has one in the measured file.
+      Name:
+        description: rRNA only; always the same text as Type and product.
+      Type:
+        description: rRNA only; always the same text as Name and product.
+      LowScore:
+        range: float
+        multivalued: true
+        description: >-
+          Two rRNA rows write this key twice with the same value; kept as one value per
+          occurrence.
+      product:
+        description: Product name. Every type but CDS has one.
+
+enums:
+  ImgAssembledFeatureType:
+    description: Column 3 values, as written.
+    permissible_values:
+      CDS:
+      tRNA:
+      rRNA:
+      misc_RNA:
+      misc_bind:
+      misc_feature:
+  ImgAssembledStrand:
+    description: Column 7 as written.
+    permissible_values:
+      "1":
+      "-1":
