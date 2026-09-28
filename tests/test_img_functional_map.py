@@ -64,6 +64,32 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(self.feature("ctg_02_500_620_DR1")["parent"], ["ctg_02_500_620"])
         self.assertEqual([c["contig_id"] for c in self.dataset["contigs"]], ["ctg_01", "ctg_02"])
 
+    def test_contig_translation_table_is_derived_forward_only(self):
+        """Issue 72: derived from CDS attributes, which map back; the slot itself is never written."""
+        self.assertEqual([c.get("translation_table") for c in self.dataset["contigs"]], [11, None])
+        # Leaving the derived slot unset loses nothing, since the attributes still carry it.
+        edited = copy.deepcopy(self.dataset)
+        edited["contigs"][0].pop("translation_table")
+        self.assertEqual(self.back(edited)["rows"], self.document["rows"])
+        # A table with no CDS attribute behind it has nowhere to go in the dialect.
+        edited = copy.deepcopy(self.dataset)
+        edited["contigs"][1]["translation_table"] = 11
+        with self.assertRaisesRegex(ValueError, "contig 'ctg_02' loses or changes \\['translation_table'\\]"):
+            self.back(edited)
+
+    def test_disagreeing_cds_tables_are_reported(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            mixed = Path(tmp) / "mixed.gff"
+            mixed.write_text(FIXTURE.read_text().replace(
+                "ID=ctg_01_1600_2199;translation_table=11", "ID=ctg_01_1600_2199;translation_table=4", 1))
+            problems, report = mapping.roundtrip(mixed)
+            self.assertEqual(len(problems), 1, problems)
+            self.assertRegex(problems[0], "^model: contig 'ctg_01': CDS translation_table attributes disagree")
+            self.assertNotIn("rows", report)
+            with self.assertRaisesRegex(ValueError, "disagree"):
+                mapping.forward(dialect.parse(mixed), self.transformers)
+
     def test_one_attribute_per_value_in_file_order(self):
         pairs = [(a["key"], a["value"]) for a in self.feature("ctg_01_1600_2199")["attributes"]]
         self.assertEqual(pairs[pairs.index(("ko", "KO:K01990")) + 1], ("ko", "KO:K01992"))
@@ -205,6 +231,17 @@ class CommandTests(unittest.TestCase):
             status, err = self.run_cli("forward", source, out)
             self.assertEqual(status, 1)
             self.assertIn("phase present on tRNA", err)
+            self.assertFalse(out.exists())
+
+    def test_forward_refuses_disagreeing_cds_tables(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            mixed, out = Path(tmp) / "mixed.gff", Path(tmp) / "d.json"
+            mixed.write_text(FIXTURE.read_text().replace(
+                "ID=ctg_01_1600_2199;translation_table=11", "ID=ctg_01_1600_2199;translation_table=4", 1))
+            status, err = self.run_cli("forward", mixed, out)
+            self.assertEqual(status, 1)
+            self.assertIn("model: contig 'ctg_01': CDS translation_table attributes disagree", err)
             self.assertFalse(out.exists())
 
     def test_reverse_refuses_an_invalid_dataset(self):

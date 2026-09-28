@@ -143,6 +143,32 @@ class ProteinProfileTests(unittest.TestCase):
                 with self.subTest(key=key, mode=mode), self.assertRaises(ConversionError):
                     export_source(b, mode=mode, protein_context=self.context)
 
+    def test_hmmer_scores_are_typed_as_bit_scores(self):
+        """Issue 72: column 6 of NMDC HMMER Pfam rows is a bit score; context CDS scores stay untyped."""
+        hits = [f for f in self.bundle["dataset"]["features"] if f["coordinate_system"] == "protein"]
+        self.assertEqual(len(hits), 416)
+        self.assertTrue(all("score" in f and f["score_type"] == "bit_score" for f in hits))
+        context = [f for f in self.bundle["dataset"]["features"] if f["coordinate_system"] == "contig"]
+        self.assertTrue(context and all("score_type" not in f for f in context))
+        # A row without a score gets no score_type (the schema requires a score for one).
+        first = PFAM.read_bytes().splitlines()[0].decode().split("\t")
+        c = deepcopy(self.context)
+        parent = next(f for f in c["dataset"]["features"] if f["feature_id"] == first[0])
+        c["dataset"] = {"contigs": [{"contig_id": parent["seqid"]}], "features": [parent]}
+        c["bindings"] = [{"protein_id": first[0], "cds_id": first[0]}]
+        first[5] = "."
+        row = imported(("\t".join(first) + "\n").encode(), c)["dataset"]["features"][-1]
+        self.assertNotIn("score", row)
+        self.assertNotIn("score_type", row)
+        # The typed slot is part of the imported projection: dropping or changing it is an edit.
+        for change in (lambda f: f.pop("score_type"), lambda f: f.__setitem__("score_type", "e_value")):
+            b = deepcopy(self.bundle)
+            change(b["dataset"]["features"][-1])
+            for mode in ("exact", "reconstruct"):
+                with self.subTest(mode=mode), self.assertRaises(ConversionError) as caught:
+                    export_source(b, mode=mode, protein_context=self.context)
+                self.assertEqual(caught.exception.code, "edited-bundle")
+
     def test_generated_attributes_and_nontrivial_reference_mapping(self):
         rng = random.Random(25)
         parent = next(f for f in self.context["dataset"]["features"] if f["feature_id"] == GENE)

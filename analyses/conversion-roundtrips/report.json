@@ -15,7 +15,7 @@
     },
     "gff3-contig/1.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
-      "sha256": "555395d6c89eeb2da52006c119186df594272d1eab55cc3b84e14032781d0cef"
+      "sha256": "fe1961f28ba89e157944156379bb765d378d8254c073715e46f01589bfabf326"
     },
     "insdc-locations/1.0.0": {
       "path": "model/profiles/insdc-locations.yaml",
@@ -23,7 +23,7 @@
     },
     "nmdc-pfam-protein/1.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
-      "sha256": "b251242c36759a0d70697e49f7181cc4fcd25b86352ea05dd0e37c5c5a484c24"
+      "sha256": "5398904495f5177ab095f119e3cb9e376316debebaf6abe5ca8030d04dddb7c9"
     }
   },
   "query_performance": "not-measured",

@@ -9,7 +9,8 @@ forward, and through `linkml-map invert` of that same file in reverse. This modu
 adds only what the transform file comments say linkml-map 0.5.4 can't do here:
 column 9 as one Attribute per value in file order, the constant coordinate
 system, and one Contig per seqid. It also restores mirror_source on the inverted
-strand mapping, which `invert` drops.
+strand mapping, which `invert` drops, and derives each Contig's translation_table
+from its CDS rows' translation_table attributes (scripts/translation_tables.py).
 
 `roundtrip` parses, validates the dialect, maps forward, validates the Dataset
 with scripts/validate_closed.py, maps back, and requires the rows to come back
@@ -21,6 +22,7 @@ from pathlib import Path
 import sys
 
 import img_functional_gff as dialect
+from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,7 +73,12 @@ def forward(document, transformers=None):
         feature["attributes"] = attributes(row)
         features.append(feature)
     seqids = dict.fromkeys(row["seqid"] for row in document["rows"])
-    return {"contigs": [{"contig_id": seqid} for seqid in seqids], "features": features}
+    # Contig.translation_table is derived from the CDS attributes, which the reverse
+    # direction writes back; mapping forward again re-derives it, so it round trips.
+    contigs, conflicts = with_translation_tables([{"contig_id": seqid} for seqid in seqids], features)
+    if conflicts:
+        raise ValueError("; ".join(conflicts))
+    return {"contigs": contigs, "features": features}
 
 
 def rows_from_attributes(feature_attributes, slots):
@@ -145,6 +152,12 @@ def reverse(dataset, source_file, transformers=None):
     # location, contig lengths ...). Map the result forward again and require the
     # input back, so nothing is dropped silently.
     again = forward(document, transformers)
+    # translation_table is derived, not written: the CDS attributes carry it. A Dataset
+    # that leaves it unset loses nothing, so drop what forward re-derived for those contigs.
+    unset = {c["contig_id"] for c in dataset.get("contigs", []) if c.get("translation_table") is None}
+    for contig in again["contigs"]:
+        if contig["contig_id"] in unset:
+            contig.pop("translation_table", None)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
     return document
@@ -186,7 +199,10 @@ def roundtrip(path):
         # Mapping assumes a valid dialect document, so stop and report.
         return problems, report
     transformers = _transformers()
-    dataset = forward(document, transformers)
+    try:
+        dataset = forward(document, transformers)
+    except ValueError as error:
+        return [f"model: {error}"], report
     problems += [f"model: {message}" for message in validation_errors(dataset, make_validator(str(MODEL)))]
     if problems:
         return problems, report
@@ -262,8 +278,12 @@ def main(argv=None):
             return 1
         errors = [f"dialect: {m}" for m in dialect.problems(document)]
         if not errors:
-            dataset = forward(document)
-            errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+            try:
+                dataset = forward(document)
+            except ValueError as error:
+                errors = [f"model: {error}"]
+            else:
+                errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
         return write_output(args.output, json.dumps(dataset, indent=1) + "\n")

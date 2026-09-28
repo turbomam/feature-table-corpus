@@ -132,6 +132,11 @@ things it couldn't, found while building this on 2026-09-25:
 - Inversion drops `mirror_source` from the strand enum mapping, which turns every strand into
   nothing on the way back, so the script copies it from the forward specification.
 
+It also derives each `Contig.translation_table` from the CDS rows, by the rule under
+[Derived slots](#derived-slots). The reverse step writes only the attributes back and re-derives
+the table, so a Dataset that leaves the slot unset still maps back, and a table with no CDS
+attribute behind it is refused as a loss.
+
 `just map-img-functional-roundtrip FILE` validates the dialect, maps forward, validates the
 Dataset with `scripts/validate_closed.py`, maps back, and requires every row to come back
 equal. It then writes GFF text and checks that each line that differs from the source parses
@@ -299,6 +304,28 @@ generic `ID`, `Parent`, and `product` values. Reconstructed output uses the type
 slots for those assignments and rejects conflicting generic copies. Missing source
 IDs receive document-local synthetic IDs but remain missing in exported GFF. The
 model's attribute list now explicitly records that order is retained.
+
+### Derived slots
+
+Two model slots are filled from retained source values rather than read from a column
+([#72](https://github.com/turbomam/feature-table-corpus/issues/72)):
+
+- `Contig.translation_table`, in `gff3-contig` and the IMG functional mapping, when every CDS
+  on the contig carries a `translation_table` attribute and all of them name the same assigned
+  NCBI genetic code (`011` counts as 11). CDS values that disagree, within one row or across
+  rows, are refused with `translation-table-conflict`. A contig with a CDS lacking the
+  attribute, or naming an unassigned or non-integer table, is left unset.
+- `Feature.score_type` is `bit_score` on `nmdc-pfam-protein` rows that have a score, because
+  nmdc-lakehouse documents NMDC's HMMER column 6 as a bit score
+  (https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/pfam_annotation_gff.md).
+  No other profile sets it: nothing retained says what Prodigal, GeneMark, lastal, INFERNAL or
+  BED scores are.
+
+Neither slot is read by export, so exact and reconstructed bytes do not change. Re-import
+derives them again, so removing or editing one is an edit like any other and is refused.
+`nmdc-pfam-protein` does not derive `translation_table` for its context contigs: the context
+Dataset is used as supplied. `insdc-locations` does not derive it either; GenBank CDS carry
+`/transl_table`, with table 1 implied when absent, which needs its own rule.
 
 These versions support **unmodified imported instances**. Changes to modeled fields,
 attributes, block relationships, preservation records or mappings are rejected in
