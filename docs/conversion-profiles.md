@@ -190,7 +190,8 @@ rows) and the eight vendored NMDC files of these types (443 rows); every file va
 rows, so the dialect's own round trip is checked by parsed rows, not bytes. Written without the
 source's spelling, numbers are respelled: `91.40` comes back as `91.4` and `1.22e+03` as
 `1220.0`, on 8,638 of the 34,306 real lines. The mapping below passes the source spelling back.
-Numbers must be plain ASCII (`1_2`, `+395` and full-width digits are rejected), and lines must
+Numbers must be plain ASCII (`1_2`, `+395` and full-width digits are rejected), columns 4, 5 and 8
+have no leading zero (`0100` is rejected, as in the functional and TMHMM/SignalP dialects), and lines must
 end with LF.
 
 The parser infers the method from the first row's accession and requires every row, and a file

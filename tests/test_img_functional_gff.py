@@ -123,6 +123,9 @@ class ValidateTests(unittest.TestCase):
 
     def test_numbers_must_be_plain_ascii(self):
         self.assert_rejected(self.edited(0, "\t100\t1299\t", "\t1_00\t1299\t"), "start '1_00' is not a number")
+        # IMG writes no leading zero in columns 4, 5 and 8, so one could not be written back.
+        self.assert_rejected(self.edited(0, "\t100\t1299\t", "\t0100\t1299\t"), "start '0100' is not a number")
+        self.assert_rejected(self.edited(0, "\t+\t0\t", "\t+\t00\t"), "phase '00' is not a number")
         self.assert_rejected(self.edited(0, "\t100\t1299\t", "\t100\t+1299\t"), "end '+1299' is not a number")
         self.assert_rejected(self.edited(0, "\t154.2\t", "\t+154.2\t"), "score '+154.2' is not a number")
         self.assert_rejected(self.edited(0, "\t154.2\t", "\t\uff11\uff15\uff14.2\t"), "is not a number")
