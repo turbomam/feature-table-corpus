@@ -15,6 +15,15 @@ FIXTURE = ROOT / "tests/fixtures/img-functional-gff/constructed.gff"
 NMDC = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-hrn8ep39.1_functional_annotation.gff"
 
 
+def padded(tmp):
+    """The fixture with its first score padded, as GeneMark writes 84.50."""
+    rows = FIXTURE.read_text().split("\n")
+    rows[0] = rows[0].replace("\t154.2\t", "\t154.20\t", 1)
+    path = Path(tmp) / "padded.gff"
+    path.write_text("\n".join(rows))
+    return path
+
+
 class MappingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -32,13 +41,13 @@ class MappingTests(unittest.TestCase):
         problems, report = mapping.roundtrip(FIXTURE)
         self.assertEqual(problems, [])
         self.assertEqual((report["rows"], report["contigs"], report["attributes"]), (10, 2, 75))
-        self.assertEqual(report["lines_differing_only_in_number_spelling"], 1)
+        self.assertEqual(report["lines_differing_only_in_number_spelling"], 0)
         problems, _ = mapping.roundtrip(NMDC)
         self.assertEqual(problems, [])
 
-    def test_a_form_feed_before_a_respelled_number_round_trips(self):
-        # 011 comes back as 11 after the form feed, so a line split at the form feed would
-        # leave a one-column fragment that differs and can't be parsed.
+    def test_a_form_feed_before_a_padded_number_round_trips(self):
+        # 011 after a form feed: a line split at the form feed would leave a one-column
+        # fragment, and the kept spelling must still write 011, not 11.
         import tempfile
         rows = FIXTURE.read_text().split("\n")
         rows[0] = (rows[0].replace("translation_table=11;", "", 1).replace("semialdehyde", "semi\x0caldehyde", 1)
@@ -48,7 +57,34 @@ class MappingTests(unittest.TestCase):
             path.write_text("\n".join(rows))
             problems, report = mapping.roundtrip(path)
         self.assertEqual(problems, [])
-        self.assertEqual(report["lines_differing_only_in_number_spelling"], 2)
+        self.assertEqual(report["lines_differing_only_in_number_spelling"], 0)
+
+    def test_source_number_spelling_comes_back(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            path = padded(tmp)
+            problems, report = mapping.roundtrip(path)
+            self.assertEqual((problems, report["lines_differing_only_in_number_spelling"]), ([], 0))
+            document = dialect.parse(path)
+            spellings = mapping.source_spellings(path, document)
+            dataset = mapping.forward(document, self.transformers, spellings)
+            scores = mapping.score_spellings(dataset, spellings)
+            self.assertEqual(scores, {"ctg_01_100_1299": "154.20"})
+            # Without the kept spellings the rows still come back; only the text is respelled.
+            back = mapping.reverse(dataset, str(path), self.transformers, scores)
+            self.assertIn("\t154.2\t", dialect.write(back))
+            # An edited value is written, not its old spelling.
+            dataset["features"][0]["score"] = 99.0
+            back = mapping.reverse(dataset, str(path), self.transformers, scores)
+            text = dialect.write(back, mapping.dataset_spellings(dataset["features"], scores))
+            self.assertIn("\t99.0\t", text)
+
+    def test_a_kept_spelling_must_be_a_plain_number(self):
+        for text in (" 84.5", "8_4.5", "nan", "84.5x"):
+            with self.subTest(text):
+                self.assertEqual(dialect.spelled(84.5, text), "84.5")
+        self.assertEqual([dialect.spelled(v, t) for v, t in ((84.5, "84.50"), (1220.0, "1.22e+03"), (11, "011"))],
+                         ["84.50", "1.22e+03", "011"])
 
     def test_roundtrip_reports_instead_of_raising(self):
         import tempfile
@@ -314,6 +350,20 @@ class CommandTests(unittest.TestCase):
             self.assertEqual(self.run_cli("reverse", dataset, back)[0], 0)
             self.assertEqual(dialect.parse(back)["rows"], dialect.parse(FIXTURE)["rows"])
 
+
+    def test_the_spelling_file_brings_the_source_back_byte_for_byte(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            source = padded(tmp)
+            dataset, spelling, back = Path(tmp) / "d.json", Path(tmp) / "s.json", Path(tmp) / "back.gff"
+            self.assertEqual(self.run_cli("forward", source, dataset, "--spelling", spelling)[0], 0)
+            self.assertEqual(self.run_cli("reverse", dataset, back, "--spelling", spelling)[0], 0)
+            self.assertEqual(back.read_bytes(), source.read_bytes())
+            bad = Path(tmp) / "bad.json"
+            bad.write_text("[1]")
+            status, err = self.run_cli("reverse", dataset, Path(tmp) / "no.gff", "--spelling", bad)
+            self.assertEqual(status, 1)
+            self.assertIn("spelling: expected", err)
 
 class AgreementTests(unittest.TestCase):
     def test_matches_gff3_contig_on_the_vendored_nmdc_file(self):

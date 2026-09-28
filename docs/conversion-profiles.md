@@ -144,13 +144,20 @@ attribute behind it is refused as a loss.
 
 `just map-img-functional-roundtrip FILE` validates the dialect, maps forward, validates the
 Dataset with `scripts/validate_closed.py`, maps back, and requires every row to come back
-equal. It then writes GFF text and checks that each line that differs from the source parses
-to the same row. Run on 2026-09-25, all rows came back equal for Clostridium acetobutylicum
-`Ga0423362` (4,439 features, 53,609 attributes) and Methanococcus maripaludis S1 `Ga0416744`
-(2,005 features, 24,507 attributes). The written text differs from the source only in number
-spelling, on 430 and 196 lines: scores such as `84.50` come back as `84.5`, and CRISPR lengths
-such as `26` as `26.0`. Exact bytes are out of scope here; `gff3-contig` keeps them through a
-[SourceDocument](source-documents.md).
+equal. It then writes GFF text and requires it to be the source byte for byte. Run on
+2026-09-25, all rows came back equal for Clostridium acetobutylicum `Ga0423362` (4,439
+features, 53,609 attributes) and Methanococcus maripaludis S1 `Ga0416744` (2,005 features,
+24,507 attributes), with the text differing only in number spelling on 430 and 196 lines:
+scores such as `84.50` came back as `84.5`, and CRISPR lengths such as `26` as `26.0`.
+
+Since 2026-09-28 forward keeps the source's spelling
+(https://github.com/turbomam/feature-table-corpus/issues/107). A column 9 number keeps it in its
+Attribute text, which is a string. A score is a number in the model, so its spelling goes in a
+separate map of `feature_id` to text, and only for scores the dialect would otherwise write
+differently. `roundtrip` holds both in memory; `forward --spelling FILE` writes the map and
+`reverse --spelling FILE` reads it. A kept spelling is used only while it still parses to the
+Feature's value, so an edited value is written as edited. `Ga0423362` now comes back byte for
+byte, its 430 lines included. `Ga0416744` is not in the repo and was not rerun.
 
 `just map-img-functional FILE OUT` and `just map-img-functional-back DATASET OUT` run each
 direction on its own, and never overwrite an existing file. The reverse direction maps its
@@ -180,8 +187,9 @@ rows) and the eight vendored NMDC files of these types (443 rows); every file va
   as `6e-18`. The dialect records this and accepts it.
 
 `write()` turns parsed rows back into GFF text and refuses unless that text parses to the same
-rows, so the round trip is checked by parsed rows, not bytes. Numbers are respelled on the way:
-`91.40` comes back as `91.4` and `1.22e+03` as `1220.0`, on 8,638 of the 34,306 real lines.
+rows, so the dialect's own round trip is checked by parsed rows, not bytes. Written without the
+source's spelling, numbers are respelled: `91.40` comes back as `91.4` and `1.22e+03` as
+`1220.0`, on 8,638 of the 34,306 real lines. The mapping below passes the source spelling back.
 Numbers must be plain ASCII (`1_2`, `+395` and full-width digits are rejected), and lines must
 end with LF.
 
@@ -210,8 +218,9 @@ whose `feature_id` doesn't match its `ID` attribute, method and type.
 
 `just map-img-per-method-roundtrip FUNCTIONAL HIT...` maps the hit files forward into one Dataset
 with the functional annotation, validates it, maps back, and requires every row of every file to
-come back equal, with written text differing only in number spelling. On 2026-09-28 it held for all
-seven methods of Ga0423362 in one Dataset (22,872 hits). `just map-img-per-method FUNCTIONAL
+come back equal and every file's text to be the source byte for byte, keeping number spelling as
+the functional mapping does (`--spelling` on both directions). On 2026-09-28 it held for all
+seven methods of Ga0423362 in one Dataset (22,872 hits), with every file byte for byte. `just map-img-per-method FUNCTIONAL
 HIT... OUT` and `just map-img-per-method-back DATASET PREFIX` run each direction, and never
 overwrite a file.
 

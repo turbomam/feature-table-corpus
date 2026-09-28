@@ -192,30 +192,56 @@ def checked(text, where, forbidden):
     return text
 
 
-def write_row(row):
+# A decimal spelling, exponent allowed (1.22e+03); float() alone would also take " 84.5", "1_0" or "nan".
+NUMBER_TEXT = re.compile(r"-?\d+(\.\d+)?([eE][-+]?\d+)?")
+
+
+def spelled(value, text):
+    """text when it spells value (84.50 for 84.5, 24 for 24.0), else value_text(value).
+
+    A mapping passes the source's own spelling so the file comes back byte for byte;
+    a value edited since no longer matches its old text, so the edit is written.
+    """
+    if (text is not None and not isinstance(value, bool) and isinstance(value, (int, float))
+            and NUMBER_TEXT.fullmatch(text)):
+        try:
+            if type(value)(text) == value:
+                return text
+        except ValueError:
+            pass
+    return value_text(value)
+
+
+def write_row(row, spelling=None):
+    """One GFF line. spelling is {"score": text, "values": [text, ...]} from the source,
+    values in the order occurrences() yields them; see spelled()."""
     where = f"line {row.get('line', '?')}"
+    spelling = spelling or {}
+    texts_in = iter(spelling.get("values") or [])
     parts = []
     for key, values in occurrences(row):
         name = slot_name(key)
         comma_list = isinstance(row[name], list) and name not in ONE_VALUE_PER_OCCURRENCE
         forbidden = LINE_BREAKS + (";",) + ((",",) if comma_list else ())
-        texts = [checked(value_text(v), f"{where} {key}", forbidden) for v in values]
+        texts = [checked(spelled(v, next(texts_in, None)), f"{where} {key}", forbidden) for v in values]
         parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}=" + ",".join(texts))
     columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
-               value_text(row["score"]) if "score" in row else ".", row["strand"],
+               spelled(row["score"], spelling.get("score")) if "score" in row else ".", row["strand"],
                str(row["phase"]) if "phase" in row else ".", ";".join(parts)]
     for column in columns[:8]:
         checked(column, where, LINE_BREAKS)
     return "\t".join(columns)
 
 
-def write(document):
+def write(document, spellings=None):
     """GFF text for a document, refused unless it parses back to the same rows.
 
-    The reparse catches every value the dialect can't represent (a delimiter,
-    nan or inf, a character UTF-8 can't encode), rather than each one by name.
+    spellings, if given, has one write_row spelling per row. The reparse catches every
+    value the dialect can't represent (a delimiter, nan or inf, a character UTF-8 can't
+    encode), rather than each one by name.
     """
-    text = "".join(write_row(row) + "\n" for row in document["rows"])
+    spellings = spellings or [None] * len(document["rows"])
+    text = "".join(write_row(row, spelling) + "\n" for row, spelling in zip(document["rows"], spellings, strict=True))
     try:
         text.encode("utf-8")
     except UnicodeEncodeError as error:

@@ -182,6 +182,22 @@ class MappingTests(unittest.TestCase):
             self.assertEqual(len(json.loads(dataset.read_text())["features"]),
                              len(self.functional["rows"]) + len(self.pfam["rows"]) + len(cog["rows"]))
 
+    def test_the_spelling_file_brings_every_file_back_byte_for_byte(self):
+        # The isolate's KO file writes scores as 1.22e+03 and its functional file pads 84.50.
+        sources = [REAL / "Ga0423362_functional_annotation.gff", REAL / "Ga0423362_ko_ec.gff"]
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, spelling, prefix = Path(tmp) / "d.json", Path(tmp) / "s.json", Path(tmp) / "Ga0423362"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(mapping.main(["forward", *map(str, sources), str(dataset), "--spelling", str(spelling)]),
+                                 0, err.getvalue())
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(prefix), "--spelling", str(spelling)]),
+                                 0, err.getvalue())
+            self.assertEqual(json.loads(spelling.read_text())["Ga0423362_01_24852_26480_1_542|ko_ec|KO:K02343__EC:2.7.7.7"],
+                             "1.22e+03")
+            for source in sources:
+                self.assertEqual((Path(tmp) / source.name).read_bytes(), source.read_bytes(), source.name)
+
     def test_clean_round_trip_prints_nothing_to_stderr(self):
         result = subprocess.run([sys.executable, str(ROOT / "scripts/img_per_method_map.py"), "roundtrip",
                                  str(self.functional_path), str(HITS / "constructed_cog.gff")],
