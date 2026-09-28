@@ -109,7 +109,7 @@ features:
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_ko_ec.gff
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_imgap.info
-    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1
+    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 # the CDS; protein positions are measured along its translation (issue 40)
     source: lastal 1456
     type: "KO:K00059__EC:1.1.1.100" # combined label, exactly as ko_ec.gff itself encodes it; see notes.md
     start: 1
@@ -128,7 +128,7 @@ features:
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_cog.gff
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_imgap.info
-    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1
+    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 # the CDS; protein positions are measured along its translation (issue 40)
     source: HMMER 3.1b2 (February 2015) # from Annotation Info File; COG Annotation GFF's own source column is blank
     type: COG1028
     start: 2
@@ -149,7 +149,7 @@ features:
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_cath_funfam.gff
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_imgap.info
-    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1
+    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 # the CDS; protein positions are measured along its translation (issue 40)
     source: HMMER 3.1b2 (February 2015)
     type: 3.40.50.720
     start: 3
@@ -170,7 +170,7 @@ features:
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_pfam.gff
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_imgap.info
-    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1
+    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 # the CDS; protein positions are measured along its translation (issue 40)
     source: HMMER 3.1b2 (February 2015)
     type: PF13561
     start: 13
@@ -190,7 +190,7 @@ features:
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_supfam.gff
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_imgap.info
-    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1
+    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 # the CDS; protein positions are measured along its translation (issue 40)
     source: HMMER 3.1b2 (February 2015)
     type: "51735"
     start: 5
@@ -259,7 +259,7 @@ features:
     source_files:
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_ko_ec.gff
       - https://data.microbiomedata.org/data/nmdc:omprc-11-2t8ft192/nmdc:wfmgan-11-5xxrm214.2/nmdc_wfmgan-11-5xxrm214.2_imgap.info
-    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_2_c1
+    seqid: nmdc:wfmgas-11-19jh9v28.1_scf_2_c1_3_866 # the CDS; protein positions are measured along its translation (issue 40)
     source: lastal 1456
     type: "KO:K00986__EC:2.7.7.49"
     start: 1

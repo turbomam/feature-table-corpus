@@ -98,7 +98,9 @@ the record's producer; they are not field-level provenance.
 BRIDGE's scalar-only prototype profile is not a requirement of this model. The loader uses
 native LIST columns for parents, lineages, and source files, and LIST of STRUCT for attributes.
 Structured locations use a JSON column, and references retain optional topology.
-`Feature.seqid` becomes a foreign key to Contig. `Contig.member_of` is a LIST of collection IDs.
+`Feature.seqid` has no foreign key: it names a Contig, or for protein coordinates the CDS they
+are measured along ([protein coordinates](../../docs/protein-coordinates.md)), and one column
+cannot reference two tables, so the Dataset validator checks it. `Contig.member_of` is a LIST of collection IDs.
 The Dataset validator checks each one against the Dataset's `contig_collections` before loading;
 DuckDB itself has no constraint on it. The physical mapping is explicit Python/SQL;
 it is not a general LinkML database generator.

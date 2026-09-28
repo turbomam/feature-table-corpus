@@ -43,7 +43,7 @@ internally consistent artifact; it cannot pass comparison with the old original.
 | Profile | Forward mapping | Reverse mapping and bounds |
 |---|---|---|
 | [`insdc-locations/1.0.0`](../model/profiles/insdc-locations.yaml) | GenBank nucleotide records with qualified references, ordered parts, partial endpoints, circular topology and generic qualifiers. | Reconstruct feature-table blocks from modeled locations and qualifiers; preserve header/sequence text in SourceDocument. Remote, between-base, unknown and mixed-strand locations are refused. |
-| [`nmdc-pfam-protein/2.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
+| [`nmdc-pfam-protein/3.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
 | [`gff3-contig/2.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, and `product` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
 
@@ -56,7 +56,7 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/2.0.0`,
+The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/3.0.0`,
 adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
 original contracts unchanged. Supporting CDSs are not exported as additional
 Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.
@@ -374,7 +374,7 @@ which keys are multivalued.
 | Source | Keys split on commas | Decoding | Example |
 |---|---|---|---|
 | `gff3-contig/2.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
-| `nmdc-pfam-protein/2.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
+| `nmdc-pfam-protein/3.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
 | IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
@@ -423,6 +423,9 @@ Adding these slots changed both profiles, so both moved to 2.0.0: each adds outp
 now refuses input 1.0.0 accepted (conflicting CDS tables, in the imported file for `gff3-contig`
 and in the protein context for `nmdc-pfam-protein`). A bundle made under 1.0.0 is refused as an
 unsupported profile rather than validated against the new rules.
+
+`nmdc-pfam-protein` moved again, to 3.0.0, when a protein hit's `seqid` changed from the contig to
+its CDS ([protein coordinates](protein-coordinates.md)). A 2.0.0 bundle is refused the same way.
 
 The Dataset validator rejects conflicting CDS tables, as the converters do, but it accepts a
 contig table that no CDS attribute backs, for example one a source states in a pragma or a
