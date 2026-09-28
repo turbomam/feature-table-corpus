@@ -1,0 +1,47 @@
+id: https://w3id.org/ber-data/transforms/phytozome-gene-exons-gff3-to-feature-model
+title: Phytozome gene_exons GFF3 rows to the feature model
+description: >-
+  linkml-map specification from the phytozome_gene_exons_gff3 dialect
+  (model/dialects/phytozome-gene-exons-gff3.yaml) to Feature in model/schema/ber_feature_model.yaml.
+  It maps the nine columns and the column 9 keys that have a Feature slot (ID, Parent). The reverse
+  specification is generated from this one with `linkml-map invert`, not written by hand.
+comments:
+  - >-
+    As for the IMG functional annotation GFF (img-functional-gff.transform.yaml), four things are
+    done in scripts/phytozome_gene_exons_map.py instead, because linkml-map 0.5.4 can't express
+    them: column 9 becomes one Attribute per key in file order, as text; coordinate_system is the
+    constant "contig"; Dataset.contigs holds one Contig per distinct seqid; and mirror_source is
+    restored on the inverted strand mapping.
+  - >-
+    Name, pacid and longest have no Feature slot and travel only as attributes. Whether the model
+    should give the representative-isoform flag (longest=1) a typed home is open in
+    https://github.com/turbomam/feature-table-corpus/issues/48; this mapping makes no model decision.
+source_schema: model/dialects/phytozome-gene-exons-gff3.yaml
+target_schema: model/schema/ber_feature_model.yaml
+class_derivations:
+  Feature:
+    populated_from: PhytozomeGeneExonsRow
+    slot_derivations:
+      feature_id:
+        populated_from: ID
+      seqid:
+        populated_from: seqid
+      source:
+        populated_from: source
+      type:
+        # An expression, so the source enum is passed through as its text.
+        expr: type
+      start:
+        populated_from: start
+      end:
+        populated_from: end
+      strand:
+        populated_from: strand
+      phase:
+        populated_from: phase
+      parent:
+        populated_from: Parent
+enum_derivations:
+  StrandEnum:
+    populated_from: Strand
+    mirror_source: true

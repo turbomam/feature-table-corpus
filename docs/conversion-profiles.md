@@ -342,8 +342,22 @@ TAIR10 file it took 23.5 seconds of wall time on an Apple M5 Max on 2026-09-25.
 Beyond the schemas, the GFF3 checks cover ID construction, block order, part numbering, one
 `longest=1` per gene, and spans: an mRNA spans its exons, each CDS and UTR sits inside an exon,
 and a gene spans its mRNAs. Each writer, run on the TAIR10 files on 2026-09-25, reproduced them
-byte for byte. There is no conversion profile or linkml-map specification for these dialects
-yet.
+byte for byte. There is no conversion profile for these dialects yet.
+
+[`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)
+maps the GFF3 rows to `Feature` with linkml-map, the same way as the IMG functional annotation
+above, and `scripts/phytozome_gene_exons_map.py` adds the same four things linkml-map can't do.
+Gene, mRNA and part rows each become a `Feature`, joined by `parent`. `Name`, `pacid` and `longest`
+have no `Feature` slot and travel only as attributes; a typed home for the representative isoform
+is https://github.com/turbomam/feature-table-corpus/issues/48. The two directives are not model
+data: the reverse step writes `##gff-version 3` and recovers the annot-version from the gene IDs,
+which are the gene Name plus `.TAIR10`. It rebuilds each row's text and parses it with the
+dialect's own row parser, then maps the result forward again and requires the Dataset back.
+
+`just map-phytozome-gff3-roundtrip FILE` requires the written file to equal the source byte for
+byte. On the TAIR10 file on 2026-09-28 it held for all 532,682 rows (1,641,402 attributes) in 211
+seconds on an Apple M5 Max, with a peak of 3.2 GB of memory. `just map-phytozome-gff3 FILE OUT`
+and `just map-phytozome-gff3-back DATASET OUT` run each direction and never overwrite a file.
 
 ## Attributes and authority
 
