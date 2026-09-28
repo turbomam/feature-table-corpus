@@ -471,8 +471,9 @@ slots:
         values of an mRNA's tag attribute.
       - Unset means the source does not say. Set false only where the source says so, as
         Phytozome's longest=0 does. A marked feature needs a parent, its gene, and a gene has at
-        most one representative; the Dataset validator checks both. Transcript types vary by
-        source (mRNA, transcript, lnc_RNA), so the type is not checked.
+        most one representative; the Dataset validator checks both. Type names vary by source
+        (mRNA, transcript, lnc_RNA; gene, ncRNA_gene, pseudogene), so the validator recognizes the
+        gene by structure, as a top-level feature with no parent of its own, not by type.
       - Different from is_selected, which records which competing call an annotation pipeline
         kept for a locus, not which of a gene's isoforms stands for it
         (https://github.com/turbomam/feature-table-corpus/issues/48).

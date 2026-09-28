@@ -159,4 +159,5 @@ isoform ([issue 48](https://github.com/turbomam/feature-table-corpus/issues/48))
 with `longest=1` on one mRNA per gene. It is not `is_selected`, which records which competing call a
 pipeline kept for a locus. Unset means the source does not say, and false only means what the
 source states, as Phytozome's `longest=0` does. The Dataset validator refuses two representatives
-under one parent, and a mark, true or false, on a feature with no parent.
+under one parent, and a mark, true or false, on a feature with no parent or with a parent that has a parent of
+its own, such as an exon under an mRNA.

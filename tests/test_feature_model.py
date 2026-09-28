@@ -340,6 +340,15 @@ class ValidationTests(unittest.TestCase):
         # A mark without a parent says nothing about a gene's isoforms.
         self.reject(lambda d: d["features"][0].__setitem__("is_representative", False),
                     "is_representative needs a parent gene")
+        # A mark on an exon under the mRNA names an mRNA, not a gene, as its parent.
+        isoforms[0]["is_representative"] = True
+        exon = copy.deepcopy(isoforms[0])
+        exon.update(feature_id=f"{isoforms[0]['feature_id']}.exon1", type="exon",
+                    parent=[isoforms[0]["feature_id"]])
+        data["features"].append(exon)
+        self.assertIn(f"feature {exon['feature_id']!r}: is_representative parent "
+                      f"{isoforms[0]['feature_id']!r} is not a top-level feature, so it is not a gene",
+                      validation_errors(data, self.validator))
 
     def test_a_gene_has_at_most_one_representative_isoform(self):
         data, gene, isoforms = with_isoforms(self.example)
