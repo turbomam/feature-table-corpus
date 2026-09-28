@@ -49,11 +49,20 @@ def slot_name(key):
 # digits, none of which IMG writes, so numbers are gated by ASCII patterns first.
 INTEGER = re.compile(r"-?[0-9]+")
 DECIMAL = re.compile(r"-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?")
+POSITION = re.compile(r"0|[1-9][0-9]*")
 
 
 def integer(text):
     """An integer spelled in ASCII digits with an optional minus sign."""
     if not INTEGER.fullmatch(text):
+        raise ValueError(text)
+    return int(text)
+
+
+def position(text):
+    """A column 4, 5 or 8 number: digits with no leading zero, the only spelling measured in
+    IMG files, so a coordinate always writes back as it was read."""
+    if not POSITION.fullmatch(text):
         raise ValueError(text)
     return int(text)
 
@@ -89,12 +98,12 @@ def parse_row(line_number, text, slots):
         if value == "." and name in ("score", "phase"):
             continue
         row[name] = value
-    for name, kind in (("start", integer), ("end", integer), ("phase", integer), ("score", finite)):
+    for name, kind in (("start", position), ("end", position), ("phase", position), ("score", finite)):
         if name in row:
             try:
                 row[name] = kind(row[name])
             except ValueError:
-                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
+                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number as IMG writes it (no leading zero in columns 4, 5 and 8)") from None
     for pair in columns[8].split(";"):
         if not pair:
             raise DialectError(f"line {line_number}: empty attribute")

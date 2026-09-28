@@ -17,7 +17,7 @@ import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, integer, spelled, value_text  # noqa: E402
+from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, position, spelled, value_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "model/dialects/img-per-method-gff.yaml"
@@ -84,11 +84,11 @@ def parse_row(line_number, text, slots):
         if value == "." and name == "phase":
             continue
         row[name] = value
-    for name, kind in (("start", integer), ("end", integer), ("score", finite)):
+    for name, kind in (("start", position), ("end", position), ("score", finite)):
         try:
             row[name] = kind(row[name])
         except ValueError:
-            raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
+            raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number as IMG writes it (no leading zero in columns 4, 5 and 8)") from None
     for pair in columns[8].split(";"):
         if not pair:
             raise DialectError(f"line {line_number}: empty attribute")
