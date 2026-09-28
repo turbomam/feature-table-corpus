@@ -29,6 +29,8 @@ EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
 IMG_FIXTURE = ROOT / "tests/fixtures/img-functional-gff/constructed.gff"
 PHIX = ROOT / "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb"
 REAL_MKDIR = os.mkdir
+# linkml-store 0.3.2's own entries, which lose values; used as negative controls.
+LOSSY_0_3_2 = {"integer": sqla.Integer, "float": sqla.Float}
 
 
 class LakehouseExportTests(unittest.TestCase):
@@ -173,22 +175,21 @@ class LakehouseExportTests(unittest.TestCase):
         _, out = self.exported(path)
         first = pq.read_table(out / "features.parquet").to_pylist()[0]
         self.assertEqual((first["start"], first["end"]), (2**33, 2**33 + 99))
-        # Negative control: linkml-store's own 4-byte INTEGER refuses the value.
+        # Negative control: linkml-store 0.3.2's 4-byte INTEGER refuses the value.
         data = load_validated(SCHEMA, path)
-        previous = lakehouse.widen_store_types({"float": sqla.Double})
-        try:
+        with patch.dict(store_mappings.TMAP, {"integer": sqla.Integer}):
             with self.assertRaisesRegex(Exception, "out of range"):
                 lakehouse.write_parquet(self.view, data, self.work)
-        finally:
-            lakehouse.restore_store_types(previous)
 
     def test_type_table_guard(self):
-        store_mappings.TMAP["float"] = sqla.Double
-        try:
-            with self.assertRaisesRegex(ValueError, "type table changed"):
-                lakehouse.export(SCHEMA, EXAMPLE, self.work / "new" / "guarded")
-        finally:
-            store_mappings.TMAP["float"] = sqla.Float
+        self.assertIsNone(lakehouse.check_store_types())
+        for lossy in ({"float": sqla.Float}, {"integer": sqla.Integer}, {"boolean": sqla.String}):
+            with self.subTest(lossy), patch.dict(store_mappings.TMAP, lossy):
+                with self.assertRaisesRegex(ValueError, "which loses values"):
+                    lakehouse.export(SCHEMA, EXAMPLE, self.work / "new" / "guarded")
+        with patch.dict(store_mappings.TMAP), self.assertRaisesRegex(ValueError, "'boolean': None"):
+            del store_mappings.TMAP["boolean"]
+            lakehouse.export(SCHEMA, EXAMPLE, self.work / "new" / "guarded")
         self.assertEqual([p.name for p in self.work.iterdir()], [])
 
     def notes(self, error):
@@ -356,10 +357,11 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertNotIn(f"{shared.resolve()}\n", notes + "\n")
 
     def test_linkml_store_default_types_lose_values(self):
-        # Negative control 3: without the type fixes, linkml-store's 4-byte FLOAT
-        # changes scores, and the value check says so.
+        # Negative control 3: with linkml-store 0.3.2's 4-byte FLOAT, scores change,
+        # and the value check says so.
         data = load_validated(SCHEMA, EXAMPLE)
-        written = lakehouse.write_parquet(self.view, data, self.work)
+        with patch.dict(store_mappings.TMAP, LOSSY_0_3_2):
+            written = lakehouse.write_parquet(self.view, data, self.work)
         problems = lakehouse.value_mismatches(self.view, data, written)
         self.assertIn("contigs[0]: differs in ['lineage_confidence']", problems)
         self.assertTrue(any("['score']" in p for p in problems))

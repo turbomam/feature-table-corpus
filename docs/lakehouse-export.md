@@ -7,7 +7,7 @@ Parquet file per collection to `DIR`. It was written for
 https://github.com/turbomam/feature-table-corpus/issues/57. The code is
 [`scripts/lakehouse_export.py`](../scripts/lakehouse_export.py) and the pinned toolchain is
 [`requirements-lakehouse.txt`](../requirements-lakehouse.txt) (linkml 1.11.1, linkml-store
-0.3.2, DuckDB 1.5.5, pyarrow 25.0.1).
+0.3.2 plus the scalar-type fix described below, DuckDB 1.5.5, pyarrow 25.0.1).
 
 ```sh
 just map-img-functional local/jgi/IMG_AP-1268149/Ga0423362_functional_annotation.gff local/ga0423362.json
@@ -44,28 +44,33 @@ Datasets have the same columns.
 
 ## Types
 
-linkml-store creates each table from the schema, but two of its default mappings lose
-information, so the export widens them before loading. It then casts every column to the
-type the schema gives when writing, which turns inlined objects into nested Parquet types
-and linkml-store's text booleans into `bool`. If linkml-store's own mapping for `float` or
-`integer` is no longer the one replaced here, the export stops rather than patch a table it
-has not been tested against.
+linkml-store creates each table from the schema. Released linkml-store 0.3.2 maps three
+scalar ranges to types that lose values, so `requirements-lakehouse.txt` pins commit
+[`22bc4d7`](https://github.com/turbomam/linkml-store/commit/22bc4d7e6ac103b800d2be7e2b54dd7914881df0)
+on branch `fix/duckdb-scalar-types` of https://github.com/turbomam/linkml-store, which maps them without loss.
+That is a personal fork, not a linkml-store release. The problem is reported in
+https://github.com/linkml/linkml-store/issues/85 and the fix proposed in
+https://github.com/linkml/linkml-store/pull/86; the pin goes back to a released version once
+that is merged and released. The export checks the installed type table before it writes
+anything and stops on a lossy one. It then casts every column to the type the schema gives
+when writing, which turns inlined objects into nested Parquet types.
 
-| Slot range | linkml-store 0.3.2 default | Written to Parquet |
-|---|---|---|
-| `float` (`score`, `lineage_confidence`) | 4-byte `FLOAT` | `double` |
-| `integer` (`start`, `end`, `length_bp`, `phase`) | 4-byte `INTEGER` | `int64` |
-| `boolean` (`is_selected`) | `VARCHAR` holding `"true"`, not changed | `bool`, by the cast |
-| inlined class (`attributes`, `location`) | `JSON` or `JSON[]` text | `struct` or `list<struct>` |
-| reference to a class (`seqid`, `parent`), string, enum | `VARCHAR` | `string` |
+| Slot range | linkml-store 0.3.2 | Pinned commit | Written to Parquet |
+|---|---|---|---|
+| `float` (`score`, `lineage_confidence`) | 4-byte `FLOAT` | `DOUBLE` | `double` |
+| `integer` (`start`, `end`, `length_bp`, `phase`) | 4-byte `INTEGER` | `BIGINT` | `int64` |
+| `boolean` (`is_selected`) | `VARCHAR` holding `"true"` | `BOOLEAN` | `bool` |
+| inlined class (`attributes`, `location`) | `JSON` or `JSON[]` text | same | `struct` or `list<struct>` |
+| reference to a class (`seqid`, `parent`), string, enum | `VARCHAR` | same | `string` |
 
-With the defaults, a score of 239.1 in the committed
+With the 0.3.2 types, a score of 239.1 in the committed
 [one-biosample example](../model/examples/one-biosample-sequencing/harmonized.yaml) reads
-back as 239.10000610351562. Measured on 2026-09-25, the default types changed the score of
-4,222 of 4,439 features in `Ga0423362` and 1,916 of 2,005 in `Ga0416744`. A test keeps this
-as a negative control. The 4-byte integer holds positions up to 2,147,483,647, which no
-current input exceeds, but linkml-store refuses a larger one with "out of range"; a test
-exports a feature at 2^33 and checks that the default mapping refuses it.
+back as 239.10000610351562. Measured on 2026-09-25, those types changed the score of
+4,222 of 4,439 features in `Ga0423362` and 1,916 of 2,005 in `Ga0416744`; with the pinned
+commit on 2026-09-28, `Ga0423362` exported with every value read back equal. Tests keep the
+0.3.2 types as negative controls. The 4-byte integer holds positions up to 2,147,483,647,
+which no current input exceeds, but 0.3.2 refuses a larger one with "out of range"; a test
+exports a feature at 2^33 and checks that the 0.3.2 mapping refuses it.
 
 linkml-store's own Parquet routes were tried first, on 2026-09-25:
 
@@ -127,8 +132,8 @@ the reported parent directories):
 for the committed example, the constructed IMG fixture and the vendored phiX174 RefSeq
 record (joined and origin-crossing locations). Its negative controls change one attribute
 value, drop one row (with the value check off, so only the row count can catch it),
-rewrite `is_selected` as `int64`, export with linkml-store's default types, and change
-linkml-store's type table before export; each must be reported.
+rewrite `is_selected` as `int64`, export with linkml-store 0.3.2's types, and export with a
+lossy type table installed; each must be reported.
 
 ## Measurements
 

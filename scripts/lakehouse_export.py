@@ -11,10 +11,11 @@ collection with no rows still gets a file with the full column set.
 
 Two things here are not linkml-store defaults, both driven by the schema:
 
-- linkml-store 0.3.2 maps `float` to a 4-byte FLOAT and `integer` to a 4-byte
-  INTEGER. A score of 239.1 comes back as 239.10000610351562, and a coordinate
-  above 2,147,483,647 is refused. TYPE_FIXES widens both before loading, and
-  refuses to run if linkml-store's own mapping is no longer the one it replaces.
+- linkml-store 0.3.2 maps `float` to a 4-byte FLOAT, `integer` to a 4-byte
+  INTEGER and `boolean` to text, so a score of 239.1 comes back as
+  239.10000610351562 and a coordinate above 2,147,483,647 is refused.
+  requirements-lakehouse.txt pins a linkml-store commit that stores all three
+  without loss, and check_store_types() refuses to run on one that doesn't.
 - Every Parquet column is cast to the type column_type() derives from the schema.
   That turns linkml-store's JSON text for inlined objects into nested STRUCT
   types, so `attributes` is list<struct<key, value>>, and its VARCHAR booleans
@@ -51,30 +52,19 @@ from build_duckdb import build_database
 from validate_closed import load_validated
 
 ROOT = Path(__file__).resolve().parents[1]
-TYPE_FIXES = {"integer": sqla.BigInteger, "float": sqla.Double}
-# linkml-store 0.3.2's own entries that TYPE_FIXES replaces. If a later version
-# changes them, the fix may no longer be needed or right, so stop and recheck.
-REPLACED_TYPES = {"integer": sqla.Integer, "float": sqla.Float}
+# The column types linkml-store must give these ranges for values to survive.
+LOSSLESS_TYPES = {"integer": sqla.BigInteger, "float": sqla.Double, "double": sqla.Double,
+                  "boolean": sqla.Boolean}
 SCALAR_TYPES = {"integer": "BIGINT", "float": "DOUBLE", "double": "DOUBLE", "boolean": "BOOLEAN"}
 
 
-def widen_store_types(fixes=TYPE_FIXES):
-    """Replace linkml-store's lossy scalar mappings; return the previous ones."""
-    previous = {k: store_mappings.TMAP.get(k) for k in fixes}
-    unexpected = {k: v for k, v in previous.items() if v is not REPLACED_TYPES.get(k)}
-    if unexpected:
-        raise ValueError(f"linkml-store's type table changed ({unexpected}); "
-                         "recheck TYPE_FIXES against the installed version")
-    store_mappings.TMAP.update(fixes)
-    return previous
-
-
-def restore_store_types(previous):
-    for key, value in previous.items():
-        if value is None:
-            store_mappings.TMAP.pop(key, None)
-        else:
-            store_mappings.TMAP[key] = value
+def check_store_types():
+    """Refuse an installed linkml-store whose DuckDB types would lose values."""
+    lossy = {k: getattr(store_mappings.TMAP.get(k), "__name__", None) for k, v in LOSSLESS_TYPES.items()
+             if store_mappings.TMAP.get(k) is not v}
+    if lossy:
+        raise ValueError(f"the installed linkml-store maps {lossy}, which loses values; "
+                         "install the version requirements-lakehouse.txt pins")
 
 
 def collections(view):
@@ -283,7 +273,7 @@ def export(schema_path, data_path, out_dir):
     data = load_validated(schema_path, data_path)
     timings["validate_seconds"] = time.perf_counter() - started
     view = SchemaView(str(schema_path))
-    previous = widen_store_types()  # before any mkdir, so a changed type table creates nothing
+    check_store_types()  # before any mkdir, so a lossy type table creates nothing
     made = []
     published = []
     staging = None
@@ -315,8 +305,6 @@ def export(schema_path, data_path, out_dir):
         for note in left_behind(leftovers):
             error.add_note(note)
         raise
-    finally:
-        restore_store_types(previous)
     return {"output": str(out_dir), "collections": summary,
             **{k: round(v, 2) for k, v in timings.items()}}
 
