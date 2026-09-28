@@ -22,7 +22,7 @@ from build_duckdb import build_database
 from query_duckdb import by_attribute, interval_overlap
 import conversion_report
 
-GFF = "gff3-contig/2.0.0"
+GFF = "gff3-contig/3.0.0"
 BED = "bed12-blocks/1.0.0"
 PRODIGAL = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff"
 BED_SOURCE = ROOT / "corpus/sources/biopython/blat_34_hg19.bed"
@@ -269,12 +269,39 @@ class ConversionTests(unittest.TestCase):
         self.assertEqual(table(gff("ID=a;translation_table=" + "0" * 5000 + "11")), 11)
 
     def test_bundle_from_the_previous_profile_version_is_refused(self):
-        """Issue 72 changed gff3-contig's output and domain, so 1.0.0 bundles aren't validated as 2.0.0."""
-        old = deepcopy(bundle(PRODIGAL.read_bytes(), metadata_profile="prodigal"))
-        old["profile"] = "gff3-contig/1.0.0"
+        """Issues 72 and 43 changed gff3-contig's output, so older bundles are refused, not revalidated."""
+        for version in ("1.0.0", "2.0.0"):
+            old = deepcopy(bundle(PRODIGAL.read_bytes(), metadata_profile="prodigal"))
+            old["profile"] = f"gff3-contig/{version}"
+            with self.subTest(version=version), self.assertRaises(ConversionError) as caught:
+                export_source(old, mode="reconstruct")
+            self.assertEqual(caught.exception.code, "unsupported-profile")
+
+    def test_reserved_tags_fill_typed_slots_and_stay_generic(self):
+        """Issue 43: Name, Note, Dbxref and Ontology_term fill typed slots; the pairs stay."""
+        content = (ROOT / "corpus/derived-examples/actinorhodin.gff3").read_bytes()
+        b = bundle(content, metadata_profile="ncbi")
+        cds = next(f for f in b["dataset"]["features"] if f["feature_id"] == "cds-WP_011030038.1")
+        self.assertEqual(cds["name"], "WP_011030038.1")
+        self.assertEqual(cds["dbxref"], ["GenBank:WP_011030038.1"])
+        self.assertEqual(cds["ontology_term"], ["GO:0006631", "GO:0070403"])
+        pairs = [(a["key"], a["value"]) for a in cds["attributes"]]
+        self.assertIn(("Ontology_term", "GO:0070403"), pairs)
+        self.assertEqual(export_source(b, mode="exact", original_bytes=content), content)
+        # A typed copy that disagrees with its generic copy is refused on export.
+        for slot, value in (("name", "other"), ("ontology_term", ["GO:0006631"]), ("dbxref", [])):
+            edited = deepcopy(b)
+            feature = next(f for f in edited["dataset"]["features"] if f["feature_id"] == cds["feature_id"])
+            feature[slot] = value
+            if value == []:
+                del feature[slot]
+            with self.subTest(slot=slot), self.assertRaises(ConversionError):
+                export_source(edited, mode="reconstruct")
         with self.assertRaises(ConversionError) as caught:
-            export_source(old, mode="reconstruct")
-        self.assertEqual(caught.exception.code, "unsupported-profile")
+            bundle(b"##gff-version 3\nc1\t.\tgene\t1\t9\t.\t+\t.\tID=g;Name=a,b\n")
+        self.assertEqual(caught.exception.code, "name-cardinality")
+        note = bundle(b"##gff-version 3\nc1\t.\tgene\t1\t9\t.\t+\t.\tID=g;Note=x%2Cy,z\n")
+        self.assertEqual(note["dataset"]["features"][0]["note"], ["x,y", "z"])
 
     def test_translation_tables_on_the_vendored_nmdc_structural_annotation(self):
         """Measured 2026-09-28: 1,199 CDS on 1,045 contigs, no contig mixes tables."""

@@ -101,7 +101,7 @@ class ProteinProfileTests(unittest.TestCase):
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
         with self.assertRaises(ConversionError):
-            import_source(PFAM.read_bytes(), profile="gff3-contig/2.0.0", reference_context=REFERENCE,
+            import_source(PFAM.read_bytes(), profile="gff3-contig/3.0.0", reference_context=REFERENCE,
                           source_uri="urn:test", protein_context=self.context)
 
     def test_provenance_uses_complete_absolute_uris(self):
@@ -148,7 +148,7 @@ class ProteinProfileTests(unittest.TestCase):
         """1.0.0 and 2.0.0 protein bundles are refused as unsupported, with or without context.
 
         2.0.0 is the last version whose hits named their contig as seqid (issue 40)."""
-        for version in ("1.0.0", "2.0.0"):
+        for version in ("1.0.0", "2.0.0", "3.0.0"):
             old = deepcopy(self.bundle)
             old["profile"] = f"nmdc-pfam-protein/{version}"
             for context in (deepcopy(self.context), None):

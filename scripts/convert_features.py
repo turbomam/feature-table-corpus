@@ -22,8 +22,8 @@ from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTEIN = "nmdc-pfam-protein/3.0.0"
-PROFILES = {"gff3-contig/2.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
+PROTEIN = "nmdc-pfam-protein/4.0.0"
+PROFILES = {"gff3-contig/3.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 
 
@@ -85,6 +85,10 @@ def attributes(text):
     return pairs, groups
 
 
+#: GFF3 reserved tags whose values fill a multivalued typed slot, in source order (issue 43).
+RESERVED_LISTS = {"Note": "note", "Dbxref": "dbxref", "Ontology_term": "ontology_term"}
+
+
 def values(pairs, key):
     return [a["value"] for a in pairs if a["key"] == key]
 
@@ -99,6 +103,8 @@ def gff_feature(columns, record_id):
     require(len(ids) <= 1 and all(ids), "identifier-cardinality", "ID must have one nonempty value")
     require(all(parents), "parent-cardinality", "Parent values cannot be empty")
     require(len(products) <= 1, "product-cardinality", "typed product requires at most one value")
+    names = values(pairs, "Name")
+    require(len(names) <= 1, "name-cardinality", "typed name requires at most one value")
     require("true" not in values(pairs, "Is_circular"), "circular-location",
             "circular reference semantics require a different location profile")
     feature = {"feature_id": ids[0] if ids else f"urn:ftc:{record_id}",
@@ -123,6 +129,12 @@ def gff_feature(columns, record_id):
         feature["parent"] = parents
     if products:
         feature["product"] = products[0]
+    # GFF3 reserved tags with typed slots (issue 43); the generic pairs above keep them too.
+    if names:
+        feature["name"] = names[0]
+    for key, slot in RESERVED_LISTS.items():
+        if values(pairs, key):
+            feature[slot] = values(pairs, key)
     return [feature], {"record_id": record_id, "feature_ids": [feature["feature_id"]],
                        "attribute_groups": groups, "source_has_id": bool(ids)}
 
@@ -351,12 +363,14 @@ def reconstruct_record(profile, by_id, mapping):
         # cell. The contextual CDS relationship is not a source Parent tag.
         projected = {**feature, "seqid": mapping["protein_id"]}
         projected.pop("parent")
-        return reconstruct_record("gff3-contig/2.0.0", {feature["feature_id"]: projected}, mapping)
+        return reconstruct_record("gff3-contig/3.0.0", {feature["feature_id"]: projected}, mapping)
     if PROFILES[profile] == "gff3":
         pairs = feature["attributes"]
         typed = {"ID": [feature["feature_id"]] if mapping["source_has_id"] else [],
                  "Parent": feature.get("parent", []),
-                 "product": [feature["product"]] if "product" in feature else []}
+                 "product": [feature["product"]] if "product" in feature else [],
+                 "Name": [feature["name"]] if "name" in feature else [],
+                 **{key: feature.get(slot, []) for key, slot in RESERVED_LISTS.items()}}
         for key, expected in typed.items():
             require(values(pairs, key) == expected, "attribute-conflict", f"generic {key} disagrees with its typed slot")
         offsets = {key: 0 for key in typed}

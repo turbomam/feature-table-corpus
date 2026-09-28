@@ -415,11 +415,12 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 51 pairs and 35 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 55 pairs and 36 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
-        # score_type (issue 46), and the scalar is_representative (issue 48).
-        self.assertEqual(len(rows), 51)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 35)
+        # score_type (issue 46), the scalar is_representative (issue 48), and the GFF3 reserved tags
+        # name (scalar) and note, dbxref and ontology_term (lists) on Feature (issue 43).
+        self.assertEqual(len(rows), 55)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 36)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
