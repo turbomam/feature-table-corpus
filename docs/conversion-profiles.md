@@ -277,6 +277,27 @@ respells a trailing zero (`0.670` as `0.67`) on 49 of 225 lines, so their round 
 by parsed rows, as in the other IMG dialects. The tests edit single rows of
 [constructed fixtures](../tests/fixtures/img-tmhmm-signalp-gff/README.md).
 
+[`img-tmhmm-signalp-gff.transform.yaml`](../model/transforms/img-tmhmm-signalp-gff.transform.yaml)
+maps the rows to `Feature` with linkml-map, and `scripts/img_tmhmm_signalp_map.py` maps them with
+the genome's functional annotation GFF, which supplies the CDS, as for the per-method hits:
+
+- Each segment or site is a Feature on protein coordinates. Its seqid is its CDS, which is also
+  its only parent.
+- `feature_id` is `<seqid>_<start>_<end>|<method>|<type>`, the form of
+  https://github.com/turbomam/feature-table-corpus/issues/98, with `tmh` or `cleavage_sites` as
+  the method. SignalP rows have no `ID`, so the source ID is built from the row, as for the
+  taxon bundle's tables. A TMHMM row's `ID` stays as its `ID` Attribute.
+- SignalP's column 6 becomes `score` with `score_type` unset, since nothing in the files says
+  which score it is; the D-score stays an Attribute. TMHMM rows have no score.
+- Number spelling is kept as in the functional and per-method mappings (`--spelling`), so the
+  SignalP `0.670` values come back as written.
+
+`just map-img-tmhmm-signalp-roundtrip FUNCTIONAL FILE...` maps forward, validates the Dataset,
+maps back and requires every file byte for byte. On 2026-09-28 it held for the vendored
+Clostridium `_tmh.gff` (9,710 rows) and `_cleavage_sites.gff` (146 rows) in one Dataset with the
+functional annotation (14,295 features). `just map-img-tmhmm-signalp` and
+`just map-img-tmhmm-signalp-back` run each direction, and never overwrite a file.
+
 ### IMG taxon bundle
 
 [`img-taxon-bundle.yaml`](../model/dialects/img-taxon-bundle.yaml) is the third dialect in
@@ -464,7 +485,7 @@ which keys are multivalued.
 | `nmdc-pfam-protein/4.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
-| IMG TMHMM and SignalP GFF | none; it declares no list keys | none | not yet mapped to `Feature` |
+| IMG TMHMM and SignalP GFF and their mapping | none; it declares no list keys | none | `D-score=0.670` is one entry, kept as written |
 | IMG taxon bundle and its mapping | only the InterPro table's `go_info`, split on `\|`; GFF `ID`, `locus_tag` and `product` are single values | none | `GO:0006807\|GO:0016810` in the fixture is two entries |
 | Phytozome gene_exons GFF3 and its mapping | none; refuses any comma or `%` in column 9 | none | each key is one entry, for example `pacid=90000001` in the fixture |
 | `insdc-locations/1.0.0` | none; a GenBank qualifier repeats instead | not applicable | two `/db_xref` lines are two entries |
