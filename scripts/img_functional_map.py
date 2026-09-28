@@ -200,9 +200,12 @@ def roundtrip(path):
             problems.append(f"line {before['line']}: row differs after the round trip in {changed}")
     if len(back["rows"]) != len(document["rows"]):
         problems.append(f"{len(document['rows'])} rows in, {len(back['rows'])} out")
-    original = Path(path).read_text(encoding="utf-8").splitlines()
+    # Split at LF only, as the parser does: both texts have passed its LF-only rule, and
+    # splitlines() would also split at a form feed or other break inside a value.
+    with open(path, encoding="utf-8", newline="") as handle:
+        original = handle.read().split("\n")[:-1]
     try:
-        written = dialect.write(back).splitlines()
+        written = dialect.write(back).split("\n")[:-1]
     except dialect.DialectError as error:
         return problems + [f"write: {error}"], report
     spelling = 0
