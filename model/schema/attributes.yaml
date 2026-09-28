@@ -20,9 +20,18 @@ classes:
         This module has no dependency on GFF, Feature, Contig, or a genomic coordinate system.
       - A key is not an identifier; repeated keys can remain separate entries in an ordered list.
         Consuming models choose attachment and cardinality. Keys are source names, not a controlled vocabulary.
-      - Values retain their source string form in this initial profile. Typed values, units,
-        nested structures, and per-attribute provenance are extension questions; this module
-        does not define a parser, escaping rules, or a lossless serialization for any source format.
+      - A value is the source's text for one item, as a string, after the source profile has split
+        any list and undone its own escapes, so a GFF3 x%2Cy is stored as x,y. The escaped spelling
+        belongs to the source serialization, not to this module. Typed values, units, nested
+        structures, and per-attribute provenance are extension questions; this module does not
+        define a parser, escaping rules, or a lossless serialization for any source format.
+      - Each value of a multivalued source attribute is its own Attribute entry, with the same key,
+        in source order; one entry never holds a joined list. Splitting happens before any
+        percent-decoding, so an encoded separator (a GFF %2C) stays inside one value. Which keys
+        are multivalued is a property of the source profile. A GFF3-conformant profile treats
+        every key as a comma list; a dialect whose writers do not encode commas declares its
+        multivalued keys and keeps every other value whole, literal commas included. See
+        docs/attributes.md and https://github.com/turbomam/feature-table-corpus/issues/39.
     attributes:
       key:
         title: Key
@@ -35,4 +44,6 @@ classes:
         slot_uri: battr:value
         range: string
         required: true
-        description: Attribute value, stored as its original string form.
+        description: >-
+          The source's text for one value, as a string: not typed or normalized, with any escapes
+          the source profile defines decoded (a GFF3 %2C is stored as a comma).
