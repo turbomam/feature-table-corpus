@@ -42,7 +42,7 @@ TYPES = {
 COMPLEMENT = str.maketrans("ACGT", "TGCA")
 # Canonical spellings only, so every accepted value is written back the same way:
 # no sign, no leading zero, ASCII digits (int() also takes "0300", "-0" and "²").
-CANONICAL = re.compile(r"0|[1-9][0-9]*")
+CANONICAL = re.compile(r"0|[1-9][0-9]{0,17}")  # at most 18 digits: fits int64, far below int()'s limit
 DIGITS = re.compile(r"[0-9]+")
 # Taxon GFF column 3 for each assembled type the taxon GFF keeps, measured 2026-09-28.
 TAXON_TYPE = {"CDS": "CDS", "tRNA": "tRNA", "rRNA": "rRNA", "misc_RNA": "RNA"}
@@ -74,7 +74,7 @@ def parse_row(line_number, text, slots):
     for name in ("start", "end", "phase"):
         if name in row:
             if not CANONICAL.fullmatch(row[name]):
-                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number")
+                raise DialectError(f"line {line_number}: {name} {row[name][:40]!r} is not a number of at most 18 digits")
             row[name] = int(row[name])
     if not columns[8].endswith(";"):
         raise DialectError(f"line {line_number}: column 9 does not end with ';'")
@@ -101,6 +101,9 @@ def parse_row(line_number, text, slots):
             typed = convert(value, slot)
         except ValueError:
             raise DialectError(f"line {line_number}: {key} {value!r} is not a {slot.range}") from None
+        # Other floats must be spelled as the writer spells them, so they write back unchanged.
+        if slot.range == "float" and places is None and value_text(typed) != value:
+            raise DialectError(f"line {line_number}: {key} {value!r} is not written as {value_text(typed)!r}")
         if slot.multivalued:
             row.setdefault(key, []).append(typed)
         else:
@@ -242,7 +245,9 @@ def cross_checks(document):
                 problems.append(f"{where}: locus_tag {row.get('locus_tag')!r} is not {seqid}{count}")
             number = str(row.get("ID", "")).rsplit(".", 1)[-1]
             if previous is not None:
-                if not DIGITS.fullmatch(number) or not DIGITS.fullmatch(previous[0]) or int(number) <= int(previous[0]):
+                # Digit strings order by (length, text), with no int() to overflow.
+                if (not DIGITS.fullmatch(number) or not DIGITS.fullmatch(previous[0])
+                        or (len(number), number) <= (len(previous[0]), previous[0])):
                     problems.append(f"{where}: ID number does not increase within {seqid}")
                 if row.get("start", 0) < previous[1]:
                     problems.append(f"{where}: start is before the previous row's on {seqid}")
@@ -280,8 +285,9 @@ def taxon_checks(document, taxon_path):
         row = here.get(tag)
         if row is None:
             problems.append(f"{where}: locus_tag {tag} is not in this file")
-        elif (str(row.get("start")), str(row.get("end")), strands.get(row.get("strand"))) != tuple(columns[3:5] + [columns[6]]):
-            problems.append(f"{where}: locus_tag {tag} has other coordinates or strand here")
+        elif (row.get("seqid"), str(row.get("start")), str(row.get("end")), strands.get(row.get("strand"))) != (
+                columns[0], columns[3], columns[4], columns[6]):
+            problems.append(f"{where}: locus_tag {tag} has another contig, coordinates or strand here")
         elif TAXON_TYPE.get(row.get("type")) != columns[2]:
             problems.append(f"{where}: locus_tag {tag} is {columns[2]} there but {row.get('type')} here")
     if not taken:

@@ -131,8 +131,10 @@ class ValidateTests(unittest.TestCase):
         status, out = self.run_on(FIXTURE.read_text(), self.taxon())
         self.assertEqual(status, 0, out)
         fixture = FIXTURE.read_text()
-        self.assert_text_rejected(fixture, "has other coordinates or strand here",
+        self.assert_text_rejected(fixture, "has another contig, coordinates or strand here",
                                   self.taxon(change=lambda line: line.replace("\t-\t", "\t+\t")))
+        self.assert_text_rejected(fixture, "has another contig, coordinates or strand here",
+                                  self.taxon(change=lambda line: line.replace("Ga0000001_101\t", "Ga0000001_102\t", 1)))
         self.assert_text_rejected(fixture, "is tRNA there but CDS here",
                                   self.taxon(change=lambda line: line.replace("\tCDS\t", "\ttRNA\t")))
         self.assert_text_rejected(fixture, "locus_tag Ga0000001_9999 is not in this file",
@@ -149,6 +151,12 @@ class ValidateTests(unittest.TestCase):
         self.assert_rejected(1, "\t300\t950\t", "\t0300\t950\t", "start '0300' is not a number")
         self.assert_rejected(1, "\t-1\t0\t", "\t-1\t-0\t", "phase '-0' is not a number")
         self.assert_rejected(3, "ID=Ga0000001_101.4;", "ID=Ga0000001_101.\u00b2;", "does not match")
+        self.assert_rejected(7, "LowScore=0.526;LowScore=0.526;", "LowScore=0.5260;LowScore=0.526;", "is not written as '0.526'")
+        self.assert_rejected(7, "LowScore=0.526;LowScore=0.526;", "LowScore=5.26e-1;LowScore=0.526;", "is not written as '0.526'")
+        # Past int()'s 4,300-digit limit: reported, not a traceback, in columns and in the ID.
+        huge = "9" * 5000
+        self.assert_rejected(1, "\t300\t950\t", f"\t300\t{huge}\t", "is not a number of at most 18 digits")
+        self.assert_rejected(3, "ID=Ga0000001_101.4;", f"ID=Ga0000001_101.{huge};", "")
         self.assert_rejected(3, "ID=Ga0000001_101.4;", "ID=Ga0000001_101.\u0664;", "does not match")
 
     @unittest.skipUnless(shutil.which("just"), "just is not installed")
