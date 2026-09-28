@@ -44,6 +44,11 @@ prefixes:
   kb_cdm: http://kbase.github.io/cdm-schema/linkml/
   MIXS: https://w3id.org/mixs/
   EDAM.DATA: http://edamontology.org/data_
+  biolink: https://w3id.org/biolink/vocab/
+  # The IRI Biolink itself uses for GFF3 columns and tags (biolink-model 4.4.4).
+  gff3: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md#
+  faldo: http://biohackathon.org/resource/faldo#
+  SO: http://purl.obolibrary.org/obo/SO_
 
 default_prefix: bfm
 default_range: string
@@ -111,6 +116,10 @@ classes:
   Feature:
     title: Feature
     description: An annotated sequence interval; explicit conversion profiles define its source representation.
+    close_mappings:
+      # SO:0000110 is "any extent of continuous biological sequence"; a Feature can also be a
+      # joined location or a protein-coordinate hit, so the match is close, not exact.
+      - SO:0000110
     notes:
       - Used for both gene/CDS-level calls and for finer-grained per-database evidence hits
         (Pfam, COG, CATH-FunFam, SUPERFAMILY, KO, EC) that a functional annotation pipeline
@@ -147,6 +156,11 @@ classes:
     slot_usage:
       feature_id:
         identifier: true
+      name:
+        # On Feature, name is the GFF3 Name; on ContigCollection it is not, so the mappings live here.
+        exact_mappings:
+          - gff3:Name
+          - biolink:name
     rules:
       - description: A score_type qualifies a score, so it needs one (issue 46).
         preconditions:
@@ -275,10 +289,16 @@ slots:
       Human-readable name, not an identifier and not unique: for a contig collection an organism
       and strain or a bin label; for a feature the GFF3 Name, its display name.
   note:
+    exact_mappings:
+      - gff3:Note
     title: Note
     multivalued: true
     description: GFF3 Note values, free-text remarks about the feature, in source order.
   dbxref:
+    exact_mappings:
+      - gff3:Dbxref
+    broad_mappings:
+      - biolink:xref
     title: Database cross-reference
     multivalued: true
     description: >-
@@ -286,6 +306,8 @@ slots:
       stable_identifiers, a cross-reference can point at a related record rather than at this
       feature itself, such as a GeneID on a CDS.
   ontology_term:
+    exact_mappings:
+      - gff3:Ontology_term
     title: Ontology term
     multivalued: true
     description: GFF3 Ontology_term values, ontology term CURIEs such as GO:0003677, in source order.
@@ -324,6 +346,8 @@ slots:
         descriptive, not confirmed.
 
   feature_id:
+    close_mappings:
+      - gff3:ID
     title: Feature ID
     description: Identity unique within this Dataset; supplied by the source or assigned by an explicit profile.
     notes:
@@ -355,6 +379,8 @@ slots:
         nmdc:wfmgan-11-grwgtd27.2, where both files give 2776147680 for the hit of
         nmdc:wfmgan-11-grwgtd27.2_0016_3_1208.
   seqid:
+    exact_mappings:
+      - gff3:seqid
     title: Sequence ID
     any_of:
       - range: Contig
@@ -371,6 +397,8 @@ slots:
         docs/protein-coordinates.md gives the rule, queries, and the alternatives considered.
       - A protein-coordinate feature's parent is the same CDS. LocationPart.seqid stays a Contig.
   source:
+    exact_mappings:
+      - gff3:source
     title: Source
     description: GFF3 column 2, the producing tool and version, e.g. "Prodigal v2.6.3_patched".
     notes:
@@ -381,6 +409,8 @@ slots:
         where the individual GFF's own source column is empty; use `generated_by` plus that
         sidecar for full provenance when this is blank.
   type:
+    exact_mappings:
+      - gff3:type
     title: Type
     description: GFF3 column 3, nominally a Sequence Ontology term or accession.
     notes:
@@ -395,12 +425,22 @@ slots:
         instead, an accession where an SO term is expected in one case, a generic placeholder
         where an accession would be more specific in another.
   start:
+    exact_mappings:
+      - gff3:start
+      - biolink:start_coordinate
+    close_mappings:
+      - faldo:begin
     title: Start
     range: integer
     required: true
     minimum_value: 1
     description: 1-based inclusive start; when location is present this is only the minimum reported part coordinate, not a claim that gaps are occupied.
   end:
+    exact_mappings:
+      - gff3:end
+      - biolink:end_coordinate
+    close_mappings:
+      - faldo:end
     title: End
     range: integer
     required: true
@@ -421,6 +461,8 @@ slots:
         CDS's own start/end are contig-relative. A table mixing both kinds of row without
         this field would silently let one be misread as the other.
   score:
+    exact_mappings:
+      - gff3:score
     title: Score
     range: float
     description: GFF3 column 6.
@@ -438,10 +480,16 @@ slots:
       - Leave it unset when no source states what the score means. Unset says the meaning is
         not recorded, not that the score is generic.
   strand:
+    exact_mappings:
+      - gff3:strand
+      - biolink:strand
     title: Strand
     range: StrandEnum
     description: GFF3 column 7.
   phase:
+    exact_mappings:
+      - gff3:phase
+      - biolink:phase
     title: Phase
     range: integer
     minimum_value: 0
@@ -451,6 +499,8 @@ slots:
       - Measured 2026-09-11, 366 of 368 real values are 0, so a handler that mishandles 1
         and 2 will still pass almost all real-data testing.
   parent:
+    exact_mappings:
+      - gff3:Parent
     title: Parent
     multivalued: true
     range: Feature
@@ -463,6 +513,9 @@ slots:
         have to be flattened into a join table.
   attributes:
     title: Attributes
+    # Close, not exact: column 9 is one text field, and this is its ordered key/value pairs.
+    close_mappings:
+      - gff3:attributes
     multivalued: true
     inlined_as_list: true
     list_elements_ordered: true
