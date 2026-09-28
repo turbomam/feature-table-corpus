@@ -109,6 +109,38 @@ class MappingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "CDS features are missing"):
             self.back(no_cds)
 
+    def test_reverse_accepts_contigs_without_translation_table(self):
+        # functional.reverse accepts a Dataset that leaves the derived slot unset; so must this.
+        dataset = copy.deepcopy(self.dataset)
+        for contig in dataset["contigs"]:
+            contig.pop("translation_table", None)
+        functional_back, hits_back = self.back(dataset)
+        self.assertEqual(functional_back["rows"], self.functional["rows"])
+        self.assertEqual(hits_back["rows"], self.pfam["rows"])
+
+    def test_a_hit_without_a_score_is_named(self):
+        dataset = copy.deepcopy(self.dataset)
+        hit = next(f for f in dataset["features"] if f["coordinate_system"] == "protein")
+        del hit["score"]
+        with self.assertRaisesRegex(ValueError, f"{hit['feature_id']}: a hit needs a score"):
+            self.back(dataset)
+
+    def test_conflicting_translation_tables_are_reported_not_raised(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            conflicting = Path(tmp) / "conflict_functional_annotation.gff"
+            conflicting.write_text(self.functional_path.read_text().replace(
+                "ID=ctg_01_1600_2199;translation_table=11;", "ID=ctg_01_1600_2199;translation_table=4;", 1))
+            self.assertIn("translation_table=4", conflicting.read_text())
+            hits = HITS / "constructed_pfam.gff"
+            problems, _ = mapping.roundtrip(conflicting, [hits])
+            self.assertTrue(problems and "translation" in problems[0], problems)
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                status = mapping.main(["forward", str(conflicting), str(hits), str(Path(tmp) / "out.json")])
+            self.assertEqual(status, 1)
+            self.assertIn("translation", err.getvalue())
+            self.assertFalse((Path(tmp) / "out.json").exists())
+
     def test_commands_write_both_files_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             dataset, prefix = Path(tmp) / "dataset.json", Path(tmp) / "genome"

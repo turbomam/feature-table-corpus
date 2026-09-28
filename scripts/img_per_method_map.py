@@ -30,7 +30,8 @@ import sys
 import img_functional_gff as functional_dialect
 import img_functional_map as functional
 import img_per_method_gff as dialect
-from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
+from img_functional_map import (canonical, difference, present, quiet_linkml_map, report_errors,
+                                without_rederived_tables, write_output)
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -136,6 +137,8 @@ def reverse(dataset, source_prefix, transformers=None):
         document = documents.setdefault(method, {"source_file": f"{source_prefix}_{method}.gff",
                                                  "method": method, "rows": []})
         number = len(document["rows"]) + 1
+        if "score" not in mapped:
+            raise ValueError(f"{name}: a hit needs a score (column 6); every per-method row has one")
         columns = [dialect.value_text(mapped[slot]) if slot == "score" else str(mapped.get(slot, ""))
                    for slot in COLUMN_SLOTS] + ["."]
         try:
@@ -152,7 +155,7 @@ def reverse(dataset, source_prefix, transformers=None):
     if len(documents) != 1:
         raise ValueError(f"a Dataset holds hits of one method; found {sorted(documents) or 'none'}")
     hit_document = next(iter(documents.values()))
-    again = forward(functional_document, hit_document, transformers)
+    again = without_rederived_tables(forward(functional_document, hit_document, transformers), dataset)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(dataset, again)}")
     return functional_document, hit_document
@@ -215,7 +218,11 @@ def roundtrip(functional_path, hit_paths):
     transformers = _transformers()
     validator = make_validator(str(MODEL))
     for hit_document, path in zip(hit_documents, hit_paths):
-        dataset = forward(functional_document, hit_document, transformers)
+        try:
+            dataset = forward(functional_document, hit_document, transformers)
+        except ValueError as error:  # for example CDS translation tables that disagree
+            problems.append(f"{path}: model: {error}")
+            continue
         errors = [f"{path}: model: {m}" for m in validation_errors(dataset, validator)]
         if errors:
             problems += errors
@@ -255,8 +262,12 @@ def main(argv=None):
         functional_document, hit_documents, errors = parse_inputs(args.functional, [args.hit])
         dataset = None
         if not errors:
-            dataset = forward(functional_document, hit_documents[0])
-            errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+            try:
+                dataset = forward(functional_document, hit_documents[0])
+            except ValueError as error:  # for example CDS translation tables that disagree
+                errors = [f"model: {error}"]
+            else:
+                errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
         return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
