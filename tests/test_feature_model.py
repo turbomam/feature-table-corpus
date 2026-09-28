@@ -88,6 +88,25 @@ class ValidationTests(unittest.TestCase):
                 self.reject(lambda d: d["features"][0].pop(field), "required")
         self.reject(lambda d: d["contigs"][0].__setitem__("length_bp", 0), "minimum")
 
+    def test_json_datasets_keep_exponent_floats_and_refuse_nan(self):
+        # json.dumps writes 1e-05, which PyYAML's YAML 1.1 rules read as a string.
+        data = copy.deepcopy(self.example)
+        feature = next(f for f in data["features"] if "score" in f)
+        feature["score"] = 1e-05
+        text = json.dumps(data)
+        self.assertIn("1e-05", text)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "dataset.json"
+            path.write_text(text)
+            loaded = load_validated(SCHEMA, path)
+            self.assertEqual(next(f for f in loaded["features"] if "score" in f)["score"], 1e-05)
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
+                                     str(SCHEMA), str(path), "Dataset"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            path.write_text(text.replace("1e-05", "NaN", 1))
+            with self.assertRaisesRegex(ValueError, "NaN is not a JSON number"):
+                load_validated(SCHEMA, path)
+
     def test_semantic_constraints(self):
         cases = (
             (lambda d: d["features"][0].update(start=854), "start must be <= end"),

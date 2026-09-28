@@ -8,6 +8,7 @@ also cover interval ordering, unique IDs, references (including contig membershi
 in declared collections), parent cycles and coordinate spaces. These checks are explicit: JSON Schema cannot compare two fields or resolve
 an identifier to another record's translated sequence.
 """
+import json
 import sys
 from pathlib import Path
 
@@ -126,8 +127,25 @@ def validation_errors(data, validator, class_name="Dataset"):
     return errors
 
 
+def _no_constant(name):
+    raise ValueError(f"{name} is not a JSON number")
+
+
+def load_data(data_path):
+    """A .json file is read as JSON, anything else as YAML.
+
+    PyYAML follows YAML 1.1, which reads 1e-05 (as json.dumps writes it) as a string.
+    NaN and Infinity, which json.load accepts by default, are not JSON and are refused.
+    """
+    path = Path(data_path)
+    if path.suffix == ".json":
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle, parse_constant=_no_constant)
+    return yaml.safe_load(path.read_text())
+
+
 def load_validated(schema_path, data_path):
-    data = yaml.safe_load(Path(data_path).read_text())
+    data = load_data(data_path)
     errors = validation_errors(data, make_validator(schema_path))
     if errors:
         raise ValueError("Invalid Dataset:\n" + "\n".join(errors))
@@ -139,7 +157,7 @@ def main():
         print(__doc__, file=sys.stderr)
         return 2
     schema_path, data_path, top_class = sys.argv[1:4]
-    data = yaml.safe_load(Path(data_path).read_text())
+    data = load_data(data_path)
     errors = validation_errors(data, make_validator(schema_path, top_class), top_class)
     for error in errors:
         print(f"ERROR: {error}")
