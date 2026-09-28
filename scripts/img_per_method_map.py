@@ -136,7 +136,7 @@ def reverse(dataset, source_prefix, transformers=None):
                                              functional_transformers) if contig_features else None
     if functional_document is None:
         raise ValueError("no contig-coordinate features: the hits' CDS features are missing")
-    documents = {}
+    documents, by_method = {}, {}
     for feature in hits:
         name = feature.get("feature_id")
         if feature.get("parent") != [feature.get("seqid")]:
@@ -156,6 +156,7 @@ def reverse(dataset, source_prefix, transformers=None):
             raise ValueError(f"{name}: feature_id should be {expected!r}, the ID attribute, method and type")
         document = documents.setdefault(method, {"source_file": f"{source_prefix}_{method}.gff",
                                                  "method": method, "rows": []})
+        by_method.setdefault(method, []).append(feature)
         number = len(document["rows"]) + 1
         if "score" not in mapped:
             raise ValueError(f"{name}: a hit needs a score (column 6); every per-method row has one")
@@ -176,8 +177,11 @@ def reverse(dataset, source_prefix, transformers=None):
         raise ValueError("no protein-coordinate features: a per-method Dataset needs hits")
     hit_documents = list(documents.values())
     again = without_rederived_tables(forward(functional_document, hit_documents, transformers), dataset)
-    if canonical(again) != canonical(dataset):
-        raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(dataset, again)}")
+    # One file per method can't record how methods interleave, only each method's own order, so
+    # compare in the order forward writes: contig features, then each method's hits.
+    grouped = {**dataset, "features": contig_features + [f for group in by_method.values() for f in group]}
+    if canonical(again) != canonical(grouped):
+        raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(grouped, again)}")
     return functional_document, hit_documents
 
 

@@ -96,6 +96,14 @@ class MappingTests(unittest.TestCase):
         _, back = self.back(both)
         self.assertEqual([d["method"] for d in back], ["pfam", "cog"])
         self.assertEqual([d["rows"] for d in back], [self.pfam["rows"], cog["rows"]])
+        # A Dataset that interleaves methods and puts hits first is the same content: each method's
+        # own order is what the files keep.
+        pfam_hits, cog_hits = hits[:len(self.pfam["rows"])], hits[len(self.pfam["rows"]):]
+        mixed = [f for pair in zip(pfam_hits, cog_hits) for f in pair]
+        mixed += pfam_hits[len(cog_hits):] + cog_hits[len(pfam_hits):]
+        interleaved = {**both, "features": mixed + [f for f in both["features"] if f["coordinate_system"] != "protein"]}
+        _, back = self.back(interleaved)
+        self.assertEqual([d["rows"] for d in back], [self.pfam["rows"], cog["rows"]])
 
     def test_reverse_refuses_what_the_dialects_cannot_hold(self):
         def hit(dataset):
