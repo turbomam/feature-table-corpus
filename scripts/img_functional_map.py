@@ -152,16 +152,23 @@ def reverse(dataset, source_file, transformers=None):
     # The dialect can't carry every model slot (translated_sequence, is_selected,
     # location, contig lengths ...). Map the result forward again and require the
     # input back, so nothing is dropped silently.
-    again = forward(document, transformers)
-    # translation_table is derived, not written: the CDS attributes carry it. A Dataset
-    # that leaves it unset loses nothing, so drop what forward re-derived for those contigs.
+    again = without_rederived_tables(forward(document, transformers), dataset)
+    if canonical(again) != canonical(dataset):
+        raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
+    return document
+
+
+def without_rederived_tables(again, dataset):
+    """Drop translation tables that forward re-derived for contigs the input Dataset left unset.
+
+    translation_table is derived, not written: the CDS attributes carry it. A Dataset
+    that leaves it unset loses nothing, so the re-derived value is not a difference.
+    """
     unset = {c["contig_id"] for c in dataset.get("contigs", []) if c.get("translation_table") is None}
     for contig in again["contigs"]:
         if contig["contig_id"] in unset:
             contig.pop("translation_table", None)
-    if canonical(again) != canonical(dataset):
-        raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
-    return document
+    return again
 
 
 def canonical(dataset):
