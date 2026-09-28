@@ -13,7 +13,7 @@ from source_document import parse_bytes, write_new
 
 
 def build_context(annotation, structural, fasta, *, reference_context, annotation_uri, structural_uri, fasta_uri):
-    structural_bundle = import_source(structural, profile="gff3-contig/2.0.0",
+    structural_bundle = import_source(structural, profile="gff3-contig/3.0.0",
                                       reference_context=reference_context, source_uri=structural_uri)
     document = parse_bytes(annotation, source_uri=annotation_uri, format="gff3", profile="generic")
     needed = {decoded(r["feature_columns"][0]) for r in document["records"] if r["kind"] == "feature"}
