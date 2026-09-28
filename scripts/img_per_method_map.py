@@ -22,7 +22,8 @@ The reverse direction writes OUT_PREFIX_functional_annotation.gff and
 OUT_PREFIX_<method>.gff. It rebuilds each hit row's text and
 parses it with the per-method dialect's own row parser, then maps everything
 forward again and refuses a Dataset it can't reproduce. As for the functional
-annotation, written text may differ from the source only in number spelling.
+annotation, forward keeps the source's number spelling (Attribute texts, and the
+--spelling file for scores), so with both every file comes back byte for byte.
 """
 import argparse
 import json
@@ -69,14 +70,40 @@ def _transformers():
     return functional._transformers(), _hit_transformers()
 
 
-def hit_attributes(row):
-    """Every column 9 value, one Attribute each, in file order, as text; a list gives one per value."""
+def hit_attributes(row, spelling=None):
+    """Every column 9 value, one Attribute each, in file order, as text; a list gives one per
+    value. The source's own spelling is kept where spelling gives one."""
+    texts = iter((spelling or {}).get("values") or [])
     out = []
     for key in row["attribute_order"]:
         value = row[dialect.slot_name(key)]
         for item in value if isinstance(value, list) else [value]:
-            out.append({"key": key, "value": dialect.value_text(item)})
+            out.append({"key": key, "value": functional_dialect.spelled(item, next(texts, None))})
     return out
+
+
+def hit_line_spelling(text, row):
+    """As functional.line_spelling, for a per-method hit line."""
+    columns = text.split("\t")
+    values = []
+    for key, pair in zip(row["attribute_order"], columns[8].split(";"), strict=True):
+        raw = pair.partition("=")[2]
+        value = row[dialect.slot_name(key)]
+        parts = raw.split(",") if isinstance(value, list) else [raw]
+        if len(parts) != (len(value) if isinstance(value, list) else 1):
+            raise ValueError(f"line {row['line']}: {key} has {len(parts)} values in the text")
+        values += parts
+    return {"score": columns[5], "values": values}
+
+
+def source_spellings(functional_document, hit_documents):
+    """One spelling per Feature forward makes, in its order: functional rows, then each file's hits."""
+    spellings = functional.source_spellings(functional_document["source_file"], functional_document)
+    for document in hit_documents:
+        with open(document["source_file"], encoding="utf-8", newline="") as handle:
+            lines = handle.read().split("\n")
+        spellings += [hit_line_spelling(lines[row["line"] - 1], row) for row in document["rows"]]
+    return spellings
 
 
 def hit_feature_id(source_id, method, accession):
@@ -84,12 +111,17 @@ def hit_feature_id(source_id, method, accession):
     return f"{source_id}|{method}|{accession}"
 
 
-def forward(functional_document, hit_documents, transformers=None):
-    """Map the functional annotation and one or more hit documents (one per method) to one Dataset."""
+def forward(functional_document, hit_documents, transformers=None, spellings=None):
+    """Map the functional annotation and one or more hit documents (one per method) to one Dataset.
+
+    spellings (source_spellings) keeps the source's spelling of numbers in the Attribute texts."""
     functional_transformers, (to_model, _) = transformers or _transformers()
-    dataset = functional.forward(functional_document, functional_transformers)
     if isinstance(hit_documents, dict):
         hit_documents = [hit_documents]
+    count = len(functional_document["rows"])
+    spellings = spellings or [None] * (count + sum(len(d["rows"]) for d in hit_documents))
+    dataset = functional.forward(functional_document, functional_transformers, spellings[:count])
+    hit_spellings = iter(spellings[count:])
     for document in hit_documents:
         for row in document["rows"]:
             feature = present(to_model.map_object({k: v for k, v in row.items() if k not in LEXICAL},
@@ -98,7 +130,7 @@ def forward(functional_document, hit_documents, transformers=None):
             feature["coordinate_system"] = "protein"
             # The CDS a hit's positions count along is both its seqid and its parent.
             feature["parent"] = [row["seqid"]]
-            feature["attributes"] = hit_attributes(row)
+            feature["attributes"] = hit_attributes(row, next(hit_spellings))
             dataset["features"].append(feature)
     return dataset
 
@@ -121,10 +153,12 @@ def column9(attributes, where):
     return ";".join(f"{key}={','.join(values)}" for key, values in parts)
 
 
-def reverse(dataset, source_prefix, transformers=None):
+def reverse(dataset, source_prefix, transformers=None, scores=None):
     """Return (functional_document, hit_documents) that forward maps back to dataset.
 
-    hit_documents has one document per method, in the order the methods first appear."""
+    hit_documents has one document per method, in the order the methods first appear.
+    scores is functional.score_spellings of the forward Dataset; write_spellings gives
+    each document's spellings for a write."""
     transformers = transformers or _transformers()
     functional_transformers, (_, to_dialect) = transformers
     slots = dialect.row_slots()
@@ -133,7 +167,7 @@ def reverse(dataset, source_prefix, transformers=None):
         (hits if feature.get("coordinate_system") == "protein" else contig_features).append(feature)
     functional_document = functional.reverse({**dataset, "features": contig_features},
                                              f"{source_prefix}_functional_annotation.gff",
-                                             functional_transformers) if contig_features else None
+                                             functional_transformers, scores) if contig_features else None
     if functional_document is None:
         raise ValueError("no contig-coordinate features: the hits' CDS features are missing")
     documents, by_method = {}, {}
@@ -160,7 +194,8 @@ def reverse(dataset, source_prefix, transformers=None):
         number = len(document["rows"]) + 1
         if "score" not in mapped:
             raise ValueError(f"{name}: a hit needs a score (column 6); every per-method row has one")
-        columns = [dialect.value_text(mapped[slot]) if slot == "score" else str(mapped.get(slot, ""))
+        columns = [functional_dialect.spelled(mapped[slot], (scores or {}).get(name)) if slot == "score"
+                   else str(mapped.get(slot, ""))
                    for slot in COLUMN_SLOTS] + ["."]
         try:
             text = "\t".join(columns + [column9(feature.get("attributes", []), f"{name}")])
@@ -176,13 +211,26 @@ def reverse(dataset, source_prefix, transformers=None):
     if not documents:
         raise ValueError("no protein-coordinate features: a per-method Dataset needs hits")
     hit_documents = list(documents.values())
-    again = without_rederived_tables(forward(functional_document, hit_documents, transformers), dataset)
     # One file per method can't record how methods interleave, only each method's own order, so
     # compare in the order forward writes: contig features, then each method's hits.
     grouped = {**dataset, "features": contig_features + [f for group in by_method.values() for f in group]}
+    again = without_rederived_tables(forward(functional_document, hit_documents, transformers,
+                                             functional.dataset_spellings(grouped["features"], scores)), dataset)
     if canonical(again) != canonical(grouped):
         raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(grouped, again)}")
     return functional_document, hit_documents
+
+
+def write_spellings(dataset, documents, scores=None):
+    """Per document from reverse, the spellings its write needs, from the Dataset's Attribute
+    texts and scores. Features are matched to rows in the order reverse groups them."""
+    contig = [f for f in dataset["features"] if f.get("coordinate_system") != "protein"]
+    hits = {}
+    for feature in dataset["features"]:
+        if feature.get("coordinate_system") == "protein":
+            hits.setdefault(feature["feature_id"].rsplit("|", 2)[-2], []).append(feature)
+    return [functional.dataset_spellings(contig if i == 0 else hits.get(d.get("method"), []), scores)
+            for i, d in enumerate(documents)]
 
 
 def parse_inputs(functional_path, hit_paths):
@@ -208,8 +256,10 @@ def parse_inputs(functional_path, hit_paths):
     return functional_document, hit_documents, problems
 
 
-def compare(before, after, module, path):
-    """Problems and the count of lines that differ only in number spelling, for one file."""
+def compare(before, after, module, path, spellings=None):
+    """Problems and the count of lines that differ only in number spelling, for one file.
+
+    Any differing line is a problem: forward keeps the source's spelling, so the text comes back."""
     problems, spelling = [], 0
     if len(after["rows"]) != len(before["rows"]):
         return [f"{path}: {len(before['rows'])} rows in, {len(after['rows'])} back"], 0
@@ -220,7 +270,7 @@ def compare(before, after, module, path):
     with open(path, encoding="utf-8", newline="") as handle:
         original = handle.read().split("\n")[:-1]
     try:
-        written = module.write(after).split("\n")[:-1]
+        written = module.write(after, spellings).split("\n")[:-1]
     except module.DialectError as error:
         return problems + [f"{path}: write: {error}"], 0
     slots = module.row_slots()
@@ -230,6 +280,8 @@ def compare(before, after, module, path):
                 problems.append(f"{path} line {number}: written text differs in value, not only in spelling")
             else:
                 spelling += 1
+    if spelling:
+        problems.append(f"{path}: {spelling} lines differ from the source in number spelling")
     return problems, spelling
 
 
@@ -241,25 +293,28 @@ def roundtrip(functional_path, hit_paths):
         return problems, report
     transformers = _transformers()
     try:
-        dataset = forward(functional_document, hit_documents, transformers)
+        spellings = source_spellings(functional_document, hit_documents)
+        dataset = forward(functional_document, hit_documents, transformers, spellings)
     except ValueError as error:  # for example CDS translation tables that disagree
         return [f"{functional_path}: model: {error}"], report
+    scores = functional.score_spellings(dataset, spellings)
     problems = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
     if problems:
         return problems, report
     try:
-        back_functional, back_hits = reverse(dataset, "roundtrip", transformers)
+        back_functional, back_hits = reverse(dataset, "roundtrip", transformers, scores)
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
-    back_by_method = {d["method"]: d for d in back_hits}
+    written_spellings = write_spellings(dataset, [back_functional] + back_hits, scores)
+    back_by_method = {d["method"]: (d, sp) for d, sp in zip(back_hits, written_spellings[1:])}
     found_functional, functional_spelling = compare(functional_document, back_functional,
-                                                    functional_dialect, functional_path)
+                                                    functional_dialect, functional_path, written_spellings[0])
     problems += found_functional
     report["features"] = len(dataset["features"])
     report["functional_lines_differing_only_in_number_spelling"] = functional_spelling
     for hit_document, path in zip(hit_documents, hit_paths):
-        back = back_by_method.get(hit_document["method"], {"rows": []})
-        found, spelling = compare(hit_document, back, dialect, path)
+        back, back_spellings = back_by_method.get(hit_document["method"], ({"rows": []}, None))
+        found, spelling = compare(hit_document, back, dialect, path, back_spellings)
         problems += found
         report["files"].append({"file": str(path), "method": hit_document["method"],
                                 "hits": len(hit_document["rows"]),
@@ -275,9 +330,11 @@ def main(argv=None):
     fwd.add_argument("functional", type=Path)
     fwd.add_argument("hits", type=Path, nargs="+", help="one hit GFF per method")
     fwd.add_argument("output", type=Path)
+    fwd.add_argument("--spelling", type=Path, help="also write the source's score spellings here, for reverse")
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("prefix", help="written as PREFIX_functional_annotation.gff and PREFIX_<method>.gff")
+    rev.add_argument("--spelling", type=Path, help="score spellings from forward --spelling")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("functional", type=Path)
     trip.add_argument("hits", type=Path, nargs="+")
@@ -287,34 +344,43 @@ def main(argv=None):
         dataset = None
         if not errors:
             try:
-                dataset = forward(functional_document, hit_documents)
+                spellings = source_spellings(functional_document, hit_documents)
+                dataset = forward(functional_document, hit_documents, spellings=spellings)
             except ValueError as error:  # for example CDS translation tables that disagree
                 errors = [f"model: {error}"]
             else:
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
+        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
+            return 1
+        scores = functional.score_spellings(dataset, spellings)
+        if args.spelling and write_output(args.spelling, json.dumps(scores, indent=1) + "\n"):
+            args.output.unlink()
+            return 1
+        return 0
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        scores, errors = functional.read_scores(args.spelling)
+        errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         outputs = {}
         if not errors:
             try:
-                functional_document, hit_documents = reverse(dataset, args.prefix)
+                functional_document, hit_documents = reverse(dataset, args.prefix, scores=scores)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:
                 pieces = [(functional_dialect, functional_document)] + [(dialect, d) for d in hit_documents]
-                for module, document in pieces:
+                spellings = write_spellings(dataset, [d for _, d in pieces], scores)
+                for (module, document), spelling in zip(pieces, spellings):
                     errors += [f"{document['source_file']}: {m}" for m in module.problems(document)]
                     if not errors:
                         try:
-                            outputs[Path(document["source_file"])] = module.write(document)
+                            outputs[Path(document["source_file"])] = module.write(document, spelling)
                         except module.DialectError as error:
                             errors.append(f"{document['source_file']}: write: {error}")
         existing = [str(p) for p in outputs if p.exists()]

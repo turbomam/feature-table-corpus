@@ -49,11 +49,20 @@ def slot_name(key):
 # digits, none of which IMG writes, so numbers are gated by ASCII patterns first.
 INTEGER = re.compile(r"-?[0-9]+")
 DECIMAL = re.compile(r"-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?")
+POSITION = re.compile(r"0|[1-9][0-9]*")
 
 
 def integer(text):
     """An integer spelled in ASCII digits with an optional minus sign."""
     if not INTEGER.fullmatch(text):
+        raise ValueError(text)
+    return int(text)
+
+
+def position(text):
+    """A column 4, 5 or 8 number: digits with no leading zero, the only spelling measured in
+    IMG files, so a coordinate always writes back as it was read."""
+    if not POSITION.fullmatch(text):
         raise ValueError(text)
     return int(text)
 
@@ -89,12 +98,12 @@ def parse_row(line_number, text, slots):
         if value == "." and name in ("score", "phase"):
             continue
         row[name] = value
-    for name, kind in (("start", integer), ("end", integer), ("phase", integer), ("score", finite)):
+    for name, kind in (("start", position), ("end", position), ("phase", position), ("score", finite)):
         if name in row:
             try:
                 row[name] = kind(row[name])
             except ValueError:
-                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number") from None
+                raise DialectError(f"line {line_number}: {name} {row[name]!r} is not a number as IMG writes it (no leading zero in columns 4, 5 and 8)") from None
     for pair in columns[8].split(";"):
         if not pair:
             raise DialectError(f"line {line_number}: empty attribute")
@@ -192,30 +201,57 @@ def checked(text, where, forbidden):
     return text
 
 
-def write_row(row):
+# The parser's own ASCII decimal spelling, exponent allowed (1.22e+03); float() alone would also
+# take " 84.5", "1_0", "nan" or non-ASCII digits.
+NUMBER_TEXT = DECIMAL
+
+
+def spelled(value, text):
+    """text when it spells value (84.50 for 84.5, 24 for 24.0), else value_text(value).
+
+    A mapping passes the source's own spelling so the file comes back byte for byte;
+    a value edited since no longer matches its old text, so the edit is written.
+    """
+    if (text is not None and not isinstance(value, bool) and isinstance(value, (int, float))
+            and NUMBER_TEXT.fullmatch(text)):
+        try:
+            if type(value)(text) == value:
+                return text
+        except ValueError:
+            pass
+    return value_text(value)
+
+
+def write_row(row, spelling=None):
+    """One GFF line. spelling is {"score": text, "values": [text, ...]} from the source,
+    values in the order occurrences() yields them; see spelled()."""
     where = f"line {row.get('line', '?')}"
+    spelling = spelling or {}
+    texts_in = iter(spelling.get("values") or [])
     parts = []
     for key, values in occurrences(row):
         name = slot_name(key)
         comma_list = isinstance(row[name], list) and name not in ONE_VALUE_PER_OCCURRENCE
         forbidden = LINE_BREAKS + (";",) + ((",",) if comma_list else ())
-        texts = [checked(value_text(v), f"{where} {key}", forbidden) for v in values]
+        texts = [checked(spelled(v, next(texts_in, None)), f"{where} {key}", forbidden) for v in values]
         parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}=" + ",".join(texts))
     columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
-               value_text(row["score"]) if "score" in row else ".", row["strand"],
+               spelled(row["score"], spelling.get("score")) if "score" in row else ".", row["strand"],
                str(row["phase"]) if "phase" in row else ".", ";".join(parts)]
     for column in columns[:8]:
         checked(column, where, LINE_BREAKS)
     return "\t".join(columns)
 
 
-def write(document):
+def write(document, spellings=None):
     """GFF text for a document, refused unless it parses back to the same rows.
 
-    The reparse catches every value the dialect can't represent (a delimiter,
-    nan or inf, a character UTF-8 can't encode), rather than each one by name.
+    spellings, if given, has one write_row spelling per row. The reparse catches every
+    value the dialect can't represent (a delimiter, nan or inf, a character UTF-8 can't
+    encode), rather than each one by name.
     """
-    text = "".join(write_row(row) + "\n" for row in document["rows"])
+    spellings = spellings or [None] * len(document["rows"])
+    text = "".join(write_row(row, spelling) + "\n" for row, spelling in zip(document["rows"], spellings, strict=True))
     try:
         text.encode("utf-8")
     except UnicodeEncodeError as error:

@@ -105,6 +105,16 @@ class MappingTests(unittest.TestCase):
         _, back = self.back(interleaved)
         self.assertEqual([d["rows"] for d in back], [self.pfam["rows"], cog["rows"]])
 
+    def test_a_source_id_containing_a_bar_keeps_its_method(self):
+        # IMG IDs are any non-space text, so a contig ctg|01 gives hit IDs with an extra |.
+        with tempfile.TemporaryDirectory() as tmp:
+            functional_path, pfam_path = Path(tmp) / "g_functional_annotation.gff", Path(tmp) / "g_pfam.gff"
+            functional_path.write_text(self.functional_path.read_text().replace("ctg_", "ctg|"))
+            pfam_path.write_text((HITS / "constructed_pfam.gff").read_text().replace("ctg_", "ctg|"))
+            problems, report = mapping.roundtrip(functional_path, [pfam_path])
+        self.assertEqual(problems, [])
+        self.assertEqual([f["method"] for f in report["files"]], ["pfam"])
+
     def test_reverse_refuses_what_the_dialects_cannot_hold(self):
         def hit(dataset):
             return next(f for f in dataset["features"] if f["coordinate_system"] == "protein")
@@ -181,6 +191,22 @@ class MappingTests(unittest.TestCase):
                              self.functional["rows"])
             self.assertEqual(len(json.loads(dataset.read_text())["features"]),
                              len(self.functional["rows"]) + len(self.pfam["rows"]) + len(cog["rows"]))
+
+    def test_the_spelling_file_brings_every_file_back_byte_for_byte(self):
+        # The isolate's KO file writes scores as 1.22e+03 and its functional file pads 84.50.
+        sources = [REAL / "Ga0423362_functional_annotation.gff", REAL / "Ga0423362_ko_ec.gff"]
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, spelling, prefix = Path(tmp) / "d.json", Path(tmp) / "s.json", Path(tmp) / "Ga0423362"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(mapping.main(["forward", *map(str, sources), str(dataset), "--spelling", str(spelling)]),
+                                 0, err.getvalue())
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(prefix), "--spelling", str(spelling)]),
+                                 0, err.getvalue())
+            self.assertEqual(json.loads(spelling.read_text())["Ga0423362_01_24852_26480_1_542|ko_ec|KO:K02343__EC:2.7.7.7"],
+                             "1.22e+03")
+            for source in sources:
+                self.assertEqual((Path(tmp) / source.name).read_bytes(), source.read_bytes(), source.name)
 
     def test_clean_round_trip_prints_nothing_to_stderr(self):
         result = subprocess.run([sys.executable, str(ROOT / "scripts/img_per_method_map.py"), "roundtrip",

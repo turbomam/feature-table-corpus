@@ -14,7 +14,9 @@ from its CDS rows' translation_table attributes (scripts/translation_tables.py).
 
 `roundtrip` parses, validates the dialect, maps forward, validates the Dataset
 with scripts/validate_closed.py, maps back, and requires the rows to come back
-equal. The written text may differ from the source only in number spelling.
+equal. Forward keeps the source's spelling of numbers: column 9 values in the
+Attribute texts, and scores (a number in the model) in a separate spelling map, the
+--spelling file. With both, the written text is the source byte for byte.
 """
 import argparse
 import json
@@ -58,20 +60,68 @@ def present(record):
     return {k: v for k, v in record.items() if v is not None and v != []}
 
 
-def attributes(row):
-    """Every column 9 value, one Attribute each, in file order, as text."""
-    return [{"key": key, "value": dialect.value_text(value)}
+def attributes(row, spelling=None):
+    """Every column 9 value, one Attribute each, in file order, as text: the source's
+    own spelling where spelling gives one (24, not 24.0), else the dialect's."""
+    texts = iter((spelling or {}).get("values") or [])
+    return [{"key": key, "value": dialect.spelled(value, next(texts, None))}
             for key, values in dialect.occurrences(row) for value in values]
 
 
-def forward(document, transformers=None):
+def line_spelling(text, row):
+    """{"score": text, "values": [text, ...]} as one source line spells them, for
+    dialect.write_row; values in the order dialect.occurrences(row) yields them."""
+    columns = text.split("\t")
+    values = []
+    pairs = columns[8].split(";")
+    for (key, parsed), pair in zip(dialect.occurrences(row), pairs, strict=True):
+        raw = pair.partition("=")[2]
+        name = dialect.slot_name(key)
+        comma_list = isinstance(row[name], list) and name not in dialect.ONE_VALUE_PER_OCCURRENCE
+        parts = raw.split(",") if comma_list else [raw]
+        if len(parts) != len(parsed):
+            raise ValueError(f"line {row['line']}: {key} has {len(parts)} values in the text, {len(parsed)} parsed")
+        values += parts
+    return {"score": columns[5], "values": values}
+
+
+def source_spellings(path, document):
+    """One line_spelling per row of a document parsed from path."""
+    with open(path, encoding="utf-8", newline="") as handle:
+        lines = handle.read().split("\n")
+    return [line_spelling(lines[row["line"] - 1], row) for row in document["rows"]]
+
+
+def score_spellings(dataset, spellings):
+    """{feature_id: score text} for each score the source spells differently from the
+    dialect's default (84.50 for 84.5). The model's score is a number, so this is the
+    one spelling a Dataset can't carry itself; pass it back to reverse."""
+    out = {}
+    for feature, spelling in zip(dataset["features"], spellings):
+        text = (spelling or {}).get("score")
+        if "score" in feature and text and dialect.spelled(feature["score"], text) != dialect.value_text(feature["score"]):
+            out[feature["feature_id"]] = text
+    return out
+
+
+def dataset_spellings(features, scores=None):
+    """Per feature, the spelling a write needs: its Attribute texts, and its score text from scores."""
+    scores = scores or {}
+    return [{"score": scores.get(f.get("feature_id")), "values": [a["value"] for a in f.get("attributes", [])]}
+            for f in features]
+
+
+def forward(document, transformers=None, spellings=None):
+    """Map a document to a Dataset. spellings (source_spellings) keeps the source's
+    spelling of numbers in the Attribute texts."""
     to_model, _ = transformers or _transformers()
+    spellings = spellings or [None] * len(document["rows"])
     features = []
-    for row in document["rows"]:
+    for row, spelling in zip(document["rows"], spellings, strict=True):
         feature = present(to_model.map_object({k: v for k, v in row.items() if k not in LEXICAL},
                                               source_type=ROW))
         feature["coordinate_system"] = "contig"
-        feature["attributes"] = attributes(row)
+        feature["attributes"] = attributes(row, spelling)
         features.append(feature)
     seqids = dict.fromkeys(row["seqid"] for row in document["rows"])
     # Contig.translation_table is derived from the CDS attributes, which the reverse
@@ -110,7 +160,9 @@ def rows_from_attributes(feature_attributes, slots):
     return row
 
 
-def reverse(dataset, source_file, transformers=None):
+def reverse(dataset, source_file, transformers=None, scores=None):
+    """The dialect document for a Dataset. scores (score_spellings) is only used to
+    check the round trip here; a write passes it again through dataset_spellings."""
     transformers = transformers or _transformers()
     _, to_dialect = transformers
     slots = dialect.row_slots()
@@ -152,7 +204,8 @@ def reverse(dataset, source_file, transformers=None):
     # The dialect can't carry every model slot (translated_sequence, is_selected,
     # location, contig lengths ...). Map the result forward again and require the
     # input back, so nothing is dropped silently.
-    again = without_rederived_tables(forward(document, transformers), dataset)
+    again = without_rederived_tables(forward(document, transformers, dataset_spellings(dataset["features"], scores)),
+                                     dataset)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
     return document
@@ -208,14 +261,16 @@ def roundtrip(path):
         return problems, report
     transformers = _transformers()
     try:
-        dataset = forward(document, transformers)
+        spellings = source_spellings(path, document)
+        dataset = forward(document, transformers, spellings)
     except ValueError as error:
         return [f"model: {error}"], report
+    scores = score_spellings(dataset, spellings)
     problems += [f"model: {message}" for message in validation_errors(dataset, make_validator(str(MODEL)))]
     if problems:
         return problems, report
     try:
-        back = reverse(dataset, str(path), transformers)
+        back = reverse(dataset, str(path), transformers, scores)
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
     for before, after in zip(document["rows"], back["rows"]):
@@ -229,7 +284,7 @@ def roundtrip(path):
     with open(path, encoding="utf-8", newline="") as handle:
         original = handle.read().split("\n")[:-1]
     try:
-        written = dialect.write(back).split("\n")[:-1]
+        written = dialect.write(back, dataset_spellings(dataset["features"], scores)).split("\n")[:-1]
     except dialect.DialectError as error:
         return problems + [f"write: {error}"], report
     spelling = 0
@@ -242,11 +297,26 @@ def roundtrip(path):
             problems.append(f"line {number}: written text differs in value, not only in spelling")
         else:
             spelling += 1
+    if spelling:
+        problems.append(f"{spelling} lines differ from the source in number spelling")
     report |= {"rows": len(document["rows"]), "features": len(dataset["features"]),
               "contigs": len(dataset["contigs"]),
               "attributes": sum(len(f["attributes"]) for f in dataset["features"]),
               "lines_differing_only_in_number_spelling": spelling}
     return problems, report
+
+
+def read_scores(path):
+    """(scores, errors) from a --spelling file; no file means no kept spellings."""
+    if path is None:
+        return {}, []
+    try:
+        scores = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return {}, [f"spelling: {error}"]
+    if not isinstance(scores, dict) or not all(isinstance(v, str) for v in scores.values()):
+        return {}, ["spelling: expected a JSON object of feature_id to score text"]
+    return scores, []
 
 
 def report_errors(errors):
@@ -285,9 +355,11 @@ def main(argv=None):
     fwd = commands.add_parser("forward")
     fwd.add_argument("gff", type=Path)
     fwd.add_argument("output", type=Path)
+    fwd.add_argument("--spelling", type=Path, help="also write the source's score spellings here, for reverse")
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("output", type=Path)
+    rev.add_argument("--spelling", type=Path, help="score spellings from forward --spelling")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff", type=Path)
     args = parser.parse_args(argv)
@@ -300,24 +372,31 @@ def main(argv=None):
         errors = [f"dialect: {m}" for m in dialect.problems(document)]
         if not errors:
             try:
-                dataset = forward(document)
+                spellings = source_spellings(args.gff, document)
+                dataset = forward(document, spellings=spellings)
             except ValueError as error:
                 errors = [f"model: {error}"]
             else:
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
+        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
+            return 1
+        if args.spelling and write_output(args.spelling, json.dumps(score_spellings(dataset, spellings), indent=1) + "\n"):
+            args.output.unlink()
+            return 1
+        return 0
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        scores, errors = read_scores(args.spelling)
+        errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if not errors:
             try:
-                document = reverse(dataset, str(args.output))
+                document = reverse(dataset, str(args.output), scores=scores)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:
@@ -325,7 +404,7 @@ def main(argv=None):
         if report_errors(errors):
             return 1
         try:
-            text = dialect.write(document)
+            text = dialect.write(document, dataset_spellings(dataset["features"], scores))
         except dialect.DialectError as error:
             report_errors([f"write: {error}"])
             return 1
