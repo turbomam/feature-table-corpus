@@ -215,8 +215,11 @@ def protein_bindings(context, reference_context):
                 and re.fullmatch(r"[A-Z]+", parent.get("translated_sequence") or "") is not None,
                 "protein-context", "each context feature must be a contig CDS with an explicit protein sequence")
         pairs = parent.get("attributes") or []
-        for key, typed in (("ID", [parent["feature_id"]]), ("Parent", parent.get("parent") or []),
-                           ("product", [parent["product"]] if "product" in parent else [])):
+        mirrored = [("ID", [parent["feature_id"]]), ("Parent", parent.get("parent") or []),
+                    ("product", [parent["product"]] if "product" in parent else []),
+                    ("Name", [parent["name"]] if "name" in parent else []),
+                    *[(key, parent.get(slot) or []) for key, slot in RESERVED_LISTS.items()]]
+        for key, typed in mirrored:
             generic = values(pairs, key)
             require(not generic or generic == typed, "protein-context",
                     f"context {key} attribute disagrees with its typed slot")
