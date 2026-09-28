@@ -1,0 +1,8 @@
+ctg_01_100_1299	decodeanhmm 1.1g	Outside	1	20	.	.	.	ID=ctg_01_100_1299_1_20
+ctg_01_100_1299	decodeanhmm 1.1g	TMhelix	21	43	.	.	.	ID=ctg_01_100_1299_21_43
+ctg_01_100_1299	decodeanhmm 1.1g	Inside	44	60	.	.	.	ID=ctg_01_100_1299_44_60
+ctg_01_100_1299	decodeanhmm 1.1g	TMhelix	61	83	.	.	.	ID=ctg_01_100_1299_61_83
+ctg_01_100_1299	decodeanhmm 1.1g	Outside	84	399	.	.	.	ID=ctg_01_100_1299_84_399
+ctg_01_1600_2199	decodeanhmm 1.1g	Inside	1	10	.	.	.	ID=ctg_01_1600_2199_1_10
+ctg_01_1600_2199	decodeanhmm 1.1g	TMhelix	11	33	.	.	.	ID=ctg_01_1600_2199_11_33
+ctg_01_1600_2199	decodeanhmm 1.1g	Outside	34	200	.	.	.	ID=ctg_01_1600_2199_34_200

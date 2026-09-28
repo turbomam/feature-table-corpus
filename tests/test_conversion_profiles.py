@@ -22,7 +22,7 @@ from build_duckdb import build_database
 from query_duckdb import by_attribute, interval_overlap
 import conversion_report
 
-GFF = "gff3-contig/1.0.0"
+GFF = "gff3-contig/2.0.0"
 BED = "bed12-blocks/1.0.0"
 PRODIGAL = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff"
 BED_SOURCE = ROOT / "corpus/sources/biopython/blat_34_hg19.bed"
@@ -226,6 +226,68 @@ class ConversionTests(unittest.TestCase):
             import_source(PRODIGAL.read_bytes(), profile=GFF, reference_context="test",
                           source_uri="not a URI")
         self.assertEqual(result.exception.code, "source-invalid")
+
+    def test_contig_translation_table_is_derived_from_cds_attributes(self):
+        """Issue 72: set only when every CDS on a contig names the same assigned table."""
+        b = bundle(PRODIGAL.read_bytes(), metadata_profile="prodigal")
+        tables = {c["contig_id"].rsplit("_", 1)[1]: c.get("translation_table") for c in b["dataset"]["contigs"]}
+        self.assertEqual(tables, {"01": 4, "02": 11, "03": 11, "04": 11, "05": 11})
+        # The derived slot is part of the imported projection: dropping it is an edit.
+        edited = deepcopy(b)
+        edited["dataset"]["contigs"][0].pop("translation_table")
+        for mode in ("exact", "reconstruct"):
+            with self.subTest(mode=mode), self.assertRaises(ConversionError) as caught:
+                export_source(edited, mode=mode)
+            self.assertEqual(caught.exception.code, "edited-bundle")
+
+        def gff(*attributes, kind="CDS"):
+            rows = [f"c\t.\t{kind}\t{3 * i + 1}\t{3 * i + 3}\t.\t+\t{'0' if kind == 'CDS' else '.'}\t{a}\n"
+                    for i, a in enumerate(attributes)]
+            return ("##gff-version 3\n" + "".join(rows)).encode()
+
+        def table(content):
+            return self.assert_roundtrip(content)["dataset"]["contigs"][0].get("translation_table")
+
+        self.assertEqual(table(gff("ID=a;translation_table=11", "ID=b;translation_table=11")), 11)
+        # Exact export keeps the lexical 011 even though the slot holds 11.
+        content = gff("ID=a;translation_table=011", "ID=b;translation_table=11")
+        self.assertEqual(table(content), 11)
+        self.assertIn(b"translation_table=011", export_source(bundle(content), mode="exact", original_bytes=content))
+        # Incomplete or unusable evidence leaves the slot unset rather than guessing.
+        for content in (gff("ID=a;translation_table=11", "ID=b"), gff("ID=a;translation_table=7"),
+                        gff("ID=a;translation_table=x"), gff("ID=a;translation_table=11", kind="gene")):
+            with self.subTest(content=content):
+                self.assertIsNone(table(content))
+        # Disagreement is refused, across rows and within one row.
+        for content in (gff("ID=a;translation_table=11", "ID=b;translation_table=4"),
+                        gff("ID=a;translation_table=11,4"), gff("ID=a;translation_table=11", "ID=b;translation_table=x")):
+            with self.subTest(content=content):
+                self.assert_rejects(content, "translation-table-conflict")
+        self.assertNotIn("translation_table", bundle(BED_SOURCE.read_bytes(), BED)["dataset"]["contigs"][0])
+        # A digit string past int()'s limit is read as text, so it can't crash the import.
+        self.assertIsNone(table(gff("ID=a;translation_table=" + "1" * 5000)))
+        self.assertEqual(table(gff("ID=a;translation_table=" + "0" * 5000 + "11")), 11)
+
+    def test_bundle_from_the_previous_profile_version_is_refused(self):
+        """Issue 72 changed gff3-contig's output and domain, so 1.0.0 bundles aren't validated as 2.0.0."""
+        old = deepcopy(bundle(PRODIGAL.read_bytes(), metadata_profile="prodigal"))
+        old["profile"] = "gff3-contig/1.0.0"
+        with self.assertRaises(ConversionError) as caught:
+            export_source(old, mode="reconstruct")
+        self.assertEqual(caught.exception.code, "unsupported-profile")
+
+    def test_translation_tables_on_the_vendored_nmdc_structural_annotation(self):
+        """Measured 2026-09-28: 1,199 CDS on 1,045 contigs, no contig mixes tables."""
+        from collections import Counter
+        content = (ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_structural_annotation.gff").read_bytes()
+        b = bundle(content)
+        self.assertEqual(export_source(b, mode="exact", original_bytes=content), content)
+        cds = [f for f in b["dataset"]["features"] if f["type"] == "CDS"]
+        self.assertEqual((len(cds), len({f["seqid"] for f in cds})), (1199, 1045))
+        tables = Counter(c.get("translation_table") for c in b["dataset"]["contigs"])
+        # 34 contigs carry only non-CDS features, so they have no table.
+        self.assertEqual(tables, {11: 1035, 4: 5, 15: 3, 25: 2, None: 34})
+        self.assertEqual(validation_errors(b["dataset"], make_validator(ROOT / "model/schema/ber_feature_model.yaml")), [])
 
     def test_common_interval_and_attribute_queries_work_for_both_profiles(self):
         scratch = ROOT / "local/test-tmp"

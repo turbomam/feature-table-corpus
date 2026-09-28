@@ -36,6 +36,20 @@ class MappingTests(unittest.TestCase):
         problems, _ = mapping.roundtrip(NMDC)
         self.assertEqual(problems, [])
 
+    def test_a_form_feed_before_a_respelled_number_round_trips(self):
+        # 011 comes back as 11 after the form feed, so a line split at the form feed would
+        # leave a one-column fragment that differs and can't be parsed.
+        import tempfile
+        rows = FIXTURE.read_text().split("\n")
+        rows[0] = (rows[0].replace("translation_table=11;", "", 1).replace("semialdehyde", "semi\x0caldehyde", 1)
+                   + ";translation_table=011")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "form-feed.gff"
+            path.write_text("\n".join(rows))
+            problems, report = mapping.roundtrip(path)
+        self.assertEqual(problems, [])
+        self.assertEqual(report["lines_differing_only_in_number_spelling"], 2)
+
     def test_roundtrip_reports_instead_of_raising(self):
         import tempfile
         with tempfile.TemporaryDirectory() as tmp:
@@ -63,6 +77,32 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(cds["coordinate_system"], "contig")
         self.assertEqual(self.feature("ctg_02_500_620_DR1")["parent"], ["ctg_02_500_620"])
         self.assertEqual([c["contig_id"] for c in self.dataset["contigs"]], ["ctg_01", "ctg_02"])
+
+    def test_contig_translation_table_is_derived_forward_only(self):
+        """Issue 72: derived from CDS attributes, which map back; the slot itself is never written."""
+        self.assertEqual([c.get("translation_table") for c in self.dataset["contigs"]], [11, None])
+        # Leaving the derived slot unset loses nothing, since the attributes still carry it.
+        edited = copy.deepcopy(self.dataset)
+        edited["contigs"][0].pop("translation_table")
+        self.assertEqual(self.back(edited)["rows"], self.document["rows"])
+        # A table with no CDS attribute behind it has nowhere to go in the dialect.
+        edited = copy.deepcopy(self.dataset)
+        edited["contigs"][1]["translation_table"] = 11
+        with self.assertRaisesRegex(ValueError, "contig 'ctg_02' loses or changes \\['translation_table'\\]"):
+            self.back(edited)
+
+    def test_disagreeing_cds_tables_are_reported(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            mixed = Path(tmp) / "mixed.gff"
+            mixed.write_text(FIXTURE.read_text().replace(
+                "ID=ctg_01_1600_2199;translation_table=11", "ID=ctg_01_1600_2199;translation_table=4", 1))
+            problems, report = mapping.roundtrip(mixed)
+            self.assertEqual(len(problems), 1, problems)
+            self.assertRegex(problems[0], "^model: contig 'ctg_01': CDS translation_table attributes disagree")
+            self.assertNotIn("rows", report)
+            with self.assertRaisesRegex(ValueError, "disagree"):
+                mapping.forward(dialect.parse(mixed), self.transformers)
 
     def test_one_attribute_per_value_in_file_order(self):
         pairs = [(a["key"], a["value"]) for a in self.feature("ctg_01_1600_2199")["attributes"]]
@@ -207,6 +247,17 @@ class CommandTests(unittest.TestCase):
             self.assertIn("phase present on tRNA", err)
             self.assertFalse(out.exists())
 
+    def test_forward_refuses_disagreeing_cds_tables(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            mixed, out = Path(tmp) / "mixed.gff", Path(tmp) / "d.json"
+            mixed.write_text(FIXTURE.read_text().replace(
+                "ID=ctg_01_1600_2199;translation_table=11", "ID=ctg_01_1600_2199;translation_table=4", 1))
+            status, err = self.run_cli("forward", mixed, out)
+            self.assertEqual(status, 1)
+            self.assertIn("model: contig 'ctg_01': CDS translation_table attributes disagree", err)
+            self.assertFalse(out.exists())
+
     def test_reverse_refuses_an_invalid_dataset(self):
         import json
         import tempfile
@@ -272,7 +323,7 @@ class AgreementTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             bundle = Path(tmp) / "bundle.json"
             subprocess.run([sys.executable, str(ROOT / "scripts/convert_features.py"), "import", str(NMDC),
-                            "--profile", "gff3-contig/1.0.0", "--reference-context", "nmdc:test",
+                            "--profile", "gff3-contig/2.0.0", "--reference-context", "nmdc:test",
                             "--output", str(bundle)], check=True, capture_output=True)
             reference = json.loads(bundle.read_text())["dataset"]
         mapped = mapping.forward(dialect.parse(NMDC))

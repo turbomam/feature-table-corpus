@@ -2,6 +2,7 @@
 import contextlib
 import importlib.util
 import io
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -135,6 +136,43 @@ class ValidateTests(unittest.TestCase):
 
     def test_attribute_named_like_a_column_is_rejected(self):
         self.assert_rejected(self.edited(0, "cog=COG0001", "cog=COG0001;start=999"), "names a column")
+
+    def test_each_partial_value_is_accepted_as_one_value(self):
+        self.assertEqual(dialect.parse(FIXTURE)["rows"][1]["partial"], "5',3'")
+        for value in ("5'", "3'"):
+            status, out = self.run_on(self.edited(1, "partial=5',3'", f"partial={value}"))
+            self.assertEqual(status, 0, out)
+        self.assert_rejected(self.edited(1, "partial=5',3'", "partial=3',5'"), "partial")
+
+    def test_line_endings_must_be_lf_with_a_final_newline(self):
+        text = FIXTURE.read_text()
+        self.assert_rejected(text.replace("\n", "\r\n"), "line 1: carriage return")
+        self.assert_rejected(text.replace("\n", "\r", 1), "line 1: carriage return")
+        self.assert_rejected(text[:-1], f"line {len(lines())}: no final newline")
+
+    def test_a_form_feed_in_a_value_is_written_back_unchanged(self):
+        text = self.edited(0, "semialdehyde", "semi\x0caldehyde")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "case.gff"
+            path.write_text(text)
+            document = dialect.parse(path)
+            # write() raises unless its text parses back to the same rows.
+            written = dialect.write(document)
+        self.assertIn("semi\x0caldehyde", written)
+        self.assertEqual(written.count("\n"), len(lines()))
+
+    def test_parse_output_never_overwrites(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            existing = Path(tmp) / "existing.json"
+            existing.write_text("keep")
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(dialect.main(["parse", str(FIXTURE), "--output", str(existing)]), 1)
+            self.assertEqual(existing.read_text(), "keep")
+            self.assertIn("exists", err.getvalue())
+            new = Path(tmp) / "new.json"
+            self.assertEqual(dialect.main(["parse", str(FIXTURE), "--output", str(new)]), 0)
+            self.assertEqual(len(json.loads(new.read_text())["rows"]), len(lines()))
 
     def test_comment_line_is_rejected(self):
         self.assert_rejected("##gff-version 3\n" + FIXTURE.read_text(), "comment or directive")

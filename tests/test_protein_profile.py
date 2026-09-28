@@ -100,7 +100,7 @@ class ProteinProfileTests(unittest.TestCase):
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
         with self.assertRaises(ConversionError):
-            import_source(PFAM.read_bytes(), profile="gff3-contig/1.0.0", reference_context=REFERENCE,
+            import_source(PFAM.read_bytes(), profile="gff3-contig/2.0.0", reference_context=REFERENCE,
                           source_uri="urn:test", protein_context=self.context)
 
     def test_provenance_uses_complete_absolute_uris(self):
@@ -142,6 +142,54 @@ class ProteinProfileTests(unittest.TestCase):
             for mode in ("exact", "reconstruct"):
                 with self.subTest(key=key, mode=mode), self.assertRaises(ConversionError):
                     export_source(b, mode=mode, protein_context=self.context)
+
+    def test_bundle_from_the_previous_profile_version_is_refused(self):
+        """A 1.0.0 protein bundle is refused as unsupported, with or without its context."""
+        old = deepcopy(self.bundle)
+        old["profile"] = "nmdc-pfam-protein/1.0.0"
+        for context in (deepcopy(self.context), None):
+            with self.assertRaises(ConversionError) as caught:
+                export_source(old, mode="reconstruct", protein_context=context)
+            self.assertEqual(caught.exception.code, "unsupported-profile")
+
+    def test_context_with_conflicting_cds_tables_is_refused(self):
+        """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""
+        c = deepcopy(self.context)
+        by_contig = {}
+        for f in c["dataset"]["features"]:
+            if f.get("type") == "CDS" and any(a["key"] == "translation_table" for a in f.get("attributes", [])):
+                by_contig.setdefault(f["seqid"], []).append(f)
+        shared = next(features for features in by_contig.values() if len(features) > 1)
+        next(a for a in shared[0]["attributes"] if a["key"] == "translation_table")["value"] = "4"
+        with self.assertRaises(ConversionError) as caught:
+            imported(PFAM.read_bytes(), c)
+        self.assertIn("CDS translation_table attributes disagree", str(caught.exception))
+
+    def test_hmmer_scores_are_typed_as_bit_scores(self):
+        """Issue 72: column 6 of NMDC HMMER Pfam rows is a bit score; context CDS scores stay untyped."""
+        hits = [f for f in self.bundle["dataset"]["features"] if f["coordinate_system"] == "protein"]
+        self.assertEqual(len(hits), 416)
+        self.assertTrue(all("score" in f and f["score_type"] == "bit_score" for f in hits))
+        context = [f for f in self.bundle["dataset"]["features"] if f["coordinate_system"] == "contig"]
+        self.assertTrue(context and all("score_type" not in f for f in context))
+        # A row without a score gets no score_type (the schema requires a score for one).
+        first = PFAM.read_bytes().splitlines()[0].decode().split("\t")
+        c = deepcopy(self.context)
+        parent = next(f for f in c["dataset"]["features"] if f["feature_id"] == first[0])
+        c["dataset"] = {"contigs": [{"contig_id": parent["seqid"]}], "features": [parent]}
+        c["bindings"] = [{"protein_id": first[0], "cds_id": first[0]}]
+        first[5] = "."
+        row = imported(("\t".join(first) + "\n").encode(), c)["dataset"]["features"][-1]
+        self.assertNotIn("score", row)
+        self.assertNotIn("score_type", row)
+        # The typed slot is part of the imported projection: dropping or changing it is an edit.
+        for change in (lambda f: f.pop("score_type"), lambda f: f.__setitem__("score_type", "e_value")):
+            b = deepcopy(self.bundle)
+            change(b["dataset"]["features"][-1])
+            for mode in ("exact", "reconstruct"):
+                with self.subTest(mode=mode), self.assertRaises(ConversionError) as caught:
+                    export_source(b, mode=mode, protein_context=self.context)
+                self.assertEqual(caught.exception.code, "edited-bundle")
 
     def test_generated_attributes_and_nontrivial_reference_mapping(self):
         rng = random.Random(25)

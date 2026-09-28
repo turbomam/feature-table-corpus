@@ -18,11 +18,12 @@ from urllib.parse import quote, unquote, urlsplit
 import rfc3987
 
 from source_document import parse_bytes, replay_bytes, write_new
+from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTEIN = "nmdc-pfam-protein/1.0.0"
-PROFILES = {"gff3-contig/1.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
+PROTEIN = "nmdc-pfam-protein/2.0.0"
+PROFILES = {"gff3-contig/2.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 
 
@@ -249,6 +250,10 @@ def protein_feature(columns, record_id, bindings):
     require(feature["end"] <= len(parent["translated_sequence"]),
             "protein-bound", f"{record_id}: hit exceeds the retained protein length")
     feature.update(seqid=parent["seqid"], coordinate_system="protein", parent=[parent["feature_id"]])
+    if "score" in feature:
+        # HMMER column 6 is a bit score; nmdc-lakehouse documents it for NMDC Pfam GFF
+        # (docs/pfam_annotation_gff.md). Reconstruction never reads this slot.
+        feature["score_type"] = "bit_score"
     mapping["protein_id"] = protein
     return rows, mapping
 
@@ -307,6 +312,10 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
             require(start <= feature["start"] <= feature["end"] <= end,
                     "declared-region", f"{feature['feature_id']} is outside a declared sequence region")
     dataset = {"contigs": list(contigs.values()), "features": rows}
+    if PROFILES[profile] == "gff3" and profile != PROTEIN:
+        # Derived from retained CDS attributes, so re-import reproduces it and export ignores it.
+        dataset["contigs"], conflicts = with_translation_tables(dataset["contigs"], rows)
+        require(not conflicts, "translation-table-conflict", "; ".join(conflicts))
     if profile == PROTEIN:
         require(set(protein_ids.values()) == set(bindings), "protein-context",
                 "protein context must cover exactly the source protein references")
@@ -336,7 +345,7 @@ def reconstruct_record(profile, by_id, mapping):
         # cell. The contextual CDS relationship is not a source Parent tag.
         projected = {**feature, "seqid": mapping["protein_id"]}
         projected.pop("parent")
-        return reconstruct_record("gff3-contig/1.0.0", {feature["feature_id"]: projected}, mapping)
+        return reconstruct_record("gff3-contig/2.0.0", {feature["feature_id"]: projected}, mapping)
     if PROFILES[profile] == "gff3":
         pairs = feature["attributes"]
         typed = {"ID": [feature["feature_id"]] if mapping["source_has_id"] else [],
@@ -386,6 +395,10 @@ def mutable_object_ids(value):
 
 def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
     try:
+        # Check the version first, so a bundle from a retired profile version is reported as
+        # such rather than failing a check that belongs to another profile.
+        require(bundle["profile"] in PROFILES, "unsupported-profile",
+                f"no executable conversion profile {bundle['profile']!r}")
         if bundle["profile"] == PROTEIN:
             require(protein_context is not None, "protein-context-original",
                     "supply the independent original protein context for validation/export")

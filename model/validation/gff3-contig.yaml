@@ -1,6 +1,6 @@
 # Validator expectations for the conversion contract model/profiles/gff3-contig.yaml.
 # Kept out of the contract so its checksum in the conversion report stays stable.
-profile: gff3-contig/1.0.0
+profile: gff3-contig/2.0.0
 # Independent validator observations; reproduce with just validity-check.
 validation:
   scope: Exact rule sets for the listed retained corpus inputs, including negative controls. These are

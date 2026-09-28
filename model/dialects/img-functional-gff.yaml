@@ -109,7 +109,7 @@ classes:
         description: Start codon of the CDS, or Edge when the gene runs off the contig.
         range: StartType
       partial:
-        description: "Which end of the feature is incomplete: 5' or 3'."
+        description: "Which end of the feature is incomplete: 5', 3', or 5',3' for both ends (one value)."
         range: Partial
       product:
         description: Free text; commas are part of the name.
@@ -249,6 +249,10 @@ enums:
     permissible_values:
       "5'":
       "3'":
+      "5',3'":
+        description: >-
+          Incomplete at both ends, one value; the comma is not a list separator. NMDC
+          metagenome files write it on 627 GFF lines (counted 2026-09-25).
   SearchMode:
     description: tRNAscan-SE search model.
     permissible_values:

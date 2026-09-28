@@ -1,0 +1,161 @@
+id: https://w3id.org/ber-data/dialects/img-tmhmm-signalp-gff
+name: img_tmhmm_signalp_gff
+title: IMG TMHMM topology and SignalP cleavage site GFF, parsed rows (draft dialect)
+description: >-
+  Rows of the JGI IMG annotation pipeline's `*_tmh.gff` (TMHMM topology, written by
+  decodeanhmm) and `*_cleavage_sites.gff` (SignalP) files, as parsed by
+  scripts/img_tmhmm_signalp_gff.py, before any mapping to the feature model. As in the
+  per-method hit files, column 1 is a gene ID and columns 4 and 5 are amino acid positions in
+  that gene's protein, but column 3 is a topology segment or a cleavage site, not an accession.
+comments:
+  - >-
+    Measured 2026-09-28 on two JGI isolate annotations (Clostridium acetobutylicum Ga0423362:
+    9,710 TMHMM rows on 1,066 genes and 146 SignalP rows; Methanococcus maripaludis S1
+    Ga0416744: 4,078 and 79). The Clostridium pair is vendored under
+    corpus/sources/jgi-img/IMG_AP-1268149/. See model/examples/jgi-inputs.yaml for the inputs.
+  - >-
+    A TMHMM file lists, for each gene with at least one predicted helix, segments that start at
+    residue 1, follow each other without gaps, alternate between a helix and a non-helix
+    segment, begin and end outside a helix, and switch between Inside and Outside across every
+    helix. scripts/img_tmhmm_signalp_gff.py checks each of these; they held on every gene
+    measured.
+  - >-
+    Every SignalP row measured has organism_type gram-, including those of the Gram-positive
+    Clostridium and the archaeon Methanococcus. The value is kept as written; the dialect does
+    not interpret it.
+license: CC BY 4.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  imgts: https://w3id.org/ber-data/dialects/img-tmhmm-signalp-gff/
+default_prefix: imgts
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  ImgTmhmmSignalpGffDocument:
+    tree_root: true
+    description: One parsed TMHMM or SignalP file.
+    attributes:
+      source_file:
+        required: true
+        description: Path or URI of the parsed file.
+      method:
+        required: true
+        range: ImgTopologyMethod
+        description: >-
+          The tool that wrote the file. Not a column: the parser infers it from the first row's
+          column 3, and every row must agree.
+      rows:
+        description: Every row, in file order.
+        range: ImgTmhmmSignalpGffRow
+        multivalued: true
+        inlined_as_list: true
+        required: true
+
+  ImgTmhmmSignalpGffRow:
+    description: >-
+      One nine-column row. The files have no header or comment lines. Column 8 is always ".",
+      so the row has no phase.
+    attributes:
+      line:
+        range: integer
+        required: true
+        minimum_value: 1
+        description: One-based line number in the source file.
+      seqid:
+        description: >-
+          Column 1, the gene ID of the protein. IMG builds it as <contig>_<start>_<end> in contig
+          coordinates, which is what lets a position be checked against the protein's length.
+        required: true
+        pattern: "^\\S+_\\d+_\\d+$"
+      source:
+        required: true
+        description: >-
+          Column 2: "decodeanhmm 1.1g" in every TMHMM row and "signalp 4.1" in every SignalP row
+          measured. Versions are left open, as in the other IMG dialects.
+        pattern: "^(decodeanhmm|signalp) \\S+$"
+      type:
+        required: true
+        range: ImgTopologyFeatureType
+        description: Column 3, a TMHMM segment or a SignalP cleavage site.
+      start:
+        description: Column 4, first amino acid, one-based inclusive.
+        range: integer
+        required: true
+        minimum_value: 1
+      end:
+        description: >-
+          Column 5, last amino acid, one-based inclusive. A SignalP row spans the two residues
+          on either side of the cleavage, so its end is start + 1.
+        range: integer
+        required: true
+        minimum_value: 1
+      score:
+        range: float
+        minimum_value: 0
+        maximum_value: 1
+        description: >-
+          Column 6. SignalP rows write a score with three decimals, a different number from the
+          D-score in every row measured. TMHMM rows write ".", so the slot is absent.
+      strand:
+        description: Column 7; always "." because positions are on the protein.
+        range: ImgTopologyStrand
+        required: true
+      attribute_order:
+        multivalued: true
+        required: true
+        description: >-
+          Column 9 keys in source order, so the row can be written back. TMHMM rows have only
+          ID; SignalP rows have D-score, network and organism_type in that order.
+      ID:
+        pattern: "^\\S+_\\d+_\\d+_\\d+_\\d+$"
+        description: >-
+          TMHMM rows only, built as <seqid>_<start>_<end>; scripts/img_tmhmm_signalp_gff.py
+          checks it. SignalP rows have no ID.
+      D_score:
+        range: float
+        minimum_value: 0
+        maximum_value: 1
+        description: >-
+          Source key D-score, SignalP's discrimination score, with three decimals. The lowest
+          measured is 0.515.
+      network:
+        range: SignalpNetwork
+        description: SignalP network variant.
+      organism_type:
+        range: SignalpOrganismType
+        description: The organism group SignalP was run for, as written.
+
+enums:
+  ImgTopologyMethod:
+    description: Which of the two IMG files a document came from.
+    permissible_values:
+      tmh:
+        description: A `*_tmh.gff` file of TMHMM segments.
+      cleavage_sites:
+        description: A `*_cleavage_sites.gff` file of SignalP cleavage sites.
+  ImgTopologyFeatureType:
+    description: Column 3 values, spelled as the tools write them.
+    permissible_values:
+      Inside:
+        description: TMHMM segment on the inner side of the membrane.
+      Outside:
+        description: TMHMM segment on the outer side of the membrane.
+      TMhelix:
+        description: TMHMM transmembrane helix.
+      cleavage_site:
+        description: SignalP signal peptide cleavage site.
+  ImgTopologyStrand:
+    description: Column 7 is always "." because positions are on the protein.
+    permissible_values:
+      ".":
+  SignalpNetwork:
+    description: SignalP 4.1 network variant, as written in the network key.
+    permissible_values:
+      SignalP-noTM:
+      SignalP-TM:
+  SignalpOrganismType:
+    description: Only gram- was measured; SignalP's other organism groups are not listed.
+    permissible_values:
+      gram-:

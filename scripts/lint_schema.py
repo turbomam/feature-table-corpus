@@ -20,7 +20,7 @@ DIALECT_NAMES = {
             "ImgFeatureType": ("CDS", "tRNA", "rRNA", "ncRNA", "tmRNA", "CRISPR"),
             "Strand": ("+", "-", "."),
             "StartType": ("ATG", "GTG", "TTG", "Edge"),
-            "Partial": ("5'", "3'"),
+            "Partial": ("5'", "3'", "5',3'"),
             "SearchMode": ("Bacterial", "Archaeal"),
             "CleavageSiteNetwork": ("SignalP-noTM", "SignalP-TM"),
         },
@@ -29,6 +29,15 @@ DIALECT_NAMES = {
         "slots": ("ID", "Name"),
         "values": {
             "ImgPerMethodStrand": (".",),
+        },
+    },
+    "img_tmhmm_signalp_gff": {
+        "slots": ("ID", "D_score"),
+        "values": {
+            "ImgTopologyFeatureType": ("Inside", "Outside", "TMhelix"),
+            "ImgTopologyStrand": (".",),
+            "SignalpNetwork": ("SignalP-noTM", "SignalP-TM"),
+            "SignalpOrganismType": ("gram-",),
         },
     },
     "img_taxon_bundle": {

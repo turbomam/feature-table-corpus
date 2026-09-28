@@ -10,6 +10,7 @@ an identifier to another record's translated sequence.
 """
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -22,6 +23,19 @@ from feature_locations import location_errors
 # Assigned NCBI genetic codes, from https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
 # (read 2026-09-25). 7, 8 and 17 to 20 are unassigned.
 NCBI_GENETIC_CODES = frozenset([*range(1, 7), *range(9, 17), *range(21, 34)])
+
+
+def table_value(text):
+    """A translation_table attribute as an integer when it is one, else its text.
+
+    Leading zeros are ignored, so 011 is 11 and 01000 equals 1000. Only up to three digits are
+    read as a number: codes stop at 33, and a longer digit string would otherwise reach int()'s
+    digit limit, so it stays text with its leading zeros removed.
+    """
+    if not re.fullmatch(r"[0-9]+", text):
+        return text
+    digits = text.lstrip("0") or "0"
+    return int(digits) if len(digits) <= 3 else digits
 
 
 def make_validator(schema_path, class_name="Dataset"):
@@ -54,6 +68,13 @@ def dataset_errors(data):
         indexes[collection] = index
     contigs, features = indexes["contigs"], indexes["features"]
     collections = indexes["contig_collections"]
+    # translation_table attributes on contig-coordinate CDS rows, by contig (issue 72).
+    cds_tables = {}
+    for fid, feature in features.items():
+        if feature.get("type") == "CDS" and feature.get("coordinate_system") == "contig":
+            for attribute in feature.get("attributes") or []:
+                if attribute["key"] == "translation_table":
+                    cds_tables.setdefault(feature["seqid"], []).append((fid, attribute["value"]))
     for cid, contig in contigs.items():
         members = contig.get("member_of") or []
         if len(members) != len(set(members)):
@@ -66,6 +87,16 @@ def dataset_errors(data):
             errors.append(f"contig {cid!r}: translation_table {table} is not an assigned NCBI genetic code")
         if contig.get("topology") == "circular" and not contig.get("length_bp"):
             errors.append(f"contig {cid!r}: circular topology requires length_bp")
+        cds_values = cds_tables.get(cid, [])
+        if len({table_value(value) for _, value in cds_values}) > 1:
+            # The same conflict the converters refuse, whether or not the contig has a table.
+            listed = ", ".join(f"{value!r} on {fid!r}" for fid, value in cds_values)
+            errors.append(f"contig {cid!r}: CDS translation_table attributes disagree ({listed})")
+        if table is not None:
+            for fid, value in cds_values:
+                if table_value(value) != table:
+                    errors.append(f"contig {cid!r}: translation_table {table} disagrees with "
+                                  f"CDS {fid!r} translation_table attribute {value!r}")
     for fid, feature in features.items():
         def error(message):
             errors.append(f"feature {fid!r}: {message}")

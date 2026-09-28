@@ -1,4 +1,4 @@
-id: nmdc-pfam-protein/1.0.0
+id: nmdc-pfam-protein/2.0.0
 format: gff3
 status: experimental
 scope: NMDC HMMER Pfam protein-relative annotation rows with an explicit CDS/FASTA context
@@ -11,6 +11,8 @@ mapping:
   seqid: source column 1 is a protein reference; model seqid is the bound CDS's contig
   parent: model parent is the explicit CDS binding; no source Parent tag is invented
   type: literal Pfam accession, not a Sequence Ontology assertion
+  score_type: bit_score on every row with a score (HMMER column 6, per nmdc-lakehouse docs/pfam_annotation_gff.md); export never reads it
+  translation_table: not derived; the protein context Dataset is used as supplied
   attributes: ordered generic pairs with repeated/empty/unknown values and comma grouping retained
 round_trip:
   exact: byte-identical source recovery after projection and independent-original checks
