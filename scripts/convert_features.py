@@ -22,8 +22,8 @@ from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTEIN = "nmdc-pfam-protein/1.0.0"
-PROFILES = {"gff3-contig/1.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
+PROTEIN = "nmdc-pfam-protein/2.0.0"
+PROFILES = {"gff3-contig/2.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 
 
@@ -345,7 +345,7 @@ def reconstruct_record(profile, by_id, mapping):
         # cell. The contextual CDS relationship is not a source Parent tag.
         projected = {**feature, "seqid": mapping["protein_id"]}
         projected.pop("parent")
-        return reconstruct_record("gff3-contig/1.0.0", {feature["feature_id"]: projected}, mapping)
+        return reconstruct_record("gff3-contig/2.0.0", {feature["feature_id"]: projected}, mapping)
     if PROFILES[profile] == "gff3":
         pairs = feature["attributes"]
         typed = {"ID": [feature["feature_id"]] if mapping["source_has_id"] else [],
@@ -395,6 +395,10 @@ def mutable_object_ids(value):
 
 def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
     try:
+        # Check the version first, so a bundle from a retired profile version is reported as
+        # such rather than failing a check that belongs to another profile.
+        require(bundle["profile"] in PROFILES, "unsupported-profile",
+                f"no executable conversion profile {bundle['profile']!r}")
         if bundle["profile"] == PROTEIN:
             require(protein_context is not None, "protein-context-original",
                     "supply the independent original protein context for validation/export")

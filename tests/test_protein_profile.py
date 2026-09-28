@@ -100,7 +100,7 @@ class ProteinProfileTests(unittest.TestCase):
             with self.subTest(context_type=type(context).__name__), self.assertRaises(ConversionError):
                 imported(PFAM.read_bytes(), context)
         with self.assertRaises(ConversionError):
-            import_source(PFAM.read_bytes(), profile="gff3-contig/1.0.0", reference_context=REFERENCE,
+            import_source(PFAM.read_bytes(), profile="gff3-contig/2.0.0", reference_context=REFERENCE,
                           source_uri="urn:test", protein_context=self.context)
 
     def test_provenance_uses_complete_absolute_uris(self):
@@ -142,6 +142,28 @@ class ProteinProfileTests(unittest.TestCase):
             for mode in ("exact", "reconstruct"):
                 with self.subTest(key=key, mode=mode), self.assertRaises(ConversionError):
                     export_source(b, mode=mode, protein_context=self.context)
+
+    def test_bundle_from_the_previous_profile_version_is_refused(self):
+        """A 1.0.0 protein bundle is refused as unsupported, with or without its context."""
+        old = deepcopy(self.bundle)
+        old["profile"] = "nmdc-pfam-protein/1.0.0"
+        for context in (deepcopy(self.context), None):
+            with self.assertRaises(ConversionError) as caught:
+                export_source(old, mode="reconstruct", protein_context=context)
+            self.assertEqual(caught.exception.code, "unsupported-profile")
+
+    def test_context_with_conflicting_cds_tables_is_refused(self):
+        """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""
+        c = deepcopy(self.context)
+        by_contig = {}
+        for f in c["dataset"]["features"]:
+            if f.get("type") == "CDS" and any(a["key"] == "translation_table" for a in f.get("attributes", [])):
+                by_contig.setdefault(f["seqid"], []).append(f)
+        shared = next(features for features in by_contig.values() if len(features) > 1)
+        next(a for a in shared[0]["attributes"] if a["key"] == "translation_table")["value"] = "4"
+        with self.assertRaises(ConversionError) as caught:
+            imported(PFAM.read_bytes(), c)
+        self.assertIn("CDS translation_table attributes disagree", str(caught.exception))
 
     def test_hmmer_scores_are_typed_as_bit_scores(self):
         """Issue 72: column 6 of NMDC HMMER Pfam rows is a bit score; context CDS scores stay untyped."""
