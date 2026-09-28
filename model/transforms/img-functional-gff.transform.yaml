@@ -13,7 +13,9 @@ comments:
     slot order. (2) coordinate_system is the constant "contig": a constant slot makes
     `linkml-map invert` fail (inverter.py line 144). (3) Dataset.contigs holds one Contig per
     distinct seqid: linkml-map refuses to build records inside an expression. (4) `invert`
-    drops mirror_source from the StrandEnum derivation below, so the script restores it.
+    drops mirror_source from the StrandEnum derivation below, so the script restores it. The
+    script also derives Contig.translation_table from the CDS rows' translation_table attributes
+    (scripts/translation_tables.py), which needs the Attribute list from (1).
 source_schema: model/dialects/img-functional-gff.yaml
 target_schema: model/schema/ber_feature_model.yaml
 class_derivations:

@@ -142,6 +142,45 @@ class ValidationTests(unittest.TestCase):
         data["contigs"][0].pop("member_of")
         self.assertEqual(validation_errors(data, self.validator), [])
 
+    def test_translation_table_must_match_cds_attributes(self):
+        """Issue 72: a contig's table disagreeing with any CDS translation_table attribute is rejected."""
+        self.assertEqual(validation_errors(self.example, self.validator), [])
+        first = self.example["contigs"][0]["contig_id"]
+
+        def cds_attributes(data, contig=first):
+            return [a for f in data["features"] if f["seqid"] == contig and f["type"] == "CDS"
+                    for a in f["attributes"] if a["key"] == "translation_table"]
+
+        self.assertEqual(len(cds_attributes(self.example)), 2)
+        # Either side can be wrong: the contig slot, or one CDS attribute.
+        self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 4),
+                    "translation_table 4 disagrees with CDS")
+        self.reject(lambda d: cds_attributes(d)[1].__setitem__("value", "4"), "attribute '4'")
+        self.reject(lambda d: cds_attributes(d)[0].__setitem__("value", "x"), "attribute 'x'")
+        self.reject(lambda d: cds_attributes(d)[0].__setitem__("value", ""), "attribute ''")
+        data = copy.deepcopy(self.example)
+        # 011 names table 11; a contig with no table set is not compared.
+        cds_attributes(data)[0]["value"] = "011"
+        self.assertEqual(validation_errors(data, self.validator), [])
+        data["contigs"][0].pop("translation_table")
+        cds_attributes(data)[0]["value"] = "4"
+        self.assertEqual(validation_errors(data, self.validator), [])
+        # Only CDS rows count: the same attribute on another feature type is not compared.
+        data = copy.deepcopy(self.example)
+        other = next(f for f in data["features"] if f["seqid"] == first and f["type"] != "CDS")
+        other.setdefault("attributes", []).append({"key": "translation_table", "value": "4"})
+        self.assertEqual(validation_errors(data, self.validator), [])
+        # Every per-contig check still runs for every contig, before and after this one.
+        data = copy.deepcopy(self.example)
+        data["contigs"][0]["translation_table"] = 4
+        for contig in data["contigs"]:
+            contig["topology"] = "circular"
+            contig.pop("length_bp", None)
+        errors = validation_errors(data, self.validator)
+        self.assertEqual(sum("circular topology requires length_bp" in e for e in errors),
+                         len(data["contigs"]), errors)
+        self.assertEqual(sum("disagrees with CDS" in e for e in errors), 2, errors)
+
     def test_translation_table_bounds_and_score_type(self):
         """Issue 46: assigned NCBI genetic codes only; score_type is a closed list of kinds."""
         self.reject(lambda d: d["contigs"][0].__setitem__("translation_table", 0), "minimum")
@@ -159,8 +198,15 @@ class ValidationTests(unittest.TestCase):
         self.reject(lambda d: next(f for f in d["features"] if f.get("score_type")).pop("score"),
                     "'score' is a required property")
         data["features"][0]["score_type"] = "score"
+        contig = data["contigs"][0]["contig_id"]
         for assigned in (1, 4, 33):
             data["contigs"][0]["translation_table"] = assigned
+            # The contig's CDS rows must name the same table (issue 72).
+            for feature in data["features"]:
+                if feature["seqid"] == contig and feature["type"] == "CDS":
+                    for attribute in feature["attributes"]:
+                        if attribute["key"] == "translation_table":
+                            attribute["value"] = str(assigned)
             self.assertEqual(validation_errors(data, self.validator), [])
         # Each score kind maps to EDAM's own IRI, not a resolver URL.
         view = SchemaView(str(SCHEMA))

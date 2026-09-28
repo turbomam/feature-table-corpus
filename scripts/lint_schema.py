@@ -20,7 +20,7 @@ DIALECT_NAMES = {
             "ImgFeatureType": ("CDS", "tRNA", "rRNA", "ncRNA", "tmRNA", "CRISPR"),
             "Strand": ("+", "-", "."),
             "StartType": ("ATG", "GTG", "TTG", "Edge"),
-            "Partial": ("5'", "3'"),
+            "Partial": ("5'", "3'", "5',3'"),
             "SearchMode": ("Bacterial", "Archaeal"),
             "CleavageSiteNetwork": ("SignalP-noTM", "SignalP-TM"),
         },
