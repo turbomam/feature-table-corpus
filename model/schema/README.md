@@ -157,4 +157,6 @@ Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
 `Feature.is_representative` says whether the source names a transcript as its gene's representative
 isoform ([issue 48](https://github.com/turbomam/feature-table-corpus/issues/48)). Phytozome marks it
 with `longest=1` on one mRNA per gene. It is not `is_selected`, which records which competing call a
-pipeline kept for a locus. Unset means the source does not say.
+pipeline kept for a locus. Unset means the source does not say, and false only means what the
+source states, as Phytozome's `longest=0` does. The Dataset validator refuses two representatives
+under one parent.

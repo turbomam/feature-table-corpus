@@ -175,6 +175,7 @@ class MappingTests(unittest.TestCase):
 
     def test_fields_the_dialect_cannot_hold_are_refused(self):
         for field, value in (("translated_sequence", "MKV"), ("is_selected", True),
+                             ("is_representative", True),
                              ("generated_by", "nmdc:wfmgan-11-x.1")):
             edited = copy.deepcopy(self.dataset)
             self.feature("ctg_01_100_1299", edited)[field] = value

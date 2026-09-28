@@ -324,8 +324,9 @@ the tests use a [constructed fixture](../tests/fixtures/phytozome/README.md).
   descend. A gene or mRNA ID is its Name plus `.TAIR10`.
 - Every mRNA row has `longest=0` or `longest=1`, and each gene has exactly one `longest=1`
   (27,416 genes, 7,970 other isoforms). The flag is Phytozome's choice: in 16 of the 5,804
-  genes with more than one isoform, the flagged one does not have the longest CDS. How the
-  feature model should carry it is open in https://github.com/turbomam/feature-table-corpus/issues/48.
+  genes with more than one isoform, the flagged one does not have the longest CDS. The
+  feature model carries it as `Feature.is_representative`
+  (https://github.com/turbomam/feature-table-corpus/issues/48).
 - Each mRNA's `pacid` appears once in the table, as `PAC:<pacid>`, with the mRNA's Name as
   `transcriptName` and its gene's Name as `locusName`. All 35,386 match in both directions.
 - In the table, one space separates values in `Pfam`, `Panther`, `ec`, `KOG`, `KO` and `GO`.

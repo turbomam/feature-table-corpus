@@ -462,12 +462,15 @@ slots:
       Whether the source names this transcript as its gene's representative isoform, the one to
       use when a query wants a single transcript per gene.
     notes:
-      - Phytozome writes longest=1 on one mRNA per gene. In Athaliana_167_TAIR10.gene_exons.gff3,
-        downloaded 2026-09-25, 27,416 of 35,386 mRNA rows carry it, one for each of the 27,416
-        genes. Other sources mark the same idea differently, for example Ensembl's
-        tag=Ensembl_canonical.
-      - Unset means the source does not say. A mapping may set false on a gene's other
-        transcripts only where the source marks exactly one per gene, as Phytozome does.
+      - Phytozome writes longest=1 on one mRNA per gene and longest=0 on the others. In
+        Athaliana_167_TAIR10.gene_exons.gff3, downloaded 2026-09-25, 27,416 of 35,386 mRNA rows
+        have longest=1, one for each gene. Despite the key name the flag is Phytozome's choice
+        and not a length rule. In 16 of the 5,804 genes with more than one isoform, the flagged
+        mRNA does not have the longest CDS (docs/conversion-profiles.md). Other sources mark the
+        same idea differently. Ensembl GFF3 lists Ensembl_canonical as one of the comma-separated
+        values of an mRNA's tag attribute.
+      - Unset means the source does not say. Set false only where the source says so, as
+        Phytozome's longest=0 does.
       - Different from is_selected, which records which competing call an annotation pipeline
         kept for a locus, not which of a gene's isoforms stands for it
         (https://github.com/turbomam/feature-table-corpus/issues/48).

@@ -323,6 +323,23 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(validation_errors(data, self.validator), [])
         self.reject(lambda d: d["features"][0].__setitem__("is_representative", "1"), "is not of type")
 
+    def test_a_gene_has_at_most_one_representative_isoform(self):
+        data = copy.deepcopy(self.example)
+        gene = data["features"][0]["feature_id"]
+        isoforms = []
+        for number in (1, 2):
+            isoform = copy.deepcopy(data["features"][0])
+            isoform.update(feature_id=f"{gene}.mRNA{number}", type="mRNA", parent=[gene], attributes=[])
+            isoforms.append(isoform)
+        data["features"].extend(isoforms)
+        isoforms[0]["is_representative"] = True
+        isoforms[1]["is_representative"] = False
+        self.assertEqual(validation_errors(data, self.validator), [])
+        isoforms[1]["is_representative"] = True
+        self.assertIn(f"feature {gene!r}: more than one representative isoform "
+                      f"({isoforms[0]['feature_id']!r}, {isoforms[1]['feature_id']!r})",
+                      validation_errors(data, self.validator))
+
     def test_source_uris_are_validated(self):
         for collection in ('contigs', 'features'):
             for value in ('not-a-url', 'https://example.org/file name.gff'):
@@ -561,6 +578,17 @@ class DatabaseTests(unittest.TestCase):
         data = yaml.safe_load(EXAMPLE.read_text())
         row = con.execute("SELECT generated_by, source_files, attributes FROM feature WHERE feature_id = ?", [gene]).fetchone()
         self.assertEqual(row, tuple(data["features"][0][k] for k in ("generated_by", "source_files", "attributes")))
+
+    def test_is_representative_round_trips_true_false_and_unset(self):
+        data = yaml.safe_load(EXAMPLE.read_text())
+        data["features"][0]["is_representative"] = True
+        data["features"][1]["is_representative"] = False
+        marked = self.work / "representative.yaml"
+        marked.write_text(yaml.safe_dump(data))
+        build_database(SCHEMA, marked, self.db)
+        rows = dict(self.connect().execute("SELECT feature_id, is_representative FROM feature").fetchall())
+        ids = [f["feature_id"] for f in data["features"]]
+        self.assertEqual([rows[i] for i in ids[:3]], [True, False, None])
 
     def test_failed_validation_preserves_existing_database(self):
         data = yaml.safe_load(EXAMPLE.read_text())

@@ -79,6 +79,15 @@ def dataset_errors(data):
             for attribute in feature.get("attributes") or []:
                 if attribute["key"] == "translation_table":
                     cds_tables.setdefault(feature["seqid"], []).append((fid, attribute["value"]))
+    # A gene has at most one representative isoform (issue 48); unset marks are allowed.
+    representatives = {}
+    for fid, feature in features.items():
+        if feature.get("is_representative") is True:
+            for pid in feature.get("parent") or []:
+                representatives.setdefault(pid, []).append(fid)
+    for pid, fids in representatives.items():
+        if len(fids) > 1:
+            errors.append(f"feature {pid!r}: more than one representative isoform ({', '.join(map(repr, fids))})")
     for cid, contig in contigs.items():
         members = contig.get("member_of") or []
         if len(members) != len(set(members)):
