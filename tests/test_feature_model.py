@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_duckdb import build_database
 from flat_profile_audit import audit
 from query_duckdb import by_attribute, interval_overlap, multiple_pfams
-from validate_closed import load_data, load_validated, make_validator, validation_errors
+from validate_closed import _check_values, load_data, load_validated, make_validator, validation_errors
 
 SCHEMA = ROOT / "model/schema/ber_feature_model.yaml"
 EXAMPLE = ROOT / "model/examples/one-biosample-sequencing/harmonized.yaml"
@@ -135,16 +135,15 @@ class ValidationTests(unittest.TestCase):
             upper = Path(tmp) / "dataset.JSON"
             upper.write_text(text)
             self.assertEqual(next(f for f in load_validated(SCHEMA, upper)["features"] if "score" in f)["score"], 1e-05)
-            # The walk and its error path are iterative: a value deeper than Python's
-            # recursion limit, which json.load still reads, is reported, not a traceback.
-            deep_inf = Path(tmp) / "deep-inf.json"
-            deep_inf.write_text("[" * 1500 + "1e400" + "]" * 1500)
-            with self.assertRaisesRegex(ValueError, r"data\[0\].*\.\.\.\(1490 more\)\.\.\..*is not a finite number"):
-                load_data(deep_inf)
-            result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
-                                     str(SCHEMA), str(deep_inf), "Dataset"], capture_output=True, text=True)
-            self.assertEqual(result.returncode, 1)
-            self.assertNotIn("Traceback", result.stderr)
+            # The walk and its error path are iterative, so a value nested deeper than the
+            # recursion limit is reported, not a RecursionError. Built in memory, since
+            # where the JSON loader's own limit falls differs between Python builds.
+            depth = sys.getrecursionlimit() + 500
+            deep_inf = float("inf")
+            for _ in range(depth):
+                deep_inf = [deep_inf]
+            with self.assertRaisesRegex(ValueError, rf"data\[0\].*\.\.\.\({depth - 10} more\)\.\.\..*is not a finite number"):
+                _check_values(deep_inf)
             # Both loaders recurse; nesting past their limit is refused, not a traceback.
             for name in ("deep.json", "deep.yaml"):
                 deep = Path(tmp) / name

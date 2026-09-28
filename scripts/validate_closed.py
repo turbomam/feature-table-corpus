@@ -190,7 +190,7 @@ def load_data(data_path):
         else:
             data = yaml.safe_load(path.read_text())
     except RecursionError:
-        raise ValueError(f"{path}: nested too deeply to load") from None
+        raise ValueError("nested too deeply to load") from None
     _check_values(data)
     return data
 
