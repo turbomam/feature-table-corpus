@@ -393,6 +393,21 @@ byte. On the TAIR10 file on 2026-09-28 it held for all 532,682 rows (1,641,402 a
 seconds on an Apple M5 Max, with a peak of 3.2 GB of memory. `just map-phytozome-gff3 FILE OUT`
 and `just map-phytozome-gff3-back DATASET OUT` run each direction and never overwrite a file.
 
+`scripts/phytozome_annotation_map.py` maps the GFF3 and its `annotation_info.txt` together into one
+Dataset. The table has no positions, so each of its values becomes one Attribute on the mRNA its
+`pacId` names, keyed by the table's column name (`Pfam`, `Panther`, `ec`, `KOG`, `KO`, `GO` and the
+four `Best-hit` columns) and placed after the GFF3's own attributes. A list column gives one
+Attribute per value in table order. The table's URL goes in the mRNA's `source_files`, since the
+model has no provenance per attribute. `locusName`, `transcriptName` and `peptideName` are not
+stored: they are the gene's `Name`, the mRNA's `Name`, and, in all 35,386 TAIR10 rows, the mRNA's
+`Name` again, and a row where they differ is refused. The reverse step writes rows sorted by
+`locusName` and then transcript number, which is the TAIR10 table's own order (it is not the
+GFF3's mRNA order), and forward refuses a table in any other order. It also refuses an mRNA whose
+GFF3 attributes already use one of the table's column names.
+`just map-phytozome-annotation-roundtrip GFF3 TABLE` requires both files back byte for byte; on
+2026-09-28 it held for the TAIR10 pair (35,386 mRNA carrying 465,471 table attributes) in 266
+seconds with a peak of 3.5 GB of memory.
+
 ## Attributes and authority
 
 The shared Attribute class still means a string key/value pair, independent of
