@@ -39,7 +39,11 @@ def table_value(text):
 
 
 def make_validator(schema_path, class_name="Dataset"):
+    """A closed validator for one class of the schema; ValueError if it has no such class."""
     schema = JsonSchemaGenerator(str(schema_path), not_closed=False).generate()
+    classes = sorted(name for name, definition in schema["$defs"].items() if definition.get("type") == "object")
+    if class_name not in classes:
+        raise ValueError(f"{class_name!r} is not a class in {schema_path}; classes: {', '.join(classes)}")
     selected = {"$defs": schema["$defs"], "$ref": f"#/$defs/{class_name}"}
     return jsonschema.Draft202012Validator(selected, format_checker=jsonschema.FormatChecker())
 
@@ -239,12 +243,18 @@ def main():
         print(__doc__, file=sys.stderr)
         return 2
     schema_path, data_path, top_class = sys.argv[1:4]
+    # A missing schema or an unknown class is a usage error, reported before the data is read.
+    try:
+        validator = make_validator(schema_path, top_class)
+    except (OSError, ValueError) as error:
+        print(error, file=sys.stderr)
+        return 2
     try:
         data = load_data(data_path)
     except (OSError, ValueError, yaml.YAMLError) as error:
         print(f"{data_path}: {error}", file=sys.stderr)
         return 1
-    errors = validation_errors(data, make_validator(schema_path, top_class), top_class)
+    errors = validation_errors(data, validator, top_class)
     for error in errors:
         print(f"ERROR: {error}")
     print(f"{data_path}: {len(errors)} error(s) under the closed {top_class} checks")
