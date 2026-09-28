@@ -145,20 +145,39 @@ class MappingTests(unittest.TestCase):
     def test_a_failed_write_leaves_neither_file(self):
         # A write that fails after creating its file (a full disk, say) must not leave it behind.
         from unittest import mock
-        real = mapping.write_output
+        real = mapping.write_new
         def fail_second(path, text):
             if str(path).endswith(".txt"):
                 Path(path).write_text("partial")
-                return 1
+                return False, True
             return real(path, text)
         with tempfile.TemporaryDirectory() as tmp:
             dataset = Path(tmp) / "d.json"
             with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(mapping.main(["forward", str(GFF3), str(TABLE), str(dataset)]), 0)
-                with mock.patch.object(mapping, "write_output", fail_second):
+                with mock.patch.object(mapping, "write_new", fail_second):
                     self.assertEqual(mapping.main(["reverse", str(dataset), str(Path(tmp) / "g.gff3"),
                                                    str(Path(tmp) / "t.txt")]), 1)
             self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), ["d.json"])
+
+    def test_a_file_another_process_made_first_is_left_alone(self):
+        # The table path appears between the existence check and the write: its exclusive
+        # open fails, and the cleanup must remove only the GFF3 this call wrote.
+        from unittest import mock
+        real = mapping.write_new
+        def race(path, text):
+            if str(path).endswith(".txt"):
+                Path(path).write_text("theirs")
+            return real(path, text)
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset = Path(tmp) / "d.json"
+            with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(GFF3), str(TABLE), str(dataset)]), 0)
+                with mock.patch.object(mapping, "write_new", race):
+                    self.assertEqual(mapping.main(["reverse", str(dataset), str(Path(tmp) / "g.gff3"),
+                                                   str(Path(tmp) / "t.txt")]), 1)
+            self.assertEqual((Path(tmp) / "t.txt").read_text(), "theirs")
+            self.assertFalse((Path(tmp) / "g.gff3").exists())
 
     def test_commands_write_both_files_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:

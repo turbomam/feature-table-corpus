@@ -194,6 +194,26 @@ def roundtrip(gff3_path, table_path):
     return problems, report
 
 
+def write_new(path, text):
+    """Write text to a new file; return (ok, created). created says whether this call made the file.
+
+    Only a file this call created may be removed on failure: if another process made
+    the path first, open(..., "x") fails without touching it.
+    """
+    try:
+        handle = open(path, "x", encoding="utf-8")
+    except (OSError, UnicodeEncodeError) as error:
+        report_errors([f"output: {error}"])
+        return False, False
+    try:
+        with handle:
+            handle.write(text)
+    except (OSError, UnicodeEncodeError) as error:
+        report_errors([f"output: {error}"])
+        return False, True
+    return True, True
+
+
 def main(argv=None):
     quiet_linkml_map()
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -253,17 +273,16 @@ def main(argv=None):
             errors.append(f"output: already exists, not overwritten: {existing}")
         if report_errors(errors):
             return 1
-        written = []
+        created = []
         for path, text in texts.items():
-            if write_output(path, text):
-                # Leave nothing half done: remove what this call wrote, including a file
-                # created and then left partly written by the failed write. Neither existed
-                # before, since existing paths were refused above.
-                for done in written + [path]:
-                    if done.exists():
-                        done.unlink()
+            ok, made = write_new(path, text)
+            if made:
+                created.append(path)
+            if not ok:
+                # Leave nothing half done, but remove only files this call created.
+                for done in created:
+                    done.unlink(missing_ok=True)
                 return 1
-            written.append(path)
         return 0
     problems, report = roundtrip(args.gff3, args.table)
     for problem in problems[:20]:
