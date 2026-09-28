@@ -325,6 +325,16 @@ accepts only canonical numbers (no leading zeros) and the measured two- and thre
 spellings, so the writer reproduces any valid file byte for byte. The tests edit
 single rows of a [constructed fixture](../tests/fixtures/img-assembled-gff/README.md).
 
+[`img-assembled-gff.transform.yaml`](../model/transforms/img-assembled-gff.transform.yaml) maps the
+rows to `Feature` with linkml-map, and `scripts/img_assembled_gff_map.py` adds the same pieces as
+the other IMG mappings. The strand derivation maps `1` and `-1` to `+` and `-`; `linkml-map
+invert` keeps those value derivations, so unlike `mirror_source` they need no repair. Each
+attribute value is the text the dialect's writer produces, so `conf=100.00` stays `100.00`.
+`just map-img-assembled-roundtrip FILE` requires the written file to equal the source byte for
+byte; on 2026-09-28 it held for `106476.assembled.gff` (4,693 rows, 18,899 attributes).
+`just map-img-assembled FILE OUT` and `just map-img-assembled-back DATASET OUT` run each direction
+and never overwrite a file.
+
 ### Phytozome gene_exons GFF3 and annotation_info
 
 Two more dialects describe a Phytozome genome's
