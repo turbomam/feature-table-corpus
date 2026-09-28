@@ -201,8 +201,9 @@ def checked(text, where, forbidden):
     return text
 
 
-# A decimal spelling, exponent allowed (1.22e+03); float() alone would also take " 84.5", "1_0" or "nan".
-NUMBER_TEXT = re.compile(r"-?\d+(\.\d+)?([eE][-+]?\d+)?")
+# The parser's own ASCII decimal spelling, exponent allowed (1.22e+03); float() alone would also
+# take " 84.5", "1_0", "nan" or non-ASCII digits.
+NUMBER_TEXT = DECIMAL
 
 
 def spelled(value, text):
