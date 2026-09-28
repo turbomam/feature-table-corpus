@@ -346,6 +346,12 @@ class ValidationTests(unittest.TestCase):
         exon.update(feature_id=f"{isoforms[0]['feature_id']}.exon1", type="exon",
                     parent=[isoforms[0]["feature_id"]])
         data["features"].append(exon)
+        # A parent ID with no row is refused like any unknown parent, marked or not.
+        orphan = copy.deepcopy(isoforms[1])
+        orphan.update(feature_id="orphan.mRNA1", parent=["no-such-gene"], is_representative=True)
+        data["features"].append(orphan)
+        self.assertIn("feature 'orphan.mRNA1': unknown parent 'no-such-gene'",
+                      validation_errors(data, self.validator))
         self.assertIn(f"feature {exon['feature_id']!r}: is_representative parent "
                       f"{isoforms[0]['feature_id']!r} is not a top-level feature, so it is not a gene",
                       validation_errors(data, self.validator))
