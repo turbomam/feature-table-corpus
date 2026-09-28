@@ -249,6 +249,10 @@ enums:
     permissible_values:
       "5'":
       "3'":
+      "5',3'":
+        description: >-
+          Incomplete at both ends, one value; the comma is not a list separator. NMDC
+          metagenome files write it on 627 GFF lines (counted 2026-09-25).
   SearchMode:
     description: tRNAscan-SE search model.
     permissible_values:

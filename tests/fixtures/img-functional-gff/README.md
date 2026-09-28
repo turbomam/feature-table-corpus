@@ -6,7 +6,7 @@ scores are invented; accessions and value forms follow what the IMG pipeline wri
 measured on the files listed in `model/examples/jgi-inputs.yaml`.
 
 It holds one row of each shape the dialect schema must accept: a CDS whose product contains a
-comma, a CDS with a repeated `shortened` key and an `Edge` start, slash-joined
+comma, a CDS with a repeated `shortened` key, an `Edge` start and `partial=5',3'` (incomplete at both ends), slash-joined
 `product_source`, a pseudo tRNA, an rRNA and a riboswitch from Rfam, and a CRISPR with two
 repeat units whose IDs extend the CRISPR's ID. `tests/test_img_functional_gff.py` edits
 single rows of it to check that each rule rejects what it should.

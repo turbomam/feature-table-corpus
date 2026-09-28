@@ -103,6 +103,11 @@ The Clostridium file is now vendored too, as `corpus/sources/jgi-img/IMG_AP-1268
   repeat units are unstranded.
 - A key can repeat: one Prodigal CDS has `shortened` twice. Key order is kept in
   `attribute_order` so rows can be written back.
+- `partial` is `5'`, `3'` or `5',3'`. The last, a feature incomplete at both ends, is one value
+  and not a list; NMDC metagenome files write it on 627 GFF lines, and the isolates never do.
+- Lines end with LF and the file ends with a newline, since that is all the writer emits; a
+  carriage return or a missing final newline is rejected. `parse --output` refuses a path that
+  already exists.
 
 `just dialect-validate-img-functional FILE` parses a file, validates it with the LinkML
 validator, and adds the cross-row checks a schema can't express. The tests edit single rows
@@ -195,9 +200,10 @@ The other per-genome files were measured on the same date to place them:
   (program version, input and parameter files, translation table, run date), then a blank line
   and a `##sequence-region` line before each contig's rows. The first dialect rejects comment lines, so accepting these files means extending
   it, not a new dialect.
-- Three vendored NMDC files (Rfam, one structural annotation, GeneMark) fail the first dialect
-  only because metagenome rows can be partial at both ends (`partial=5',3'`), which it does not
-  yet accept. The NMDC GeneMark file has no header lines.
+- Three vendored NMDC files (Rfam, one structural annotation, GeneMark) failed the first
+  dialect only because metagenome rows can be partial at both ends (`partial=5',3'`). It accepts
+  that value since https://github.com/turbomam/feature-table-corpus/issues/65, and all three
+  validate (checked 2026-09-28). The NMDC GeneMark file has no header lines.
 - `_tmh` (TMHMM topology, column 3 `Inside`, `Outside` or `TMhelix`, score `.`) and
   `_cleavage_sites` (SignalP, column 3 `cleavage_site`, no `ID`) are on protein positions like
   the hit files, but their column 3 is not an accession and their keys differ. They need their

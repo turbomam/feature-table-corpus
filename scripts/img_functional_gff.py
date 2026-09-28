@@ -9,6 +9,7 @@ a separate step. Commas split values only for the keys the schema types as
 multivalued, because product names and notes contain literal commas.
 """
 import argparse
+import io
 import json
 import math
 from pathlib import Path
@@ -129,11 +130,21 @@ def parse_row(line_number, text, slots):
     return row
 
 
+def strip(number, raw):
+    """A line's text, refused unless it ends in LF alone, since write() emits only LF."""
+    # Checked first: the reader also ends a line at a bare CR, so that line lacks LF too.
+    if "\r" in raw:
+        raise DialectError(f"line {number}: carriage return; this dialect writes LF line endings")
+    if not raw.endswith("\n"):
+        raise DialectError(f"line {number}: no final newline")
+    return raw[:-1]
+
+
 def parse_lines(lines, source_file, slots=None):
     slots = slots or row_slots()
     rows = []
     for number, raw in enumerate(lines, start=1):
-        text = raw.rstrip("\n").rstrip("\r")
+        text = strip(number, raw)
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
@@ -209,7 +220,9 @@ def write(document):
         text.encode("utf-8")
     except UnicodeEncodeError as error:
         raise DialectError(f"output can't be encoded as UTF-8: {error}") from None
-    reparsed = parse_lines(text.splitlines(keepends=True), document.get("source_file", ""))
+    # newline="" splits only at the LF, CR and CRLF a file read would split at; splitlines()
+    # would also split at characters such as a form feed inside a value.
+    reparsed = parse_lines(io.StringIO(text, newline=""), document.get("source_file", ""))
     for row, again in zip(document["rows"], reparsed["rows"], strict=True):
         if {**row, "line": 0} != {**again, "line": 0}:
             changed = sorted(k for k in set(row) | set(again) if row.get(k) != again.get(k))
@@ -299,9 +312,19 @@ def main(argv=None):
     document = parse(args.file)
     text = json.dumps(document, indent=1)
     if args.output:
-        args.output.write_text(text + "\n")
-    else:
-        print(text)
+        return write_output(args.output, text + "\n")
+    print(text)
+    return 0
+
+
+def write_output(path, text):
+    """Write to a new file only; like the conversion commands, never overwrite."""
+    try:
+        with open(path, "x", encoding="utf-8") as handle:
+            handle.write(text)
+    except (OSError, UnicodeEncodeError) as error:
+        print(f"output: {error}", file=sys.stderr)
+        return 1
     return 0
 
 
