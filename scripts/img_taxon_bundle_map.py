@@ -28,6 +28,7 @@ reverse writes OUT_GFF and each table beside it, named from OUT_GFF's taxon_oid.
 `roundtrip` requires every file back byte for byte.
 """
 import argparse
+import glob
 import json
 from pathlib import Path
 import sys
@@ -143,6 +144,14 @@ def forward(document, transformers=None):
         rows = document.get(kind, [])
         groups = ko_groups(rows) if kind == "ko" else [[row] for row in rows]
         names = columns(kind)
+        if kind != "ko":
+            ids = {}
+            for row in rows:
+                key = hit_id(row["gene_oid"], row[start], row[end], kind, row[accession])
+                if key in ids:
+                    raise ValueError(f"{kind} line {row['line']}: gene, span and {accession} repeat line "
+                                     f"{ids[key]}, so both would have feature_id {key!r}; none was measured")
+                ids[key] = row["line"]
         for group in groups:
             row = group[0]
             core = {k: v for k, v in row.items() if k != "line"}
@@ -246,15 +255,32 @@ def reverse(dataset, gff_path, transformers=None):
             raise ValueError(f"{name}: feature_id should be {expected!r}")
     for number, row in enumerate(document["rows"], start=2):
         row["line"] = number
+    # The dialect sorts every table by gene_oid, which GFF order need not follow; a
+    # stable sort keeps each gene's identifiers in their order.
+    xref.sort(key=lambda row: (len(str(row["gene_oid"])), str(row["gene_oid"])))
     for kind, rows in [("xref", xref)] + list(tables.items()):
         if rows:
             for number, row in enumerate(rows, start=2):
                 row["line"] = number
             document[kind] = rows
     again = forward(document, transformers)
-    if canonical(again) != canonical(dataset):
-        raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(dataset, again)}")
+    grouped = file_order(dataset)
+    if canonical(again) != canonical(grouped):
+        raise ValueError(f"the dialect can't hold this Dataset without loss: {difference(grouped, again)}")
     return document
+
+
+def file_order(dataset):
+    """The Dataset with its features in the files' grouping: GFF rows, then each table's hits.
+
+    Separate files can't record how features of different files interleave, so only the
+    order within each file is compared.
+    """
+    def group(feature):
+        name = feature.get("feature_id") or ""
+        kind = name.split("|")[1] if feature.get("coordinate_system") == "protein" and name.count("|") == 2 else None
+        return 0 if kind is None else 1 + list(HITS).index(kind) if kind in HITS else len(HITS) + 1
+    return {**dataset, "features": sorted(dataset["features"], key=group)}
 
 
 def roundtrip(path):
@@ -357,9 +383,12 @@ def main(argv=None):
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
         paths = {args.output.parent / name: text for name, text in files.items()}
-        existing = [str(p) for p in paths if p.exists()]
+        taxon = args.output.name[:-len(".gff")]
+        existing = sorted(str(p) for p in args.output.parent.glob(glob.escape(taxon) + ".*")
+                          if p.name[len(taxon) + 1:] not in dialect.SEQUENCE_FILES)
         if existing:
-            errors.append(f"output: already exists, not overwritten: {existing}")
+            errors.append(f"output: {taxon} files already in {args.output.parent}, which would join or be "
+                          f"overwritten by the bundle: {existing}")
         if report_errors(errors):
             return 1
         written = []

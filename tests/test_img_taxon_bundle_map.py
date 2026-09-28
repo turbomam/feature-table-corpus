@@ -100,6 +100,42 @@ class MappingTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, expected):
                     self.back(dataset)
 
+    def test_xref_rows_are_written_in_gene_order_whatever_the_gff_order(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for path in FIXTURE.parent.glob("9900000001.*"):
+                shutil.copy(path, Path(tmp) / path.name)
+            gff = Path(tmp) / "9900000001.gff"
+            lines = gff.read_text().splitlines(keepends=True)
+            head, rows = lines[:1], lines[1:]
+            gff.write_text("".join(head + [r for r in rows if r.startswith("ctg_02")]
+                                   + [r for r in rows if not r.startswith("ctg_02")]))
+            self.assertEqual(dialect.problems(dialect.parse(gff)), [])
+            problems, _ = mapping.roundtrip(gff)
+            self.assertEqual(problems, [])
+
+    def test_interleaved_hits_come_back_grouped_by_file(self):
+        # TMHMM hits first, then the GFF rows, then the other tables in reverse table order;
+        # each file's own rows keep their order.
+        dataset = copy.deepcopy(self.dataset)
+        def table(feature):
+            name = feature["feature_id"]
+            return name.split("|")[1] if name.count("|") == 2 else None
+        gff = [f for f in dataset["features"] if table(f) is None]
+        kinds = list(dict.fromkeys(table(f) for f in dataset["features"] if table(f)))
+        order = ["tmhmm"] + [None] + [k for k in reversed(kinds) if k != "tmhmm"]
+        dataset["features"] = [f for k in order for f in (gff if k is None else
+                                                           [x for x in dataset["features"] if table(x) == k])]
+        back = self.back(dataset)
+        for kind in kinds:
+            self.assertEqual(back[kind], self.document[kind], kind)
+
+    def test_a_repeated_hit_id_outside_ko_is_refused(self):
+        document = copy.deepcopy(self.document)
+        twin = dict(document["cog"][0], subj_start=document["cog"][0]["subj_start"] + 1)
+        document["cog"].insert(1, twin)
+        with self.assertRaisesRegex(ValueError, "cog line .*: gene, span and cog_id repeat"):
+            mapping.forward(document, self.transformers)
+
     def test_an_xref_needs_a_cds(self):
         document = copy.deepcopy(self.document)
         document["xref"][0]["gene_oid"] = 9900000001  # the rRNA row
@@ -120,7 +156,15 @@ class MappingTests(unittest.TestCase):
                                  err.getvalue())
                 self.assertEqual(mapping.main(["reverse", str(dataset), str(out)]), 0, err.getvalue())
                 self.assertEqual(mapping.main(["reverse", str(dataset), str(out)]), 1)
-            self.assertIn("already exists", err.getvalue())
+            self.assertIn("already in", err.getvalue())
+            # A leftover table of the same taxon would join the bundle, so it is refused too.
+            fresh = Path(tmp) / "fresh"
+            fresh.mkdir()
+            (fresh / "2708743150.xref.tab.txt").write_text("gene_oid\tdb_name\tid\n")
+            with contextlib.redirect_stderr(io.StringIO()) as stale, contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(fresh / "2708743150.gff")]), 1)
+            self.assertIn("2708743150.xref.tab.txt", stale.getvalue())
+            self.assertEqual(sorted(p.name for p in fresh.iterdir()), ["2708743150.xref.tab.txt"])
             written = sorted(p.name for p in out.parent.iterdir())
             self.assertEqual(written, sorted(p.name for p in source.iterdir() if p.name.endswith((".gff", ".tab.txt"))))
             for name in written:
