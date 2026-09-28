@@ -80,7 +80,7 @@ class MappingTests(unittest.TestCase):
             self.assertIn("\t99.0\t", text)
 
     def test_a_kept_spelling_must_be_a_plain_number(self):
-        for text in (" 84.5", "8_4.5", "nan", "84.5x"):
+        for text in (" 84.5", "8_4.5", "nan", "84.5x", "\u0668\u0664.\u0665"):
             with self.subTest(text):
                 self.assertEqual(dialect.spelled(84.5, text), "84.5")
         self.assertEqual([dialect.spelled(v, t) for v, t in ((84.5, "84.50"), (1220.0, "1.22e+03"), (11, "011"))],
