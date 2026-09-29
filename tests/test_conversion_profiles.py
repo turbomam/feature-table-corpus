@@ -22,7 +22,7 @@ from build_duckdb import build_database
 from query_duckdb import by_attribute, interval_overlap
 import conversion_report
 
-GFF = "gff3-contig/3.0.0"
+GFF = "gff3-contig/4.0.0"
 BED = "bed12-blocks/1.0.0"
 PRODIGAL = ROOT / "corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff"
 BED_SOURCE = ROOT / "corpus/sources/biopython/blat_34_hg19.bed"
@@ -270,12 +270,27 @@ class ConversionTests(unittest.TestCase):
 
     def test_bundle_from_the_previous_profile_version_is_refused(self):
         """Issues 72 and 43 changed gff3-contig's output, so older bundles are refused, not revalidated."""
-        for version in ("1.0.0", "2.0.0"):
+        for version in ("1.0.0", "2.0.0", "3.0.0"):
             old = deepcopy(bundle(PRODIGAL.read_bytes(), metadata_profile="prodigal"))
             old["profile"] = f"gff3-contig/{version}"
             with self.subTest(version=version), self.assertRaises(ConversionError) as caught:
                 export_source(old, mode="reconstruct")
             self.assertEqual(caught.exception.code, "unsupported-profile")
+
+    def test_ncbi_sequence_region_gives_contig_length(self):
+        """Issue 46: an NCBI region from 1 gives length_bp; nothing else does."""
+        lam = (ROOT / "corpus/sources/ncbi-refseq/ncbi_refseq_lambda_GCF_000840245.1.gff").read_bytes()
+        contigs = bundle(lam, metadata_profile="ncbi")["dataset"]["contigs"]
+        self.assertEqual([(c["contig_id"], c.get("length_bp")) for c in contigs], [("NC_001416.1", 48502)])
+        self.assertNotIn("length_bp", bundle(lam)["dataset"]["contigs"][0])  # generic metadata profile
+        row = b"c1\t.\tgene\t5\t9\t.\t+\t.\tID=g\n"
+        for regions in (b"##sequence-region c1 2 100\n",
+                        b"##sequence-region c1 1 100\n##sequence-region c1 1 200\n", b""):
+            with self.subTest(regions=regions):
+                content = b"##gff-version 3\n" + regions + row
+                self.assertNotIn("length_bp", bundle(content, metadata_profile="ncbi")["dataset"]["contigs"][0])
+        b = bundle(lam, metadata_profile="ncbi")
+        self.assertEqual(export_source(b, mode="exact", original_bytes=lam), lam)
 
     def test_an_id_repeated_on_opposite_strands_is_refused_by_name(self):
         """Issue 38: older NMDC runs give a misc_feature and a CDS on opposite strands one ID."""

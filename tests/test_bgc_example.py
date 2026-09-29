@@ -39,7 +39,7 @@ class BGCExampleTests(unittest.TestCase):
             derive_source(SOURCE.read_bytes() + b"# edited\n")
 
     def test_product_lookup_inclusive_overlap_and_reference_controls(self):
-        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/3.0.0",
+        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/4.0.0",
                                reference_context=REFERENCE, source_uri="urn:test:bgc")
         with tempfile.TemporaryDirectory(dir=ROOT / "local") as work:
             path, db = Path(work) / "data.json", Path(work) / "features.duckdb"
@@ -71,7 +71,7 @@ class BGCExampleTests(unittest.TestCase):
                         self.assertEqual(query_order(con, **{**opts, "start": start, "end": end}), [])
 
     def test_edited_coordinate_or_annotation_cannot_replay_old_source(self):
-        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/3.0.0",
+        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/4.0.0",
                                reference_context=REFERENCE, source_uri="urn:test:bgc")
         cds = next(i for i, row in enumerate(bundle["dataset"]["features"]) if row["type"] == "CDS")
         for key, value in (("start", 1), ("product", "invented annotation"), ("seqid", "NC_003888.2")):
@@ -90,7 +90,7 @@ class BGCExampleTests(unittest.TestCase):
         self.assertEqual(before, [(path.read_bytes(), path.stat().st_mtime_ns) for path in (SOURCE, EXCERPT, REPORT)])
 
     def test_pinned_context_and_independent_full_order_cannot_be_redefined(self):
-        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/3.0.0",
+        bundle = import_source(EXCERPT.read_bytes(), profile="gff3-contig/4.0.0",
                                reference_context=REFERENCE, source_uri=URI, metadata_profile="ncbi")
         for field in ("reference_context", "source_uri"):
             edited = copy.deepcopy(bundle)

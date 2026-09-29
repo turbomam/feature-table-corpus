@@ -1,6 +1,6 @@
 {
   "report_version": 1,
-  "profile": "gff3-contig/3.0.0",
+  "profile": "gff3-contig/4.0.0",
   "reference_context": "refseq:NC_003888.3",
   "seqid": "NC_003888.3",
   "source_sha256": "e49de7213e25d075e0b79541f8a49288a055ae87bdd355931d129c0573026858",
