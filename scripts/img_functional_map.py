@@ -339,13 +339,45 @@ def write_output(path, text):
     return 0
 
 
-def quiet_linkml_map():
-    """Keep linkml-map's per-record warnings off stderr, so a run prints only its own result.
+class _CountWarnings(logging.Handler):
+    """Counts linkml-map's warnings instead of printing them; see quiet_linkml_map."""
 
-    linkml-map 0.5.4 logs "Unexpected: <id> for type ..." and "Unknown target range ..."
-    for every record it maps; errors still show.
+    def __init__(self):
+        super().__init__(logging.WARNING)
+        self.count, self.first = 0, None
+
+    def emit(self, record):
+        if record.levelno < logging.ERROR:
+            self.count += 1
+            self.first = self.first or record.getMessage()
+
+
+HIDDEN = _CountWarnings()
+
+
+def quiet_linkml_map():
+    """Keep linkml-map's warnings off stderr, so a run prints only its own result, but count them.
+
+    linkml-map 0.5.4 logs "Unexpected: <id> for type ..." and "Unknown target range ..." when it
+    maps a reference such as Parent, which the mapping scripts handle themselves. Errors still go
+    to stderr; warnings are counted, and each roundtrip reports the count (hidden_warnings).
     """
-    logging.getLogger("linkml_map").setLevel(logging.ERROR)
+    logger = logging.getLogger("linkml_map")
+    logger.setLevel(logging.WARNING)
+    logger.propagate = False
+    if HIDDEN not in logger.handlers:
+        errors = logging.StreamHandler()
+        errors.setLevel(logging.ERROR)
+        logger.addHandler(HIDDEN)
+        logger.addHandler(errors)
+
+
+def hidden_warnings():
+    """{"linkml_map_warnings": n}, plus the first message when there were any, for a report."""
+    out = {"linkml_map_warnings": HIDDEN.count}
+    if HIDDEN.first:
+        out["first_linkml_map_warning"] = HIDDEN.first
+    return out
 
 
 def main(argv=None):
@@ -412,7 +444,7 @@ def main(argv=None):
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:
         print(f"  {problem}")
-    print(json.dumps(report))
+    print(json.dumps(report | hidden_warnings()))
     print(f"{'HELD' if not problems else 'FAILED'}  {args.gff}: {len(problems)} problem(s)")
     return 1 if problems else 0
 

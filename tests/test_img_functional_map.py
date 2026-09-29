@@ -1,5 +1,6 @@
 """The linkml-map round trip for IMG functional annotation holds, and fails when it should."""
 import copy
+import json
 import importlib.util
 from pathlib import Path
 import sys
@@ -392,6 +393,37 @@ class AgreementTests(unittest.TestCase):
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertEqual(result.stderr, "")
+
+class HiddenWarningTests(unittest.TestCase):
+    """linkml-map's warnings stay off stderr, but the round trip report counts them."""
+
+    def test_the_report_counts_the_warnings_stderr_leaves_out(self):
+        import subprocess
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/img_functional_map.py"), "roundtrip",
+                                 str(FIXTURE)], capture_output=True, text=True)
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+        report = json.loads(result.stdout.splitlines()[-2])
+        # Measured 2026-09-29: the fixture's CRISPR row has repeat units whose Parent linkml-map
+        # can't map itself; the script does.
+        self.assertEqual(report["linkml_map_warnings"], 4)
+        self.assertIn("for type Feature", report["first_linkml_map_warning"])
+
+    def test_linkml_map_errors_still_reach_stderr(self):
+        import contextlib
+        import io
+        import logging
+        mapping.quiet_linkml_map()
+        logger = logging.getLogger("linkml_map")
+        stream = next(h for h in logger.handlers if isinstance(h, logging.StreamHandler)
+                      and h is not mapping.HIDDEN)
+        err = io.StringIO()
+        stream.setStream(err)
+        try:
+            logger.error("a real error")
+            logger.warning("a warning")
+        finally:
+            stream.setStream(sys.stderr)
+        self.assertEqual(err.getvalue(), "a real error\n")
 
 if __name__ == "__main__":
     unittest.main()

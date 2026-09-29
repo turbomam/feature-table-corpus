@@ -28,6 +28,7 @@ import phytozome_annotation_info as table_dialect
 import phytozome_gene_exons as gff3_dialect
 import phytozome_gene_exons_map as gff3_map
 from img_functional_map import canonical, difference, quiet_linkml_map, report_errors, write_output
+from img_functional_map import hidden_warnings as functional_map_warnings
 from validate_closed import make_validator, validation_errors
 
 MODEL = gff3_map.MODEL
@@ -287,7 +288,7 @@ def main(argv=None):
     problems, report = roundtrip(args.gff3, args.table)
     for problem in problems[:20]:
         print(f"  {problem}")
-    print(json.dumps(report))
+    print(json.dumps(report | functional_map_warnings()))
     print(f"{'HELD' if not problems else 'FAILED'}  {args.gff3} + {args.table}: {len(problems)} problem(s)")
     return 1 if problems else 0
 

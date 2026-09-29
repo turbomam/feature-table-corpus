@@ -35,6 +35,7 @@ import sys
 
 import img_taxon_bundle as dialect
 from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
+from img_functional_map import hidden_warnings as functional_map_warnings
 from phytozome_annotation_map import write_new
 from validate_closed import make_validator, validation_errors
 
@@ -413,7 +414,7 @@ def main(argv=None):
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:
         print(f"  {problem}")
-    print(json.dumps(report))
+    print(json.dumps(report | functional_map_warnings()))
     print(f"{'HELD' if not problems else 'FAILED'}  {args.gff}: {len(problems)} problem(s)")
     return 1 if problems else 0
 

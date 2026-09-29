@@ -330,7 +330,7 @@ def main(argv=None):
     problems, report = roundtrip(args.functional, args.files)
     for problem in problems[:20]:
         print(f"  {problem}")
-    print(json.dumps(report))
+    print(json.dumps(report | functional.hidden_warnings()))
     print(f"{'HELD' if not problems else 'FAILED'}  {args.functional} + {len(args.files)} file(s): "
           f"{len(problems)} problem(s)")
     return 1 if problems else 0
