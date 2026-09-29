@@ -159,25 +159,13 @@ class FlatProfileTests(unittest.TestCase):
         flat["contig"][0]["lineage_confidence"] = float("nan")
         with self.assertRaisesRegex(ValueError, r"contig\[0\]\.lineage_confidence"):
             flat_profile.unflatten(flat, self.tables)
-        cycle = {"features": []}
-        cycle["features"].append(cycle)
-        with self.assertRaisesRegex(ValueError, "contains itself"):
-            flat_profile.flatten(cycle, self.tables)
-        # 60 aliases, each holding the previous one twice: 2**60 paths, one scan each.
-        import time
-        chain = [1.0]
-        for _ in range(60):
-            chain = [chain, chain]
-        started = time.monotonic()
-        self.assertEqual(flat_profile.nonfinite({"x": chain}), [])
-        self.assertLess(time.monotonic() - started, 1.0)
         with tempfile.TemporaryDirectory() as tmp:
-            recursive = Path(tmp) / "cycle.yaml"
-            recursive.write_text("extra: &x {self: *x}\n")
+            aliased = Path(tmp) / "aliased.yaml"
+            aliased.write_text("features:\n- &f {feature_id: a}\n- *f\n")
             err = io.StringIO()
             with contextlib.redirect_stderr(err):
-                self.assertEqual(flat_profile.main(["flatten", str(recursive), str(Path(tmp) / "o.json")]), 1)
-            self.assertIn("contains itself", err.getvalue())
+                self.assertEqual(flat_profile.main(["flatten", str(aliased), str(Path(tmp) / "o.json")]), 1)
+            self.assertIn("YAML anchors or aliases on lines [2, 3]", err.getvalue())
         with tempfile.TemporaryDirectory() as tmp:
             source, out = Path(tmp) / "d.json", Path(tmp) / "flat.json"
             source.write_text(EVERY_SLOT.read_text().replace('"score": 55.5', '"score": 1e400'))

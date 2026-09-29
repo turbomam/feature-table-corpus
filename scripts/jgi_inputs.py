@@ -28,6 +28,14 @@ import urllib.request
 
 import yaml
 
+
+class NoAliasDumper(yaml.SafeDumper):
+    """Writes a repeated object out in full each time, never as a YAML anchor and alias."""
+
+    def ignore_aliases(self, data):
+        return True
+
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "model/examples/jgi-inputs.yaml"
 LOCAL = ROOT / "local/jgi"
@@ -154,7 +162,8 @@ def collect(manifest, path=MANIFEST):
         record["files"] = files
         print(f"{record['record_id']}: {len(files)} files", file=sys.stderr)
     with open(path, "w") as handle:
-        yaml.safe_dump(manifest, handle, sort_keys=False, allow_unicode=True, width=100)
+        # NoAliasDumper: safe_dump would write &id001 and *id001 if one object appeared twice.
+        yaml.dump(manifest, handle, Dumper=NoAliasDumper, sort_keys=False, allow_unicode=True, width=100)
     return 0
 
 

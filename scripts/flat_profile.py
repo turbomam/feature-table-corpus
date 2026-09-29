@@ -289,34 +289,17 @@ def key_column(columns):
     return next(name for name, path, slot in columns if slot.identifier and len(path) == 1)
 
 
-def nonfinite(value, where="", active=None, done=None):
+def nonfinite(value, where=""):
     """Paths of infinite or NaN numbers in value. JSON has no spelling for them, and a number too
-    large for a float (1e400) parses as infinity, so both commands refuse them by name.
-
-    A YAML alias can make a container hold itself; active holds the containers on the current
-    path, so a cycle is refused by name instead of recursing until Python gives up. done holds
-    containers already scanned, so an alias shared many times is scanned once, not once per
-    reference (a chain of aliases each used twice would otherwise take exponential time).
-    """
+    large for a float (1e400) parses as infinity, so both commands refuse them by name. Input can't
+    hold a cycle: JSON has no references, and load() refuses YAML anchors and aliases."""
     if isinstance(value, float) and not math.isfinite(value):
         return [where or "value"]
-    if not isinstance(value, (dict, list)):
-        return []
-    active = active if active is not None else set()
-    done = done if done is not None else set()
-    if id(value) in done:
-        return []
-    if id(value) in active:
-        raise ValueError(f"{where or 'the input'} contains itself (a YAML alias cycle)")
-    active.add(id(value))
-    try:
-        items = value.items() if isinstance(value, dict) else enumerate(value)
-        return [p for k, v in items
-                for p in nonfinite(v, (f"{where}.{k}" if where else str(k)) if isinstance(value, dict)
-                                   else f"{where}[{k}]", active, done)]
-    finally:
-        active.discard(id(value))
-        done.add(id(value))
+    if isinstance(value, dict):
+        return [p for k, v in value.items() for p in nonfinite(v, f"{where}.{k}" if where else str(k))]
+    if isinstance(value, list):
+        return [p for i, v in enumerate(value) for p in nonfinite(v, f"{where}[{i}]")]
+    return []
 
 
 def refuse_nonfinite(value):
@@ -446,15 +429,37 @@ def first_difference(a, b):
     return "unknown"
 
 
+def yaml_references(text):
+    """Line numbers of YAML anchors (&name) and aliases (*name). The project doesn't use them, and an
+    alias lets one input hold the same object many times over, or itself."""
+    lines = []
+    for event in yaml.parse(text, Loader=yaml.SafeLoader):
+        if isinstance(event, yaml.AliasEvent) or getattr(event, "anchor", None):
+            lines.append(event.start_mark.line + 1)
+    return lines
+
+
+class NoAliasDumper(yaml.SafeDumper):
+    """safe_dump writes &id001 and *id001 by itself when one Python object appears twice; this writes
+    the object out in full each time instead."""
+
+    def ignore_aliases(self, data):
+        return True
+
+
 def load(path):
     text = Path(path).read_text(encoding="utf-8")
+    if str(path).endswith((".yaml", ".yml")):
+        lines = yaml_references(text)
+        if lines:
+            raise ValueError(f"{path}: YAML anchors or aliases on lines {lines[:5]}; write each value out in full")
     data = yaml.safe_load(text) if str(path).endswith((".yaml", ".yml")) else json.loads(text)
     # A conversion bundle or protein context carries its Dataset under "dataset".
     return data["dataset"] if isinstance(data.get("dataset"), dict) else data
 
 
 def schema_text():
-    return yaml.safe_dump(schema(), sort_keys=False, width=100)
+    return yaml.dump(schema(), Dumper=NoAliasDumper, sort_keys=False, width=100)
 
 
 def main(argv=None):
