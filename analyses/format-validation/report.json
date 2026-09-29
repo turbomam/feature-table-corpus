@@ -431,7 +431,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-tn3gnf41.1_pfam.gff",
       "format": "GFF3",
       "sha256": "6f5169770fe29313d5448f74ea0354a8d54169e181afea30ca420985b624511c",
-      "profile": "nmdc-pfam-protein/4.0.0",
+      "profile": "nmdc-pfam-protein/5.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",
@@ -1541,7 +1541,7 @@
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
       "format": "GFF3",
       "sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
-      "profile": "nmdc-pfam-protein/4.0.0",
+      "profile": "nmdc-pfam-protein/5.0.0",
       "validators": {
         "genometools": {
           "verdict": "rejected",

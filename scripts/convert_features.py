@@ -22,7 +22,7 @@ from translation_tables import with_translation_tables
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTEIN = "nmdc-pfam-protein/4.0.0"
+PROTEIN = "nmdc-pfam-protein/5.0.0"
 PROFILES = {"gff3-contig/3.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 
@@ -271,6 +271,14 @@ def protein_feature(columns, record_id, bindings):
         # HMMER column 6 is a bit score; nmdc-lakehouse documents it for NMDC Pfam GFF
         # (docs/pfam_annotation_gff.md). Reconstruction never reads this slot.
         feature["score_type"] = "bit_score"
+    # HMMER's model_start and model_end are positions on the Pfam model the type names (issue 94).
+    # Every row needs both, so every hit has a target.
+    starts, ends = values(feature["attributes"], "model_start"), values(feature["attributes"], "model_end")
+    require(len(starts) == 1 and len(ends) == 1
+            and all(re.fullmatch(r"[1-9][0-9]*", v) for v in starts + ends),
+            "alignment-target", f"{record_id}: model_start and model_end need one positive integer each")
+    feature["target"] = {"target_id": feature["type"], "target_start": int(starts[0]),
+                         "target_end": int(ends[0])}
     mapping["protein_id"] = protein
     return rows, mapping
 
@@ -362,10 +370,17 @@ def reconstruct_record(profile, by_id, mapping):
         require(feature["coordinate_system"] == "protein" and len(feature.get("parent", [])) == 1
                 and feature["seqid"] == feature["parent"][0],
                 "protein-profile", "protein features require one explicit CDS, as both seqid and parent")
+        # The typed target mirrors model_start/model_end (issue 94); both copies must agree.
+        target = feature.get("target")
+        starts, ends = values(feature["attributes"], "model_start"), values(feature["attributes"], "model_end")
+        expected = ({"target_id": feature["type"], "target_start": int(starts[0]), "target_end": int(ends[0])}
+                    if len(starts) == 1 and len(ends) == 1 else None)
+        require(target == expected, "attribute-conflict", "target disagrees with model_start and model_end")
         # Protein identity is a semantic reference mapping, not a retained source
         # cell. The contextual CDS relationship is not a source Parent tag.
         projected = {**feature, "seqid": mapping["protein_id"]}
         projected.pop("parent")
+        projected.pop("target", None)
         return reconstruct_record("gff3-contig/3.0.0", {feature["feature_id"]: projected}, mapping)
     if PROFILES[profile] == "gff3":
         pairs = feature["attributes"]

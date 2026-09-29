@@ -133,6 +133,9 @@ def dataset_errors(data):
 
         if feature["start"] > feature["end"]:
             error("start must be <= end")
+        target = feature.get("target")
+        if target and target["target_start"] > target["target_end"]:
+            error("target_start must be <= target_end")
         space, seqid = feature["coordinate_system"], feature["seqid"]
         if space == "protein":
             # Protein positions are measured along the translation of the CDS that seqid names,

@@ -100,8 +100,9 @@ for that reason.
 its own keys (`model_start`, `model_end`, `subject_start`, `subject_end`), which the model keeps
 as untyped attribute strings. A typed target (ID, start, end, strand, alignment) would hold
 either form. This answers a different question, where on the Pfam model or reference protein
-the hit aligns, so it does not replace the rule above. It is tracked in
-https://github.com/turbomam/feature-table-corpus/issues/94.
+the hit aligns, so it does not replace the rule above. It was added as `Feature.target` in
+https://github.com/turbomam/feature-table-corpus/issues/94, and `nmdc-pfam-protein` fills it from
+`model_start` and `model_end`.
 
 **A separate Protein class as the landmark.** The hit's `seqid` would name a Protein record that
 points to its CDS. That repeats what the CDS already holds, its identity and translation, for no
