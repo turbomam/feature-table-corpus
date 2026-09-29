@@ -290,8 +290,17 @@ def key_column(columns):
     return next(name for name, path, slot in columns if slot.identifier and len(path) == 1)
 
 
+def refuse_nonfinite(value):
+    """Refuse a non-finite number (JSON has no spelling for one, and 1e400 parses as infinity) or a
+    container that holds itself. validate_closed._check_values already does this without recursing,
+    so input of any depth gets a ValueError, not a RecursionError."""
+    from validate_closed import _check_values
+    _check_values(value)
+
+
 def flatten(dataset, tables=None):
     tables = tables or plan()
+    refuse_nonfinite(dataset)
     unknown = sorted(set(dataset) - {collection for _, _, collection, _, _ in tables})
     if unknown:
         raise ValueError(f"{unknown} are not Dataset slots; is this a Dataset?")
@@ -323,6 +332,7 @@ def flatten(dataset, tables=None):
 
 def unflatten(flat, tables=None):
     tables = tables or plan()
+    refuse_nonfinite(flat)
     expected = {}
     for table, _, _, columns, children in tables:
         key = key_column(columns)
@@ -409,15 +419,37 @@ def first_difference(a, b):
     return "unknown"
 
 
+def yaml_references(text):
+    """Line numbers of YAML anchors (&name) and aliases (*name). The project doesn't use them, and an
+    alias lets one input hold the same object many times over, or itself."""
+    lines = []
+    for event in yaml.parse(text, Loader=yaml.SafeLoader):
+        if isinstance(event, yaml.AliasEvent) or getattr(event, "anchor", None):
+            lines.append(event.start_mark.line + 1)
+    return lines
+
+
+class NoAliasDumper(yaml.SafeDumper):
+    """safe_dump writes &id001 and *id001 by itself when one Python object appears twice; this writes
+    the object out in full each time instead."""
+
+    def ignore_aliases(self, data):
+        return True
+
+
 def load(path):
     text = Path(path).read_text(encoding="utf-8")
+    if str(path).endswith((".yaml", ".yml")):
+        lines = yaml_references(text)
+        if lines:
+            raise ValueError(f"{path}: YAML anchors or aliases on lines {lines[:5]}; write each value out in full")
     data = yaml.safe_load(text) if str(path).endswith((".yaml", ".yml")) else json.loads(text)
     # A conversion bundle or protein context carries its Dataset under "dataset".
     return data["dataset"] if isinstance(data.get("dataset"), dict) else data
 
 
 def schema_text():
-    return yaml.safe_dump(schema(), sort_keys=False, width=100)
+    return yaml.dump(schema(), Dumper=NoAliasDumper, sort_keys=False, width=100)
 
 
 def main(argv=None):
@@ -445,7 +477,14 @@ def main(argv=None):
     if args.command == "roundtrip":
         failed = 0
         for path in args.datasets:
-            problems = roundtrip(load(path))
+            try:
+                problems = roundtrip(load(path))
+            except RecursionError:
+                problems = ["load: nested too deeply to read"]
+            except (ValueError, OSError, UnicodeDecodeError, yaml.YAMLError) as error:
+                # json.JSONDecodeError is a ValueError; an unreadable or refused file fails, and the
+                # rest are still checked.
+                problems = [f"load: {error}"]
             print(f"{'HELD' if not problems else 'FAILED'}  {path}" + "".join(f"\n  {p}" for p in problems))
             failed += bool(problems)
         return 1 if failed else 0
@@ -458,7 +497,10 @@ def main(argv=None):
         try:
             data = (flatten(load(args.input)) if args.command == "flatten"
                     else unflatten(json.loads(args.input.read_text(encoding="utf-8"))))
-        except (ValueError, OSError, json.JSONDecodeError) as error:
+        except RecursionError:
+            print(f"{args.command}: nested too deeply to read", file=sys.stderr)
+            return 1
+        except (ValueError, OSError, UnicodeDecodeError, yaml.YAMLError) as error:
             print(f"{args.command}: {error}", file=sys.stderr)
             return 1
         if args.command == "unflatten":
@@ -470,7 +512,7 @@ def main(argv=None):
                 for error in errors[:20]:
                     print(f"unflatten: {error}", file=sys.stderr)
                 return 1
-        text = json.dumps(data, indent=1) + "\n"
+        text = json.dumps(data, indent=1, allow_nan=False) + "\n"
     with open(args.output, "x", encoding="utf-8") as handle:
         handle.write(text)
     return 0
