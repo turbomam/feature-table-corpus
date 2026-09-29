@@ -153,6 +153,7 @@ classes:
       - ontology_term
       - translated_sequence
       - location
+      - target
     slot_usage:
       feature_id:
         identifier: true
@@ -171,6 +172,23 @@ classes:
           slot_conditions:
             score:
               value_presence: PRESENT
+
+  AlignmentTarget:
+    description: >-
+      Where a hit aligns on the thing it matched, such as a Pfam model or a reference protein, in
+      that thing's own positions. GFF3 writes this as the Target and Gap tags.
+    notes:
+      - Added for https://github.com/turbomam/feature-table-corpus/issues/94. A hit's own start,
+        end and seqid say where it lies on the query protein (docs/protein-coordinates.md); this
+        says where on the target. nmdc-pfam-protein fills it from HMMER's model_start and
+        model_end, which all 416 rows of the vendored NMDC Pfam file carry, with the Pfam
+        accession as target_id. The generic attributes stay as they are.
+    slots:
+      - target_id
+      - target_start
+      - target_end
+      - target_strand
+      - gap
 
   FeatureLocation:
     description: Ordered component intervals; authoritative when present, with scalar feature bounds serving only as an indexing envelope.
@@ -213,6 +231,39 @@ slots:
       - The upper bound is the highest NCBI genetic code identifier in use, 33, as listed at
         https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi (read 2026-09-25). Codes 7, 8
         and 17 to 20 are unassigned; scripts/validate_closed.py rejects them.
+  target:
+    title: Alignment target
+    description: Where this hit aligns on the thing it matched; absent for features that are not alignments.
+    range: AlignmentTarget
+    inlined: true
+    close_mappings:
+      # Close: GFF3's Target holds id, start, end and strand; this keeps Gap alongside.
+      - gff3:Target
+  target_id:
+    title: Target ID
+    required: true
+    description: What the hit aligned to, as the source names it, such as a Pfam accession or a reference gene ID.
+  target_start:
+    title: Target start
+    range: integer
+    minimum_value: 1
+    required: true
+    description: First aligned position on the target, one-based and inclusive.
+  target_end:
+    title: Target end
+    range: integer
+    minimum_value: 1
+    required: true
+    description: Last aligned position on the target, one-based and inclusive.
+  target_strand:
+    title: Target strand
+    range: StrandEnum
+    description: Strand of the alignment on the target, when the target is a nucleotide sequence.
+  gap:
+    title: Gap
+    description: The alignment in GFF3 Gap form, a CIGAR-like string of operations and lengths.
+    exact_mappings:
+      - gff3:Gap
   location:
     description: Explicit location parts; parent links and BED drawing blocks are separate concepts.
     range: FeatureLocation

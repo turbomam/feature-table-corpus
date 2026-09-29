@@ -21,9 +21,9 @@
       "path": "model/profiles/insdc-locations.yaml",
       "sha256": "812fe071016d23f2a2bdbdfe099ee8bc32037107b4ab0d36e98e1f4a2c986bea"
     },
-    "nmdc-pfam-protein/4.0.0": {
+    "nmdc-pfam-protein/5.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
-      "sha256": "a982266f9e4e67818f4020b0f8e0cfaacd29fd36c91c5485ccb4d88a3ef8a593"
+      "sha256": "35544e2f5eea9e877968c41e8aa55157347033006d29dfb942a2bafa15061e41"
     }
   },
   "query_performance": "not-measured",
@@ -63,7 +63,7 @@
       "id": "nmdc-biosample-pfam",
       "path": "corpus/sources/nmdc/nmdc_wfmgan-11-5xxrm214.2_pfam.gff",
       "format": "gff3",
-      "profile": "nmdc-pfam-protein/4.0.0",
+      "profile": "nmdc-pfam-protein/5.0.0",
       "source_sha256": "c143822c0ddad8bc6161b6a6a27a2c2c0fa806c986052557762e3a3aed6c14bf",
       "case_kind": "observed",
       "losses": [],

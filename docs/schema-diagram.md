@@ -8,6 +8,13 @@ compares the generated Mermaid block with this committed block in CI.
 
 ```mermaid
 erDiagram
+AlignmentTarget {
+    string gap
+    integer target_end
+    string target_id
+    integer target_start
+    StrandEnum target_strand
+}
 Attribute {
     string key
     string value
@@ -73,6 +80,7 @@ Contig }o--o{ ContigCollection : "member_of"
 Dataset ||--o{ Contig : "contigs"
 Dataset ||--o{ ContigCollection : "contig_collections"
 Dataset ||--o{ Feature : "features"
+Feature ||--o| AlignmentTarget : "target"
 Feature ||--o| FeatureLocation : "location"
 Feature ||--o{ Attribute : "attributes"
 Feature }o--o{ Feature : "parent"

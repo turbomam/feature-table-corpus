@@ -188,6 +188,8 @@ class ValidationTests(unittest.TestCase):
             (lambda d: d["features"][1].update(parent=["missing"]), "unknown parent"),
             (lambda d: d["features"][1].pop("parent"), "require a parent CDS"),
             (lambda d: d["features"][1].update(end=250), "translated_sequence length"),
+            (lambda d: d["features"][1].update(target={"target_id": "PF1", "target_start": 9, "target_end": 3}),
+             "target_start must be <= target_end"),
             # Issue 40: a protein hit's seqid is its CDS. The old shape, its contig, is refused.
             (lambda d: d["features"][1].update(seqid=d["features"][0]["seqid"]),
              "protein coordinates need their CDS as seqid"),
@@ -415,12 +417,13 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 55 pairs and 36 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 61 pairs and 41 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
         # score_type (issue 46), the scalar is_representative (issue 48), and the GFF3 reserved tags
         # name (scalar) and note, dbxref and ontology_term (lists) on Feature (issue 43).
-        self.assertEqual(len(rows), 55)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 36)
+        # Feature.target is a value object with five scalar slots of its own (issue 94).
+        self.assertEqual(len(rows), 61)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 41)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
