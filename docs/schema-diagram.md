@@ -16,7 +16,9 @@ AlignmentTarget {
     StrandEnum target_strand
 }
 Attribute {
+    uriorcurie attribute_cv_id
     string key
+    float numeric_value
     string value
 }
 Contig {

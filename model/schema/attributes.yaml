@@ -1,11 +1,15 @@
 id: https://w3id.org/ber-data/attributes
 name: attributes
 title: Reusable attributes (draft)
-description: Minimal string-valued attributes for metadata, annotations, and source-reported evidence.
+description: >-
+  String-valued attributes for metadata, annotations, and source-reported evidence, with an
+  optional CURIE for the key and an optional number for the value.
 license: CC BY 4.0
 prefixes:
   linkml: https://w3id.org/linkml/
   battr: https://w3id.org/ber-data/attributes/
+  kb_cdm: http://kbase.github.io/cdm-schema/linkml/
+  nmdc: https://w3id.org/nmdc/
 default_prefix: battr
 default_range: string
 imports:
@@ -16,6 +20,12 @@ classes:
     class_uri: battr:Attribute
     description: One named value attached to a record by a consuming model.
     notes:
+      - attribute_cv_id and numeric_value were added 2026-09-29 for
+        https://github.com/turbomam/feature-table-corpus/issues/42, so a profile can give e-value
+        and evalue one meaning and filter e-values without a cast. They follow the NMDC
+        AttributeValue pattern that BERtron and the KBase CDM use (an optional attribute CURIE
+        plus the raw string, with a typed value), which this pair can be projected onto later.
+        Both are optional, and key and value keep the source's text.
       - GFF column 9 is a minimal use case, alongside tabular annotations and metadata.
         This module has no dependency on GFF, Feature, Contig, or a genomic coordinate system.
       - A key is not an identifier; repeated keys can remain separate entries in an ordered list.
@@ -47,3 +57,24 @@ classes:
         description: >-
           The source's text for one value, as a string: not typed or normalized, with any escapes
           the source profile defines decoded (a GFF3 %2C is stored as a comma).
+      attribute_cv_id:
+        title: Attribute CV ID
+        slot_uri: battr:attribute_cv_id
+        range: uriorcurie
+        description: >-
+          A CURIE for what the key means, from an ontology or controlled vocabulary, set by a
+          profile that maps this key; for example EDAM:data_1667 (E-value) for both e-value and
+          evalue. key keeps the source spelling either way.
+        exact_mappings:
+          - kb_cdm:attribute_cv_id
+      numeric_value:
+        title: Numeric value
+        slot_uri: battr:numeric_value
+        range: float
+        description: >-
+          value read as a number, set by a profile only for keys it knows are numeric. value
+          keeps the source text, so 3.4e-28 and 3.40E-28 stay distinguishable. The validator
+          requires the float that value reads as, and refuses an integer no float holds exactly.
+        exact_mappings:
+          - kb_cdm:numeric_value
+          - nmdc:numeric_value

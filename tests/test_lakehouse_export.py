@@ -79,7 +79,8 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual(schema.field("start").type, pa.int64())
         self.assertEqual(schema.field("is_selected").type, pa.bool_())
         self.assertEqual(schema.field("attributes").type,
-                         pa.list_(pa.struct([("key", pa.string()), ("value", pa.string())])))
+                         pa.list_(pa.struct([("key", pa.string()), ("value", pa.string()),
+                                             ("attribute_cv_id", pa.string()), ("numeric_value", pa.float64())])))
         rows = {r["feature_id"]: r for r in features.to_pylist()}
         self.assertIn(239.1, [r["score"] for r in rows.values()])
         self.assertEqual(sorted({r["is_selected"] for r in rows.values()}, key=str), [False, None, True])

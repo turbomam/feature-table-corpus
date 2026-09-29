@@ -10,7 +10,8 @@ key: instrument_model
 value: NovaSeq
 ```
 
-The initial contract is deliberately small: both `key` and `value` are required strings.
+The contract is small: `key` and `value` are required strings, and `attribute_cv_id` and
+`numeric_value` are optional (see [Meaning and numbers](#meaning-and-numbers)).
 They are class-local attributes with explicit ranges, so importing this module does not
 reserve these common names as schema-wide slots or depend on the consumer's default range.
 A key preserves the source spelling and is not a globally unique identifier. Repeated
@@ -24,6 +25,21 @@ a tag to `key`; an evidence importer can map `evalue` to `key` and preserve `1e-
 format escapes characters, the value holds the decoded text and the escaped spelling stays with
 the source serialization. These mappings do not define GFF escaping or a round trip back to the
 source serialization. They do follow one rule for values that hold more than one item, below.
+
+## Meaning and numbers
+
+Two optional fields let a profile say more than the source's text
+([issue 42](https://github.com/turbomam/feature-table-corpus/issues/42)):
+
+- `attribute_cv_id`, a CURIE for what the key means, so keys spelled differently by different
+  producers can share one meaning. The corpus's NMDC files spell one key both `e-value` and
+  `evalue`; a profile can give both `EDAM:data_1667` (E-value).
+- `numeric_value`, the value read as a number, so a filter on e-values needs no cast.
+
+`key` and `value` keep the source's text either way, and the Dataset validator refuses a
+`numeric_value` that disagrees with `value`. Both follow the NMDC `AttributeValue` pattern that
+BERtron and the KBase CDM use, and map to CDM's `attribute_cv_id` and `numeric_value`. No profile
+fills them yet.
 
 ## Multivalued values
 
