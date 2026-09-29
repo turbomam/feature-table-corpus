@@ -37,6 +37,20 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
                 self.assertIn(row["predicate_id"], PREDICATES)
                 self.assertRegex(row["object_id"], r"^img_core:[a-z_]+\.[a-z_]+$")
 
+    def test_every_hit_table_has_its_own_rows(self):
+        # A comment saying "the same column in the other tables" is not a mapping; each table
+        # a consumer might query needs rows of its own.
+        tables = ("gene_pfam_families", "gene_cog_groups", "gene_ko_terms", "gene_superfam", "gene_smart",
+                  "gene_cathfam", "gene_tigrfams", "gene_img_interpro_hits", "gene_sig_peptides")
+        mapped = {(r["object_id"].split(":")[1].split(".")[0], r["subject_id"]) for r in rows()}
+        for table in tables:
+            with self.subTest(table):
+                self.assertIn((table, "bfm:seqid"), mapped)
+                self.assertIn((table, "bfm:type"), mapped)
+        for table in ("gene_pfam_families", "gene_cog_groups", "gene_ko_terms", "gene_superfam", "gene_smart",
+                      "gene_cathfam", "gene_tigrfams"):
+            self.assertIn((table, "bfm:score"), mapped)
+
     def test_rows_are_unique(self):
         keys = [(r["subject_category"], r["subject_id"], r["object_id"]) for r in rows()]
         self.assertEqual(len(keys), len(set(keys)))

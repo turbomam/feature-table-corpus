@@ -34,17 +34,48 @@ bfm:contig_id	bfm:Contig	skos:relatedMatch	img_core:gene.scaffold	semapv:ManualM
 bfm:collection_id	bfm:ContigCollection	skos:relatedMatch	img_core:gene.taxon	semapv:ManualMappingCuration	An integer key to IMG's taxon table, which the view doesn't include.
 bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.gene_oid	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
 bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.pfam_family	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
-bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.query_start	semapv:ManualMappingCuration	Protein position; the same column in gene_cog_groups, gene_ko_terms, gene_superfam, gene_smart and gene_cathfam.
-bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.query_end	semapv:ManualMappingCuration	As query_start.
-bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.bit_score	semapv:ManualMappingCuration	With score_type bit_score; the same column in the other hit tables.
-bfm:target_start	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_pfam_families.subj_start	semapv:ManualMappingCuration	Also in gene_cog_groups and gene_ko_terms.
-bfm:target_end	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_pfam_families.subj_end	semapv:ManualMappingCuration	As subj_start.
-bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_cog_groups.cog	semapv:ManualMappingCuration	
-bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_ko_terms.ko_terms	semapv:ManualMappingCuration	
-bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_tigrfams.ext_accession	semapv:ManualMappingCuration	gene_tigrfams keeps positions as text lists (sfstarts, sfsends), not one span.
+bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.query_start	semapv:ManualMappingCuration	Protein position.
+bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.query_end	semapv:ManualMappingCuration	Protein position.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_pfam_families.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:target_start	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_pfam_families.subj_start	semapv:ManualMappingCuration	
+bfm:target_end	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_pfam_families.subj_end	semapv:ManualMappingCuration	
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_cog_groups.gene_oid	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
+bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_cog_groups.cog	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
+bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_cog_groups.query_start	semapv:ManualMappingCuration	Protein position.
+bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_cog_groups.query_end	semapv:ManualMappingCuration	Protein position.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_cog_groups.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:target_start	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_cog_groups.subj_start	semapv:ManualMappingCuration	
+bfm:target_end	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_cog_groups.subj_end	semapv:ManualMappingCuration	
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_ko_terms.gene_oid	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
+bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_ko_terms.ko_terms	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
+bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_ko_terms.query_start	semapv:ManualMappingCuration	Protein position.
+bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_ko_terms.query_end	semapv:ManualMappingCuration	Protein position.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_ko_terms.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:target_start	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_ko_terms.subj_start	semapv:ManualMappingCuration	
+bfm:target_end	bfm:AlignmentTarget	skos:closeMatch	img_core:gene_ko_terms.subj_end	semapv:ManualMappingCuration	
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_superfam.gene_oid	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
+bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_superfam.id	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
+bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_superfam.query_start	semapv:ManualMappingCuration	Protein position.
+bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_superfam.query_end	semapv:ManualMappingCuration	Protein position.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_superfam.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_smart.gene_oid	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
+bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_smart.id	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
+bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_smart.query_start	semapv:ManualMappingCuration	Protein position.
+bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_smart.query_end	semapv:ManualMappingCuration	Protein position.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_smart.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_cathfam.gene_oid	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
+bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_cathfam.id	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
+bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_cathfam.query_start	semapv:ManualMappingCuration	Protein position.
+bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_cathfam.query_end	semapv:ManualMappingCuration	Protein position.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_cathfam.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_tigrfams.gene_oid	semapv:ManualMappingCuration	
+bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_tigrfams.ext_accession	semapv:ManualMappingCuration	gene_tigrfams keeps positions as text lists (sfstarts, sfsends), so one row can hold several spans and has no single start or end.
+bfm:score	bfm:Feature	skos:closeMatch	img_core:gene_tigrfams.bit_score	semapv:ManualMappingCuration	With score_type bit_score.
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_img_interpro_hits.gene_oid	semapv:ManualMappingCuration	
 bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_img_interpro_hits.domainid	semapv:ManualMappingCuration	As in the taxon-bundle mapping; iprid and go_info stay Attributes.
 bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_img_interpro_hits.sfstarts	semapv:ManualMappingCuration	
 bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_img_interpro_hits.sfends	semapv:ManualMappingCuration	
+bfm:seqid	bfm:Feature	skos:closeMatch	img_core:gene_sig_peptides.gene_oid	semapv:ManualMappingCuration	
 bfm:type	bfm:Feature	skos:closeMatch	img_core:gene_sig_peptides.feature_type	semapv:ManualMappingCuration	SignalP rows; start_coord and end_coord are protein positions.
 bfm:start	bfm:Feature	skos:closeMatch	img_core:gene_sig_peptides.start_coord	semapv:ManualMappingCuration	
 bfm:end	bfm:Feature	skos:closeMatch	img_core:gene_sig_peptides.end_coord	semapv:ManualMappingCuration	
