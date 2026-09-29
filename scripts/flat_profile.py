@@ -301,6 +301,8 @@ def refuse_nonfinite(value):
 def flatten(dataset, tables=None):
     tables = tables or plan()
     refuse_nonfinite(dataset)
+    if not isinstance(dataset, dict):
+        raise ValueError(f"a Dataset is an object of lists, not a {type(dataset).__name__}")
     unknown = sorted(set(dataset) - {collection for _, _, collection, _, _ in tables})
     if unknown:
         raise ValueError(f"{unknown} are not Dataset slots; is this a Dataset?")
@@ -308,7 +310,17 @@ def flatten(dataset, tables=None):
     for table, owner, collection, columns, children in tables:
         key = key_column(columns)
         rows = out.setdefault(table, [])
-        for record in dataset.get(collection) or []:
+        # Absent or null is an empty collection, as present() in img_functional_map treats None;
+        # any other non-list ({}, "", 0, false) is the wrong shape, not an empty one.
+        records = dataset.get(collection)
+        records = [] if records is None else records
+        if not isinstance(records, list):
+            raise ValueError(f"{collection} is a list of {owner} records, not a {type(records).__name__}")
+        for number, record in enumerate(records):
+            if not isinstance(record, dict):
+                raise ValueError(f"{collection}[{number}] is a {owner} record, not a {type(record).__name__}")
+            if record.get(key) is None:  # absent or null, as elsewhere
+                raise ValueError(f"{collection}[{number}] has no {key}")
             paths = [path for _, path, _ in columns] + [path for _, path, _, _ in children]
             unknown = unknown_fields(record, paths)
             if unknown:
@@ -316,9 +328,15 @@ def flatten(dataset, tables=None):
             row = {name: value for name, path, _ in columns if (value := get(record, path)) is not None}
             rows.append(row)
             for child, path, slot, fields in children:
-                items = get(record, path) or []
+                items = get(record, path)
+                items = [] if items is None else items
+                if not isinstance(items, list):
+                    raise ValueError(f"{owner} {record[key]!r}: {'.'.join(path)} is a list, not a {type(items).__name__}")
                 child_rows = out.setdefault(child, [])
                 for ordinal, item in enumerate(items):
+                    if fields is not None and not isinstance(item, dict):
+                        raise ValueError(f"{owner} {record[key]!r}: {'.'.join(path)}[{ordinal}] is an object, "
+                                         f"not a {type(item).__name__}")
                     base = {key: record[key], "ordinal": ordinal}
                     if fields is None:
                         child_rows.append({**base, slot.name: item})
@@ -333,6 +351,11 @@ def flatten(dataset, tables=None):
 def unflatten(flat, tables=None):
     tables = tables or plan()
     refuse_nonfinite(flat)
+    if not isinstance(flat, dict):
+        raise ValueError(f"flat tables are an object of lists, not a {type(flat).__name__}")
+    for table, rows in flat.items():
+        if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
+            raise ValueError(f"{table} is a list of row objects")
     expected = {}
     for table, _, _, columns, children in tables:
         key = key_column(columns)
@@ -445,7 +468,9 @@ def load(path):
             raise ValueError(f"{path}: YAML anchors or aliases on lines {lines[:5]}; write each value out in full")
     data = yaml.safe_load(text) if str(path).endswith((".yaml", ".yml")) else json.loads(text)
     # A conversion bundle or protein context carries its Dataset under "dataset".
-    return data["dataset"] if isinstance(data.get("dataset"), dict) else data
+    if isinstance(data, dict) and isinstance(data.get("dataset"), dict):
+        return data["dataset"]
+    return data
 
 
 def schema_text():
