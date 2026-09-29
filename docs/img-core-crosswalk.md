@@ -14,6 +14,9 @@ columns on different classes. A list of structs, such as `Feature.attributes` or
 `FeatureLocation.parts`, maps through its items' slots (`Attribute.key`, `LocationPart.start`),
 not as one column. A hit table's `gene_oid` maps to both `seqid` and `parent`, because the model
 requires both on a protein-coordinate Feature.
+SSSOM maps one column to one slot, so a value built from two columns is two `relatedMatch`
+rows: `Feature.dbxref` is `gene_ext_links.db_name`, a colon, then `gene_ext_links.id`. A table
+with target positions also maps `AlignmentTarget.target_id`, which the model requires.
 
 ## Source
 

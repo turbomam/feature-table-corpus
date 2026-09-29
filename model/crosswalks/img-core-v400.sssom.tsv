@@ -19,7 +19,8 @@ bfm:product	Feature.product	rdf property	skos:closeMatch	img_core:gene.product_n
 bfm:product_source	Feature.product_source	rdf property	skos:closeMatch	img_core:gene.img_product_source	rdf property	semapv:ManualMappingCuration	
 bfm:name	Feature.name	rdf property	skos:relatedMatch	img_core:gene.gene_symbol	rdf property	semapv:ManualMappingCuration	GFF Name is a display name; IMG's gene_symbol is the closest column.
 bfm:note	Feature.note	rdf property	skos:closeMatch	img_core:gene_notes.notes	rdf property	semapv:ManualMappingCuration	One row per note, keyed by gene_oid.
-bfm:dbxref	Feature.dbxref	rdf property	skos:closeMatch	img_core:gene_ext_links.id	rdf property	semapv:ManualMappingCuration	With gene_ext_links.db_name as the prefix.
+bfm:dbxref	Feature.dbxref	rdf property	skos:relatedMatch	img_core:gene_ext_links.id	rdf property	semapv:ManualMappingCuration	The model writes db_name:id; SSSOM maps one column to one slot, so this row and the db_name row together give a dbxref.
+bfm:dbxref	Feature.dbxref	rdf property	skos:relatedMatch	img_core:gene_ext_links.db_name	rdf property	semapv:ManualMappingCuration	The prefix of a dbxref, with gene_ext_links.id after the colon.
 bfm:ontology_term	Feature.ontology_term	rdf property	skos:closeMatch	img_core:gene_go_terms.go_id	rdf property	semapv:ManualMappingCuration	GO only; go_evidence has no model slot and would be an Attribute.
 bfm:translated_sequence	Feature.translated_sequence	rdf property	skos:relatedMatch	img_core:gene.aa_checksum	rdf property	semapv:ManualMappingCuration	The view has no sequence column, only its checksum and aa_seq_length.
 bfm:start_status	LocationPart.start_status	rdf property	skos:relatedMatch	img_core:gene.is_partial_w	rdf property	semapv:ManualMappingCuration	A partial flag that doesn't say which end is partial.
@@ -38,6 +39,7 @@ bfm:end	Feature.end	rdf property	skos:closeMatch	img_core:gene_pfam_families.que
 bfm:score	Feature.score	rdf property	skos:closeMatch	img_core:gene_pfam_families.bit_score	rdf property	semapv:ManualMappingCuration	With score_type bit_score.
 bfm:target_start	AlignmentTarget.target_start	rdf property	skos:closeMatch	img_core:gene_pfam_families.subj_start	rdf property	semapv:ManualMappingCuration	
 bfm:target_end	AlignmentTarget.target_end	rdf property	skos:closeMatch	img_core:gene_pfam_families.subj_end	rdf property	semapv:ManualMappingCuration	
+bfm:target_id	AlignmentTarget.target_id	rdf property	skos:closeMatch	img_core:gene_pfam_families.pfam_family	rdf property	semapv:ManualMappingCuration	What the hit aligned to, the same accession as the hit's type; target_start and target_end count along it.
 bfm:seqid	Feature.seqid	rdf property	skos:closeMatch	img_core:gene_cog_groups.gene_oid	rdf property	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
 bfm:parent	Feature.parent	rdf property	skos:closeMatch	img_core:gene_cog_groups.gene_oid	rdf property	semapv:ManualMappingCuration	The gene is a hit's only parent as well as its seqid; the model requires both.
 bfm:type	Feature.type	rdf property	skos:closeMatch	img_core:gene_cog_groups.cog	rdf property	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
@@ -46,6 +48,7 @@ bfm:end	Feature.end	rdf property	skos:closeMatch	img_core:gene_cog_groups.query_
 bfm:score	Feature.score	rdf property	skos:closeMatch	img_core:gene_cog_groups.bit_score	rdf property	semapv:ManualMappingCuration	With score_type bit_score.
 bfm:target_start	AlignmentTarget.target_start	rdf property	skos:closeMatch	img_core:gene_cog_groups.subj_start	rdf property	semapv:ManualMappingCuration	
 bfm:target_end	AlignmentTarget.target_end	rdf property	skos:closeMatch	img_core:gene_cog_groups.subj_end	rdf property	semapv:ManualMappingCuration	
+bfm:target_id	AlignmentTarget.target_id	rdf property	skos:closeMatch	img_core:gene_cog_groups.cog	rdf property	semapv:ManualMappingCuration	What the hit aligned to, the same accession as the hit's type; target_start and target_end count along it.
 bfm:seqid	Feature.seqid	rdf property	skos:closeMatch	img_core:gene_ko_terms.gene_oid	rdf property	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
 bfm:parent	Feature.parent	rdf property	skos:closeMatch	img_core:gene_ko_terms.gene_oid	rdf property	semapv:ManualMappingCuration	The gene is a hit's only parent as well as its seqid; the model requires both.
 bfm:type	Feature.type	rdf property	skos:closeMatch	img_core:gene_ko_terms.ko_terms	rdf property	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.
@@ -54,6 +57,7 @@ bfm:end	Feature.end	rdf property	skos:closeMatch	img_core:gene_ko_terms.query_en
 bfm:score	Feature.score	rdf property	skos:closeMatch	img_core:gene_ko_terms.bit_score	rdf property	semapv:ManualMappingCuration	With score_type bit_score.
 bfm:target_start	AlignmentTarget.target_start	rdf property	skos:closeMatch	img_core:gene_ko_terms.subj_start	rdf property	semapv:ManualMappingCuration	
 bfm:target_end	AlignmentTarget.target_end	rdf property	skos:closeMatch	img_core:gene_ko_terms.subj_end	rdf property	semapv:ManualMappingCuration	
+bfm:target_id	AlignmentTarget.target_id	rdf property	skos:closeMatch	img_core:gene_ko_terms.ko_terms	rdf property	semapv:ManualMappingCuration	What the hit aligned to, the same accession as the hit's type; target_start and target_end count along it.
 bfm:seqid	Feature.seqid	rdf property	skos:closeMatch	img_core:gene_superfam.gene_oid	rdf property	semapv:ManualMappingCuration	A hit is on protein coordinates: its seqid, and its only parent, is the gene.
 bfm:parent	Feature.parent	rdf property	skos:closeMatch	img_core:gene_superfam.gene_oid	rdf property	semapv:ManualMappingCuration	The gene is a hit's only parent as well as its seqid; the model requires both.
 bfm:type	Feature.type	rdf property	skos:closeMatch	img_core:gene_superfam.id	rdf property	semapv:ManualMappingCuration	The accession, as in the per-method and taxon-bundle mappings.

@@ -55,6 +55,20 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
                       "gene_cathfam", "gene_tigrfams"):
             self.assertIn((table, "bfm:score"), mapped)
 
+    def test_a_table_mapping_a_struct_maps_its_required_fields(self):
+        # A consumer builds an AlignmentTarget from a table's target rows, so every required
+        # AlignmentTarget slot needs a column in that table.
+        view = SchemaView(str(ROOT / "model/schema/ber_feature_model.yaml"))
+        required = {"bfm:" + s.name for s in view.class_induced_slots("AlignmentTarget") if s.required}
+        by_table = {}
+        for r in rows():
+            if r["subject_label"].startswith("AlignmentTarget."):
+                by_table.setdefault(r["object_id"].split(":")[1].split(".")[0], set()).add(r["subject_id"])
+        self.assertTrue(by_table)
+        for table, slots in by_table.items():
+            with self.subTest(table):
+                self.assertEqual(sorted(required - slots), [])
+
     def test_rows_are_unique(self):
         keys = [(r["subject_label"], r["object_id"]) for r in rows()]
         self.assertEqual(len(keys), len(set(keys)))
