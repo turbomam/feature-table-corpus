@@ -163,6 +163,14 @@ class FlatProfileTests(unittest.TestCase):
         cycle["features"].append(cycle)
         with self.assertRaisesRegex(ValueError, "contains itself"):
             flat_profile.flatten(cycle, self.tables)
+        # 60 aliases, each holding the previous one twice: 2**60 paths, one scan each.
+        import time
+        chain = [1.0]
+        for _ in range(60):
+            chain = [chain, chain]
+        started = time.monotonic()
+        self.assertEqual(flat_profile.nonfinite({"x": chain}), [])
+        self.assertLess(time.monotonic() - started, 1.0)
         with tempfile.TemporaryDirectory() as tmp:
             recursive = Path(tmp) / "cycle.yaml"
             recursive.write_text("extra: &x {self: *x}\n")

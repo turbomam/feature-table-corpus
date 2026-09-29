@@ -289,18 +289,23 @@ def key_column(columns):
     return next(name for name, path, slot in columns if slot.identifier and len(path) == 1)
 
 
-def nonfinite(value, where="", active=None):
+def nonfinite(value, where="", active=None, done=None):
     """Paths of infinite or NaN numbers in value. JSON has no spelling for them, and a number too
     large for a float (1e400) parses as infinity, so both commands refuse them by name.
 
     A YAML alias can make a container hold itself; active holds the containers on the current
-    path, so a cycle is refused by name instead of recursing until Python gives up.
+    path, so a cycle is refused by name instead of recursing until Python gives up. done holds
+    containers already scanned, so an alias shared many times is scanned once, not once per
+    reference (a chain of aliases each used twice would otherwise take exponential time).
     """
     if isinstance(value, float) and not math.isfinite(value):
         return [where or "value"]
     if not isinstance(value, (dict, list)):
         return []
     active = active if active is not None else set()
+    done = done if done is not None else set()
+    if id(value) in done:
+        return []
     if id(value) in active:
         raise ValueError(f"{where or 'the input'} contains itself (a YAML alias cycle)")
     active.add(id(value))
@@ -308,9 +313,10 @@ def nonfinite(value, where="", active=None):
         items = value.items() if isinstance(value, dict) else enumerate(value)
         return [p for k, v in items
                 for p in nonfinite(v, (f"{where}.{k}" if where else str(k)) if isinstance(value, dict)
-                                   else f"{where}[{k}]", active)]
+                                   else f"{where}[{k}]", active, done)]
     finally:
         active.discard(id(value))
+        done.add(id(value))
 
 
 def refuse_nonfinite(value):
