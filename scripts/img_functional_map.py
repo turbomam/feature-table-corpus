@@ -342,6 +342,8 @@ def write_output(path, text):
 class _CountWarnings(logging.Handler):
     """Counts linkml-map's warnings instead of printing them; see quiet_linkml_map."""
 
+    role = "ftc-count-warnings"
+
     def __init__(self):
         super().__init__(logging.WARNING)
         self.count, self.first = 0, None
@@ -355,12 +357,31 @@ class _CountWarnings(logging.Handler):
 class _ErrorsToStderr(logging.StreamHandler):
     """Writes errors to whatever sys.stderr is when they happen, so a redirected stderr gets them."""
 
+    role = "ftc-errors-to-stderr"
+
+    def __init__(self):
+        super().__init__()
+        self.setLevel(logging.ERROR)
+
     def emit(self, record):
         self.stream = sys.stderr
         super().emit(record)
 
 
-HIDDEN = _CountWarnings()
+def _installed(kind):
+    """The logger's handler of this kind, added once per process.
+
+    It is looked up on the logger by role, not held by this module, because this file can be
+    loaded twice (through another script, and by path in a test), and each load must find the
+    same handlers rather than add its own.
+    """
+    logger = logging.getLogger("linkml_map")
+    for handler in logger.handlers:
+        if getattr(handler, "role", None) == kind.role:
+            return handler
+    handler = kind()
+    logger.addHandler(handler)
+    return handler
 
 
 def quiet_linkml_map():
@@ -371,23 +392,21 @@ def quiet_linkml_map():
     to stderr; warnings are counted from this call on, and each roundtrip reports the count
     (hidden_warnings).
     """
-    # Each script's main calls this first, so the count starts again for every invocation.
-    HIDDEN.count, HIDDEN.first = 0, None
     logger = logging.getLogger("linkml_map")
     logger.setLevel(logging.WARNING)
     logger.propagate = False
-    if HIDDEN not in logger.handlers:
-        errors = _ErrorsToStderr()
-        errors.setLevel(logging.ERROR)
-        logger.addHandler(HIDDEN)
-        logger.addHandler(errors)
+    _installed(_ErrorsToStderr)
+    # Each script's main calls this first, so the count starts again for every invocation.
+    counter = _installed(_CountWarnings)
+    counter.count, counter.first = 0, None
 
 
 def hidden_warnings():
     """{"linkml_map_warnings": n}, plus the first message when there were any, for a report."""
-    out = {"linkml_map_warnings": HIDDEN.count}
-    if HIDDEN.first:
-        out["first_linkml_map_warning"] = HIDDEN.first
+    counter = _installed(_CountWarnings)
+    out = {"linkml_map_warnings": counter.count}
+    if counter.first:
+        out["first_linkml_map_warning"] = counter.first
     return out
 
 

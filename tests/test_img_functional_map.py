@@ -419,6 +419,19 @@ class HiddenWarningTests(unittest.TestCase):
             reports.append(json.loads(out.getvalue().splitlines()[-2])["linkml_map_warnings"])
         self.assertEqual(reports, [4, 4])
 
+    def test_a_second_load_of_the_module_adds_no_handlers(self):
+        # The full suite loads this file through other scripts and again by path, as here.
+        import importlib.util
+        import logging
+        mapping.quiet_linkml_map()
+        before = list(logging.getLogger("linkml_map").handlers)
+        spec = importlib.util.spec_from_file_location("img_functional_map_again",
+                                                      ROOT / "scripts/img_functional_map.py")
+        again = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(again)
+        again.quiet_linkml_map()
+        self.assertEqual(logging.getLogger("linkml_map").handlers, before)
+
     def test_linkml_map_errors_still_reach_stderr(self):
         import contextlib
         import io
