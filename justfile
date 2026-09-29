@@ -156,6 +156,11 @@ bgc-check:
 diagram:
     uv run --with linkml python3 scripts/schema_diagram.py
 
+[doc("Regenerate model/flat/ber_feature_model_flat.yaml, the derived scalar-only profile.")]
+[group("Model")]
+flat-profile:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/flat_profile.py regenerate
+
 [doc("Audit scalar-table compatibility of a schema path or URL.")]
 [group("Model")]
 flat-profile-audit schema=feature_schema:

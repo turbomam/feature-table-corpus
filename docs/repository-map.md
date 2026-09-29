@@ -16,6 +16,7 @@ model/                          This project's proposed contracts and instances
   profiles/                     Versioned, executable source conversion contracts
   dialects/                     LinkML schemas for a source's own rows, validated before mapping
   transforms/                   linkml-map specifications from a dialect to the model
+  flat/                         Scalar-only profile derived from the schema (docs/flat-profile.md)
   validation/                   Expected validator rules for each contract or dialect
   examples/                     Worked examples, source-artifact and JGI input manifests
 analyses/                       Source-specific measurements and selection reports
