@@ -184,3 +184,13 @@ maps broadly to `biolink:xref`. `attributes` is only close to GFF3's column 9, b
 rather than its text. `feature_id` is only close to `gff3:ID`, because it can be
 synthetic or method-qualified, and `Feature` is only close to SO:0000110, sequence_feature, because
 a Feature can also be a joined location or a protein-coordinate hit.
+
+## Alignment targets
+
+`Feature.target` says where a hit aligns on the thing it matched, in that thing's own positions:
+`target_id`, `target_start`, `target_end`, and optionally `target_strand` and a GFF3-style `gap`
+([issue 94](https://github.com/turbomam/feature-table-corpus/issues/94)). The hit's own `seqid`,
+`start` and `end` stay the query side. `nmdc-pfam-protein` fills it from HMMER's `model_start` and
+`model_end`, with the Pfam accession as `target_id`. GFF3's `Target` tag occurs in no corpus file,
+so `gff3-contig` doesn't parse it yet. The IMG per-method and NMDC lakehouse KO hits carry
+`subject_start` and `subject_end` and can fill it in their own mappings.

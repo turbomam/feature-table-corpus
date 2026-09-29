@@ -30,7 +30,7 @@ FEATURE_COLUMNS = (
     "feature_id", "stable_identifiers", "seqid", "source", "type", "start", "end", "coordinate_system",
     "score", "score_type", "strand", "phase", "generated_by", "source_files", "is_selected",
     "is_representative", "product", "product_source", "name", "note", "dbxref", "ontology_term",
-    "translated_sequence", "parent", "attributes", "location",
+    "translated_sequence", "parent", "attributes", "location", "target",
 )
 
 
@@ -109,7 +109,8 @@ def _populate_database(data, db_path):
                 translated_sequence VARCHAR,
                 parent VARCHAR[],
                 attributes STRUCT(key VARCHAR, value VARCHAR)[],
-                location JSON
+                location JSON,
+                target JSON
             )
         """)
         for table, collection, columns in (
@@ -120,13 +121,13 @@ def _populate_database(data, db_path):
             # DuckDB interprets a Python dict with exactly key/value keys as a MAP.
             # Cast JSON explicitly so the generic attribute stays a STRUCT.
             placeholders = ", ".join(
-                "?::JSON::STRUCT(key VARCHAR, value VARCHAR)[]" if c == "attributes" else "?::JSON" if c == "location" else "?"
+                "?::JSON::STRUCT(key VARCHAR, value VARCHAR)[]" if c == "attributes" else "?::JSON" if c in ("location", "target") else "?"
                 for c in columns
             )
             for row in data.get(collection) or []:
                 con.execute(
                     f"INSERT INTO {table} VALUES ({placeholders})",
-                    [json.dumps(row[c]) if c in ("attributes", "location") and row.get(c) is not None else row.get(c) for c in columns],
+                    [json.dumps(row[c]) if c in ("attributes", "location", "target") and row.get(c) is not None else row.get(c) for c in columns],
                 )
         counts = (
             con.execute("SELECT count(*) FROM contig").fetchone()[0],

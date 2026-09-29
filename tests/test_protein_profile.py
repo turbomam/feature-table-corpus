@@ -149,7 +149,7 @@ class ProteinProfileTests(unittest.TestCase):
 
         2.0.0 is the last version whose hits named their contig as seqid (issue 40), and 3.0.0 the
         last without typed reserved-tag slots (issue 43)."""
-        for version in ("1.0.0", "2.0.0", "3.0.0"):
+        for version in ("1.0.0", "2.0.0", "3.0.0", "4.0.0"):
             old = deepcopy(self.bundle)
             old["profile"] = f"nmdc-pfam-protein/{version}"
             for context in (deepcopy(self.context), None):
@@ -171,6 +171,29 @@ class ProteinProfileTests(unittest.TestCase):
             self.assertIn(f"context {key} attribute disagrees", str(caught.exception))
             cds[slot] = value
             imported(PFAM.read_bytes(), c)
+
+    def test_hits_carry_their_pfam_model_positions_as_a_target(self):
+        """Issue 94: model_start and model_end become the hit's alignment target on its Pfam model."""
+        hits = [f for f in self.bundle["dataset"]["features"] if f["coordinate_system"] == "protein"]
+        self.assertEqual(len(hits), 416)
+        for hit in hits:
+            pairs = {a["key"]: a["value"] for a in hit["attributes"]}
+            self.assertEqual(hit["target"], {"target_id": hit["type"], "target_start": int(pairs["model_start"]),
+                                             "target_end": int(pairs["model_end"])})
+        # A row without model positions has no target to give, so it is refused.
+        text = PFAM.read_bytes()
+        first = next(line for line in text.splitlines() if b"model_start=" in line and not line.startswith(b"#"))
+        stripped = first.replace(b";model_start=", b";x_start=").replace(b";model_end=", b";x_end=")
+        self.assertNotEqual(stripped, first)
+        with self.assertRaises(ConversionError) as caught:
+            imported(text.replace(first, stripped), self.context)
+        self.assertEqual(caught.exception.code, "alignment-target")
+        for change in ({"target_end": 1}, {"target_id": "PF00001"}):
+            edited = deepcopy(self.bundle)
+            hit = next(f for f in edited["dataset"]["features"] if f["coordinate_system"] == "protein")
+            hit["target"] = {**hit["target"], **change}
+            with self.subTest(change=change), self.assertRaises(ConversionError):
+                export_source(edited, mode="reconstruct", protein_context=self.context)
 
     def test_context_with_conflicting_cds_tables_is_refused(self):
         """2.0.0 narrowed the domain: CDS on one context contig that disagree are refused."""
@@ -220,7 +243,7 @@ class ProteinProfileTests(unittest.TestCase):
         for _ in range(20):
             start = rng.randint(1, 200); end = rng.randint(start, 300)
             content = (f"# observed metadata\r\nprotein%20alias\tHMMER 3.1b2\tPF13358\t{start:05}\t{end}\t1e1\t.\t.\t"
-                       "ID=hit;unknown=x%3By;unknown=;Note=a%2Cb,,c;\r\n").encode()
+                       "ID=hit;unknown=x%3By;unknown=;Note=a%2Cb,,c;model_start=1;model_end=40;\r\n").encode()
             b = imported(content, c)
             self.assertEqual(export_source(b, mode="exact", protein_context=c), content)
             again = imported(export_source(b, mode="reconstruct", protein_context=c), c)
