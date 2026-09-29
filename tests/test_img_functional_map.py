@@ -419,6 +419,11 @@ class HiddenWarningTests(unittest.TestCase):
             reports.append(json.loads(out.getvalue().splitlines()[-2])["linkml_map_warnings"])
         self.assertEqual(reports, [4, 4])
 
+    def test_the_returned_report_counts_this_call_only(self):
+        # Callers of roundtrip() itself, such as tests/test_clean_round_trips.py, see the count too.
+        counts = [mapping.roundtrip(FIXTURE)[1]["linkml_map_warnings"] for _ in range(2)]
+        self.assertEqual(counts, [4, 4])
+
     def test_a_second_load_of_the_module_adds_no_handlers(self):
         # The full suite loads this file through other scripts and again by path, as here.
         import importlib.util

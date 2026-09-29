@@ -23,7 +23,7 @@ import sys
 
 import img_assembled_gff as dialect
 from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
-from img_functional_map import hidden_warnings as functional_map_warnings
+from img_functional_map import reports_hidden_warnings
 from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -115,6 +115,7 @@ def reverse(dataset, source_file, transformers=None):
     return document
 
 
+@reports_hidden_warnings
 def roundtrip(path):
     """Return (problems, report) for one file; no problems means it came back byte for byte."""
     report = {"file": str(path)}
@@ -203,7 +204,7 @@ def main(argv=None):
     problems, report = roundtrip(args.gff)
     for problem in problems[:20]:
         print(f"  {problem}")
-    print(json.dumps(report | functional_map_warnings()))
+    print(json.dumps(report))
     print(f"{'HELD' if not problems else 'FAILED'}  {args.gff}: {len(problems)} problem(s)")
     return 1 if problems else 0
 
