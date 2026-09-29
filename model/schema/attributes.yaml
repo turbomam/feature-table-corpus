@@ -4,7 +4,7 @@ title: Reusable attributes (draft)
 description: >-
   String-valued attributes for metadata, annotations, and source-reported evidence, with an
   optional CURIE for the key and an optional number for the value.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   battr: https://w3id.org/ber-data/attributes/

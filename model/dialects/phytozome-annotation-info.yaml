@@ -20,7 +20,7 @@ comments:
     doubled space. Header names that are not valid slot
     names are mapped in scripts/phytozome_annotation_info.py: "#pacId" to pacId and each
     "Best-hit-..." column to the same name in lower case with underscores.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   phyann: https://w3id.org/ber-data/dialects/phytozome-annotation-info/

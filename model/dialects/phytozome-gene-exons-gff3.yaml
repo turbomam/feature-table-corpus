@@ -18,7 +18,7 @@ comments:
     The file has LF line endings and a final newline, no score, no percent escapes, and no
     commas in column 9, so a Parent never names two rows. The parser rejects each of these
     rather than guessing what it would mean.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   phygff: https://w3id.org/ber-data/dialects/phytozome-gene-exons-gff3/

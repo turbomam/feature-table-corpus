@@ -23,7 +23,7 @@ comments:
     Every SignalP row measured has organism_type gram-, including those of the Gram-positive
     Clostridium and the archaeon Methanococcus. The value is kept as written; the dialect does
     not interpret it.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   imgts: https://w3id.org/ber-data/dialects/img-tmhmm-signalp-gff/

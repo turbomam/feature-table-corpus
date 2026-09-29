@@ -7,7 +7,7 @@ description: >-
   site can show every class once and every relationship between them. Each schema keeps
   its own file, identifier and prefix; validate data against ber_feature_model.yaml or
   source_document.yaml, never against this file.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   bfs: https://w3id.org/ber-data/feature-schemas/
