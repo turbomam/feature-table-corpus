@@ -26,7 +26,10 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
         self.assertGreater(len(found), 30)
         for row in found:
             with self.subTest(row["subject_id"], table=row["object_id"]):
-                slots = {s.name: s for s in view.class_induced_slots(row["subject_category"])}
+                # subject_category is the class's own CURIE, resolved to its local name.
+                category = row["subject_category"].split(":", 1)[1]
+                self.assertEqual(row["subject_category"], view.get_uri(view.get_class(category), expand=False))
+                slots = {s.name: s for s in view.class_induced_slots(category)}
                 name = row["subject_id"].split(":", 1)[1]
                 self.assertIn(name, slots)
                 # The CURIE must be the slot's own URI: Attribute's slots are battr:, not bfm:.
