@@ -5,7 +5,6 @@ Tags start with an uppercase letter; the column names the model also maps (gff3:
 gff3:start ...) start with a lowercase one, so they are not checked here.
 """
 from pathlib import Path
-import re
 import unittest
 
 import yaml
@@ -13,7 +12,23 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 RESERVED = ROOT / "model/schema/gff3_reserved_attributes.yaml"
 SCHEMAS = [ROOT / "model/schema/ber_feature_model.yaml", ROOT / "model/schema/attributes.yaml"]
-MAPPING = re.compile(r"\bgff3:([A-Z][A-Za-z_]*)")
+
+
+def gff3_tags(node):
+    """Local names of every gff3: value under a *_mappings key, whole, as the schema writes them."""
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key.endswith("_mappings") and isinstance(value, list):
+                yield from (v[len("gff3:"):] for v in value if isinstance(v, str) and v.startswith("gff3:"))
+            else:
+                yield from gff3_tags(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from gff3_tags(item)
+
+
+def uppercase_tags(text):
+    return {tag for tag in gff3_tags(yaml.safe_load(text)) if tag[:1].isupper()}
 
 
 class ReservedAttributeTests(unittest.TestCase):
@@ -26,7 +41,7 @@ class ReservedAttributeTests(unittest.TestCase):
                                      "Note", "Dbxref", "Ontology_term", "Is_circular"])
 
     def test_every_uppercase_gff3_mapping_is_a_reserved_tag(self):
-        found = {schema.name: set(MAPPING.findall(schema.read_text())) for schema in SCHEMAS}
+        found = {schema.name: uppercase_tags(schema.read_text()) for schema in SCHEMAS}
         # A negative control: the feature model maps ID, Parent, Name and others, so an empty
         # result would mean the pattern stopped matching, not that every tag is right.
         self.assertIn("Parent", found["ber_feature_model.yaml"])
@@ -35,7 +50,8 @@ class ReservedAttributeTests(unittest.TestCase):
                 self.assertEqual(sorted(tags - set(self.tags)), [])
 
     def test_the_check_catches_a_misspelled_tag(self):
-        self.assertEqual(set(MAPPING.findall("exact_mappings:\n  - gff3:DBxref\n")) - set(self.tags), {"DBxref"})
+        text = "slots:\n  a:\n    exact_mappings: [gff3:DBxref]\n    close_mappings: [gff3:Parent2, gff3:seqid]\n"
+        self.assertEqual(uppercase_tags(text) - set(self.tags), {"DBxref", "Parent2"})
 
 
 if __name__ == "__main__":
