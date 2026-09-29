@@ -715,6 +715,12 @@ class DatabaseTests(unittest.TestCase):
         typed.write_text(yaml.safe_dump(data))
         with self.assertRaisesRegex(ValueError, "numeric_value 1.0 disagrees with value"):
             build_database(SCHEMA, typed, self.db)
+        # A number past float range is refused as a disagreement, not raised as an error.
+        validator = make_validator(SCHEMA)
+        for value, number in (("1e999", 10 ** 310), (evalue["value"], 10 ** 310)):
+            evalue.update(value=value, numeric_value=number)
+            with self.subTest(value=value):
+                self.assertTrue(any("disagrees with value" in e for e in validation_errors(data, validator)))
 
     def test_is_representative_round_trips_true_false_and_unset(self):
         data, gene, isoforms = with_isoforms(yaml.safe_load(EXAMPLE.read_text()), count=3)

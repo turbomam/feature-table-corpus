@@ -49,9 +49,11 @@ def make_validator(schema_path, class_name="Dataset"):
 
 
 def attribute_number_agrees(attribute):
+    """value read as a float equals numeric_value; a number beyond float range never agrees."""
     try:
-        return float(attribute["value"]) == float(attribute["numeric_value"])
-    except (TypeError, ValueError):
+        number = float(attribute["value"])
+        return math.isfinite(number) and number == float(attribute["numeric_value"])
+    except (TypeError, ValueError, OverflowError):
         return False
 
 
