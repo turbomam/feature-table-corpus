@@ -1,0 +1,144 @@
+{
+ "contig_collections": [
+  {
+   "collection_id": "genome:1",
+   "collection_type": "isolate",
+   "name": "Example genome",
+   "taxonomic_lineage": [
+    "Bacteria",
+    "Bacillota"
+   ],
+   "generated_by": "run:1",
+   "source_files": [
+    "https://example.org/genome.gff",
+    "https://example.org/genome.fna"
+   ]
+  }
+ ],
+ "contigs": [
+  {
+   "contig_id": "ctg_1",
+   "member_of": [
+    "genome:1"
+   ],
+   "length_bp": 5000,
+   "topology": "linear",
+   "translation_table": 11,
+   "taxonomic_lineage": [
+    "Bacteria"
+   ],
+   "lineage_confidence": 0.9,
+   "generated_by": "run:1",
+   "source_files": [
+    "https://example.org/genome.fna"
+   ]
+  }
+ ],
+ "features": [
+  {
+   "feature_id": "locus_1",
+   "seqid": "ctg_1",
+   "type": "gene",
+   "start": 101,
+   "end": 400,
+   "coordinate_system": "contig",
+   "strand": "+"
+  },
+  {
+   "feature_id": "gene_1",
+   "stable_identifiers": [
+    "locus:EX_0001",
+    "ncbigi:1"
+   ],
+   "seqid": "ctg_1",
+   "source": "Prodigal",
+   "type": "CDS",
+   "start": 101,
+   "end": 400,
+   "coordinate_system": "contig",
+   "score": 55.5,
+   "score_type": "bit_score",
+   "strand": "+",
+   "phase": 0,
+   "attributes": [
+    {
+     "key": "ID",
+     "value": "gene_1"
+    },
+    {
+     "key": "product",
+     "value": "kinase"
+    },
+    {
+     "key": "evalue",
+     "value": "3.4e-28",
+     "attribute_cv_id": "EDAM:data_1667",
+     "numeric_value": 3.4e-28
+    }
+   ],
+   "generated_by": "run:1",
+   "source_files": [
+    "https://example.org/genome.gff"
+   ],
+   "is_selected": true,
+   "is_representative": false,
+   "product": "kinase",
+   "product_source": "KO:K00001",
+   "name": "exaA",
+   "note": [
+    "first note",
+    "second note"
+   ],
+   "dbxref": [
+    "GeneID:1"
+   ],
+   "ontology_term": [
+    "GO:0016301"
+   ],
+   "translated_sequence": "MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA*",
+   "location": {
+    "location_operator": "join",
+    "crosses_origin": false,
+    "parts": [
+     {
+      "seqid": "ctg_1",
+      "start": 101,
+      "end": 250,
+      "strand": "+",
+      "start_status": "exact",
+      "end_status": "exact"
+     },
+     {
+      "seqid": "ctg_1",
+      "start": 251,
+      "end": 400,
+      "strand": "+",
+      "start_status": "exact",
+      "end_status": "after"
+     }
+    ]
+   },
+   "parent": [
+    "locus_1"
+   ]
+  },
+  {
+   "feature_id": "gene_1|pfam|PF00001",
+   "seqid": "gene_1",
+   "type": "PF00001",
+   "start": 5,
+   "end": 90,
+   "coordinate_system": "protein",
+   "parent": [
+    "gene_1"
+   ],
+   "target": {
+    "target_id": "PF00001",
+    "target_start": 1,
+    "target_end": 86,
+    "target_strand": "+",
+    "gap": "M86"
+   }
+  }
+ ]
+}
