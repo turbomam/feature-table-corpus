@@ -68,6 +68,12 @@
     {
      "key": "product",
      "value": "kinase"
+    },
+    {
+     "key": "evalue",
+     "value": "3.4e-28",
+     "attribute_cv_id": "EDAM:data_1667",
+     "numeric_value": 3.4e-28
     }
    ],
    "generated_by": "run:1",
