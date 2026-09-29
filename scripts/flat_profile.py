@@ -36,6 +36,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL = ROOT / "model/schema/ber_feature_model.yaml"
 FLAT = ROOT / "model/flat/ber_feature_model_flat.yaml"
 ROOT_CLASS = "Dataset"
+# Slot constraints the flat columns keep, so a flat row the model would reject is rejected too.
+CONSTRAINTS = ("minimum_value", "maximum_value", "pattern")
 
 
 def _view():
@@ -115,6 +117,9 @@ def schema(view=None):
 
     def attribute(slot, required=False):
         out = {"range": flat_range(view, slot)}
+        for name in CONSTRAINTS:
+            if getattr(slot, name, None) is not None:
+                out[name] = getattr(slot, name)
         if slot.range in view.all_enums():
             enums.add(slot.range)
         if slot.range in view.all_classes():
@@ -129,7 +134,9 @@ def schema(view=None):
         key = identifier(view, owner)
         attrs = {}
         for name, path, slot in columns:
-            attrs[name] = attribute(slot, required=slot.name == key and len(path) == 1)
+            # A column from an expanded struct is required only when the struct is present, which
+            # a flat row can't say, so only a top-level slot keeps required.
+            attrs[name] = attribute(slot, required=len(path) == 1 and bool(slot.required or slot.name == key))
             if name == key:
                 attrs[name]["identifier"] = True
         classes[camel(table)] = {"description": f"One {owner}; derived from the nested model.",
@@ -190,6 +197,20 @@ def put(record, path, value):
     record[path[-1]] = value
 
 
+def unknown_fields(record, paths, prefix=()):
+    """Dotted names of fields in record, or in a struct it holds, that no planned path reaches."""
+    found = []
+    for name, value in record.items():
+        path = prefix + (name,)
+        if path in paths:
+            continue
+        if isinstance(value, dict) and any(p[:len(path)] == path for p in paths):
+            found += unknown_fields(value, paths, path)
+        else:
+            found.append(".".join(path))
+    return sorted(found)
+
+
 def key_column(columns):
     return next(name for name, path, slot in columns if slot.identifier and len(path) == 1)
 
@@ -204,8 +225,8 @@ def flatten(dataset, tables=None):
         key = key_column(columns)
         rows = out.setdefault(table, [])
         for record in dataset.get(collection) or []:
-            known = {path[0] for _, path, _ in columns} | {path[0] for _, path, _, _ in children}
-            unknown = sorted(set(record) - known)
+            paths = [path for _, path, _ in columns] + [path for _, path, _, _ in children]
+            unknown = unknown_fields(record, paths)
             if unknown:
                 raise ValueError(f"{owner} {record.get(key)!r}: {unknown} are not slots of the model")
             row = {name: value for name, path, _ in columns if (value := get(record, path)) is not None}
@@ -227,6 +248,20 @@ def flatten(dataset, tables=None):
 
 def unflatten(flat, tables=None):
     tables = tables or plan()
+    expected = {}
+    for table, _, _, columns, children in tables:
+        key = key_column(columns)
+        expected[table] = {name for name, _, _ in columns}
+        for child, _, slot, fields in children:
+            expected[child] = {key, "ordinal"} | ({slot.name} if fields is None else {n for n, _ in fields})
+    unknown = sorted(set(flat) - set(expected))
+    if unknown:
+        raise ValueError(f"{unknown} are not tables of the flat profile")
+    for table, rows in flat.items():
+        for number, row in enumerate(rows):
+            extra = sorted(set(row) - expected[table])
+            if extra:
+                raise ValueError(f"{table} row {number}: {extra} are not its columns")
     dataset = {}
     for table, owner, collection, columns, children in tables:
         key = key_column(columns)

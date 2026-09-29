@@ -47,8 +47,11 @@ class FlatProfileTests(unittest.TestCase):
             with self.subTest(table):
                 filled = {name for row in flat[table] for name in row}
                 self.assertEqual(sorted({name for name, _, _ in columns} - filled), [])
-                for child, _, _, _ in children:
+                for child, _, slot, fields in children:
                     self.assertTrue(flat.get(child), f"{child} has no row")
+                    wanted = {slot.name} if fields is None else {name for name, _ in fields}
+                    filled = {name for row in flat[child] for name in row}
+                    self.assertEqual(sorted(wanted - filled), [], child)
 
     def test_every_dataset_round_trips(self):
         for path in [EVERY_SLOT] + EXAMPLES:
@@ -71,6 +74,10 @@ class FlatProfileTests(unittest.TestCase):
             flat_profile.flatten(dataset, self.tables)
         with self.assertRaisesRegex(ValueError, "is this a Dataset"):
             flat_profile.flatten({"artifacts": []}, self.tables)
+        nested = copy.deepcopy(self.every)
+        nested["features"][-1]["target"]["typo"] = "lost"
+        with self.assertRaisesRegex(ValueError, r"\['target.typo'\] are not slots"):
+            flat_profile.flatten(nested, self.tables)
         flat = flat_profile.flatten(self.every, self.tables)
         swapped = copy.deepcopy(flat)
         swapped["feature_note"].reverse()
@@ -80,6 +87,22 @@ class FlatProfileTests(unittest.TestCase):
         orphan["feature_dbxref"][0]["feature_id"] = "missing"
         with self.assertRaisesRegex(ValueError, "has no feature row"):
             flat_profile.unflatten(orphan, self.tables)
+        misspelled = copy.deepcopy(flat)
+        misspelled["feature"][-1]["target_strat"] = 1
+        with self.assertRaisesRegex(ValueError, r"\['target_strat'\] are not its columns"):
+            flat_profile.unflatten(misspelled, self.tables)
+        with self.assertRaisesRegex(ValueError, "not tables of the flat profile"):
+            flat_profile.unflatten({**flat, "feature_notes": []}, self.tables)
+
+    def test_the_flat_schema_keeps_the_model_constraints(self):
+        import yaml
+        classes = yaml.safe_load(flat_profile.FLAT.read_text())["classes"]
+        feature, parts = classes["Feature"]["attributes"], classes["FeatureLocationParts"]["attributes"]
+        self.assertTrue(all(feature[n].get("required") for n in ("feature_id", "seqid", "start", "end",
+                                                                 "coordinate_system")))
+        self.assertEqual((feature["start"]["minimum_value"], feature["phase"]["maximum_value"]), (1, 2))
+        self.assertEqual(parts["start"]["minimum_value"], 1)
+        self.assertNotIn("required", feature["target_id"])
 
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:

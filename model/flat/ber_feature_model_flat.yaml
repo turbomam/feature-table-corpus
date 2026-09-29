@@ -72,12 +72,15 @@ classes:
         identifier: true
       length_bp:
         range: integer
+        minimum_value: 1
         description: Contig length in base pairs.
       topology:
         range: TopologyEnum
         description: Declared reference topology; circular locations also require length_bp.
       translation_table:
         range: integer
+        minimum_value: 1
+        maximum_value: 33
         description: NCBI genetic code used to translate coding features on this contig, such as 11 for
           bacteria and archaea or 4 for Mycoplasma.
       lineage_confidence:
@@ -149,6 +152,7 @@ classes:
         description: The reference sequence that start and end are measured along, such as GFF3 column
           1 or BED chrom; interpreted within its assembly context. A contig for contig coordinates; for
           protein coordinates, the CDS whose translation they count residues of.
+        required: true
       source:
         range: string
         description: GFF3 column 2, the producing tool and version, e.g. "Prodigal v2.6.3_patched".
@@ -157,15 +161,20 @@ classes:
         description: GFF3 column 3, nominally a Sequence Ontology term or accession.
       start:
         range: integer
+        minimum_value: 1
         description: 1-based inclusive start; when location is present this is only the minimum reported
           part coordinate, not a claim that gaps are occupied.
+        required: true
       end:
         range: integer
+        minimum_value: 1
         description: 1-based inclusive end, always >= start; when location is present this is only the
           maximum reported part coordinate.
+        required: true
       coordinate_system:
         range: CoordinateSystemEnum
         description: Which coordinate space `start`/`end` are measured in.
+        required: true
       score:
         range: float
         description: GFF3 column 6.
@@ -177,6 +186,8 @@ classes:
         description: GFF3 column 7.
       phase:
         range: integer
+        minimum_value: 0
+        maximum_value: 2
         description: GFF3 column 8. One of 0, 1, 2; only meaningful when type is CDS.
       generated_by:
         range: string
@@ -215,9 +226,11 @@ classes:
           gene ID.
       target_start:
         range: integer
+        minimum_value: 1
         description: First aligned position on the target, one-based and inclusive.
       target_end:
         range: integer
+        minimum_value: 1
         description: Last aligned position on the target, one-based and inclusive.
       target_strand:
         range: StrandEnum
@@ -363,11 +376,13 @@ classes:
         required: true
       start:
         range: integer
+        minimum_value: 1
         description: 1-based inclusive start; when location is present this is only the minimum reported
           part coordinate, not a claim that gaps are occupied.
         required: true
       end:
         range: integer
+        minimum_value: 1
         description: 1-based inclusive end, always >= start; when location is present this is only the
           maximum reported part coordinate.
         required: true
