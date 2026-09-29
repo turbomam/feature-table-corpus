@@ -360,8 +360,11 @@ def quiet_linkml_map():
 
     linkml-map 0.5.4 logs "Unexpected: <id> for type ..." and "Unknown target range ..." when it
     maps a reference such as Parent, which the mapping scripts handle themselves. Errors still go
-    to stderr; warnings are counted, and each roundtrip reports the count (hidden_warnings).
+    to stderr; warnings are counted from this call on, and each roundtrip reports the count
+    (hidden_warnings).
     """
+    # Each script's main calls this first, so the count starts again for every invocation.
+    HIDDEN.count, HIDDEN.first = 0, None
     logger = logging.getLogger("linkml_map")
     logger.setLevel(logging.WARNING)
     logger.propagate = False

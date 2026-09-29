@@ -408,6 +408,17 @@ class HiddenWarningTests(unittest.TestCase):
         self.assertEqual(report["linkml_map_warnings"], 4)
         self.assertIn("for type Feature", report["first_linkml_map_warning"])
 
+    def test_each_invocation_counts_only_its_own_warnings(self):
+        import contextlib
+        import io
+        reports = []
+        for _ in range(2):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(mapping.main(["roundtrip", str(FIXTURE)]), 0)
+            reports.append(json.loads(out.getvalue().splitlines()[-2])["linkml_map_warnings"])
+        self.assertEqual(reports, [4, 4])
+
     def test_linkml_map_errors_still_reach_stderr(self):
         import contextlib
         import io
