@@ -17,7 +17,7 @@ import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, position, value_text  # noqa: E402
+from img_functional_gff import DialectError, LINE_BREAKS, checked, convert, finite, position, spelled, value_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "model/dialects/img-tmhmm-signalp-gff.yaml"
@@ -131,23 +131,29 @@ def parse(path, slots=None):
         raise DialectError(f"can't read: {error}") from None
 
 
-def write_row(row):
+def write_row(row, spelling=None):
+    """One GFF line; spelling is as for img_functional_gff.write_row."""
     where = f"line {row.get('line', '?')}"
+    spelling = spelling or {}
+    texts = iter(spelling.get("values") or [])
     parts = []
     for key in row["attribute_order"]:
-        text = checked(value_text(row[slot_name(key)]), f"{where} {key}", LINE_BREAKS + (";",))
+        text = checked(spelled(row[slot_name(key)], next(texts, None)), f"{where} {key}", LINE_BREAKS + (";",))
         parts.append(f"{checked(key, where, LINE_BREAKS + (';', '='))}={text}")
     columns = [row["seqid"], row["source"], row["type"], str(row["start"]), str(row["end"]),
-               value_text(row["score"]) if "score" in row else ".", row["strand"],
+               spelled(row["score"], spelling.get("score")) if "score" in row else ".", row["strand"],
                str(row["phase"]) if "phase" in row else ".", ";".join(parts)]
     for column in columns[:8]:
         checked(column, where, LINE_BREAKS)
     return "\t".join(columns)
 
 
-def write(document):
-    """GFF text for a document, refused unless it parses back to the same rows."""
-    text = "".join(write_row(row) + "\n" for row in document["rows"])
+def write(document, spellings=None):
+    """GFF text for a document, refused unless it parses back to the same rows.
+
+    spellings is as for img_functional_gff.write."""
+    spellings = spellings or [None] * len(document["rows"])
+    text = "".join(write_row(row, spelling) + "\n" for row, spelling in zip(document["rows"], spellings, strict=True))
     try:
         text.encode("utf-8")
     except UnicodeEncodeError as error:

@@ -1,0 +1,52 @@
+id: https://w3id.org/ber-data/transforms/img-tmhmm-signalp-gff-to-feature-model
+title: IMG TMHMM and SignalP GFF rows to the feature model
+description: >-
+  linkml-map specification from the img_tmhmm_signalp_gff dialect
+  (model/dialects/img-tmhmm-signalp-gff.yaml) to Feature in model/schema/ber_feature_model.yaml,
+  for the TMHMM segment (_tmh) and SignalP cleavage site (_cleavage_sites) files. The reverse
+  specification is generated from this one with `linkml-map invert`, not written by hand.
+comments:
+  - >-
+    A segment or cleavage site is on protein coordinates: its seqid is the CDS whose translation
+    its positions count along, and that CDS is also its only parent (docs/protein-coordinates.md).
+    The files carry no CDS rows, so scripts/img_tmhmm_signalp_map.py maps them together with the
+    same genome's functional annotation GFF, which supplies the contigs and CDS features.
+  - >-
+    The script adds what linkml-map 0.5.4 can't express, as for the per-method hit files: column 9
+    as one Attribute per value in file order, as text; the constant coordinate_system ("protein");
+    the parent, which is the seqid; mirror_source on the inverted strand mapping; and feature_id,
+    <seqid>_<start>_<end>|<method>|<type>. SignalP rows have no ID, so the source ID is built from
+    the row, as for the taxon bundle's tables
+    (https://github.com/turbomam/feature-table-corpus/issues/98).
+  - >-
+    score_type is left unset: SignalP's column 6 is not its D-score (which stays an Attribute), and
+    nothing retained from the files says which score it is. TMHMM rows have no score.
+source_schema:
+  name: img_tmhmm_signalp_gff
+  source_file: model/dialects/img-tmhmm-signalp-gff.yaml
+target_schema:
+  name: ber-feature-model
+  source_file: model/schema/ber_feature_model.yaml
+class_derivations:
+  Feature:
+    populated_from: ImgTmhmmSignalpGffRow
+    slot_derivations:
+      seqid:
+        populated_from: seqid
+      source:
+        populated_from: source
+      type:
+        # An expression, so the enum value is passed through as its text.
+        expr: type
+      start:
+        populated_from: start
+      end:
+        populated_from: end
+      score:
+        populated_from: score
+      strand:
+        populated_from: strand
+enum_derivations:
+  StrandEnum:
+    populated_from: ImgTopologyStrand
+    mirror_source: true
