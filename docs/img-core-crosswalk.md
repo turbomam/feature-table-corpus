@@ -9,10 +9,10 @@ where they only overlap. No row is `skos:exactMatch`, because the source doesn't
 bases or value spellings.
 
 Each subject is a slot, typed `rdf property`, with its SSSOM `subject_label` naming the class it
-is used on, such as `Feature.start` or `LocationPart.start`; the same slot can map to different
-columns on different classes. A list of structs, such as `Feature.attributes` or
-`FeatureLocation.parts`, maps through its items' slots (`Attribute.key`, `LocationPart.start`),
-not as one column. A hit table's `gene_oid` maps to both `seqid` and `parent`, because the model
+is used on, such as `Feature.start` or `AlignmentTarget.target_start`; a slot keeps its URI whichever
+table it maps. A list of structs, such as `Feature.attributes`, maps through its items' slots (`Attribute.key`,
+`Attribute.value`), not as one column, and a table that maps any slot of a struct maps all of
+that struct's required slots. A hit table's `gene_oid` maps to both `seqid` and `parent`, because the model
 requires both on a protein-coordinate Feature.
 SSSOM maps one column to one slot, so a value built from two columns is two `relatedMatch`
 rows: `Feature.dbxref` is `gene_ext_links.db_name`, a colon, then `gene_ext_links.id`. A table
@@ -32,7 +32,6 @@ from the same database: `2708743150.gff` and its tables are a `img_core_v400` ta
 
 - `gene` is a Feature on contig coordinates: `start_coord`, `end_coord`, `strand`, `locus_type`,
   `product_name`, and `scaffold` and `taxon` as integer keys to contig and genome tables.
-- `gene_frag_coords` is `FeatureLocation.parts`, one row per part ordered by `frag_order`.
 - `gene_feature_tags` is `Attribute`: an open tag/value table.
 - The per-method hit tables (`gene_pfam_families`, `gene_cog_groups`, `gene_ko_terms` and others)
   are protein-coordinate Features on the gene: `query_start` and `query_end` are `start` and `end`,
@@ -42,6 +41,9 @@ from the same database: `2708743150.gff` and its tables are a `img_core_v400` ta
 
 ## What doesn't line up
 
+- Gene locations aren't mapped yet. `gene_frag_coords` holds each part's start and end, but a
+  `LocationPart` also needs a seqid, strand and endpoint status, and `is_partial_w` doesn't say
+  which end is partial: https://github.com/turbomam/feature-table-corpus/issues/119.
 - The view has no scaffold or taxon table, so `Contig.length_bp`, `topology` and
   `ContigCollection` have no column here. `docs/genes.md` in bridge-schemas joins `gene` to a
   `taxon` table, so the database has one; the view leaves it out.
