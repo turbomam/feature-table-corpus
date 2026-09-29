@@ -156,8 +156,10 @@ contigs, checked 2026-09-28) no contig mixes tables: 1,035 contigs get 11, 5 get
 2 get 25. `nmdc-pfam-protein` sets `score_type: bit_score` on its HMMER rows, and no other profile
 sets `score_type`. `scripts/validate_closed.py` rejects a contig whose `translation_table`
 disagrees with the `translation_table` attribute of any contig-coordinate CDS on it.
-Filling `Contig.length_bp` from `##sequence-region` is not part of this: the
-`gff3-contig` profile deliberately does not infer contig lengths from declared regions.
+`gff3-contig` fills `Contig.length_bp` from `##sequence-region` only under the `ncbi` metadata
+profile, and only from a single region starting at 1, since NCBI writes one whole-record region per
+record ([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)). For any other
+producer it infers no length from a declared region.
 
 ## Representative isoforms
 

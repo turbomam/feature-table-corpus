@@ -30,8 +30,9 @@ notes:
     data rows. The original pair of vendored NCBI RefSeq GFF3 files carry 4 each (gff-version, sequence-region,
     species, and a closing `###`). GFF3's `##sequence-region` declares a region, not necessarily
     a full sequence length; `##species` is document-level organism metadata, not a taxonomic
-    lineage for each contig. Both Contig.length_bp and Contig.taxonomic_lineage use other
-    sidecar files here instead (see their own notes). This directive count excludes single-#
+    lineage for each contig. Contig.taxonomic_lineage uses other sidecar files here instead, and
+    Contig.length_bp does too, except that gff3-contig takes an NCBI whole-record region as the
+    length (see their own notes). This directive count excludes single-#
     comments: the Prodigal example has 5 Sequence Data and 5 Model Data comments interleaved
     with feature rows, including sequence lengths and per-sequence prediction settings.
     The source-document reader preserves these with explicit sequence scope;
@@ -376,8 +377,13 @@ slots:
     minimum_value: 1
     description: Contig length in base pairs.
     notes:
-      - Compute directly from the contig's own FASTA record, not from a summary statistics
-        file, so it is exact rather than an average.
+      - Compute directly from the contig's own FASTA record where there is one, not from a
+        summary statistics file, so it is exact rather than an average.
+      - gff3-contig 4.0.0 also takes it from a GFF3 sequence-region directive, under the ncbi metadata
+        profile only and only from a single region starting at 1, because NCBI writes one region
+        per record from 1 to the record's length (https://github.com/turbomam/feature-table-corpus/issues/46).
+        GFF3 lets a region cover part of a sequence, so no other producer's regions are used;
+        https://github.com/turbomam/feature-table-corpus/issues/126 tracks measuring them.
   taxonomic_lineage:
     title: Taxonomic lineage
     multivalued: true
