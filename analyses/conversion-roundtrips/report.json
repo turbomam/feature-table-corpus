@@ -23,7 +23,7 @@
     },
     "nmdc-pfam-protein/5.0.0": {
       "path": "model/profiles/nmdc-pfam-protein.yaml",
-      "sha256": "35544e2f5eea9e877968c41e8aa55157347033006d29dfb942a2bafa15061e41"
+      "sha256": "a8152024295fb6a6b7529a2cfa47629aeb3a276a52f8eaf77551936263b1b680"
     }
   },
   "query_performance": "not-measured",

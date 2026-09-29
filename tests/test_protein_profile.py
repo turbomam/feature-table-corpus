@@ -180,6 +180,14 @@ class ProteinProfileTests(unittest.TestCase):
             pairs = {a["key"]: a["value"] for a in hit["attributes"]}
             self.assertEqual(hit["target"], {"target_id": hit["type"], "target_start": int(pairs["model_start"]),
                                              "target_end": int(pairs["model_end"])})
+        # A row without model positions has no target to give, so it is refused.
+        text = PFAM.read_bytes()
+        first = next(line for line in text.splitlines() if b"model_start=" in line and not line.startswith(b"#"))
+        stripped = first.replace(b";model_start=", b";x_start=").replace(b";model_end=", b";x_end=")
+        self.assertNotEqual(stripped, first)
+        with self.assertRaises(ConversionError) as caught:
+            imported(text.replace(first, stripped), self.context)
+        self.assertEqual(caught.exception.code, "alignment-target")
         for change in ({"target_end": 1}, {"target_id": "PF00001"}):
             edited = deepcopy(self.bundle)
             hit = next(f for f in edited["dataset"]["features"] if f["coordinate_system"] == "protein")
@@ -235,7 +243,7 @@ class ProteinProfileTests(unittest.TestCase):
         for _ in range(20):
             start = rng.randint(1, 200); end = rng.randint(start, 300)
             content = (f"# observed metadata\r\nprotein%20alias\tHMMER 3.1b2\tPF13358\t{start:05}\t{end}\t1e1\t.\t.\t"
-                       "ID=hit;unknown=x%3By;unknown=;Note=a%2Cb,,c;\r\n").encode()
+                       "ID=hit;unknown=x%3By;unknown=;Note=a%2Cb,,c;model_start=1;model_end=40;\r\n").encode()
             b = imported(content, c)
             self.assertEqual(export_source(b, mode="exact", protein_context=c), content)
             again = imported(export_source(b, mode="reconstruct", protein_context=c), c)

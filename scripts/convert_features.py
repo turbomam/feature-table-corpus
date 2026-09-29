@@ -272,13 +272,13 @@ def protein_feature(columns, record_id, bindings):
         # (docs/pfam_annotation_gff.md). Reconstruction never reads this slot.
         feature["score_type"] = "bit_score"
     # HMMER's model_start and model_end are positions on the Pfam model the type names (issue 94).
+    # Every row needs both, so every hit has a target.
     starts, ends = values(feature["attributes"], "model_start"), values(feature["attributes"], "model_end")
-    if starts or ends:
-        require(len(starts) == 1 and len(ends) == 1
-                and all(re.fullmatch(r"[1-9][0-9]*", v) for v in starts + ends),
-                "alignment-target", f"{record_id}: model_start and model_end need one positive integer each")
-        feature["target"] = {"target_id": feature["type"], "target_start": int(starts[0]),
-                             "target_end": int(ends[0])}
+    require(len(starts) == 1 and len(ends) == 1
+            and all(re.fullmatch(r"[1-9][0-9]*", v) for v in starts + ends),
+            "alignment-target", f"{record_id}: model_start and model_end need one positive integer each")
+    feature["target"] = {"target_id": feature["type"], "target_start": int(starts[0]),
+                         "target_end": int(ends[0])}
     mapping["protein_id"] = protein
     return rows, mapping
 
