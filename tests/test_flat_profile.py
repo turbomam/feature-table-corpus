@@ -160,11 +160,11 @@ class FlatProfileTests(unittest.TestCase):
         # https://github.com/turbomam/feature-table-corpus/issues/121: 1e400 parses as infinity.
         dataset = copy.deepcopy(self.every)
         dataset["features"][1]["score"] = json.loads("1e400")
-        with self.assertRaisesRegex(ValueError, r"\['features\[1\]\.score'\] is not a finite number"):
+        with self.assertRaisesRegex(ValueError, r"data\['features'\]\[1\]\['score'\] is not a finite number"):
             flat_profile.flatten(dataset, self.tables)
         flat = flat_profile.flatten(self.every, self.tables)
         flat["contig"][0]["lineage_confidence"] = float("nan")
-        with self.assertRaisesRegex(ValueError, r"contig\[0\]\.lineage_confidence"):
+        with self.assertRaisesRegex(ValueError, r"\['contig'\]\[0\]\['lineage_confidence'\]"):
             flat_profile.unflatten(flat, self.tables)
         with tempfile.TemporaryDirectory() as tmp:
             aliased = Path(tmp) / "aliased.yaml"
@@ -188,6 +188,24 @@ class FlatProfileTests(unittest.TestCase):
                 self.assertEqual(flat_profile.main(["flatten", str(source), str(out)]), 1)
             self.assertIn("not a finite number", err.getvalue())
             self.assertFalse(out.exists())
+
+    def test_deep_input_is_a_named_error_not_a_recursion_error(self):
+        # A 5,000-deep list under an unknown field: the value check doesn't recurse, so the input
+        # gets its normal refusal. Deeper than json.loads can read is a named load error.
+        deep = []
+        for _ in range(5000):
+            deep = [deep]
+        with self.assertRaisesRegex(ValueError, "not Dataset slots"):
+            flat_profile.flatten({"extra": deep}, self.tables)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "deep.json"
+            path.write_text("[" * 100000 + "]" * 100000)
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                self.assertEqual(flat_profile.main(["roundtrip", str(path)]), 1)
+                self.assertEqual(flat_profile.main(["flatten", str(path), str(Path(tmp) / "o.json")]), 1)
+            self.assertIn("nested too deeply", out.getvalue())
+            self.assertIn("nested too deeply", err.getvalue())
 
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:

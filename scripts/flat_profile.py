@@ -27,7 +27,6 @@ schema has no field a scalar-only profile would reject.
 """
 import argparse
 import json
-import math
 from pathlib import Path
 import sys
 
@@ -291,23 +290,12 @@ def key_column(columns):
     return next(name for name, path, slot in columns if slot.identifier and len(path) == 1)
 
 
-def nonfinite(value, where=""):
-    """Paths of infinite or NaN numbers in value. JSON has no spelling for them, and a number too
-    large for a float (1e400) parses as infinity, so both commands refuse them by name. Input can't
-    hold a cycle: JSON has no references, and load() refuses YAML anchors and aliases."""
-    if isinstance(value, float) and not math.isfinite(value):
-        return [where or "value"]
-    if isinstance(value, dict):
-        return [p for k, v in value.items() for p in nonfinite(v, f"{where}.{k}" if where else str(k))]
-    if isinstance(value, list):
-        return [p for i, v in enumerate(value) for p in nonfinite(v, f"{where}[{i}]")]
-    return []
-
-
 def refuse_nonfinite(value):
-    found = nonfinite(value)
-    if found:
-        raise ValueError(f"{found[:5]} {'is' if len(found) == 1 else 'are'} not a finite number")
+    """Refuse a non-finite number (JSON has no spelling for one, and 1e400 parses as infinity) or a
+    container that holds itself. validate_closed._check_values already does this without recursing,
+    so input of any depth gets a ValueError, not a RecursionError."""
+    from validate_closed import _check_values
+    _check_values(value)
 
 
 def flatten(dataset, tables=None):
@@ -491,6 +479,8 @@ def main(argv=None):
         for path in args.datasets:
             try:
                 problems = roundtrip(load(path))
+            except RecursionError:
+                problems = ["load: nested too deeply to read"]
             except (ValueError, OSError, UnicodeDecodeError, yaml.YAMLError) as error:
                 # json.JSONDecodeError is a ValueError; an unreadable or refused file fails, and the
                 # rest are still checked.
@@ -507,7 +497,10 @@ def main(argv=None):
         try:
             data = (flatten(load(args.input)) if args.command == "flatten"
                     else unflatten(json.loads(args.input.read_text(encoding="utf-8"))))
-        except (ValueError, OSError, json.JSONDecodeError) as error:
+        except RecursionError:
+            print(f"{args.command}: nested too deeply to read", file=sys.stderr)
+            return 1
+        except (ValueError, OSError, UnicodeDecodeError, yaml.YAMLError) as error:
             print(f"{args.command}: {error}", file=sys.stderr)
             return 1
         if args.command == "unflatten":
