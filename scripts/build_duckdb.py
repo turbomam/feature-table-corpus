@@ -26,6 +26,10 @@ CONTIG_COLUMNS = (
     "contig_id", "length_bp", "lineage_confidence", "taxonomic_lineage",
     "generated_by", "source_files", "topology", "member_of", "translation_table",
 )
+#: Attribute as stored: the model's optional attribute_cv_id and numeric_value (issue 42) are null
+#: when a source doesn't set them.
+ATTRIBUTE_TYPE = "STRUCT(key VARCHAR, value VARCHAR, attribute_cv_id VARCHAR, numeric_value DOUBLE)"
+OPTIONAL_ATTRIBUTE_FIELDS = {"attribute_cv_id": None, "numeric_value": None}
 FEATURE_COLUMNS = (
     "feature_id", "stable_identifiers", "seqid", "source", "type", "start", "end", "coordinate_system",
     "score", "score_type", "strand", "phase", "generated_by", "source_files", "is_selected",
@@ -79,7 +83,7 @@ def _populate_database(data, db_path):
                 translation_table INTEGER
             )
         """)
-        con.execute("""
+        con.execute(f"""
             CREATE TABLE feature (
                 feature_id VARCHAR PRIMARY KEY,
                 stable_identifiers VARCHAR[],
@@ -108,7 +112,7 @@ def _populate_database(data, db_path):
                 ontology_term VARCHAR[],
                 translated_sequence VARCHAR,
                 parent VARCHAR[],
-                attributes STRUCT(key VARCHAR, value VARCHAR)[],
+                attributes {ATTRIBUTE_TYPE}[],
                 location JSON,
                 target JSON
             )
@@ -121,14 +125,18 @@ def _populate_database(data, db_path):
             # DuckDB interprets a Python dict with exactly key/value keys as a MAP.
             # Cast JSON explicitly so the generic attribute stays a STRUCT.
             placeholders = ", ".join(
-                "?::JSON::STRUCT(key VARCHAR, value VARCHAR)[]" if c == "attributes" else "?::JSON" if c in ("location", "target") else "?"
+                f"?::JSON::{ATTRIBUTE_TYPE}[]" if c == "attributes" else "?::JSON" if c in ("location", "target") else "?"
                 for c in columns
             )
             for row in data.get(collection) or []:
-                con.execute(
-                    f"INSERT INTO {table} VALUES ({placeholders})",
-                    [json.dumps(row[c]) if c in ("attributes", "location", "target") and row.get(c) is not None else row.get(c) for c in columns],
-                )
+                values = []
+                for c in columns:
+                    value = row.get(c)
+                    if c == "attributes" and value is not None:
+                        # DuckDB's JSON-to-STRUCT cast needs every field; the optional ones are null.
+                        value = [{**OPTIONAL_ATTRIBUTE_FIELDS, **a} for a in value]
+                    values.append(json.dumps(value) if c in ("attributes", "location", "target") and value is not None else value)
+                con.execute(f"INSERT INTO {table} VALUES ({placeholders})", values)
         counts = (
             con.execute("SELECT count(*) FROM contig").fetchone()[0],
             con.execute("SELECT count(*) FROM feature").fetchone()[0],

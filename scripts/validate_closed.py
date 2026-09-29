@@ -48,6 +48,13 @@ def make_validator(schema_path, class_name="Dataset"):
     return jsonschema.Draft202012Validator(selected, format_checker=jsonschema.FormatChecker())
 
 
+def attribute_number_agrees(attribute):
+    try:
+        return float(attribute["value"]) == float(attribute["numeric_value"])
+    except (TypeError, ValueError):
+        return False
+
+
 def dataset_errors(data):
     """Check a structurally valid, self-contained harmonized Dataset.
 
@@ -133,6 +140,11 @@ def dataset_errors(data):
 
         if feature["start"] > feature["end"]:
             error("start must be <= end")
+        for attribute in feature.get("attributes") or []:
+            # numeric_value is value read as a number (issue 42), so the two must agree.
+            if attribute.get("numeric_value") is not None and not attribute_number_agrees(attribute):
+                error(f"attribute {attribute['key']!r}: numeric_value {attribute['numeric_value']!r} "
+                      f"disagrees with value {attribute['value']!r}")
         target = feature.get("target")
         if target and target["target_start"] > target["target_end"]:
             error("target_start must be <= target_end")
