@@ -383,8 +383,18 @@ def roundtrip(dataset, tables=None):
         back = unflatten(flatten(dataset, tables), tables)
     except ValueError as error:
         return [str(error)]
-    expected = {k: v for k, v in dataset.items() if v}
+    expected = without_empty_lists(dataset)
     return [] if back == expected else [f"the Dataset changed: {first_difference(expected, back)}"]
+
+
+def without_empty_lists(value):
+    """The Dataset with every empty list removed. A child table has no row for an empty list, so
+    [] and an absent slot flatten alike, as present() in scripts/img_functional_map.py treats them."""
+    if isinstance(value, dict):
+        return {k: without_empty_lists(v) for k, v in value.items() if v != []}
+    if isinstance(value, list):
+        return [without_empty_lists(v) for v in value]
+    return value
 
 
 def first_difference(a, b):
@@ -449,6 +459,15 @@ def main(argv=None):
         except (ValueError, OSError, json.JSONDecodeError) as error:
             print(f"{args.command}: {error}", file=sys.stderr)
             return 1
+        if args.command == "unflatten":
+            # Cross-column rules such as start <= end live in the closed Dataset checks, which a
+            # flat row's own schema can't express; a Dataset that fails them is not written.
+            from validate_closed import make_validator, validation_errors
+            errors = validation_errors(data, make_validator(str(MODEL)))
+            if errors:
+                for error in errors[:20]:
+                    print(f"unflatten: {error}", file=sys.stderr)
+                return 1
         text = json.dumps(data, indent=1) + "\n"
     with open(args.output, "x", encoding="utf-8") as handle:
         handle.write(text)

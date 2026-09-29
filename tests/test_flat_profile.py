@@ -131,6 +131,24 @@ class FlatProfileTests(unittest.TestCase):
         self.assertEqual((list(rule["preconditions"]["slot_conditions"]), list(rule["postconditions"]["slot_conditions"])),
                          (["score_type"], ["score"]))
 
+    def test_an_empty_list_round_trips_as_absent(self):
+        dataset = copy.deepcopy(self.every)
+        dataset["features"][0]["parent"] = []
+        dataset["features"][0]["note"] = []
+        self.assertEqual(flat_profile.roundtrip(dataset, self.tables), [])
+
+    def test_unflatten_refuses_a_dataset_the_model_rejects(self):
+        flat = flat_profile.flatten(self.every, self.tables)
+        flat["feature"][0].update(start=10, end=5)
+        with tempfile.TemporaryDirectory() as tmp:
+            source, out = Path(tmp) / "flat.json", Path(tmp) / "back.json"
+            source.write_text(json.dumps(flat))
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(flat_profile.main(["unflatten", str(source), str(out)]), 1)
+            self.assertIn("start", err.getvalue())
+            self.assertFalse(out.exists())
+
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             flat, back = Path(tmp) / "flat.json", Path(tmp) / "back.json"

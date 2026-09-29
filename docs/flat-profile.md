@@ -41,7 +41,10 @@ see, so `unflatten` checks it: a Feature with a location must have at least one 
 - `python3 scripts/flat_profile.py flatten DATASET OUT` writes `{table: [row, ...]}` as JSON, and
   `unflatten` rebuilds the Dataset. Both refuse a field the model doesn't have, a child row with no
   owner, and ordinals out of order.
-- `python3 scripts/flat_profile.py roundtrip DATASET...` requires each Dataset back unchanged.
+- `python3 scripts/flat_profile.py roundtrip DATASET...` requires each Dataset back unchanged. An
+  empty list has no child rows, so it comes back as an absent slot, which the comparison accepts.
+- `unflatten` also runs the closed Dataset checks (`scripts/validate_closed.py`), because rules
+  across columns or rows, such as start not after end, can't be written on one flat row.
 
 The tests round-trip both harmonized examples, the BED12 conversion bundle, the NMDC Pfam protein
 context, and [a fixture](../tests/fixtures/flat-profile/every-slot.json) that sets every slot of
