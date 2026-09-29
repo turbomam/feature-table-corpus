@@ -159,6 +159,17 @@ class FlatProfileTests(unittest.TestCase):
         flat["contig"][0]["lineage_confidence"] = float("nan")
         with self.assertRaisesRegex(ValueError, r"contig\[0\]\.lineage_confidence"):
             flat_profile.unflatten(flat, self.tables)
+        cycle = {"features": []}
+        cycle["features"].append(cycle)
+        with self.assertRaisesRegex(ValueError, "contains itself"):
+            flat_profile.flatten(cycle, self.tables)
+        with tempfile.TemporaryDirectory() as tmp:
+            recursive = Path(tmp) / "cycle.yaml"
+            recursive.write_text("extra: &x {self: *x}\n")
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(flat_profile.main(["flatten", str(recursive), str(Path(tmp) / "o.json")]), 1)
+            self.assertIn("contains itself", err.getvalue())
         with tempfile.TemporaryDirectory() as tmp:
             source, out = Path(tmp) / "d.json", Path(tmp) / "flat.json"
             source.write_text(EVERY_SLOT.read_text().replace('"score": 55.5', '"score": 1e400'))
