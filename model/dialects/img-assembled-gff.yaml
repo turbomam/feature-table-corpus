@@ -17,7 +17,7 @@ comments:
     type (it writes misc_RNA as RNA). The other 65 rows here are the misc_bind and misc_feature
     rows the taxon GFF drops. `scripts/img_assembled_gff.py validate FILE --taxon TAXON_GFF`
     checks both directions.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   imgasm: https://w3id.org/ber-data/dialects/img-assembled-gff/

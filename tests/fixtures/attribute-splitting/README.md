@@ -6,7 +6,7 @@ stated in [docs/attributes.md](../../../docs/attributes.md#multivalued-values): 
 multivalued attribute is its own Attribute entry, split before percent-decoding
 (https://github.com/turbomam/feature-table-corpus/issues/39).
 
-- `gff3-contig.gff3` is read by `gff3-contig/3.0.0` (`scripts/convert_features.py`). Its mRNA
+- `gff3-contig.gff3` is read by `gff3-contig/4.0.0` (`scripts/convert_features.py`). Its mRNA
   has `Parent=a,b`, `Dbxref=A:1,B:2`, an encoded comma in `Note=x%2Cy`, and a product with an
   encoded comma, `2%2C1-aminomutase`.
 - `img-functional.gff` is read by the IMG functional dialect and its mapping

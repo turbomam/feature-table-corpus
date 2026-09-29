@@ -21,7 +21,7 @@ comments:
     output has been reported with `evalue=` beside `e-value=` (docs/columns-and-discretion.md).
     A file using either fails as an undeclared key until a real example is added, see
     https://github.com/turbomam/feature-table-corpus/issues/54.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   imgfa: https://w3id.org/ber-data/dialects/img-functional-gff/

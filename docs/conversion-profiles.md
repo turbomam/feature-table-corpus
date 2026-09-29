@@ -44,7 +44,7 @@ internally consistent artifact; it cannot pass comparison with the old original.
 |---|---|---|
 | [`insdc-locations/1.0.0`](../model/profiles/insdc-locations.yaml) | GenBank nucleotide records with qualified references, ordered parts, partial endpoints, circular topology and generic qualifiers. | Reconstruct feature-table blocks from modeled locations and qualifiers; preserve header/sequence text in SourceDocument. Remote, between-base, unknown and mixed-strand locations are refused. |
 | [`nmdc-pfam-protein/5.0.0`](../model/profiles/nmdc-pfam-protein.yaml) | NMDC HMMER Pfam hits with explicit protein-to-CDS bindings, retained translations and amino-acid coordinates. | Reconstruct protein references and attributes without fabricating source Parent tags or exporting contextual CDS rows. Validation/export require the independent original context. |
-| [`gff3-contig/3.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, `product`, `Name`, `Note`, `Dbxref`, and `Ontology_term` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
+| [`gff3-contig/4.0.0`](../model/profiles/gff3-contig.yaml) | Linear contig coordinates, decoded sequence/feature identities, source/type/score/strand/phase; `ID`, `Parent`, `product`, `Name`, `Note`, `Dbxref`, and `Ontology_term` also populate typed slots. Every attribute occurrence remains a generic pair. | Reconstruct nine columns from the Dataset and grouping indices. Repeated IDs/discontinuous features, circular references, protein-relative coordinates, unresolved parents, and ambiguous typed cardinalities are refused. |
 | [`bed12-blocks/1.0.0`](../model/profiles/bed12-blocks.yaml) | One parent interval plus ordered block children. Source `[start,end)` becomes model `[start+1,end]`; chromosome names remain literal. Score and strand use core slots; name, RGB and thick drawing bounds use generic `bed:*` attributes. | Reconstruct twelve columns using the parent and children. Require positive, ordered, nonoverlapping blocks covering the enclosing boundaries. Zero-length intervals, fewer/extra columns and whitespace-delimited variants are refused. |
 
 These restrictions belong to these adapters, not to the full input formats.
@@ -91,7 +91,7 @@ Methanococcus maripaludis S1 `Ga0416744`, 2,005 rows), which need a JGI login to
 ([#52](https://github.com/turbomam/feature-table-corpus/issues/52)), and the vendored NMDC file.
 The Clostridium file is now vendored too, as `corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff`.
 
-- `gff3-contig/3.0.0` rejects both isolate files at their first product name containing a
+- `gff3-contig/4.0.0` rejects both isolate files at their first product name containing a
   comma (`product-cardinality`), for example "glutamate-1-semialdehyde 2,1-aminomutase".
   96 product names in the two files have one. The dialect splits commas only for the keys it
   types as lists (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`,
@@ -481,7 +481,7 @@ which keys are multivalued.
 
 | Source | Keys split on commas | Decoding | Example |
 |---|---|---|---|
-| `gff3-contig/3.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
+| `gff3-contig/4.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
 | `nmdc-pfam-protein/5.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
 | IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
@@ -544,6 +544,14 @@ Typed slots for the GFF3 reserved tags `Name`, `Note`, `Dbxref` and `Ontology_te
 profiles, so `gff3-contig` moved to 3.0.0 and `nmdc-pfam-protein`, whose hits carry `Name`, to
 4.0.0. Bundles made under the earlier versions are refused as unsupported profiles.
 
+`gff3-contig` moved to 4.0.0 when it began filling `Contig.length_bp` from `##sequence-region`
+([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)), under the `ncbi` metadata
+profile only. NCBI writes one region per record, from 1 to the record's length: the RefSeq
+phiX174 GFF3 declares `NC_001422.1 1 5386`, and the vendored GenBank record for the same
+accession says 5386 bp. A contig with no region, more than one, or one that doesn't start at 1
+keeps `length_bp` unset, as does every file read under another metadata profile, because GFF3
+lets a region cover part of a sequence.
+
 `nmdc-pfam-protein` moved to 5.0.0 when its hits gained a typed alignment target
 ([issue 94](https://github.com/turbomam/feature-table-corpus/issues/94)): `target_id` is the Pfam
 accession and `target_start` and `target_end` come from HMMER's `model_start` and `model_end`,
@@ -577,7 +585,7 @@ jsonschema 4.26.0, PyYAML 6.0.3, rfc3987 1.3.8 and Biopython 1.85. Use new outpu
 ```sh
 just conversion-import \
   corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff \
-  gff3-contig/3.0.0 nmdc:wfmgan-11-9ya9xh30.1 \
+  gff3-contig/4.0.0 nmdc:wfmgan-11-9ya9xh30.1 \
   local/conversions/prodigal.json --metadata-profile prodigal
 just conversion-validate local/conversions/prodigal.json \
   --original corpus/sources/nmdc/nmdc_wfmgan-11-9ya9xh30.1_prodigal.gff

@@ -23,7 +23,7 @@ from validate_closed import make_validator, validation_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTEIN = "nmdc-pfam-protein/5.0.0"
-PROFILES = {"gff3-contig/3.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
+PROFILES = {"gff3-contig/4.0.0": "gff3", "bed12-blocks/1.0.0": "bed12", PROTEIN: "gff3",
             "insdc-locations/1.0.0": "genbank"}
 
 
@@ -333,6 +333,15 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
                 # the supplied context instead.
                 contigs.setdefault(feature["seqid"], {"contig_id": feature["seqid"]})
     require(bool(rows), "no-features", "this profile requires at least one feature record")
+    if metadata_profile == "ncbi" and profile != PROTEIN:
+        # NCBI writes one ##sequence-region per record, from 1 to the record's length (issue 46),
+        # so under the ncbi metadata profile such a region gives the contig's length. Any other
+        # shape, or any other producer, leaves length_bp unset: GFF3 itself lets a region cover
+        # part of a sequence, so nothing is inferred from it.
+        for contig_id, contig in contigs.items():
+            declared = regions.get(contig_id, [])
+            if len(declared) == 1 and declared[0][0] == 1:
+                contig["length_bp"] = declared[0][1]
     protein_ids = {m["feature_ids"][0]: m.get("protein_id") for m in mappings}
     for feature in rows:
         region_id = protein_ids[feature["feature_id"]] if profile == PROTEIN else feature["seqid"]
@@ -381,7 +390,7 @@ def reconstruct_record(profile, by_id, mapping):
         projected = {**feature, "seqid": mapping["protein_id"]}
         projected.pop("parent")
         projected.pop("target", None)
-        return reconstruct_record("gff3-contig/3.0.0", {feature["feature_id"]: projected}, mapping)
+        return reconstruct_record("gff3-contig/4.0.0", {feature["feature_id"]: projected}, mapping)
     if PROFILES[profile] == "gff3":
         pairs = feature["attributes"]
         typed = {"ID": [feature["feature_id"]] if mapping["source_has_id"] else [],
