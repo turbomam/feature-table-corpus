@@ -247,7 +247,7 @@ def difference(dataset, again):
 
 
 def roundtrip(path):
-    """Return (problems, report) for one file; no problems means the round trip held."""
+    """Return (problems, report) for one file; no problems means it came back byte for byte."""
     report = {"file": str(path)}
     try:
         document = dialect.parse(path)

@@ -1,0 +1,52 @@
+description: >-
+  For each dialect under model/dialects/, one real input vendored in the repository that maps to the
+  feature model and back with nothing skipped, refused or changed, byte for byte. Keeping the
+  source's spelling of numbers alongside the model data counts as unchanged
+  (https://github.com/turbomam/feature-table-corpus/issues/107). tests/test_clean_round_trips.py runs
+  every `clean` entry and fails if a dialect has no entry. A `gap` entry names the issue that tracks
+  it and has no input yet; when one is vendored, the entry becomes `clean`.
+dialects:
+  img-functional-gff:
+    status: clean
+    mapping: img_functional_map
+    inputs:
+    - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff
+  img-per-method-gff:
+    status: clean
+    mapping: img_per_method_map
+    inputs:
+    - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff
+    - - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_pfam.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cog.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_ko_ec.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tigrfam.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_smart.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_supfam.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cath_funfam.gff
+  img-tmhmm-signalp-gff:
+    status: clean
+    mapping: img_tmhmm_signalp_map
+    inputs:
+    - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_functional_annotation.gff
+    - - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_tmh.gff
+      - corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_cleavage_sites.gff
+  img-taxon-bundle:
+    status: clean
+    mapping: img_taxon_bundle_map
+    inputs:
+    - corpus/sources/jgi-img/IMG_AP-1121004/2708743150.gff
+  img-assembled-gff:
+    status: clean
+    mapping: img_assembled_gff_map
+    inputs:
+    - corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff
+  phytozome-gene-exons-gff3:
+    status: gap
+    issue: https://github.com/turbomam/feature-table-corpus/issues/107
+    note: >-
+      No Phytozome genome is vendored yet. TAIR10 round-trips byte for byte outside CI, but TAIR
+      restricts redistribution; Populus trichocarpa v4.1 (Phytozome-533) is the candidate.
+  phytozome-annotation-info:
+    status: gap
+    issue: https://github.com/turbomam/feature-table-corpus/issues/107
+    note: Same input as phytozome-gene-exons-gff3; the two files map together.
