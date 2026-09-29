@@ -277,6 +277,16 @@ class ConversionTests(unittest.TestCase):
                 export_source(old, mode="reconstruct")
             self.assertEqual(caught.exception.code, "unsupported-profile")
 
+    def test_an_id_repeated_on_opposite_strands_is_refused_by_name(self):
+        """Issue 38: older NMDC runs give a misc_feature and a CDS on opposite strands one ID."""
+        content = (b"##gff-version 3\n"
+                   b"ctg\tINFERNAL 1.1.2\tmisc_feature\t1\t525\t.\t+\t.\tID=Ga0495594_0816865_1_525\n"
+                   b"ctg\tGeneMark.hmm-2 v1.05\tCDS\t1\t525\t.\t-\t0\tID=Ga0495594_0816865_1_525\n")
+        with self.assertRaises(ConversionError) as caught:
+            bundle(content)
+        self.assertEqual(caught.exception.code, "dataset-invalid")
+        self.assertIn("duplicate feature_id 'Ga0495594_0816865_1_525'", str(caught.exception))
+
     def test_reserved_tags_fill_typed_slots_and_stay_generic(self):
         """Issue 43: Name, Note, Dbxref and Ontology_term fill typed slots; the pairs stay."""
         content = (ROOT / "corpus/derived-examples/actinorhodin.gff3").read_bytes()
