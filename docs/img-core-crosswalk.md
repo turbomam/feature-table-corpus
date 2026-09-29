@@ -8,6 +8,13 @@ https://github.com/turbomam/feature-table-corpus/issues/47. It's an
 where they only overlap. No row is `skos:exactMatch`, because the source doesn't state coordinate
 bases or value spellings.
 
+Each subject is a slot, typed `rdf property`, with its SSSOM `subject_label` naming the class it
+is used on, such as `Feature.start` or `LocationPart.start`; the same slot can map to different
+columns on different classes. A list of structs, such as `Feature.attributes` or
+`FeatureLocation.parts`, maps through its items' slots (`Attribute.key`, `LocationPart.start`),
+not as one column. A hit table's `gene_oid` maps to both `seqid` and `parent`, because the model
+requires both on a protein-coordinate Feature.
+
 ## Source
 
 IMG's code isn't public, but its database schema is readable as a LinkML view in

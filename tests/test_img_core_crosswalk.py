@@ -26,16 +26,19 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
         self.assertGreater(len(found), 30)
         for row in found:
             with self.subTest(row["subject_id"], table=row["object_id"]):
-                # subject_category is the class's own CURIE, resolved to its local name.
-                category = row["subject_category"].split(":", 1)[1]
-                self.assertEqual(row["subject_category"], view.get_uri(view.get_class(category), expand=False))
+                # A subject is a slot, an rdf property; subject_label names the class it is used on.
+                self.assertEqual((row["subject_type"], row["object_type"]), ("rdf property", "rdf property"))
+                category, name = row["subject_label"].split(".")
                 slots = {s.name: s for s in view.class_induced_slots(category)}
-                name = row["subject_id"].split(":", 1)[1]
                 self.assertIn(name, slots)
                 # The CURIE must be the slot's own URI: Attribute's slots are battr:, not bfm:.
                 self.assertEqual(row["subject_id"], view.get_uri(slots[name], expand=False))
                 self.assertIn(row["predicate_id"], PREDICATES)
                 self.assertRegex(row["object_id"], r"^img_core:[a-z_]+\.[a-z_]+$")
+                # A list of objects is not one column: map its item's slots instead.
+                self.assertFalse(slots[name].multivalued and slots[name].range in view.all_classes()
+                                 and not any(s.identifier for s in view.class_induced_slots(slots[name].range)),
+                                 "a list of structs mapped to one column")
 
     def test_every_hit_table_has_its_own_rows(self):
         # A comment saying "the same column in the other tables" is not a mapping; each table
@@ -47,12 +50,13 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
             with self.subTest(table):
                 self.assertIn((table, "bfm:seqid"), mapped)
                 self.assertIn((table, "bfm:type"), mapped)
+                self.assertIn((table, "bfm:parent"), mapped)
         for table in ("gene_pfam_families", "gene_cog_groups", "gene_ko_terms", "gene_superfam", "gene_smart",
                       "gene_cathfam", "gene_tigrfams"):
             self.assertIn((table, "bfm:score"), mapped)
 
     def test_rows_are_unique(self):
-        keys = [(r["subject_category"], r["subject_id"], r["object_id"]) for r in rows()]
+        keys = [(r["subject_label"], r["object_id"]) for r in rows()]
         self.assertEqual(len(keys), len(set(keys)))
 
 
