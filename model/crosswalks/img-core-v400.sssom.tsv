@@ -1,5 +1,6 @@
 #curie_map:
 #  bfm: https://w3id.org/ber-data/gff-feature-model/
+#  battr: https://w3id.org/ber-data/attributes/
 #  img_core: https://w3id.org/jgi/img_core_v400/
 #  skos: http://www.w3.org/2004/02/skos/core#
 #  semapv: https://w3id.org/semapv/vocab/
@@ -23,8 +24,8 @@ bfm:ontology_term	Feature	skos:closeMatch	img_core:gene_go_terms.go_id	semapv:Ma
 bfm:translated_sequence	Feature	skos:relatedMatch	img_core:gene.aa_checksum	semapv:ManualMappingCuration	The view has no sequence column, only its checksum and aa_seq_length.
 bfm:start_status	LocationPart	skos:relatedMatch	img_core:gene.is_partial_w	semapv:ManualMappingCuration	A partial flag that doesn't say which end is partial.
 bfm:attributes	Feature	skos:closeMatch	img_core:gene_feature_tags.tag	semapv:ManualMappingCuration	An open tag/value table like Attribute; tag is Attribute.key and value is Attribute.value.
-bfm:key	Attribute	skos:closeMatch	img_core:gene_feature_tags.tag	semapv:ManualMappingCuration	
-bfm:value	Attribute	skos:closeMatch	img_core:gene_feature_tags.value	semapv:ManualMappingCuration	
+battr:key	Attribute	skos:closeMatch	img_core:gene_feature_tags.tag	semapv:ManualMappingCuration	
+battr:value	Attribute	skos:closeMatch	img_core:gene_feature_tags.value	semapv:ManualMappingCuration	
 bfm:start	LocationPart	skos:closeMatch	img_core:gene_frag_coords.start_coord	semapv:ManualMappingCuration	One row per part, ordered by frag_order, keyed by gene_oid.
 bfm:end	LocationPart	skos:closeMatch	img_core:gene_frag_coords.end_coord	semapv:ManualMappingCuration	
 bfm:parts	FeatureLocation	skos:relatedMatch	img_core:gene_frag_coords.frag_order	semapv:ManualMappingCuration	The part order.

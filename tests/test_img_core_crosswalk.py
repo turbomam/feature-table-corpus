@@ -1,4 +1,4 @@
-"""The IMG core crosswalk names only slots the model has, with SSSOM predicates this repo uses.
+"""The IMG core crosswalk names only slots the model has, by their own URIs, with SSSOM predicates.
 
 The objects, img_core_v400 columns, were checked against the bridge-schemas view on 2026-09-29;
 that view isn't vendored, so this test checks the model side. docs/img-core-crosswalk.md.
@@ -26,8 +26,11 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
         self.assertGreater(len(found), 30)
         for row in found:
             with self.subTest(row["subject_id"], table=row["object_id"]):
-                slots = {s.name for s in view.class_induced_slots(row["subject_category"])}
-                self.assertIn(row["subject_id"].removeprefix("bfm:"), slots)
+                slots = {s.name: s for s in view.class_induced_slots(row["subject_category"])}
+                name = row["subject_id"].split(":", 1)[1]
+                self.assertIn(name, slots)
+                # The CURIE must be the slot's own URI: Attribute's slots are battr:, not bfm:.
+                self.assertEqual(row["subject_id"], view.get_uri(slots[name], expand=False))
                 self.assertIn(row["predicate_id"], PREDICATES)
                 self.assertRegex(row["object_id"], r"^img_core:[a-z_]+\.[a-z_]+$")
 
