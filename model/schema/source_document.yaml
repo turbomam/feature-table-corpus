@@ -2,7 +2,7 @@ id: https://w3id.org/ber-data/source-document
 name: source-document
 title: Feature source documents (draft)
 description: Ordered source records and scoped metadata from individual GFF3, GTF, BED12 or GenBank artifacts.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   bfsd: https://w3id.org/ber-data/source-document/

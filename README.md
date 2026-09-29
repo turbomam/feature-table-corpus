@@ -421,7 +421,8 @@ Per entry, recorded in `corpus/index.yaml`. The NMDC files are CC BY 4.0 and req
 The JGI IMG files are unrestricted data under the JGI Legacy Data Policy, which names no license;
 this repository asks for attribution, with the dataset DOI and acknowledgment given in each entry.
 The NCBI files are public domain. This repository's own contributions, meaning the index, the
-scripts and this README, are CC0.
+scripts, this README and the LinkML schemas (`model/schema/`, `model/dialects/` and the generated
+`model/flat/`), are CC0 1.0.
 
 If you own content vendored here and would rather it were linked, open an issue and it will be
 moved to the linked tier.

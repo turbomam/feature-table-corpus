@@ -37,7 +37,7 @@ notes:
     with feature rows, including sequence lengths and per-sequence prediction settings.
     The source-document reader preserves these with explicit sequence scope;
     scarcity of ## directives does not imply absence of useful comment metadata."
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 
 prefixes:
   linkml: https://w3id.org/linkml/

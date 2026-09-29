@@ -22,7 +22,7 @@ comments:
   - >-
     COG, TIGRFAM and SMART files leave column 2 empty rather than writing ".". Every other method
     names its tool there.
-license: CC BY 4.0
+license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/
   imgpm: https://w3id.org/ber-data/dialects/img-per-method-gff/
