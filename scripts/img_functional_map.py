@@ -352,6 +352,14 @@ class _CountWarnings(logging.Handler):
             self.first = self.first or record.getMessage()
 
 
+class _ErrorsToStderr(logging.StreamHandler):
+    """Writes errors to whatever sys.stderr is when they happen, so a redirected stderr gets them."""
+
+    def emit(self, record):
+        self.stream = sys.stderr
+        super().emit(record)
+
+
 HIDDEN = _CountWarnings()
 
 
@@ -369,7 +377,7 @@ def quiet_linkml_map():
     logger.setLevel(logging.WARNING)
     logger.propagate = False
     if HIDDEN not in logger.handlers:
-        errors = logging.StreamHandler()
+        errors = _ErrorsToStderr()
         errors.setLevel(logging.ERROR)
         logger.addHandler(HIDDEN)
         logger.addHandler(errors)

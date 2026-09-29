@@ -423,18 +423,15 @@ class HiddenWarningTests(unittest.TestCase):
         import contextlib
         import io
         import logging
-        mapping.quiet_linkml_map()
         logger = logging.getLogger("linkml_map")
-        stream = next(h for h in logger.handlers if isinstance(h, logging.StreamHandler)
-                      and h is not mapping.HIDDEN)
-        err = io.StringIO()
-        stream.setStream(err)
-        try:
-            logger.error("a real error")
-            logger.warning("a warning")
-        finally:
-            stream.setStream(sys.stderr)
-        self.assertEqual(err.getvalue(), "a real error\n")
+        # Each call must write to the stderr of its own moment, as a caller that redirects it expects.
+        for message in ("first error", "second error"):
+            mapping.quiet_linkml_map()
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                logger.error(message)
+                logger.warning("a warning")
+            self.assertEqual(err.getvalue(), message + "\n")
 
 if __name__ == "__main__":
     unittest.main()
