@@ -487,7 +487,12 @@ def main(argv=None):
     if args.command == "roundtrip":
         failed = 0
         for path in args.datasets:
-            problems = roundtrip(load(path))
+            try:
+                problems = roundtrip(load(path))
+            except (ValueError, OSError, UnicodeDecodeError, yaml.YAMLError) as error:
+                # json.JSONDecodeError is a ValueError; an unreadable or refused file fails, and the
+                # rest are still checked.
+                problems = [f"load: {error}"]
             print(f"{'HELD' if not problems else 'FAILED'}  {path}" + "".join(f"\n  {p}" for p in problems))
             failed += bool(problems)
         return 1 if failed else 0

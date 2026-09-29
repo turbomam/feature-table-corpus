@@ -166,6 +166,13 @@ class FlatProfileTests(unittest.TestCase):
             with contextlib.redirect_stderr(err):
                 self.assertEqual(flat_profile.main(["flatten", str(aliased), str(Path(tmp) / "o.json")]), 1)
             self.assertIn("YAML anchors or aliases on lines [2, 3]", err.getvalue())
+            # roundtrip reports the refused file as FAILED and still checks the next one.
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(flat_profile.main(["roundtrip", str(aliased), str(EVERY_SLOT)]), 1)
+            self.assertIn(f"FAILED  {aliased}", out.getvalue())
+            self.assertIn("YAML anchors or aliases", out.getvalue())
+            self.assertIn(f"HELD  {EVERY_SLOT}", out.getvalue())
         with tempfile.TemporaryDirectory() as tmp:
             source, out = Path(tmp) / "d.json", Path(tmp) / "flat.json"
             source.write_text(EVERY_SLOT.read_text().replace('"score": 55.5', '"score": 1e400'))
