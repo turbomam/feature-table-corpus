@@ -32,6 +32,13 @@ class FlatProfileTests(unittest.TestCase):
         self.assertEqual(flat_profile.FLAT.read_text(), flat_profile.schema_text(),
                          "run: just flat-profile")
 
+    def test_the_flat_schema_carries_the_model_license(self):
+        import yaml
+        model = yaml.safe_load((ROOT / "model/schema/ber_feature_model.yaml").read_text())
+        flat = yaml.safe_load(flat_profile.FLAT.read_text())
+        self.assertEqual(flat["license"], model["license"])
+        self.assertEqual(flat["license"], "https://creativecommons.org/publicdomain/zero/1.0/")
+
     def test_the_audit_rejects_nothing(self):
         from linkml_runtime import SchemaView
         import flat_profile_audit

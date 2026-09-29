@@ -1,7 +1,8 @@
 CC0 1.0 Universal
 
-The index, scripts, prose and LinkML schemas (model/schema/ and model/dialects/)
-in this repository are dedicated to the public domain under CC0 1.0:
+The index, scripts, prose and LinkML schemas (model/schema/, model/dialects/ and
+the generated model/flat/) in this repository are dedicated to the public domain
+under CC0 1.0:
 https://creativecommons.org/publicdomain/zero/1.0/
 
 The indexed corpus files keep their own licenses, recorded per entry in
