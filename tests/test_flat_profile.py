@@ -149,6 +149,25 @@ class FlatProfileTests(unittest.TestCase):
             self.assertIn("start", err.getvalue())
             self.assertFalse(out.exists())
 
+    def test_non_finite_numbers_are_refused_both_ways(self):
+        # https://github.com/turbomam/feature-table-corpus/issues/121: 1e400 parses as infinity.
+        dataset = copy.deepcopy(self.every)
+        dataset["features"][1]["score"] = json.loads("1e400")
+        with self.assertRaisesRegex(ValueError, r"\['features\[1\]\.score'\] is not a finite number"):
+            flat_profile.flatten(dataset, self.tables)
+        flat = flat_profile.flatten(self.every, self.tables)
+        flat["contig"][0]["lineage_confidence"] = float("nan")
+        with self.assertRaisesRegex(ValueError, r"contig\[0\]\.lineage_confidence"):
+            flat_profile.unflatten(flat, self.tables)
+        with tempfile.TemporaryDirectory() as tmp:
+            source, out = Path(tmp) / "d.json", Path(tmp) / "flat.json"
+            source.write_text(EVERY_SLOT.read_text().replace('"score": 55.5', '"score": 1e400'))
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(flat_profile.main(["flatten", str(source), str(out)]), 1)
+            self.assertIn("not a finite number", err.getvalue())
+            self.assertFalse(out.exists())
+
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             flat, back = Path(tmp) / "flat.json", Path(tmp) / "back.json"

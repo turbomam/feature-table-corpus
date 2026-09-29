@@ -27,6 +27,7 @@ schema has no field a scalar-only profile would reject.
 """
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -288,8 +289,27 @@ def key_column(columns):
     return next(name for name, path, slot in columns if slot.identifier and len(path) == 1)
 
 
+def nonfinite(value, where=""):
+    """Paths of infinite or NaN numbers in value. JSON has no spelling for them, and a number too
+    large for a float (1e400) parses as infinity, so both commands refuse them by name."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return [where or "value"]
+    if isinstance(value, dict):
+        return [p for k, v in value.items() for p in nonfinite(v, f"{where}.{k}" if where else k)]
+    if isinstance(value, list):
+        return [p for i, v in enumerate(value) for p in nonfinite(v, f"{where}[{i}]")]
+    return []
+
+
+def refuse_nonfinite(value):
+    found = nonfinite(value)
+    if found:
+        raise ValueError(f"{found[:5]} {'is' if len(found) == 1 else 'are'} not a finite number")
+
+
 def flatten(dataset, tables=None):
     tables = tables or plan()
+    refuse_nonfinite(dataset)
     unknown = sorted(set(dataset) - {collection for _, _, collection, _, _ in tables})
     if unknown:
         raise ValueError(f"{unknown} are not Dataset slots; is this a Dataset?")
@@ -321,6 +341,7 @@ def flatten(dataset, tables=None):
 
 def unflatten(flat, tables=None):
     tables = tables or plan()
+    refuse_nonfinite(flat)
     expected = {}
     for table, _, _, columns, children in tables:
         key = key_column(columns)
@@ -468,7 +489,7 @@ def main(argv=None):
                 for error in errors[:20]:
                     print(f"unflatten: {error}", file=sys.stderr)
                 return 1
-        text = json.dumps(data, indent=1) + "\n"
+        text = json.dumps(data, indent=1, allow_nan=False) + "\n"
     with open(args.output, "x", encoding="utf-8") as handle:
         handle.write(text)
     return 0
