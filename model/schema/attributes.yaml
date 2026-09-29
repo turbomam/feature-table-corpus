@@ -73,7 +73,8 @@ classes:
         range: float
         description: >-
           value read as a number, set by a profile only for keys it knows are numeric. value
-          keeps the source text, so 3.4e-28 and 3.40E-28 stay distinguishable.
+          keeps the source text, so 3.4e-28 and 3.40E-28 stay distinguishable. The validator
+          requires the float that value reads as, and refuses an integer no float holds exactly.
         exact_mappings:
           - kb_cdm:numeric_value
           - nmdc:numeric_value

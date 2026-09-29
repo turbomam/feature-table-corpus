@@ -8,6 +8,7 @@ also cover interval ordering, unique IDs, references (including contig membershi
 in declared collections), parent cycles and coordinate spaces. These checks are explicit: JSON Schema cannot compare two fields or resolve
 an identifier to another record's translated sequence.
 """
+from decimal import Decimal
 import json
 import math
 import re
@@ -49,11 +50,19 @@ def make_validator(schema_path, class_name="Dataset"):
 
 
 def attribute_number_agrees(attribute):
-    """value read as a float equals numeric_value; a number beyond float range never agrees."""
+    """numeric_value is value read as a number.
+
+    A float must be the float that value reads as. An integer must equal value exactly and be
+    exactly representable as a float, since numeric_value is stored as one and two integers past
+    2**53 can round to the same float. A number beyond float range never agrees.
+    """
+    value, number = attribute["value"], attribute["numeric_value"]
     try:
-        number = float(attribute["value"])
-        return math.isfinite(number) and number == float(attribute["numeric_value"])
-    except (TypeError, ValueError, OverflowError):
+        parsed = float(value)
+        if not math.isfinite(parsed) or parsed != float(number):
+            return False
+        return not isinstance(number, int) or (Decimal(value) == number and int(float(number)) == number)
+    except (TypeError, ValueError, OverflowError, ArithmeticError):
         return False
 
 

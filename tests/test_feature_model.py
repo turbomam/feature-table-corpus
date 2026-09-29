@@ -717,6 +717,14 @@ class DatabaseTests(unittest.TestCase):
             build_database(SCHEMA, typed, self.db)
         # A number past float range is refused as a disagreement, not raised as an error.
         validator = make_validator(SCHEMA)
+        # Integers that round to the same float must still match exactly.
+        evalue.update(value="9007199254740992", numeric_value=9007199254740993)
+        self.assertTrue(any("disagrees with value" in e for e in validation_errors(data, validator)))
+        # An integer no float can hold exactly is refused even when it matches the text.
+        evalue.update(value="9007199254740993", numeric_value=9007199254740993)
+        self.assertTrue(any("disagrees with value" in e for e in validation_errors(data, validator)))
+        evalue.update(value="9007199254740992", numeric_value=9007199254740992)
+        self.assertEqual(validation_errors(data, validator), [])
         for value, number in (("1e999", 10 ** 310), (evalue["value"], 10 ** 310)):
             evalue.update(value=value, numeric_value=number)
             with self.subTest(value=value):
