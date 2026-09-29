@@ -238,6 +238,16 @@ classes:
       target_gap:
         range: string
         description: The alignment in GFF3 Gap form, a CIGAR-like string of operations and lengths.
+    rules:
+    - preconditions:
+        slot_conditions:
+          score_type:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          score:
+            value_presence: PRESENT
+      description: A score_type qualifies a score, so it needs one (issue 46).
   FeatureStableIdentifiers:
     description: Feature.stable_identifiers, one row per item.
     attributes:

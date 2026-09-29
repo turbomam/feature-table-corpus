@@ -93,6 +93,10 @@ class FlatProfileTests(unittest.TestCase):
             flat_profile.unflatten(misspelled, self.tables)
         with self.assertRaisesRegex(ValueError, "not tables of the flat profile"):
             flat_profile.unflatten({**flat, "feature_notes": []}, self.tables)
+        twice = copy.deepcopy(flat)
+        twice["feature"].append(dict(twice["feature"][1], product="other"))
+        with self.assertRaisesRegex(ValueError, "'gene_1' is on more than one row"):
+            flat_profile.unflatten(twice, self.tables)
 
     def test_the_flat_schema_keeps_the_model_constraints(self):
         import yaml
@@ -103,6 +107,10 @@ class FlatProfileTests(unittest.TestCase):
         self.assertEqual((feature["start"]["minimum_value"], feature["phase"]["maximum_value"]), (1, 2))
         self.assertEqual(parts["start"]["minimum_value"], 1)
         self.assertNotIn("required", feature["target_id"])
+        # The model's rule that a score_type needs a score names two direct columns, so it is kept.
+        rule = classes["Feature"]["rules"][0]
+        self.assertEqual((list(rule["preconditions"]["slot_conditions"]), list(rule["postconditions"]["slot_conditions"])),
+                         (["score_type"], ["score"]))
 
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:

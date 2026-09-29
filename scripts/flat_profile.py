@@ -141,6 +141,9 @@ def schema(view=None):
                 attrs[name]["identifier"] = True
         classes[camel(table)] = {"description": f"One {owner}; derived from the nested model.",
                                  "attributes": attrs}
+        rules = class_rules(view, owner, {name for name, path, _ in columns if len(path) == 1})
+        if rules:
+            classes[camel(table)]["rules"] = rules
         for child, path, slot, fields in children:
             attrs = {key: {"range": "string", "required": True,
                            "description": f"The {key} of the {table} row this belongs to."},
@@ -167,6 +170,28 @@ def schema(view=None):
         "classes": classes,
         "enums": {name: enum_dict(view, name) for name in sorted(enums)},
     }
+
+
+def class_rules(view, owner, direct):
+    """The owner class's rules, copied when every slot they name is one of its direct columns.
+
+    A rule naming a slot the profile moves into a struct column or a child table can't be
+    written against one flat row, so it stops the derivation rather than being dropped.
+    """
+    from linkml_runtime.dumpers import json_dumper
+    rules = []
+    for rule in view.get_class(owner).rules or []:
+        data = json.loads(json_dumper.dumps(rule))
+        data.pop("@type", None)
+        named = {name for part in ("preconditions", "postconditions", "elseconditions")
+                 for name in ((data.get(part) or {}).get("slot_conditions") or {})}
+        if not named <= direct:
+            raise ValueError(f"{owner} rule names {sorted(named - direct)}, which aren't columns of its flat table")
+        for conditions in (data.get(part) for part in ("preconditions", "postconditions", "elseconditions")):
+            for name, condition in ((conditions or {}).get("slot_conditions") or {}).items():
+                condition.pop("name", None)
+        rules.append(data)
+    return rules
 
 
 def camel(table):
@@ -271,6 +296,8 @@ def unflatten(flat, tables=None):
             for name, path, _ in columns:
                 if name in row:
                     put(record, path, row[name])
+            if record.get(key) in by_key:
+                raise ValueError(f"{table}: {key} {record.get(key)!r} is on more than one row")
             records.append(record)
             by_key[record[key]] = record
         for child, path, slot, fields in children:
