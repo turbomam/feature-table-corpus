@@ -212,6 +212,7 @@ class FlatProfileTests(unittest.TestCase):
         cases = {
             "flatten": [("[1, 2]", "not a list"), ('{"features": [1]}', r"features\[0\] is a Feature record, not a int"),
                         ('{"features": [{"seqid": "c", "note": ["x"]}]}', r"features\[0\] has no feature_id"),
+                        ('{"features": [{"feature_id": null, "note": ["x"]}]}', r"features\[0\] has no feature_id"),
                         ('{"features": [{"feature_id": "f", "note": "x"}]}', "note is a list, not a str"),
                         ('{"features": [{"feature_id": "f", "attributes": ["x"]}]}', r"attributes\[0\] is an object"),
                         ('{"features": {}}', "features is a list of Feature records, not a dict"),

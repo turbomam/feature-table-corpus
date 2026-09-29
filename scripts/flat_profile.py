@@ -319,7 +319,7 @@ def flatten(dataset, tables=None):
         for number, record in enumerate(records):
             if not isinstance(record, dict):
                 raise ValueError(f"{collection}[{number}] is a {owner} record, not a {type(record).__name__}")
-            if key not in record:
+            if record.get(key) is None:  # absent or null, as elsewhere
                 raise ValueError(f"{collection}[{number}] has no {key}")
             paths = [path for _, path, _ in columns] + [path for _, path, _, _ in children]
             unknown = unknown_fields(record, paths)
