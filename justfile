@@ -306,15 +306,15 @@ dialect-validate-phytozome-annotation input:
 dialect-join-phytozome gff3 annotation:
     uv run --with-requirements requirements-conversion.txt python3 scripts/phytozome_annotation_info.py join "$1" "$2"
 
-[doc("Map an IMG *_functional_annotation.gff to a Dataset JSON with linkml-map.")]
+[doc("Map an IMG *_functional_annotation.gff to a Dataset JSON with linkml-map; add --spelling FILE to keep score spellings for the back recipe.")]
 [group("Conversions")]
-map-img-functional input output:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py forward "$1" "$2"
+map-img-functional input output *spelling:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py forward "$@"
 
-[doc("Map a Dataset JSON back to IMG functional annotation GFF text.")]
+[doc("Map a Dataset JSON back to IMG functional annotation GFF text; add --spelling FILE from forward to get the source text back byte for byte.")]
 [group("Conversions")]
-map-img-functional-back input output:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py reverse "$1" "$2"
+map-img-functional-back input output *spelling:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_functional_map.py reverse "$@"
 
 [doc("Map an IMG functional annotation GFF forward and back; rows must match.")]
 [group("Conversions")]
@@ -326,10 +326,10 @@ map-img-functional-roundtrip input:
 map-img-per-method functional +hits_then_output:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py forward "$@"
 
-[doc("Map a per-method Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff.")]
+[doc("Map a per-method Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff; add --spelling FILE from forward to get the source text back byte for byte.")]
 [group("Conversions")]
-map-img-per-method-back input prefix:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py reverse "$1" "$2"
+map-img-per-method-back input prefix *spelling:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_per_method_map.py reverse "$@"
 
 [doc("Map each IMG per-method hit GFF, with the functional annotation GFF, forward and back.")]
 [group("Conversions")]
@@ -341,10 +341,10 @@ map-img-per-method-roundtrip functional +hits:
 map-img-tmhmm-signalp functional +files_then_output:
     uv run --with-requirements requirements-mapping.txt python3 scripts/img_tmhmm_signalp_map.py forward "$@"
 
-[doc("Map a TMHMM/SignalP Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff.")]
+[doc("Map a TMHMM/SignalP Dataset JSON back to PREFIX_functional_annotation.gff and PREFIX_<method>.gff; add --spelling FILE from forward to get the source text back byte for byte.")]
 [group("Conversions")]
-map-img-tmhmm-signalp-back input prefix:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/img_tmhmm_signalp_map.py reverse "$1" "$2"
+map-img-tmhmm-signalp-back input prefix *spelling:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/img_tmhmm_signalp_map.py reverse "$@"
 
 [doc("Map IMG TMHMM and SignalP files, with the functional annotation GFF, forward and back.")]
 [group("Conversions")]
