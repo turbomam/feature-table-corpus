@@ -35,6 +35,7 @@ import sys
 
 import img_taxon_bundle as dialect
 from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
+from img_functional_map import reports_hidden_warnings
 from phytozome_annotation_map import write_new
 from validate_closed import make_validator, validation_errors
 
@@ -291,6 +292,7 @@ def file_order(dataset):
     return {**dataset, "features": sorted(dataset["features"], key=group)}
 
 
+@reports_hidden_warnings
 def roundtrip(path):
     """Return (problems, report); no problems means every file came back byte for byte."""
     report = {"file": str(path)}

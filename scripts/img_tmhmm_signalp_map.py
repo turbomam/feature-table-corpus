@@ -217,6 +217,7 @@ def parse_inputs(functional_path, paths):
     return functional_document, documents, problems
 
 
+@functional.reports_hidden_warnings
 def roundtrip(functional_path, paths):
     """Return (problems, report): every file, with the functional annotation, in one Dataset."""
     report = {"functional": str(functional_path), "files": []}

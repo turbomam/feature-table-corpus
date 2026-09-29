@@ -35,6 +35,90 @@ ROW = dialect.ROW_CLASS
 LEXICAL = {"line", "attribute_order"}
 
 
+class _CountWarnings(logging.Handler):
+    """Counts linkml-map's warnings instead of printing them; see quiet_linkml_map."""
+
+    role = "ftc-count-warnings"
+
+    def __init__(self):
+        super().__init__(logging.WARNING)
+        self.count, self.first = 0, None
+
+    def emit(self, record):
+        if record.levelno < logging.ERROR:
+            self.count += 1
+            self.first = self.first or record.getMessage()
+
+
+class _ErrorsToStderr(logging.StreamHandler):
+    """Writes errors to whatever sys.stderr is when they happen, so a redirected stderr gets them."""
+
+    role = "ftc-errors-to-stderr"
+
+    def __init__(self):
+        super().__init__()
+        self.setLevel(logging.ERROR)
+
+    def emit(self, record):
+        self.stream = sys.stderr
+        super().emit(record)
+
+
+def _installed(kind):
+    """The logger's handler of this kind, added once per process.
+
+    It is looked up on the logger by role, not held by this module, because this file can be
+    loaded twice (through another script, and by path in a test), and each load must find the
+    same handlers rather than add its own.
+    """
+    logger = logging.getLogger("linkml_map")
+    for handler in logger.handlers:
+        if getattr(handler, "role", None) == kind.role:
+            return handler
+    handler = kind()
+    logger.addHandler(handler)
+    return handler
+
+
+def quiet_linkml_map():
+    """Keep linkml-map's warnings off stderr, so a run prints only its own result, but count them.
+
+    linkml-map 0.5.4 logs "Unexpected: <id> for type ..." and "Unknown target range ..." when it
+    maps a reference such as Parent, which the mapping scripts handle themselves. Errors still go
+    to stderr; warnings are counted from this call on, and each roundtrip reports the count
+    (hidden_warnings).
+    """
+    logger = logging.getLogger("linkml_map")
+    logger.setLevel(logging.WARNING)
+    logger.propagate = False
+    _installed(_ErrorsToStderr)
+    # Each script's main calls this first, so the count starts again for every invocation.
+    counter = _installed(_CountWarnings)
+    counter.count, counter.first = 0, None
+
+
+def reports_hidden_warnings(roundtrip):
+    """Decorate a roundtrip(...) -> (problems, report): count linkml-map's warnings for this call only,
+    and add hidden_warnings() to the report it returns, so callers of the function see them too."""
+    import functools
+
+    @functools.wraps(roundtrip)
+    def counted(*args, **kwargs):
+        quiet_linkml_map()
+        problems, report = roundtrip(*args, **kwargs)
+        return problems, report | hidden_warnings()
+    return counted
+
+
+def hidden_warnings():
+    """{"linkml_map_warnings": n}, plus the first message when there were any, for a report."""
+    counter = _installed(_CountWarnings)
+    out = {"linkml_map_warnings": counter.count}
+    if counter.first:
+        out["first_linkml_map_warning"] = counter.first
+    return out
+
+
 def _transformers():
     from linkml_runtime import SchemaView
     from linkml_map.inference.inverter import TransformationSpecificationInverter
@@ -246,6 +330,7 @@ def difference(dataset, again):
     return "unknown"
 
 
+@reports_hidden_warnings
 def roundtrip(path):
     """Return (problems, report) for one file; no problems means it came back byte for byte."""
     report = {"file": str(path)}
@@ -337,15 +422,6 @@ def write_output(path, text):
         report_errors([f"output: {error}"])
         return 1
     return 0
-
-
-def quiet_linkml_map():
-    """Keep linkml-map's per-record warnings off stderr, so a run prints only its own result.
-
-    linkml-map 0.5.4 logs "Unexpected: <id> for type ..." and "Unknown target range ..."
-    for every record it maps; errors still show.
-    """
-    logging.getLogger("linkml_map").setLevel(logging.ERROR)
 
 
 def main(argv=None):

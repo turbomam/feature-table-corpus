@@ -1,5 +1,6 @@
 """The linkml-map round trip for IMG functional annotation holds, and fails when it should."""
 import copy
+import json
 import importlib.util
 from pathlib import Path
 import sys
@@ -392,6 +393,63 @@ class AgreementTests(unittest.TestCase):
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertEqual(result.stderr, "")
+
+class HiddenWarningTests(unittest.TestCase):
+    """linkml-map's warnings stay off stderr, but the round trip report counts them."""
+
+    def test_the_report_counts_the_warnings_stderr_leaves_out(self):
+        import subprocess
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/img_functional_map.py"), "roundtrip",
+                                 str(FIXTURE)], capture_output=True, text=True)
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+        report = json.loads(result.stdout.splitlines()[-2])
+        # Measured 2026-09-29: the fixture's CRISPR row has repeat units whose Parent linkml-map
+        # can't map itself; the script does.
+        self.assertEqual(report["linkml_map_warnings"], 4)
+        self.assertIn("for type Feature", report["first_linkml_map_warning"])
+
+    def test_each_invocation_counts_only_its_own_warnings(self):
+        import contextlib
+        import io
+        reports = []
+        for _ in range(2):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(mapping.main(["roundtrip", str(FIXTURE)]), 0)
+            reports.append(json.loads(out.getvalue().splitlines()[-2])["linkml_map_warnings"])
+        self.assertEqual(reports, [4, 4])
+
+    def test_the_returned_report_counts_this_call_only(self):
+        # Callers of roundtrip() itself, such as tests/test_clean_round_trips.py, see the count too.
+        counts = [mapping.roundtrip(FIXTURE)[1]["linkml_map_warnings"] for _ in range(2)]
+        self.assertEqual(counts, [4, 4])
+
+    def test_a_second_load_of_the_module_adds_no_handlers(self):
+        # The full suite loads this file through other scripts and again by path, as here.
+        import importlib.util
+        import logging
+        mapping.quiet_linkml_map()
+        before = list(logging.getLogger("linkml_map").handlers)
+        spec = importlib.util.spec_from_file_location("img_functional_map_again",
+                                                      ROOT / "scripts/img_functional_map.py")
+        again = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(again)
+        again.quiet_linkml_map()
+        self.assertEqual(logging.getLogger("linkml_map").handlers, before)
+
+    def test_linkml_map_errors_still_reach_stderr(self):
+        import contextlib
+        import io
+        import logging
+        logger = logging.getLogger("linkml_map")
+        # Each call must write to the stderr of its own moment, as a caller that redirects it expects.
+        for message in ("first error", "second error"):
+            mapping.quiet_linkml_map()
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                logger.error(message)
+                logger.warning("a warning")
+            self.assertEqual(err.getvalue(), message + "\n")
 
 if __name__ == "__main__":
     unittest.main()

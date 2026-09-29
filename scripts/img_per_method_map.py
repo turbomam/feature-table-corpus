@@ -285,6 +285,7 @@ def compare(before, after, module, path, spellings=None):
     return problems, spelling
 
 
+@functional.reports_hidden_warnings
 def roundtrip(functional_path, hit_paths):
     """Return (problems, report): every hit file, with the functional annotation, in one Dataset."""
     report = {"functional": str(functional_path), "files": []}
