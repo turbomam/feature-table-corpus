@@ -15,7 +15,7 @@ mapping:
   translation_table: not derived; the protein context Dataset is used as supplied
   target: target_id is the Pfam accession, target_start and target_end come from model_start and model_end (from 5.0.0, issue 94); the attributes stay and export refuses a target that disagrees with them
   attributes: ordered generic pairs with repeated/empty/unknown values and comma grouping retained
-  typed_attributes: Name -> name, Note -> note, Dbxref -> dbxref, Ontology_term -> ontology_term, as in gff3-contig/3.0.0 (from 4.0.0, issue 43); the generic pairs stay, and context CDS copies must agree too
+  typed_attributes: Name -> name, Note -> note, Dbxref -> dbxref, Ontology_term -> ontology_term, as in gff3-contig/3.0.0 and later (from 4.0.0, issue 43); the generic pairs stay, and context CDS copies must agree too
 round_trip:
   exact: byte-identical source recovery after projection and independent-original checks
   reconstruct: model fields plus semantic protein identity/attribute grouping mappings

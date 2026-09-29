@@ -1,4 +1,4 @@
-id: gff3-contig/3.0.0
+id: gff3-contig/4.0.0
 kind: source-dialect
 source_format: gff3
 implementation: scripts/convert_features.py
@@ -10,7 +10,7 @@ supported:
   - Forward references and multiple parents on the same reference; no parent cycles.
   - Ordered, repeated, unknown, empty and comma-grouped key/value attributes; UTF-8 percent escaping.
   - Document and sequence metadata, comments, group boundaries and embedded FASTA retained in source order.
-  - Declared sequence-region bounds and explicit Prodigal sequence-context lengths checked without inferring contig lengths.
+  - Declared sequence-region bounds and explicit Prodigal sequence-context lengths checked; contig length taken from a region only as the length_bp mapping says.
   - Lexical numeric forms, missing versus empty source/attributes, BOM, CR/LF/CRLF and absent final newline.
 mapping:
   core: seqid, source and type decode percent escapes; start/end become integers; finite decimal score becomes float.
@@ -19,6 +19,7 @@ mapping:
   missing_id: Assign urn:ftc:line-N; never insert an ID on reverse export; collision with a real ID is rejected.
   translation_table: Contig.translation_table is set when every CDS on the contig carries one assigned NCBI code in a translation_table attribute; disagreeing CDS values are refused; export never reads the slot.
   score_type: Left unset; column 6 meaning depends on the producer.
+  length_bp: From 4.0.0, under the ncbi metadata profile only, a contig with exactly one ##sequence-region starting at 1 gets that region's end as length_bp (issue 46). Otherwise length_bp stays unset; GFF3 lets a region cover part of a sequence, so nothing is inferred.
 reverse:
   authority: Imported instances are immutable. Generic and typed copies must agree; inconsistent copies are rejected.
   exact: Validate the full imported projection; reconstruct semantics before restoring lexical cells and original record endings.
