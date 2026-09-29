@@ -417,13 +417,14 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 61 pairs and 41 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 63 pairs and 43 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
         # score_type (issue 46), the scalar is_representative (issue 48), and the GFF3 reserved tags
         # name (scalar) and note, dbxref and ontology_term (lists) on Feature (issue 43).
         # Feature.target is a value object with five scalar slots of its own (issue 94).
-        self.assertEqual(len(rows), 61)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 41)
+        # Attribute gains the scalars attribute_cv_id and numeric_value (issue 42).
+        self.assertEqual(len(rows), 63)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 43)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
@@ -552,7 +553,7 @@ classes:
         self.assertEqual(list(view.get_class("Feature").close_mappings), ["SO:0000110"])
         # name is only the GFF3 Name on Feature.
         self.assertEqual(list(view.induced_slot("name", "ContigCollection").exact_mappings), [])
-        prefixes = set(view.schema.prefixes)
+        prefixes = {p for schema in view.all_schema() for p in schema.prefixes}
         used = {m.split(":")[0] for element in [*view.all_slots().values(), *view.all_classes().values()]
                 for kind in ("exact_mappings", "close_mappings", "broad_mappings", "narrow_mappings", "related_mappings")
                 for m in getattr(element, kind) or []}
@@ -692,7 +693,42 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(by_attribute(con, "Name", "' OR true --"), [])
         data = yaml.safe_load(EXAMPLE.read_text())
         row = con.execute("SELECT generated_by, source_files, attributes FROM feature WHERE feature_id = ?", [gene]).fetchone()
-        self.assertEqual(row, tuple(data["features"][0][k] for k in ("generated_by", "source_files", "attributes")))
+        # The optional attribute_cv_id and numeric_value (issue 42) are stored as null when unset.
+        stored = [{k: v for k, v in a.items() if v is not None} for a in row[2]]
+        self.assertEqual((row[0], row[1], stored),
+                         tuple(data["features"][0][k] for k in ("generated_by", "source_files", "attributes")))
+
+    def test_attribute_cv_id_and_numeric_value(self):
+        """Issue 42: an attribute can name its meaning and carry its number; value keeps the text."""
+        data = yaml.safe_load(EXAMPLE.read_text())
+        hit = next(f for f in data["features"] if any(a["key"] == "e-value" for a in f.get("attributes", [])))
+        evalue = next(a for a in hit["attributes"] if a["key"] == "e-value")
+        evalue.update(attribute_cv_id="EDAM:data_1667", numeric_value=float(evalue["value"]))
+        typed = self.work / "typed.yaml"
+        typed.write_text(yaml.safe_dump(data))
+        build_database(SCHEMA, typed, self.db)
+        rows = self.connect().execute("""
+            SELECT a.item.numeric_value FROM feature, unnest(attributes) AS a(item)
+            WHERE a.item.attribute_cv_id = 'EDAM:data_1667'""").fetchall()
+        self.assertEqual(rows, [(float(evalue["value"]),)])
+        evalue["numeric_value"] = 1.0
+        typed.write_text(yaml.safe_dump(data))
+        with self.assertRaisesRegex(ValueError, "numeric_value 1.0 disagrees with value"):
+            build_database(SCHEMA, typed, self.db)
+        # A number past float range is refused as a disagreement, not raised as an error.
+        validator = make_validator(SCHEMA)
+        # Integers that round to the same float must still match exactly.
+        evalue.update(value="9007199254740992", numeric_value=9007199254740993)
+        self.assertTrue(any("disagrees with value" in e for e in validation_errors(data, validator)))
+        # An integer no float can hold exactly is refused even when it matches the text.
+        evalue.update(value="9007199254740993", numeric_value=9007199254740993)
+        self.assertTrue(any("disagrees with value" in e for e in validation_errors(data, validator)))
+        evalue.update(value="9007199254740992", numeric_value=9007199254740992)
+        self.assertEqual(validation_errors(data, validator), [])
+        for value, number in (("1e999", 10 ** 310), (evalue["value"], 10 ** 310)):
+            evalue.update(value=value, numeric_value=number)
+            with self.subTest(value=value):
+                self.assertTrue(any("disagrees with value" in e for e in validation_errors(data, validator)))
 
     def test_is_representative_round_trips_true_false_and_unset(self):
         data, gene, isoforms = with_isoforms(yaml.safe_load(EXAMPLE.read_text()), count=3)

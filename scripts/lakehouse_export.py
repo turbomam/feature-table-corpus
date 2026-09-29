@@ -93,6 +93,26 @@ def column_type(view, slot):
     return base + "[]" if slot.multivalued else base
 
 
+def with_null_fields(view, cls, row):
+    """A copy of row whose nested inlined objects have every schema field, absent ones as None.
+
+    The Parquet columns are CAST from linkml-store's JSON text, and DuckDB's JSON-to-STRUCT
+    cast refuses an object that lacks a field, so an optional field left unset (such as
+    Attribute.attribute_cv_id, issue 42) must be written as null. Top-level fields are
+    table columns and need nothing.
+    """
+    out = dict(row)
+    for s in view.class_induced_slots(cls):
+        value = out.get(s.name)
+        if value is None or s.range not in view.all_classes() or not view.is_inlined(s):
+            continue
+        items = value if s.multivalued else [value]
+        filled = [{**{f.name: None for f in view.class_induced_slots(s.range)},
+                   **with_null_fields(view, s.range, item)} for item in items]
+        out[s.name] = filled if s.multivalued else filled[0]
+    return out
+
+
 def _quote(path):
     return "'" + str(path).replace("'", "''") + "'"
 
@@ -113,7 +133,8 @@ def write_parquet(view, data, out_dir):
     client = Client()
     db = client.attach_database("duckdb", alias="lakehouse")
     db.set_schema_view(view)
-    db.store(data)
+    db.store({**data, **{name: [with_null_fields(view, cls, row) for row in data.get(name) or []]
+                         for name, cls in collections(view)}})
     written = {}
     with db.engine.connect() as conn:
         for name, cls in collections(view):
