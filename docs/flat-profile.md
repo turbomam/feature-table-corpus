@@ -27,6 +27,13 @@ catalog would reject. The derived profile has 80, and it rejects none of them (m
 2026-09-29). Lists became child tables rather than array columns because the catalog document
 rejects both multivalued and nested columns.
 
+Required slots stay required. A top-level required slot, such as `Feature.seqid`, is a required
+column. A struct's required fields, such as `target_id`, `target_start` and `target_end`, are
+required once any of that struct's columns is present, written as class rules. A required list
+inside a struct, such as `FeatureLocation.parts`, lives in a child table that one row's rules can't
+see, so `unflatten` checks it: a Feature with a location must have at least one row in
+`feature_location_parts`.
+
 ## Commands
 
 - `just flat-profile` regenerates the schema after a model change;

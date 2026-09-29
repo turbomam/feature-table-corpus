@@ -142,6 +142,7 @@ def schema(view=None):
         classes[camel(table)] = {"description": f"One {owner}; derived from the nested model.",
                                  "attributes": attrs}
         rules = class_rules(view, owner, {name for name, path, _ in columns if len(path) == 1})
+        rules += struct_rules(columns)
         if rules:
             classes[camel(table)]["rules"] = rules
         for child, path, slot, fields in children:
@@ -194,6 +195,36 @@ def class_rules(view, owner, direct):
     return rules
 
 
+def structs(columns):
+    """{struct path: ([its columns], [its required columns])} for each expanded struct."""
+    found = {}
+    for name, path, slot in columns:
+        if len(path) > 1:
+            names, required = found.setdefault(path[:-1], ([], []))
+            names.append(name)
+            if slot.required:
+                required.append(name)
+    return found
+
+
+def struct_rules(columns):
+    """A struct's required fields, as rules: any column of the struct needs all of them.
+
+    The flat row can't say whether the struct is present, so each column present stands for it.
+    A required list inside a struct, such as FeatureLocation.parts, is a child table that one
+    row's rules can't see; unflatten checks it.
+    """
+    rules = []
+    for path, (names, required) in structs(columns).items():
+        for name in names:
+            post = [r for r in required if r != name]
+            if post:
+                rules.append({"description": f"{'.'.join(path)} is present once {name} is, so it needs {', '.join(post)}.",
+                              "preconditions": {"slot_conditions": {name: {"value_presence": "PRESENT"}}},
+                              "postconditions": {"slot_conditions": {r: {"value_presence": "PRESENT"} for r in post}}})
+    return rules
+
+
 def camel(table):
     return "".join(part.capitalize() for part in table.split("_"))
 
@@ -234,6 +265,23 @@ def unknown_fields(record, paths, prefix=()):
         else:
             found.append(".".join(path))
     return sorted(found)
+
+
+def required_columns(table, row, tables):
+    """The columns a row of table must have, given the columns it has."""
+    for main, _, _, columns, children in tables:
+        key = key_column(columns)
+        if table == main:
+            needed = [name for name, path, slot in columns if len(path) == 1 and (slot.required or slot.identifier)]
+            for names, required in structs(columns).values():
+                if set(names) & set(row):
+                    needed += required
+            return needed
+        for child, _, slot, fields in children:
+            if table == child:
+                return [key, "ordinal"] + ([slot.name] if fields is None
+                                           else [n for n, f in fields if f.required])
+    return []
 
 
 def key_column(columns):
@@ -287,6 +335,9 @@ def unflatten(flat, tables=None):
             extra = sorted(set(row) - expected[table])
             if extra:
                 raise ValueError(f"{table} row {number}: {extra} are not its columns")
+            missing = sorted(set(required_columns(table, row, tables)) - set(row))
+            if missing:
+                raise ValueError(f"{table} row {number}: required {missing} missing")
     dataset = {}
     for table, owner, collection, columns, children in tables:
         key = key_column(columns)
@@ -313,6 +364,13 @@ def unflatten(flat, tables=None):
                     raise ValueError(f"{child}: {key} {row[key]!r} ordinal {row['ordinal']} is out of order")
                 items.append(row[slot.name] if fields is None
                              else {n: row[n] for n, _ in fields if n in row})
+        for child, path, slot, _ in children:
+            if not slot.required:
+                continue
+            for record in records:
+                # A required list is required where its owner is: the record, or a struct it holds.
+                if (len(path) == 1 or get(record, path[:-1]) is not None) and not get(record, path):
+                    raise ValueError(f"{child}: {table} {record[key]!r} has no rows, and {'.'.join(path)} is required")
         if records:
             dataset[collection] = records
     return dataset

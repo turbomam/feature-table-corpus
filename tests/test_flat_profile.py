@@ -93,6 +93,21 @@ class FlatProfileTests(unittest.TestCase):
             flat_profile.unflatten(misspelled, self.tables)
         with self.assertRaisesRegex(ValueError, "not tables of the flat profile"):
             flat_profile.unflatten({**flat, "feature_notes": []}, self.tables)
+        cases = {
+            "top-level required": (lambda f: f["feature"][0].pop("seqid"), r"required \['seqid'\] missing"),
+            "identifier": (lambda f: f["feature"][0].pop("feature_id"), r"required \['feature_id'\] missing"),
+            "ordinal": (lambda f: f["feature_note"][0].pop("ordinal"), r"required \['ordinal'\] missing"),
+            "child value": (lambda f: f["feature_note"][0].pop("note"), r"required \['note'\] missing"),
+            "struct field": (lambda f: f["feature"][-1].pop("target_id"), r"required \['target_id'\] missing"),
+            "item field": (lambda f: f["feature_attributes"][0].pop("value"), r"required \['value'\] missing"),
+            "required list in a struct": (lambda f: f.update(feature_location_parts=[]), "location.parts is required"),
+        }
+        for name, (change, expected) in cases.items():
+            with self.subTest(name):
+                broken = copy.deepcopy(flat)
+                change(broken)
+                with self.assertRaisesRegex(ValueError, expected):
+                    flat_profile.unflatten(broken, self.tables)
         twice = copy.deepcopy(flat)
         twice["feature"].append(dict(twice["feature"][1], product="other"))
         with self.assertRaisesRegex(ValueError, "'gene_1' is on more than one row"):
@@ -107,8 +122,12 @@ class FlatProfileTests(unittest.TestCase):
         self.assertEqual((feature["start"]["minimum_value"], feature["phase"]["maximum_value"]), (1, 2))
         self.assertEqual(parts["start"]["minimum_value"], 1)
         self.assertNotIn("required", feature["target_id"])
+        # ...but a struct's required fields are required once any of its columns is present.
+        rules = classes["Feature"]["rules"]
+        start = next(r for r in rules if list(r["preconditions"]["slot_conditions"]) == ["target_start"])
+        self.assertEqual(sorted(start["postconditions"]["slot_conditions"]), ["target_end", "target_id"])
         # The model's rule that a score_type needs a score names two direct columns, so it is kept.
-        rule = classes["Feature"]["rules"][0]
+        rule = next(r for r in classes["Feature"]["rules"] if "score_type" in r["preconditions"]["slot_conditions"])
         self.assertEqual((list(rule["preconditions"]["slot_conditions"]), list(rule["postconditions"]["slot_conditions"])),
                          (["score_type"], ["score"]))
 

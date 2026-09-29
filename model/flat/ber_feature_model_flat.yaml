@@ -248,6 +248,83 @@ classes:
           score:
             value_presence: PRESENT
       description: A score_type qualifies a score, so it needs one (issue 46).
+    - description: location is present once location_operator is, so it needs location_crosses_origin.
+      preconditions:
+        slot_conditions:
+          location_operator:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          location_crosses_origin:
+            value_presence: PRESENT
+    - description: location is present once location_crosses_origin is, so it needs location_operator.
+      preconditions:
+        slot_conditions:
+          location_crosses_origin:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          location_operator:
+            value_presence: PRESENT
+    - description: target is present once target_id is, so it needs target_start, target_end.
+      preconditions:
+        slot_conditions:
+          target_id:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          target_start:
+            value_presence: PRESENT
+          target_end:
+            value_presence: PRESENT
+    - description: target is present once target_start is, so it needs target_id, target_end.
+      preconditions:
+        slot_conditions:
+          target_start:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          target_id:
+            value_presence: PRESENT
+          target_end:
+            value_presence: PRESENT
+    - description: target is present once target_end is, so it needs target_id, target_start.
+      preconditions:
+        slot_conditions:
+          target_end:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          target_id:
+            value_presence: PRESENT
+          target_start:
+            value_presence: PRESENT
+    - description: target is present once target_strand is, so it needs target_id, target_start, target_end.
+      preconditions:
+        slot_conditions:
+          target_strand:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          target_id:
+            value_presence: PRESENT
+          target_start:
+            value_presence: PRESENT
+          target_end:
+            value_presence: PRESENT
+    - description: target is present once target_gap is, so it needs target_id, target_start, target_end.
+      preconditions:
+        slot_conditions:
+          target_gap:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          target_id:
+            value_presence: PRESENT
+          target_start:
+            value_presence: PRESENT
+          target_end:
+            value_presence: PRESENT
   FeatureStableIdentifiers:
     description: Feature.stable_identifiers, one row per item.
     attributes:
