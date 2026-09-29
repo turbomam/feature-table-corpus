@@ -17,6 +17,11 @@ scoped comment metadata, without depending on Feature or NMDC DataObject. See th
 [source-document parser contract](../../docs/source-documents.md) and
 [reproducible example](../examples/source-documents/README.md).
 
+[`gff3_reserved_attributes.yaml`](gff3_reserved_attributes.yaml) is not a schema: it transcribes the
+GFF3 spec's eleven reserved column 9 tags, written in this repository on 2026-09-18 with its source
+in the header. `tests/test_gff3_reserved_attributes.py` checks that every uppercase `gff3:` tag the
+schemas here map to is one of them.
+
 [Versioned source profiles](../../docs/conversion-profiles.md) compose these two
 contracts with preservation/mapping records. GFF3 and BED12 use the same Dataset
 and generic Attribute classes; the latter also uses ordinary parent/child features

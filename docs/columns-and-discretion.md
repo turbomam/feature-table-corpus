@@ -138,7 +138,7 @@ Three of the nine are open by design, and no two are open in the same sense.
 **Column 9, attributes: open vocabulary, closed syntax.** The grammar is fully specified as
 semicolon-separated `tag=value` pairs with percent-encoding for the separators. Eleven tags are
 reserved: ID, Name, Alias, Parent, Target, Gap, Derives_from, Note, Dbxref, Ontology_term and
-Is_circular. The namespace is then partitioned by capitalisation. *Quoted:* "All attributes that
+Is_circular ([machine-readable list](../model/schema/gff3_reserved_attributes.yaml)). The namespace is then partitioned by capitalisation. *Quoted:* "All attributes that
 begin with an uppercase letter are reserved for later use. Attributes that begin with a lowercase
 letter can be used freely by applications." And *quoted:* "attribute names are case sensitive.
 'Parent' is not the same as 'parent'."
