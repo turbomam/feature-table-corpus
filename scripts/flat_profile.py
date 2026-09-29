@@ -310,7 +310,10 @@ def flatten(dataset, tables=None):
     for table, owner, collection, columns, children in tables:
         key = key_column(columns)
         rows = out.setdefault(table, [])
-        records = dataset.get(collection) or []
+        # Absent or null is an empty collection, as present() in img_functional_map treats None;
+        # any other non-list ({}, "", 0, false) is the wrong shape, not an empty one.
+        records = dataset.get(collection)
+        records = [] if records is None else records
         if not isinstance(records, list):
             raise ValueError(f"{collection} is a list of {owner} records, not a {type(records).__name__}")
         for number, record in enumerate(records):
@@ -325,7 +328,8 @@ def flatten(dataset, tables=None):
             row = {name: value for name, path, _ in columns if (value := get(record, path)) is not None}
             rows.append(row)
             for child, path, slot, fields in children:
-                items = get(record, path) or []
+                items = get(record, path)
+                items = [] if items is None else items
                 if not isinstance(items, list):
                     raise ValueError(f"{owner} {record[key]!r}: {'.'.join(path)} is a list, not a {type(items).__name__}")
                 child_rows = out.setdefault(child, [])

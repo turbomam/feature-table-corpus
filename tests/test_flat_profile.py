@@ -213,7 +213,10 @@ class FlatProfileTests(unittest.TestCase):
             "flatten": [("[1, 2]", "not a list"), ('{"features": [1]}', r"features\[0\] is a Feature record, not a int"),
                         ('{"features": [{"seqid": "c", "note": ["x"]}]}', r"features\[0\] has no feature_id"),
                         ('{"features": [{"feature_id": "f", "note": "x"}]}', "note is a list, not a str"),
-                        ('{"features": [{"feature_id": "f", "attributes": ["x"]}]}', r"attributes\[0\] is an object")],
+                        ('{"features": [{"feature_id": "f", "attributes": ["x"]}]}', r"attributes\[0\] is an object"),
+                        ('{"features": {}}', "features is a list of Feature records, not a dict"),
+                        ('{"features": ""}', "not a str"), ('{"features": false}', "not a bool"),
+                        ('{"features": [{"feature_id": "f", "note": 0}]}', "note is a list, not a int")],
             "unflatten": [("[]", "not a list"), ('{"feature": [1]}', "feature is a list of row objects")],
         }
         with tempfile.TemporaryDirectory() as tmp:
@@ -229,6 +232,11 @@ class FlatProfileTests(unittest.TestCase):
                         self.assertFalse(out.exists())
                         self.assertRegex(err.getvalue(), expected)
                         self.assertNotIn("Traceback", err.getvalue())
+
+    def test_null_is_an_absent_collection_or_list(self):
+        flat = flat_profile.flatten({"features": None, "contigs": [{"contig_id": "c", "source_files": None}]},
+                                    self.tables)
+        self.assertEqual((flat["feature"], flat["contig_source_files"]), ([], []))
 
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
