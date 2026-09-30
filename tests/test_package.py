@@ -101,6 +101,21 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("nested too deeply to validate", result.stdout)
 
+    def test_installed_function_refuses_values_json_cannot_hold(self):
+        # jsonschema counts complex numbers and Decimals as numbers, and Feature.score has no limit.
+        values = ["1+2j", "Decimal('1.5')", "{1, 2}", "object()"]
+        script = ("import json, yaml, ber_feature_model as m; from decimal import Decimal; "
+                  f"d = yaml.safe_load(open({str(EXAMPLE)!r})); "
+                  "f = next(f for f in d['features'] if 'score' in f); out = []\n"
+                  f"for v in [{', '.join(values)}]:\n"
+                  "    f['score'] = v; out.append(m.validate(d))\n"
+                  "print(json.dumps(out))")
+        result = subprocess.run(["uv", "run", "--no-project", "--isolated", "--with", str(self.wheel),
+                                 "python", "-c", script], capture_output=True, text=True, cwd=self.tmp.name)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for value, errors in zip(values, json.loads(result.stdout)):
+            self.assertTrue(any("not JSON data" in error for error in errors), (value, errors))
+
     def test_installed_function_refuses_non_finite_scores(self):
         # JSON can't carry NaN, so the Dataset is built in memory, as a dataframe conversion would.
         # Feature.score has no range limit, so only the value check stands between these and [].

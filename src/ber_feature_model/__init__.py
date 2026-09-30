@@ -10,6 +10,7 @@ The validator and schema are the ones in https://github.com/turbomam/feature-tab
 repository can pin it. See https://github.com/turbomam/feature-table-corpus/issues/142.
 """
 import argparse
+import json
 from pathlib import Path
 import sys
 
@@ -31,13 +32,22 @@ def schema_path():
 
 
 def validate(data, class_name="Dataset"):
-    """Every schema and closed-model error for data, as strings; empty when valid."""
-    # load_data runs this check on files; data built in memory needs it too, since JSON Schema
-    # accepts NaN and infinity as numbers.
+    """Every schema and closed-model error for data, as strings; empty when valid.
+
+    data is judged as it would be written to JSON, the form the command reads, so a value
+    JSON can't hold (NaN, a complex number, a Decimal, a numpy scalar) is an error.
+    """
     try:
-        _check_values(data)
+        _check_values(data)  # NaN, infinity and cycles, reported with their path
     except ValueError as error:
         return [str(error)]
+    # jsonschema counts any number as a JSON number, so types JSON lacks would otherwise pass.
+    try:
+        data = json.loads(json.dumps(data, allow_nan=False))
+    except (TypeError, ValueError) as error:
+        return [f"not JSON data: {error}"]
+    except RecursionError:
+        return ["nested too deeply to validate"]
     return validation_errors(data, make_validator(schema_path(), class_name), class_name)
 
 
