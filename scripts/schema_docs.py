@@ -22,6 +22,7 @@ SCHEMA = "model/schema/feature_schemas.yaml"
 SUPPLEMENTARY = [
     ("Start here", [
         ("Repository overview", "overview.md"),
+        ("How the pieces fit", "docs/how-it-fits.md"),
         ("Repository map and tasks", "docs/repository-map.md"),
         ("Schema diagram", "docs/schema-diagram.md"),
         ("Schema guide", "model/schema/README.md"),

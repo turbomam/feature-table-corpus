@@ -10,6 +10,10 @@ evidence for modeling, not universal requirements.
 
 ## Start here
 
+[How the pieces fit](docs/how-it-fits.md) shows how the feature model, its converters, the NMDC
+pipeline in [nmdc-lakehouse](https://github.com/microbiomedata/nmdc-lakehouse), BERDL and the
+BER central schema connect, and which version each depends on.
+
 The [repository map](docs/repository-map.md) explains artifact roles and reproduction,
 and the [layout decision](docs/decisions/001-artifact-layout.md) records the directory reorganization.
 Run `just` or `just --list` for grouped tasks; see [running tasks](docs/repository-map.md#running-tasks)
