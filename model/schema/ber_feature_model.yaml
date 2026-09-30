@@ -1,6 +1,7 @@
 id: https://w3id.org/ber-data/gff-feature-model
 name: ber-feature-model
-title: BER unified feature model (draft, unpublished)
+title: BER unified feature model (draft)
+version: 0.1.0
 description: >-
   Draft LinkML model for genome and metagenome sequence features across BER data sources
   (NMDC, JGI IMG, KBase).
