@@ -101,16 +101,21 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("nested too deeply to validate", result.stdout)
 
-    def test_installed_function_refuses_a_non_finite_score(self):
+    def test_installed_function_refuses_non_finite_scores(self):
         # JSON can't carry NaN, so the Dataset is built in memory, as a dataframe conversion would.
-        script = ("import yaml, ber_feature_model as m; "
+        # Feature.score has no range limit, so only the value check stands between these and [].
+        values = ["float('nan')", "float('inf')", "Decimal('NaN')", "Decimal('-Infinity')", "Decimal('sNaN')"]
+        script = ("import json, yaml, ber_feature_model as m; from decimal import Decimal; "
                   f"d = yaml.safe_load(open({str(EXAMPLE)!r})); "
-                  "next(f for f in d['features'] if 'score' in f)['score'] = float('nan'); "
-                  "print(m.validate(d))")
+                  "f = next(f for f in d['features'] if 'score' in f); out = []\n"
+                  f"for v in [{', '.join(values)}]:\n"
+                  "    f['score'] = v; out.append(m.validate(d))\n"
+                  "print(json.dumps(out))")
         result = subprocess.run(["uv", "run", "--no-project", "--isolated", "--with", str(self.wheel),
                                  "python", "-c", script], capture_output=True, text=True, cwd=self.tmp.name)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("is not a finite number", result.stdout)
+        for value, errors in zip(values, json.loads(result.stdout)):
+            self.assertTrue(any("is not a finite number" in error for error in errors), (value, errors))
 
 
 if __name__ == "__main__":

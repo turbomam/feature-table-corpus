@@ -265,7 +265,9 @@ def _check_values(data):
     while pending or frames:
         if pending:
             value, key = pending.pop()
-            if isinstance(value, float) and not math.isfinite(value):
+            # jsonschema counts Decimal as a number too; is_finite also covers its signaling NaN.
+            if (isinstance(value, float) and not math.isfinite(value)
+                    or isinstance(value, Decimal) and not value.is_finite()):
                 raise ValueError(f"{path(frames, key)} is not a finite number")
             if isinstance(value, (dict, list)) and id(value) not in done:
                 if id(value) in active:
