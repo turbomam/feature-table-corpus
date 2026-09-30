@@ -141,5 +141,35 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertEqual(result.stderr, "")
 
+
+class HeaderExtraTests(unittest.TestCase):
+    """The ##species line and an excerpt's provenance lines survive the commands via --header."""
+
+    POPULUS = ROOT / "corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3"
+
+    def test_the_commands_bring_the_excerpt_back_byte_for_byte(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, header, back = Path(tmp) / "d.json", Path(tmp) / "h.json", Path(tmp) / "back.gff3"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(self.POPULUS), str(dataset), "--header", str(header)]),
+                                 0, err.getvalue())
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(back), "--header", str(header)]),
+                                 0, err.getvalue())
+            self.assertEqual(sorted(json.loads(header.read_text())), ["provenance", "species"])
+            self.assertEqual(back.read_bytes(), self.POPULUS.read_bytes())
+
+    def test_a_bad_header_file_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, bad = Path(tmp) / "d.json", Path(tmp) / "bad.json"
+            bad.write_text('{"species": "x", "other": 1}')
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(FIXTURE), str(dataset)]), 0)
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(Path(tmp) / "o.gff3"),
+                                               "--header", str(bad)]), 1)
+            self.assertIn("header: expected a JSON object", err.getvalue())
+            self.assertFalse((Path(tmp) / "o.gff3").exists())
+
 if __name__ == "__main__":
     unittest.main()

@@ -82,6 +82,28 @@ def annot_version(rows):
     return found.pop()
 
 
+# Header lines the model can't hold, kept beside the Dataset (forward --header / reverse --header),
+# as the IMG mappings keep number spellings.
+HEADER_EXTRAS = ("species", "provenance")
+
+
+def header_extras(document):
+    return {key: document[key] for key in HEADER_EXTRAS if document.get(key)}
+
+
+def read_header_extras(path):
+    """(extras, errors) from a --header file; no file means none."""
+    if path is None:
+        return {}, []
+    try:
+        extras = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return {}, [f"header: {error}"]
+    if not isinstance(extras, dict) or set(extras) - set(HEADER_EXTRAS):
+        return {}, [f"header: expected a JSON object with only {list(HEADER_EXTRAS)}"]
+    return extras, []
+
+
 def reverse(dataset, source_file, transformers=None, species=None, provenance=None):
     transformers = transformers or _transformers()
     _, to_dialect = transformers
@@ -195,10 +217,11 @@ def main(argv=None):
     fwd = commands.add_parser("forward")
     fwd.add_argument("gff", type=Path)
     fwd.add_argument("output", type=Path)
+    fwd.add_argument("--header", type=Path, help="also write the ##species line and any provenance lines here, for reverse")
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("output", type=Path)
-    rev.add_argument("--species", help="the ##species directive to write, if the source had one")
+    rev.add_argument("--header", type=Path, help="the header lines from forward --header")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff", type=Path)
     args = parser.parse_args(argv)
@@ -217,17 +240,23 @@ def main(argv=None):
             errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
+        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
+            return 1
+        if args.header and write_output(args.header, json.dumps(header_extras(document), indent=1) + "\n"):
+            args.output.unlink()
+            return 1
+        return 0
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        extras, errors = read_header_extras(args.header)
+        errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if not errors:
             try:
-                document = reverse(dataset, str(args.output), species=args.species)
+                document = reverse(dataset, str(args.output), **extras)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:

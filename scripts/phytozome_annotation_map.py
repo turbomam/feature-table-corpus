@@ -226,13 +226,14 @@ def main(argv=None):
     fwd.add_argument("gff3", type=Path)
     fwd.add_argument("table", type=Path)
     fwd.add_argument("output", type=Path)
+    fwd.add_argument("--header", type=Path, help="also write the GFF3's ##species and provenance lines here, for reverse")
     fwd.add_argument("--table-url", help="the table's published URL, stored in each mRNA's source_files; "
                                          "defaults to its file: URI")
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("gff3_output", type=Path)
     rev.add_argument("table_output", type=Path)
-    rev.add_argument("--species", help="the ##species directive to write, if the source GFF3 had one")
+    rev.add_argument("--header", type=Path, help="the GFF3 header lines from forward --header")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff3", type=Path)
     trip.add_argument("table", type=Path)
@@ -248,21 +249,27 @@ def main(argv=None):
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
+        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
+            return 1
+        if args.header and write_output(args.header, json.dumps(gff3_map.header_extras(gff3_document), indent=1) + "\n"):
+            args.output.unlink()
+            return 1
+        return 0
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        extras, errors = gff3_map.read_header_extras(args.header)
+        errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if args.gff3_output.resolve() == args.table_output.resolve():
             errors.append("output: the GFF3 and the table need different paths")
         texts = {}
         if not errors:
             try:
                 gff3_document, table_document = reverse(dataset, str(args.gff3_output), str(args.table_output),
-                                                        species=args.species)
+                                                        **extras)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:
