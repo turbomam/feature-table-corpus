@@ -90,6 +90,28 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(any("duplicate" in error.lower() for error in json.loads(result.stdout)), result.stdout)
 
+    def test_installed_function_reports_deep_nesting_without_a_traceback(self):
+        # Deeper than jsonschema can follow on any supported Python; a loader would refuse it,
+        # but data built in memory never passes through one.
+        script = ("import ber_feature_model as m; v = []; "
+                  "exec('for _ in range(10000): v = [v]'); "
+                  "print(m.validate({'contigs': [{'contig_id': 'c1', 'member_of': v}]}))")
+        result = subprocess.run(["uv", "run", "--no-project", "--isolated", "--with", str(self.wheel),
+                                 "python", "-c", script], capture_output=True, text=True, cwd=self.tmp.name)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("nested too deeply to validate", result.stdout)
+
+    def test_installed_function_refuses_a_non_finite_score(self):
+        # JSON can't carry NaN, so the Dataset is built in memory, as a dataframe conversion would.
+        script = ("import yaml, ber_feature_model as m; "
+                  f"d = yaml.safe_load(open({str(EXAMPLE)!r})); "
+                  "next(f for f in d['features'] if 'score' in f)['score'] = float('nan'); "
+                  "print(m.validate(d))")
+        result = subprocess.run(["uv", "run", "--no-project", "--isolated", "--with", str(self.wheel),
+                                 "python", "-c", script], capture_output=True, text=True, cwd=self.tmp.name)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("is not a finite number", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

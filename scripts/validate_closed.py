@@ -225,7 +225,12 @@ def dataset_errors(data):
 
 
 def validation_errors(data, validator, class_name="Dataset"):
-    errors = [f"{list(e.path)}: {e.message}" for e in validator.iter_errors(data)]
+    # jsonschema recurses into the data and into repr() for its messages, so nesting a loader
+    # accepted, or that was built in memory, can still exceed the recursion limit here.
+    try:
+        errors = [f"{list(e.path)}: {e.message}" for e in validator.iter_errors(data)]
+    except RecursionError:
+        return ["nested too deeply to validate"]
     # Only traverse data whose shape and primitive types have already been checked.
     if not errors and class_name == "Dataset":
         errors.extend(dataset_errors(data))

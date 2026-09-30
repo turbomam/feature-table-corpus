@@ -2,7 +2,6 @@
 name = "ber-feature-model"
 version = "0.1.0"
 description = "Validate Datasets against the BER feature model; the LinkML schema is bundled"
-readme = "docs/how-it-fits.md"
 license = "CC0-1.0"
 requires-python = ">=3.11"
 dependencies = [
@@ -24,6 +23,8 @@ build-backend = "hatchling.build"
 
 # The package reuses the repository's files where they are, rather than moving them:
 # scripts/ modules still import each other by name, and the justfile keeps working.
+# The copied modules exist only in a built wheel, so an editable install (pip install -e)
+# can't import them; install from git or from a wheel.
 [tool.hatch.build.targets.wheel]
 packages = ["src/ber_feature_model"]
 
@@ -40,11 +41,10 @@ include = [
     "scripts/feature_locations.py",
     "model/schema/ber_feature_model.yaml",
     "model/schema/attributes.yaml",
-    "docs/how-it-fits.md",
     "LICENSE",
 ]
 
 # The justfile runs tools with `uv run --with ...`; this file must not make uv sync a project
-# environment for those commands.
+# environment for those commands, which would also be the broken editable install above.
 [tool.uv]
 managed = false

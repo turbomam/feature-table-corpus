@@ -48,7 +48,7 @@ version is the model's version. Until a release is tagged, install from main:
 
 ```bash
 uv add "ber-feature-model @ git+https://github.com/turbomam/feature-table-corpus"
-ber-feature-validate features.yaml        # YAML or JSON; exit status 1 when invalid
+uv run ber-feature-validate features.yaml # YAML or JSON; exit status 1 when invalid
 ```
 
 ```python
@@ -58,7 +58,7 @@ errors = validate(dataset)                # a dict shaped like Dataset; [] means
 
 The package holds [`scripts/validate_closed.py`](../scripts/validate_closed.py),
 [`scripts/feature_locations.py`](../scripts/feature_locations.py) and the two schema files,
-copied unchanged at build time, so it runs the same checks as `just check`. The converters aren't
+copied unchanged at build time, so it runs the same checks as `just validate-example-closed`. The converters aren't
 in it yet.
 
 ## Where to start

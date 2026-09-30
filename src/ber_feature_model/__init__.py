@@ -10,24 +10,34 @@ The validator and schema are the ones in https://github.com/turbomam/feature-tab
 repository can pin it. See https://github.com/turbomam/feature-table-corpus/issues/142.
 """
 import argparse
-from importlib.resources import files
+from pathlib import Path
 import sys
 
 import yaml
 
-from .validate_closed import load_data, make_validator, validation_errors
+from .validate_closed import _check_values, load_data, make_validator, validation_errors
 
 __version__ = "0.1.0"
 __all__ = ["__version__", "schema_path", "validate", "main"]
 
 
 def schema_path():
-    """Path of the bundled ber_feature_model.yaml; attributes.yaml sits beside it."""
-    return str(files(__package__) / "schema" / "ber_feature_model.yaml")
+    """Path of the bundled ber_feature_model.yaml; attributes.yaml sits beside it.
+
+    LinkML reads the schema and its import by file path, so the package must be installed
+    unpacked, as pip and uv install it, not imported from a zip archive.
+    """
+    return str(Path(__file__).with_name("schema") / "ber_feature_model.yaml")
 
 
 def validate(data, class_name="Dataset"):
     """Every schema and closed-model error for data, as strings; empty when valid."""
+    # load_data runs this check on files; data built in memory needs it too, since JSON Schema
+    # accepts NaN and infinity as numbers.
+    try:
+        _check_values(data)
+    except ValueError as error:
+        return [str(error)]
     return validation_errors(data, make_validator(schema_path(), class_name), class_name)
 
 
