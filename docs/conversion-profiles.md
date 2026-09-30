@@ -437,8 +437,8 @@ Beyond the schemas, the GFF3 checks cover ID construction, block order, part num
 and a gene spans its mRNAs. Each writer, run on the TAIR10 files on 2026-09-25, reproduced them
 byte for byte. There is no conversion profile for these dialects yet.
 
-A second genome, Populus trichocarpa v4.1 (`Phytozome-533`), was measured on 2026-09-30: 849,981
-GFF3 rows and 52,400 table rows. Its GFF3 differs from TAIR10's in two ways the gene_exons dialect
+A second genome, Populus trichocarpa v4.1 (`Phytozome-533`), was measured on 2026-09-30: 849,978
+GFF3 feature rows (849,981 lines) and 52,400 table rows. Its GFF3 differs from TAIR10's in two ways the gene_exons dialect
 now accepts. It opens with a third directive, `##species Populus trichocarpa`. And genes and mRNAs
 may carry `ancestorIdentifier`, their v3.1 identifier: on 30,924 of 34,699 genes and 32,185 of
 52,400 mRNAs, always after `Name` on a gene and before `Parent` on an mRNA. A
