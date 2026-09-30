@@ -1,6 +1,7 @@
 id: https://w3id.org/ber-data/attributes
 name: attributes
 title: Reusable attributes (draft)
+version: 0.1.0
 description: >-
   String-valued attributes for metadata, annotations, and source-reported evidence, with an
   optional CURIE for the key and an optional number for the value.
