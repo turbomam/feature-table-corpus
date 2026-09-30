@@ -9,7 +9,7 @@ of them. Stated as of 2026-09-30.
 | piece | where | what it does |
 |---|---|---|
 | Feature model | [`model/schema/ber_feature_model.yaml`](../model/schema/ber_feature_model.yaml), version 0.1.0, with [`attributes.yaml`](../model/schema/attributes.yaml) | The LinkML schema: `Dataset`, `Contig`, `ContigCollection`, `Feature`, `AlignmentTarget`, `FeatureLocation`, `LocationPart` and `Attribute`. Licensed CC0 1.0. |
-| Dataset validator | [`scripts/validate_closed.py`](../scripts/validate_closed.py) | Checks a Dataset against the schema, then the rules JSON Schema can't express, such as parent links, protein coordinates and translation tables. The conversion profiles and dialect mappings in this repository run it. |
+| Dataset validator | [`scripts/validate_closed.py`](../scripts/validate_closed.py) | Checks a Dataset against the schema, then the rules JSON Schema can't express, such as parent links, protein coordinates and translation tables. The conversion profiles and dialect mappings in this repository run it. Other repositories can install it with the schema as the package `ber-feature-model`; see below. |
 | Conversion profiles | [`scripts/convert_features.py`](../scripts/convert_features.py) and [`model/profiles/`](../model/profiles/) | Versioned, reversible converters for GFF3 (`gff3-contig/4.0.0`), NMDC Pfam hits (`nmdc-pfam-protein/5.0.0`), BED12 (`bed12-blocks/1.0.0`) and GenBank (`insdc-locations/1.0.0`). See [conversion profiles](conversion-profiles.md). |
 | Source dialects | [`model/dialects/`](../model/dialects/), mapped to the model by [`model/transforms/`](../model/transforms/) and `scripts/*_map.py` | LinkML schemas for producers' own formats: IMG functional, per-method, assembled, taxon bundle, TMHMM and SignalP files, and Phytozome gene_exons GFF3 and annotation_info. |
 | Corpus | [`corpus/`](../corpus/) | The real files the converters are tested against, with provenance and licenses in [`corpus/index.yaml`](../corpus/index.yaml). |
@@ -36,10 +36,30 @@ of them. Stated as of 2026-09-30.
 
 - No release is tagged, so nothing can pin a version yet
   ([issue 131](https://github.com/turbomam/feature-table-corpus/issues/131)).
-- The validator and converters are scripts, not an installable package
+- The converters are scripts, not part of the installable package
   ([issue 142](https://github.com/turbomam/feature-table-corpus/issues/142)).
 - nmdc-lakehouse doesn't yet say which model version its tables follow
   (https://github.com/microbiomedata/nmdc-lakehouse/issues/382).
+
+## Using the validator from another repository
+
+The validator and the schema install together as the Python package `ber-feature-model`, whose
+version is the model's version. Until a release is tagged, install from main:
+
+```bash
+uv add "ber-feature-model @ git+https://github.com/turbomam/feature-table-corpus"
+ber-feature-validate features.yaml        # YAML or JSON; exit status 1 when invalid
+```
+
+```python
+from ber_feature_model import validate
+errors = validate(dataset)                # a dict shaped like Dataset; [] means valid
+```
+
+The package holds [`scripts/validate_closed.py`](../scripts/validate_closed.py),
+[`scripts/feature_locations.py`](../scripts/feature_locations.py) and the two schema files,
+copied unchanged at build time, so it runs the same checks as `just check`. The converters aren't
+in it yet.
 
 ## Where to start
 

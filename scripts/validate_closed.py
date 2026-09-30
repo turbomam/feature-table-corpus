@@ -18,7 +18,10 @@ from pathlib import Path
 import jsonschema
 import yaml
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
-from feature_locations import location_errors
+try:  # inside the installed ber_feature_model package
+    from .feature_locations import location_errors
+except ImportError:  # run from scripts/, where modules import each other by name
+    from feature_locations import location_errors
 
 
 # Assigned NCBI genetic codes, from https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
