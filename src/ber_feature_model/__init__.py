@@ -37,12 +37,18 @@ def main(argv=None):
     parser.add_argument("--class", dest="class_name", default="Dataset", help="top class (default Dataset)")
     parser.add_argument("--version", action="version", version=f"ber-feature-model {__version__}")
     args = parser.parse_args(argv)
+    # Same order and exit statuses as scripts/validate_closed.py's main: an unknown class is a
+    # usage error (2), reported before the data is read; unreadable data is 1.
+    try:
+        validator = make_validator(schema_path(), args.class_name)
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
     try:
         data = load_data(args.dataset)
     except (OSError, ValueError, yaml.YAMLError) as error:
         print(f"{args.dataset}: {error}", file=sys.stderr)
         return 1
-    errors = validate(data, args.class_name)
+    errors = validation_errors(data, validator, args.class_name)
     for error in errors:
         print(f"ERROR: {error}")
     print(f"{args.dataset}: {len(errors)} error(s) against ber-feature-model {__version__}")

@@ -72,6 +72,12 @@ class PackageTests(unittest.TestCase):
         self.assertIn("malformed.yaml:", result.stderr)
         self.assertNotIn("Traceback", result.stderr)
 
+    def test_installed_command_reports_an_unknown_class_as_a_usage_error(self):
+        result = self.run_installed("ber-feature-validate", "--class", "Datset", str(EXAMPLE))
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("'Datset' is not a class", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_installed_function_runs_the_closed_model_checks(self):
         # Two contigs with one ID is a closed-model error JSON Schema alone can't report.
         data = yaml.safe_load(EXAMPLE.read_text())
