@@ -64,6 +64,14 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("'bogus' was unexpected", result.stdout)
 
+    def test_installed_command_reports_malformed_yaml_without_a_traceback(self):
+        bad = Path(self.tmp.name) / "malformed.yaml"
+        bad.write_text("contigs: [\n")
+        result = self.run_installed("ber-feature-validate", str(bad))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("malformed.yaml:", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_installed_function_runs_the_closed_model_checks(self):
         # Two contigs with one ID is a closed-model error JSON Schema alone can't report.
         data = yaml.safe_load(EXAMPLE.read_text())

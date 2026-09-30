@@ -13,6 +13,8 @@ import argparse
 from importlib.resources import files
 import sys
 
+import yaml
+
 from .validate_closed import load_data, make_validator, validation_errors
 
 __version__ = "0.1.0"
@@ -37,7 +39,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         data = load_data(args.dataset)
-    except (OSError, ValueError) as error:
+    except (OSError, ValueError, yaml.YAMLError) as error:
         print(f"{args.dataset}: {error}", file=sys.stderr)
         return 1
     errors = validate(data, args.class_name)
