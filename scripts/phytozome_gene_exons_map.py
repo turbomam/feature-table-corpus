@@ -82,12 +82,14 @@ def annot_version(rows):
     return found.pop()
 
 
-def reverse(dataset, source_file, transformers=None):
+def reverse(dataset, source_file, transformers=None, species=None, provenance=None):
     transformers = transformers or _transformers()
     _, to_dialect = transformers
     slots = dialect.row_slots()
     rows = []
-    for number, feature in enumerate(dataset["features"], start=3):
+    # Rows follow the two opening directives, a ##species line and a provenance block when present.
+    first_row = 3 + bool(species) + len(provenance or [])
+    for number, feature in enumerate(dataset["features"], start=first_row):
         name = feature.get("feature_id")
         # The dialect has only contig coordinates; dropping another system would
         # silently reinterpret protein positions as nucleotide positions.
@@ -124,6 +126,12 @@ def reverse(dataset, source_file, transformers=None):
     except ValueError as error:
         raise ValueError(f"header: {error}") from None
     document = {"source_file": source_file, "gff_version": "3", "annot_version": version, "rows": rows}
+    # The model has no place for the file's ##species line or an excerpt's provenance
+    # comments, so they are passed in, like the IMG mappings' kept number spellings.
+    if species:
+        document["species"] = species
+    if provenance:
+        document["provenance"] = list(provenance)
     # The dialect can't carry every model slot (score, product, is_selected, contig
     # lengths ...). Map the result forward again and require the input back, so
     # nothing is dropped silently.
@@ -154,7 +162,7 @@ def roundtrip(path):
     if problems:
         return problems, report
     try:
-        back = reverse(dataset, str(path), transformers)
+        back = reverse(dataset, str(path), transformers, document.get("species"), document.get("provenance"))
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
     for before, after in zip(document["rows"], back["rows"]):
@@ -163,9 +171,9 @@ def roundtrip(path):
             problems.append(f"line {before['line']}: row differs after the round trip in {changed}")
     if len(back["rows"]) != len(document["rows"]):
         problems.append(f"{len(document['rows'])} rows in, {len(back['rows'])} out")
-    for key in ("gff_version", "annot_version"):
-        if back[key] != document[key]:
-            problems.append(f"header: {key} {document[key]!r} comes back as {back[key]!r}")
+    for key in ("gff_version", "annot_version", "species", "provenance"):
+        if back.get(key) != document.get(key):
+            problems.append(f"header: {key} {document.get(key)!r} comes back as {back.get(key)!r}")
     try:
         written = dialect.write(back)
     except dialect.DialectError as error:
@@ -190,6 +198,7 @@ def main(argv=None):
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("output", type=Path)
+    rev.add_argument("--species", help="the ##species directive to write, if the source had one")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff", type=Path)
     args = parser.parse_args(argv)
@@ -218,7 +227,7 @@ def main(argv=None):
         errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if not errors:
             try:
-                document = reverse(dataset, str(args.output))
+                document = reverse(dataset, str(args.output), species=args.species)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:

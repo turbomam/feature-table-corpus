@@ -45,6 +45,18 @@ classes:
         description: >-
           Value of the `##annot-version` directive on line 2, for example TAIR10. Every gene and
           mRNA ID ends with it.
+      species:
+        pattern: "^[^\\t]+$"
+        description: >-
+          Value of an optional `##species` directive on line 3. Populus trichocarpa v4.1 writes one
+          (`Populus trichocarpa`); TAIR10 doesn't.
+      provenance:
+        multivalued: true
+        pattern: "^# (derived-from|single-change|validity): \\S"
+        description: >-
+          The three comment lines after the directives that a derived excerpt in
+          corpus/derived-examples/ carries, in the order derived-from, single-change, validity.
+          A file as Phytozome serves it has none.
       rows:
         description: Every feature row, in file order.
         range: PhytozomeGeneExonsRow
@@ -119,6 +131,13 @@ classes:
           Phytozome's numeric transcript identifier, on mRNA rows and repeated on each of their
           parts. It is unique per mRNA, and annotation_info.txt has one row per pacid, keyed
           PAC:<pacid>.
+      ancestorIdentifier:
+        pattern: "^\\S+$"
+        description: >-
+          On some gene and mRNA rows of Populus trichocarpa v4.1 only: the feature's identifier in
+          the previous annotation, v3.1. It is Name plus ".v3.1" on 61,626 of the 63,109 rows that
+          have it, and a different v3.1 identifier on the other 1,483, for example
+          Potri.T170500.v3.1 on gene Potri.001G006901 (measured 2026-09-30).
       longest:
         range: integer
         minimum_value: 0

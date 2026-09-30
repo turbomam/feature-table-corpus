@@ -88,15 +88,15 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-94 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+96 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
 | vendored | 58 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 22 | Too large or not redistributable, so a stable public URL is recorded instead |
-| derived | 10 | Nine deliberately altered fixtures and one explicitly selected real BGC excerpt, each traceable to its source |
-| restricted | 3 | Behind a login. Recorded for completeness, not fetchable here |
+| derived | 11 | Nine deliberately altered fixtures and two explicitly selected real excerpts (a BGC and 200 Populus genes), each traceable to its source |
+| restricted | 4 | Behind a login. Recorded for completeness, not fetchable here |
 | not located | 1 | Known to exist, no public URL found. Recorded so the gap stays visible |
 
 **The one promise this corpus makes.** A file under `corpus/sources/` is

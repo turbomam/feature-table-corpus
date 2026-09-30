@@ -271,3 +271,15 @@ the second figure also counts the growth of `index.yaml` and this file.
 The corpus now has 94 entries, 58 vendored. The 21 GFF files have measured validator
 cases in `model/validation/`; see the
 [validation report](../analyses/format-validation/README.md).
+
+## September 30, 2026: a Populus trichocarpa v4.1 excerpt
+
+For https://github.com/turbomam/feature-table-corpus/issues/107, the Phytozome gene_exons dialect
+now has a real input in the repository: `corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3`,
+the first 200 Chr01 genes of Populus trichocarpa v4.1 (`Phytozome-533`), made by
+`scripts/populus_excerpt.py`. The full GFF3, downloaded by Mark with a JGI login on 2026-09-29, is
+112.8 MB uncompressed, so it is recorded as the `restricted` entry
+`jgi-phytozome-populus-v4.1-gene-exons` with its JGI file ID and md5, and the excerpt as `derived`
+from it. The `derived` tier's definition now allows a restricted source whose md5 is recorded.
+Terms and citations are in [the derived-examples README](derived-examples/README.md). The corpus
+now has 96 entries: 58 vendored, 22 linked, 4 restricted, 1 not located and 11 derived.
