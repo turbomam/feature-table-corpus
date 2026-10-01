@@ -151,8 +151,8 @@ def gff3_transcripts(path):
     transcripts, gene_names, problems = {}, {}, []
     with gff3.open_text(path) as handle:
         lines = iter(handle)
-        gff3.read_header(lines)
-        for row in gff3.iter_rows(lines, gff3.row_slots()):
+        _, lines, first_line = gff3.read_head(lines)
+        for row in gff3.iter_rows(lines, gff3.row_slots(), first_line):
             if row.get("type") == "gene":
                 gene_names[row.get("ID")] = row.get("Name")
             elif row.get("type") == "mRNA":

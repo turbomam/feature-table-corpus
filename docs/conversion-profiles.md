@@ -437,6 +437,17 @@ Beyond the schemas, the GFF3 checks cover ID construction, block order, part num
 and a gene spans its mRNAs. Each writer, run on the TAIR10 files on 2026-09-25, reproduced them
 byte for byte. There is no conversion profile for these dialects yet.
 
+A second genome, Populus trichocarpa v4.1 (`Phytozome-533`), was measured on 2026-09-30: 849,978
+GFF3 feature rows (849,981 lines) and 52,400 table rows. Its GFF3 differs from TAIR10's in two ways the gene_exons dialect
+now accepts. It opens with a third directive, `##species Populus trichocarpa`. And genes and mRNAs
+may carry `ancestorIdentifier`, their v3.1 identifier: on 30,924 of 34,699 genes and 32,185 of
+52,400 mRNAs, always after `Name` on a gene and before `Parent` on an mRNA. A
+[200-gene excerpt](../corpus/derived-examples/README.md) is in the repository, and the gene_exons
+mapping round-trips it byte for byte in CI (`model/examples/clean-round-trips.yaml`). The table
+differs more: other best-hit columns, `KOG` before `ec`, and peptide names that can't be derived
+from the GFF3. So the annotation_info dialect doesn't read it yet
+(https://github.com/turbomam/feature-table-corpus/issues/144).
+
 [`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)
 maps the GFF3 rows to `Feature` with linkml-map, the same way as the IMG functional annotation
 above, and `scripts/phytozome_gene_exons_map.py` adds the same four things linkml-map can't do.

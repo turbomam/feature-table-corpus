@@ -191,7 +191,25 @@ class GeneExonsRuleTests(Case):
     def test_directives(self):
         self.rejected(0, "##gff-version 3", "##gff-version 3.1.26", "'3.1.26' does not match")
         self.rejected(1, "##annot-version EXv1", "##annot-version", "expected '##annot-version <value>'")
-        self.rejected(5, "scaffold_1", "#scaffold_1", "comment or directive after the two opening directives")
+        self.rejected(5, "scaffold_1", "#scaffold_1", "comment or directive after the opening directives")
+
+    def test_species_and_provenance_lines_are_kept_and_written_back(self):
+        # Populus v4.1 writes ##species; a derived excerpt adds three provenance lines.
+        lines = GFF3.read_text().splitlines(keepends=True)
+        extra = ["##species Exemplum fictum\n", "# derived-from: x\n", "# single-change: y\n", "# validity: z\n"]
+        text = "".join(lines[:2] + extra + lines[2:])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "with-extra.gff3"
+            path.write_text(text)
+            document = gff3.parse(path)
+            self.assertEqual(document["species"], "Exemplum fictum")
+            self.assertEqual(document["provenance"], [line.rstrip("\n") for line in extra[1:]])
+            self.assertEqual(document["rows"][0]["line"], 7)
+            self.assertEqual(gff3.write(document), text)
+            status, out = self.run_command(gff3.validate, [text], [".gff3"])
+            self.assertEqual(status, 0, out)
+        partial = "".join(lines[:2] + extra[1:3] + lines[2:])
+        self.assert_rejected(gff3.validate, [partial], [".gff3"], "expected the provenance line '# validity: ...'")
 
     def test_line_shape(self):
         self.rejected(2, "\tgene\t", "\t", "8 columns, expected 9")
@@ -265,6 +283,11 @@ class GeneExonsRuleTests(Case):
 
     def test_key_order(self):
         self.rejected(3, "pacid=90000001;longest=1", "longest=1;pacid=90000001", "mRNA keys are")
+        # Populus v4.1 adds ancestorIdentifier in one place only on genes and mRNAs.
+        status, out = self.run_command(gff3.validate, [edited(GFF3, 3, "longest=1;", "longest=1;ancestorIdentifier=Exa.v0;")],
+                                       [".gff3"])
+        self.assertEqual(status, 0, out)
+        self.rejected(3, "longest=1;", "ancestorIdentifier=Exa.v0;longest=1;", "mRNA keys are")
 
     def test_row_rules(self):
         self.rejected(11, "exon.1;", "exon.2;", "is not 'Exa01g00010.2.EXv1.exon.1'")

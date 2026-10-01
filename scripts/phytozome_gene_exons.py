@@ -12,6 +12,7 @@ a separate step.
 import argparse
 import gzip
 import io
+import itertools
 import json
 from pathlib import Path
 import re
@@ -25,11 +26,14 @@ ROW_CLASS = "PhytozomeGeneExonsRow"
 COLUMNS = ("seqid", "source", "type", "start", "end", "score", "strand", "phase")
 CORE = {"line", "attribute_order", *COLUMNS}
 PARTS = ("exon", "CDS", "five_prime_UTR", "three_prime_UTR")
-# Column 9 keys in the order every row of the measured file writes them.
+# Column 9 keys, per type, in each order the measured files write them. TAIR10 writes the first
+# order of each; Populus trichocarpa v4.1 also writes ancestorIdentifier, its v3.1 identifier, on
+# 30,924 of 34,699 genes and 32,185 of 52,400 mRNAs, always in the place shown (measured 2026-09-30).
 KEY_ORDER = {
-    "gene": ["ID", "Name"],
-    "mRNA": ["ID", "Name", "pacid", "longest", "Parent"],
-    **{part: ["ID", "Parent", "pacid"] for part in PARTS},
+    "gene": [["ID", "Name"], ["ID", "Name", "ancestorIdentifier"]],
+    "mRNA": [["ID", "Name", "pacid", "longest", "Parent"],
+             ["ID", "Name", "pacid", "longest", "ancestorIdentifier", "Parent"]],
+    **{part: [["ID", "Parent", "pacid"]] for part in PARTS},
 }
 CHUNK = 5000
 
@@ -100,6 +104,38 @@ def read_header(lines):
     return found
 
 
+# The three comment lines a derived excerpt in corpus/derived-examples/ carries after its
+# directives (scripts/verify.py requires them); a file straight from Phytozome has none.
+PROVENANCE = ("# derived-from: ", "# single-change: ", "# validity: ")
+
+
+def read_head(lines):
+    """(header, remaining lines, number of the first row line) for an iterator of lines.
+
+    The two opening directives are required. An optional third, `##species <name>`, is kept
+    too: Populus trichocarpa v4.1 writes one, TAIR10 doesn't. So is a derived excerpt's
+    provenance block, exactly the three PROVENANCE lines in that order.
+    """
+    header = read_header(lines)
+    number = 3
+    line = next(lines, None)
+    if line is not None and line.startswith("##species "):
+        name = strip(number, line).partition(" ")[2]
+        if not name:
+            raise DialectError(f"line {number}: expected '##species <name>'")
+        header["species"] = name
+        number, line = number + 1, next(lines, None)
+    if line is not None and line.startswith(PROVENANCE[0]):
+        block = []
+        for tag in PROVENANCE:
+            if line is None or not line.startswith(tag):
+                raise DialectError(f"line {number}: expected the provenance line '{tag.strip()} ...'")
+            block.append(strip(number, line))
+            number, line = number + 1, next(lines, None)
+        header["provenance"] = block
+    return header, (itertools.chain([line], lines) if line is not None else lines), number
+
+
 def parse_row(line_number, text, slots):
     columns = text.split("\t")
     if len(columns) != 9:
@@ -153,14 +189,14 @@ def iter_rows(lines, slots, first_line=3):
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
-            raise DialectError(f"line {number}: comment or directive after the two opening directives")
+            raise DialectError(f"line {number}: comment or directive after the opening directives")
         yield parse_row(number, text, slots)
 
 
 def parse_lines(lines, source_file, slots=None):
     lines = iter(lines)
-    header = read_header(lines)
-    rows = list(iter_rows(lines, slots or row_slots()))
+    header, lines, first_line = read_head(lines)
+    rows = list(iter_rows(lines, slots or row_slots(), first_line))
     return {"source_file": str(source_file), **header, "rows": rows}
 
 
@@ -195,7 +231,9 @@ def write_row(row):
 def write(document):
     """GFF3 text for a document, refused unless it parses back to the same rows."""
     head = (f"##gff-version {document['gff_version']}\n"
-            f"##annot-version {document['annot_version']}\n")
+            f"##annot-version {document['annot_version']}\n"
+            + (f"##species {document['species']}\n" if document.get("species") else "")
+            + "".join(f"{line}\n" for line in document.get("provenance") or []))
     for directive in head.splitlines():
         checked(directive, "directive", LINE_BREAKS)
     text = head + "".join(write_row(row) + "\n" for row in document["rows"])
@@ -204,8 +242,8 @@ def write(document):
     except UnicodeEncodeError as error:
         raise DialectError(f"output can't be encoded as UTF-8: {error}") from None
     reparsed = parse_lines(io.StringIO(text, newline=""), document.get("source_file", ""))
-    for key in ("gff_version", "annot_version"):
-        if reparsed[key] != document[key]:
+    for key in ("gff_version", "annot_version", "species", "provenance"):
+        if reparsed.get(key) != document.get(key):
             raise DialectError(f"{key} parses back differently")
     for row, again in zip(document["rows"], reparsed["rows"], strict=True):
         if {**row, "line": 0} != {**again, "line": 0}:
@@ -248,8 +286,8 @@ class CrossChecks:
         kind = row.get("type")
         order = row.get("attribute_order", [])
         expected = KEY_ORDER.get(kind)
-        if expected is not None and order != expected:
-            self.add(row, f"{kind} keys are {order}, expected {expected}")
+        if expected is not None and order not in expected:
+            self.add(row, f"{kind} keys are {order}, expected {' or '.join(map(str, expected))}")
         identifier = row.get("ID")
         if identifier in self.ids:
             self.add(row, f"ID {identifier!r} repeats")
@@ -412,8 +450,9 @@ def validate(path, max_errors=20):
     try:
         with open_text(path) as handle:
             lines = iter(handle)
-            header = {"source_file": str(path), **read_header(lines)}
-            found, count = check_stream(header, iter_rows(lines, row_slots()))
+            head, lines, first_line = read_head(lines)
+            header = {"source_file": str(path), **head}
+            found, count = check_stream(header, iter_rows(lines, row_slots(), first_line))
     except (DialectError, *READ_ERRORS) as error:
         print(f"INVALID  {path}: {error}")
         return 1

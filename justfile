@@ -388,13 +388,13 @@ map-img-taxon-roundtrip gff:
 
 [doc("Map a Phytozome GFF3 and its annotation_info.txt together to one Dataset JSON.")]
 [group("Conversions")]
-map-phytozome-annotation gff3 table output:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py forward "$1" "$2" "$3"
+map-phytozome-annotation gff3 table output *header:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py forward "$@"
 
-[doc("Map a Phytozome Dataset JSON back to the GFF3 and annotation_info.txt.")]
+[doc("Map a Phytozome Dataset JSON back to the GFF3 and annotation_info.txt; add --header FILE from forward to restore the ##species and provenance lines.")]
 [group("Conversions")]
-map-phytozome-annotation-back input gff3 table:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py reverse "$1" "$2" "$3"
+map-phytozome-annotation-back input gff3 table *header:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_annotation_map.py reverse "$@"
 
 [doc("Map a Phytozome GFF3 and annotation_info.txt forward and back; both must come back byte for byte.")]
 [group("Conversions")]
@@ -403,13 +403,13 @@ map-phytozome-annotation-roundtrip gff3 table:
 
 [doc("Map a Phytozome *.gene_exons.gff3 (or .gff3.gz) to a Dataset JSON with linkml-map.")]
 [group("Conversions")]
-map-phytozome-gff3 input output:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py forward "$1" "$2"
+map-phytozome-gff3 input output *header:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py forward "$@"
 
-[doc("Map a Dataset JSON back to Phytozome gene_exons GFF3 text.")]
+[doc("Map a Dataset JSON back to Phytozome gene_exons GFF3 text; add --header FILE from forward to restore the ##species and provenance lines.")]
 [group("Conversions")]
-map-phytozome-gff3-back input output:
-    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py reverse "$1" "$2"
+map-phytozome-gff3-back input output *header:
+    uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py reverse "$@"
 
 [doc("Map a Phytozome gene_exons GFF3 forward and back; the file must come back byte for byte.")]
 [group("Conversions")]

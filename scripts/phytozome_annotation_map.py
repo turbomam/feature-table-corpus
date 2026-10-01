@@ -88,7 +88,7 @@ def forward(gff3_document, table_document, table_url, transformers=None):
     return dataset
 
 
-def reverse(dataset, gff3_source, table_source, transformers=None):
+def reverse(dataset, gff3_source, table_source, transformers=None, species=None, provenance=None):
     """Return (gff3_document, table_document) that forward maps back to dataset."""
     features = {f.get("feature_id"): f for f in dataset["features"]}
     stripped, rows, urls = [], [], set()
@@ -135,7 +135,8 @@ def reverse(dataset, gff3_source, table_source, transformers=None):
     rows.sort(key=table_order)
     for number, row in enumerate(rows, start=2):
         row["line"] = number
-    gff3_document = gff3_map.reverse({**dataset, "features": stripped}, gff3_source, transformers)
+    gff3_document = gff3_map.reverse({**dataset, "features": stripped}, gff3_source, transformers, species,
+                                     provenance)
     table_document = {"source_file": table_source, "rows": rows}
     again = forward(gff3_document, table_document, urls.pop() if urls else "", transformers)
     if canonical(again) != canonical(dataset):
@@ -174,7 +175,8 @@ def roundtrip(gff3_path, table_path):
     if problems:
         return problems, report
     try:
-        back_gff3, back_table = reverse(dataset, str(gff3_path), str(table_path), transformers)
+        back_gff3, back_table = reverse(dataset, str(gff3_path), str(table_path), transformers,
+                                        gff3_document.get("species"), gff3_document.get("provenance"))
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
     with gff3_dialect.open_text(gff3_path) as handle:
@@ -224,12 +226,14 @@ def main(argv=None):
     fwd.add_argument("gff3", type=Path)
     fwd.add_argument("table", type=Path)
     fwd.add_argument("output", type=Path)
+    fwd.add_argument("--header", type=Path, help="also write the GFF3's ##species and provenance lines here, for reverse")
     fwd.add_argument("--table-url", help="the table's published URL, stored in each mRNA's source_files; "
                                          "defaults to its file: URI")
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("gff3_output", type=Path)
     rev.add_argument("table_output", type=Path)
+    rev.add_argument("--header", type=Path, help="the GFF3 header lines from forward --header")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff3", type=Path)
     trip.add_argument("table", type=Path)
@@ -245,20 +249,27 @@ def main(argv=None):
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
+        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
+            return 1
+        if args.header and write_output(args.header, json.dumps(gff3_map.header_extras(gff3_document), indent=1) + "\n"):
+            args.output.unlink()
+            return 1
+        return 0
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        extras, errors = gff3_map.read_header_extras(args.header)
+        errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if args.gff3_output.resolve() == args.table_output.resolve():
             errors.append("output: the GFF3 and the table need different paths")
         texts = {}
         if not errors:
             try:
-                gff3_document, table_document = reverse(dataset, str(args.gff3_output), str(args.table_output))
+                gff3_document, table_document = reverse(dataset, str(args.gff3_output), str(args.table_output),
+                                                        **extras)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:

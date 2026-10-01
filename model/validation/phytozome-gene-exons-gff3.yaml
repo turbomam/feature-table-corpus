@@ -1,0 +1,30 @@
+# Validator expectations for the Phytozome gene_exons dialect,
+# model/dialects/phytozome-gene-exons-gff3.yaml.
+profile: phytozome-gene-exons-gff3/1.0.0
+dialect: model/dialects/phytozome-gene-exons-gff3.yaml
+scope: Validator expectations for the retained Populus trichocarpa v4.1 gene_exons excerpt.
+
+# Independent validator observations; reproduce with just validity-check.
+validation:
+  scope: Exact rule sets for the listed retained corpus inputs. These are validator observations,
+    not conversion-support claims.
+  genometools:
+    status: measured
+    expected_failures: {}
+  gff3toolkit:
+    status: measured
+    expected_failures:
+      Esf0015: 'QC expects one field after ##species; Phytozome writes the name, "Populus trichocarpa",
+        not a URL. The source is preserved as written.'
+      Esf0021: '##annot-version is a Phytozome directive, not a GFF3 one, so QC reports it as unknown.'
+  agat:
+    status: blocked
+    expected_failures: null
+    reason: No measured rule list. See analyses/format-validation/agat-blocker.json for the 2026-09-25
+      macOS arm64 dependency failure.
+  cases:
+    populus-v4.1-chr01-200-genes:
+      genometools: []
+      gff3toolkit:
+      - Esf0015
+      - Esf0021

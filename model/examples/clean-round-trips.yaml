@@ -1,5 +1,6 @@
 description: >-
-  For each dialect under model/dialects/, one real input vendored in the repository that maps to the
+  For each dialect under model/dialects/, one real input in the repository, whole or an excerpt of
+  unchanged rows, that maps to the
   feature model and back with nothing skipped, refused or changed, byte for byte. Keeping the
   source's spelling of numbers alongside the model data counts as unchanged
   (https://github.com/turbomam/feature-table-corpus/issues/107). tests/test_clean_round_trips.py runs
@@ -41,12 +42,14 @@ dialects:
     inputs:
     - corpus/sources/jgi-img/IMG_AP-1121004/106476.assembled.gff
   phytozome-gene-exons-gff3:
-    status: gap
-    issue: https://github.com/turbomam/feature-table-corpus/issues/107
-    note: >-
-      No Phytozome genome is vendored yet. TAIR10 round-trips byte for byte outside CI, but TAIR
-      restricts redistribution; Populus trichocarpa v4.1 (Phytozome-533) is the candidate.
+    status: clean
+    mapping: phytozome_gene_exons_map
+    inputs:
+    - corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3
   phytozome-annotation-info:
     status: gap
-    issue: https://github.com/turbomam/feature-table-corpus/issues/107
-    note: Same input as phytozome-gene-exons-gff3; the two files map together.
+    issue: https://github.com/turbomam/feature-table-corpus/issues/144
+    note: >-
+      The Populus v4.1 table differs from TAIR10's in layout and peptide names, so the dialect
+      doesn't read it yet. TAIR10 round-trips byte for byte outside CI; TAIR restricts
+      redistribution.

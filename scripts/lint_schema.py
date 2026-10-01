@@ -58,7 +58,7 @@ DIALECT_NAMES = {
         },
     },
     "phytozome_gene_exons_gff3": {
-        "slots": ("ID", "Name", "Parent"),
+        "slots": ("ID", "Name", "Parent", "ancestorIdentifier"),
         "values": {
             "PhytozomeFeatureType": ("mRNA", "CDS", "five_prime_UTR", "three_prime_UTR"),
             "Strand": ("+", "-"),

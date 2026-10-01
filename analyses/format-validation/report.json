@@ -51,17 +51,17 @@
   },
   "summary": {
     "genometools": {
-      "accepted": 10,
+      "accepted": 11,
       "not_checked": 18,
       "rejected": 40
     },
     "gff3toolkit": {
       "accepted": 6,
       "not_checked": 18,
-      "rejected": 44
+      "rejected": 45
     },
     "agat": {
-      "blocked": 50,
+      "blocked": 51,
       "not_checked": 18
     }
   },
@@ -3243,6 +3243,63 @@
         "agat": {
           "verdict": "not_checked",
           "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "populus-v4.1-chr01-200-genes",
+      "path": "corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3",
+      "format": "GFF3",
+      "sha256": "82c4e5916b1379a444946709d1c843fcd528c5f03942abf1fbb710e088e48391",
+      "profile": "phytozome-gene-exons-gff3/1.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "accepted",
+          "rules": [],
+          "exit_code": 0,
+          "stdout": "input is valid GFF3",
+          "stderr": "warning: unknown meta-directive encountered in line 2 in file \"corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3\", keep anyway: ##annot-version v4.1\nwarning: seqid \"Chr01\" on line 7 in file \"corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically",
+          "expected_from_validity": "accepted",
+          "expected_rules": []
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0015",
+            "Esf0021"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0015",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 3']",
+                "Error_code": "Esf0015",
+                "Error_level": "Error",
+                "Error_tag": "[Expecting 1 field, got 1: ['trichocarpa']]"
+              }
+            },
+            {
+              "rule": "Esf0021",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 2']",
+                "Error_code": "Esf0021",
+                "Error_level": "Info",
+                "Error_tag": "[Unknown directive]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "1f2fbe4adf3370b3c39241d35149284fd731ca444323cda2f806d38bca56af32",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0015",
+            "Esf0021"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
         }
       }
     }

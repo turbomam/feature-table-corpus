@@ -8,12 +8,17 @@ description: >-
   write, not that a mapping is wrong.
 comments:
   - >-
-    Measured 2026-09-25 on one file only, Athaliana_167_TAIR10.gene_exons.gff3.gz (Phytozome-167,
-    md5 83f7e24dca4020e5cc0bc642301ee1c9, 532,684 lines, 62,518,934 bytes uncompressed), listed
-    in model/examples/jgi-inputs.yaml. Other Phytozome genomes may differ; none has been read.
+    Measured on two files. Athaliana_167_TAIR10.gene_exons.gff3.gz (Phytozome-167, md5
+    83f7e24dca4020e5cc0bc642301ee1c9, 532,684 lines, 62,518,934 bytes uncompressed), listed in
+    model/examples/jgi-inputs.yaml, on 2026-09-25. Ptrichocarpa_533_v4.1.gene_exons.gff3.gz
+    (Phytozome-533, md5 3fdcfdd5af213c5f4dde0c01f2cdbfda, 849,981 lines, 112,795,545 bytes
+    uncompressed), indexed as jgi-phytozome-populus-v4.1-gene-exons, on 2026-09-30. Populus adds a
+    ##species directive and the ancestorIdentifier key; every other rule held on both. Other
+    Phytozome genomes may differ.
   - >-
     TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
-    of that file is kept in this repository. The test fixture is constructed.
+    of that file is kept in this repository. A 200-gene Populus excerpt is, in
+    corpus/derived-examples/; the rule tests use a constructed fixture.
   - >-
     The file has LF line endings and a final newline, no score, no percent escapes, and no
     commas in column 9, so a Parent never names two rows. The parser rejects each of these
@@ -45,6 +50,18 @@ classes:
         description: >-
           Value of the `##annot-version` directive on line 2, for example TAIR10. Every gene and
           mRNA ID ends with it.
+      species:
+        pattern: "^[^\\t]+$"
+        description: >-
+          Value of an optional `##species` directive on line 3. Populus trichocarpa v4.1 writes one
+          (`Populus trichocarpa`); TAIR10 doesn't.
+      provenance:
+        multivalued: true
+        pattern: "^# (derived-from|single-change|validity): \\S"
+        description: >-
+          The three comment lines after the directives that a derived excerpt in
+          corpus/derived-examples/ carries, in the order derived-from, single-change, validity.
+          A file as Phytozome serves it has none.
       rows:
         description: Every feature row, in file order.
         range: PhytozomeGeneExonsRow
@@ -68,7 +85,7 @@ classes:
       source:
         required: true
         pattern: "^phytozomev[0-9]+$"
-        description: Column 2. Every row read has phytozomev10.
+        description: Column 2. Every TAIR10 row has phytozomev10 and every Populus v4.1 row phytozomev13.
       type:
         description: Column 3.
         range: PhytozomeFeatureType
@@ -119,32 +136,39 @@ classes:
           Phytozome's numeric transcript identifier, on mRNA rows and repeated on each of their
           parts. It is unique per mRNA, and annotation_info.txt has one row per pacid, keyed
           PAC:<pacid>.
+      ancestorIdentifier:
+        pattern: "^\\S+$"
+        description: >-
+          On some gene and mRNA rows of Populus trichocarpa v4.1 only: the feature's identifier in
+          the previous annotation, v3.1. It is Name plus ".v3.1" on 61,626 of the 63,109 rows that
+          have it, and a different v3.1 identifier on the other 1,483, for example
+          Potri.T170500.v3.1 on gene Potri.001G006901 (measured 2026-09-30).
       longest:
         range: integer
         minimum_value: 0
         maximum_value: 1
         description: >-
           On mRNA rows only. 1 marks the one representative isoform of each gene, 0 the others.
-          In the file read, 27,416 mRNA rows have 1 and 7,970 have 0. The flag is Phytozome's
+          In TAIR10, 27,416 mRNA rows have 1 and 7,970 have 0. The flag is Phytozome's
           choice, not something to recompute: in 16 of the 5,804 genes with more than one
-          isoform, the flagged isoform does not have the longest CDS.
+          isoform of TAIR10, the flagged isoform does not have the longest CDS.
 
 enums:
   PhytozomeFeatureType:
-    description: Column 3 values, with the row counts in the file read.
+    description: Column 3 values, with the row counts in TAIR10 and in Populus v4.1.
     permissible_values:
       gene:
-        description: 27,416 rows.
+        description: 27,416 rows in TAIR10, 34,699 in Populus v4.1.
       mRNA:
-        description: 35,386 rows.
+        description: 35,386 rows in TAIR10, 52,400 in Populus v4.1.
       exon:
-        description: 207,465 rows.
+        description: 207,465 rows in TAIR10, 333,784 in Populus v4.1.
       CDS:
-        description: 197,160 rows.
+        description: 197,160 rows in TAIR10, 310,067 in Populus v4.1.
       five_prime_UTR:
-        description: 34,621 rows.
+        description: 34,621 rows in TAIR10, 62,804 in Populus v4.1.
       three_prime_UTR:
-        description: 30,634 rows.
+        description: 30,634 rows in TAIR10, 56,224 in Populus v4.1.
   Strand:
     description: Column 7 symbols.
     permissible_values:

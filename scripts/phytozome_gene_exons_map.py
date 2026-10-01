@@ -82,12 +82,44 @@ def annot_version(rows):
     return found.pop()
 
 
-def reverse(dataset, source_file, transformers=None):
+# Header lines the model can't hold, kept beside the Dataset (forward --header / reverse --header),
+# as the IMG mappings keep number spellings.
+HEADER_EXTRAS = ("species", "provenance")
+
+
+def header_extras(document):
+    return {key: document[key] for key in HEADER_EXTRAS if document.get(key)}
+
+
+def read_header_extras(path):
+    """(extras, errors) from a --header file; no file means none."""
+    if path is None:
+        return {}, []
+    try:
+        extras = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return {}, [f"header: {error}"]
+    if not isinstance(extras, dict) or set(extras) - set(HEADER_EXTRAS):
+        return {}, [f"header: expected a JSON object with only {list(HEADER_EXTRAS)}"]
+    species, provenance = extras.get("species"), extras.get("provenance")
+    if "species" in extras and not (isinstance(species, str) and species.strip()):
+        return {}, ["header: species is a non-empty string, the ##species line's value"]
+    if "provenance" in extras and not (isinstance(provenance, list) and len(provenance) == len(dialect.PROVENANCE)
+                                       and all(isinstance(line, str) and line.startswith(tag)
+                                               for line, tag in zip(provenance, dialect.PROVENANCE))):
+        return {}, [f"header: provenance is the {len(dialect.PROVENANCE)} lines "
+                    f"{[t.strip() for t in dialect.PROVENANCE]}, in order"]
+    return extras, []
+
+
+def reverse(dataset, source_file, transformers=None, species=None, provenance=None):
     transformers = transformers or _transformers()
     _, to_dialect = transformers
     slots = dialect.row_slots()
     rows = []
-    for number, feature in enumerate(dataset["features"], start=3):
+    # Rows follow the two opening directives, a ##species line and a provenance block when present.
+    first_row = 3 + bool(species) + len(provenance or [])
+    for number, feature in enumerate(dataset["features"], start=first_row):
         name = feature.get("feature_id")
         # The dialect has only contig coordinates; dropping another system would
         # silently reinterpret protein positions as nucleotide positions.
@@ -124,6 +156,12 @@ def reverse(dataset, source_file, transformers=None):
     except ValueError as error:
         raise ValueError(f"header: {error}") from None
     document = {"source_file": source_file, "gff_version": "3", "annot_version": version, "rows": rows}
+    # The model has no place for the file's ##species line or an excerpt's provenance
+    # comments, so they are passed in, like the IMG mappings' kept number spellings.
+    if species:
+        document["species"] = species
+    if provenance:
+        document["provenance"] = list(provenance)
     # The dialect can't carry every model slot (score, product, is_selected, contig
     # lengths ...). Map the result forward again and require the input back, so
     # nothing is dropped silently.
@@ -154,7 +192,7 @@ def roundtrip(path):
     if problems:
         return problems, report
     try:
-        back = reverse(dataset, str(path), transformers)
+        back = reverse(dataset, str(path), transformers, document.get("species"), document.get("provenance"))
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
     for before, after in zip(document["rows"], back["rows"]):
@@ -163,9 +201,9 @@ def roundtrip(path):
             problems.append(f"line {before['line']}: row differs after the round trip in {changed}")
     if len(back["rows"]) != len(document["rows"]):
         problems.append(f"{len(document['rows'])} rows in, {len(back['rows'])} out")
-    for key in ("gff_version", "annot_version"):
-        if back[key] != document[key]:
-            problems.append(f"header: {key} {document[key]!r} comes back as {back[key]!r}")
+    for key in ("gff_version", "annot_version", "species", "provenance"):
+        if back.get(key) != document.get(key):
+            problems.append(f"header: {key} {document.get(key)!r} comes back as {back.get(key)!r}")
     try:
         written = dialect.write(back)
     except dialect.DialectError as error:
@@ -187,9 +225,11 @@ def main(argv=None):
     fwd = commands.add_parser("forward")
     fwd.add_argument("gff", type=Path)
     fwd.add_argument("output", type=Path)
+    fwd.add_argument("--header", type=Path, help="also write the ##species line and any provenance lines here, for reverse")
     rev = commands.add_parser("reverse")
     rev.add_argument("dataset", type=Path)
     rev.add_argument("output", type=Path)
+    rev.add_argument("--header", type=Path, help="the header lines from forward --header")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff", type=Path)
     args = parser.parse_args(argv)
@@ -208,17 +248,23 @@ def main(argv=None):
             errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        return write_output(args.output, json.dumps(dataset, indent=1) + "\n")
+        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
+            return 1
+        if args.header and write_output(args.header, json.dumps(header_extras(document), indent=1) + "\n"):
+            args.output.unlink()
+            return 1
+        return 0
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
+        extras, errors = read_header_extras(args.header)
+        errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if not errors:
             try:
-                document = reverse(dataset, str(args.output))
+                document = reverse(dataset, str(args.output), **extras)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:
