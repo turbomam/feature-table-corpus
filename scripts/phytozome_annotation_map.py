@@ -27,7 +27,7 @@ import sys
 import phytozome_annotation_info as table_dialect
 import phytozome_gene_exons as gff3_dialect
 import phytozome_gene_exons_map as gff3_map
-from img_functional_map import canonical, difference, quiet_linkml_map, report_errors, write_output
+from img_functional_map import canonical, difference, quiet_linkml_map, report_errors, write_new, write_new_files, write_output
 from img_functional_map import reports_hidden_warnings
 from validate_closed import make_validator, validation_errors
 
@@ -198,26 +198,6 @@ def roundtrip(gff3_path, table_path):
     return problems, report
 
 
-def write_new(path, text):
-    """Write text to a new file; return (ok, created). created says whether this call made the file.
-
-    Only a file this call created may be removed on failure: if another process made
-    the path first, open(..., "x") fails without touching it.
-    """
-    try:
-        handle = open(path, "x", encoding="utf-8")
-    except (OSError, UnicodeEncodeError) as error:
-        report_errors([f"output: {error}"])
-        return False, False
-    try:
-        with handle:
-            handle.write(text)
-    except (OSError, UnicodeEncodeError) as error:
-        report_errors([f"output: {error}"])
-        return False, True
-    return True, True
-
-
 def main(argv=None):
     quiet_linkml_map()
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -249,12 +229,10 @@ def main(argv=None):
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
-            return 1
-        if args.header and write_output(args.header, json.dumps(gff3_map.header_extras(gff3_document), indent=1) + "\n"):
-            args.output.unlink()
-            return 1
-        return 0
+        outputs = [(args.output, json.dumps(dataset, indent=1) + "\n")]
+        if args.header:
+            outputs.append((args.header, json.dumps(gff3_map.header_extras(gff3_document), indent=1) + "\n"))
+        return write_new_files(outputs)
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))

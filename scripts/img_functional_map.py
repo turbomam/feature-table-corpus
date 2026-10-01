@@ -413,6 +413,46 @@ def report_errors(errors):
     return bool(errors)
 
 
+def write_new(path, text):
+    """Write text to a new file; return (ok, created). created says whether this call made the file.
+
+    Only a file this call created may be removed on failure: if another process made
+    the path first, open(..., "x") fails without touching it.
+    """
+    try:
+        handle = open(path, "x", encoding="utf-8")
+    except (OSError, UnicodeEncodeError) as error:
+        report_errors([f"output: {error}"])
+        return False, False
+    try:
+        with handle:
+            handle.write(text)
+    except (OSError, UnicodeEncodeError) as error:
+        report_errors([f"output: {error}"])
+        return False, True
+    return True, True
+
+
+def write_new_files(outputs):
+    """Write each (path, text) to a new file; 0 on success. On any failure, remove every file this
+    call created, a partly written one included, so a retry starts clean; 1."""
+    created = []
+    for path, text in outputs:
+        ok, made = write_new(path, text)
+        if made:
+            created.append(Path(path))
+        if not ok:
+            # Each removal is tried on its own, so one that fails (a read-only directory, say)
+            # is reported and the rest are still removed.
+            for done in created:
+                try:
+                    done.unlink(missing_ok=True)
+                except OSError as error:
+                    report_errors([f"output: couldn't remove {done}: {error}"])
+            return 1
+    return 0
+
+
 def write_output(path, text):
     """Write to a new file only; like the conversion commands, never overwrite."""
     try:
@@ -456,12 +496,10 @@ def main(argv=None):
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
-            return 1
-        if args.spelling and write_output(args.spelling, json.dumps(score_spellings(dataset, spellings), indent=1) + "\n"):
-            args.output.unlink()
-            return 1
-        return 0
+        outputs = [(args.output, json.dumps(dataset, indent=1) + "\n")]
+        if args.spelling:
+            outputs.append((args.spelling, json.dumps(score_spellings(dataset, spellings), indent=1) + "\n"))
+        return write_new_files(outputs)
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))

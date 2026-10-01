@@ -23,7 +23,7 @@ from pathlib import Path
 import sys
 
 import phytozome_gene_exons as dialect
-from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output
+from img_functional_map import canonical, difference, present, quiet_linkml_map, report_errors, write_output, write_new_files
 from img_functional_map import reports_hidden_warnings
 from validate_closed import make_validator, validation_errors
 
@@ -248,12 +248,10 @@ def main(argv=None):
             errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
-            return 1
-        if args.header and write_output(args.header, json.dumps(header_extras(document), indent=1) + "\n"):
-            args.output.unlink()
-            return 1
-        return 0
+        outputs = [(args.output, json.dumps(dataset, indent=1) + "\n")]
+        if args.header:
+            outputs.append((args.header, json.dumps(header_extras(document), indent=1) + "\n"))
+        return write_new_files(outputs)
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
