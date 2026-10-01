@@ -101,15 +101,25 @@ def read_header_extras(path):
         return {}, [f"header: {error}"]
     if not isinstance(extras, dict) or set(extras) - set(HEADER_EXTRAS):
         return {}, [f"header: expected a JSON object with only {list(HEADER_EXTRAS)}"]
-    species, provenance = extras.get("species"), extras.get("provenance")
+    errors = check_header_extras(extras)
+    return ({}, errors) if errors else (extras, [])
+
+
+def is_provenance(lines):
+    return (isinstance(lines, list) and len(lines) == len(dialect.PROVENANCE)
+            and all(isinstance(line, str) and line.startswith(tag) for line, tag in zip(lines, dialect.PROVENANCE)))
+
+
+def check_header_extras(extras, keys=HEADER_EXTRAS):
+    """Errors in the values of a header-extras object; a provenance-valued key must hold the three lines."""
+    species = extras.get("species")
     if "species" in extras and not (isinstance(species, str) and species.strip()):
-        return {}, ["header: species is a non-empty string, the ##species line's value"]
-    if "provenance" in extras and not (isinstance(provenance, list) and len(provenance) == len(dialect.PROVENANCE)
-                                       and all(isinstance(line, str) and line.startswith(tag)
-                                               for line, tag in zip(provenance, dialect.PROVENANCE))):
-        return {}, [f"header: provenance is the {len(dialect.PROVENANCE)} lines "
+        return ["header: species is a non-empty string, the ##species line's value"]
+    for key in keys:
+        if key != "species" and key in extras and not is_provenance(extras[key]):
+            return [f"header: {key} is the {len(dialect.PROVENANCE)} lines "
                     f"{[t.strip() for t in dialect.PROVENANCE]}, in order"]
-    return extras, []
+    return []
 
 
 def reverse(dataset, source_file, transformers=None, species=None, provenance=None):

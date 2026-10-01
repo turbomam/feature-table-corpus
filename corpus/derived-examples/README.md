@@ -17,3 +17,10 @@ that md5 first. Phytozome lists this genome as public with citation required. Ci
 40:D1178. JGI's legacy data policy asks for this acknowledgment: "These sequence data were
 produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in
 collaboration with the user community."
+
+`populus-v4.1-chr01-200-genes.annotation_info.txt` holds the 293 rows of
+`Ptrichocarpa_533_v4.1.annotation_info.txt` (JGI file 5d94dc9ec0d65a87debccfcc, md5
+aaf04aa3515d96748d1229d36ac7dfe4) for the 200 genes of the gene_exons excerpt, unchanged and in
+table order, after the header and the three provenance lines. `scripts/populus_excerpt.py --table`
+writes it, checking that md5 first. Two of its rows have a peptideName naming another locus's
+transcript. The header's KOG and ec labels are swapped, as in the source. The same citations apply.

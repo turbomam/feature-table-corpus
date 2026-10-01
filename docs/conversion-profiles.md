@@ -455,7 +455,8 @@ and the parser puts each value in the slot it is; JGI's files API lists a siblin
 it is, so Populus's EC numbers are `ec` Attributes despite their column's label. A Populus
 `peptideName` is the mRNA's Name plus `.p`; in 560 rows it names another locus's transcript
 instead, and the mapping keeps that one as a `peptideName` Attribute. Reverse reads the layout from
-the Attributes, or from `--layout`. A vendored excerpt of the Populus table is still to come
+the Attributes, or from `--layout`. The table rows of the same 200 genes are vendored too, and the
+two excerpts round-trip together byte for byte in CI, making annotation_info clean as well
 (https://github.com/turbomam/feature-table-corpus/issues/144).
 
 [`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)

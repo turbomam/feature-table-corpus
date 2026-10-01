@@ -2,6 +2,7 @@
 import contextlib
 import copy
 import io
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -262,6 +263,25 @@ class PopulusLayoutTests(unittest.TestCase):
             mapping.table_layout(bare)
         back_gff3, back_table = mapping.reverse(bare, "g.gff3", "t.txt", layout="arabi")
         self.assertEqual(back_table["layout"], "arabi")
+
+
+class PopulusExcerptTests(unittest.TestCase):
+    GFF3 = ROOT / "corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3"
+    TABLE = ROOT / "corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt"
+
+    def test_the_commands_bring_both_excerpts_back_byte_for_byte(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, header = Path(tmp) / "d.json", Path(tmp) / "h.json"
+            gff3, table = Path(tmp) / "back.gff3", Path(tmp) / "back.txt"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(self.GFF3), str(self.TABLE), str(dataset),
+                                               "--table-url", URL, "--header", str(header)]), 0, err.getvalue())
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(gff3), str(table),
+                                               "--header", str(header)]), 0, err.getvalue())
+            self.assertIn("table_provenance", json.loads(header.read_text()))
+            self.assertEqual(gff3.read_bytes(), self.GFF3.read_bytes())
+            self.assertEqual(table.read_bytes(), self.TABLE.read_bytes())
 
 if __name__ == "__main__":
     unittest.main()

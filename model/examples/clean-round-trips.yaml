@@ -47,9 +47,8 @@ dialects:
     inputs:
     - corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3
   phytozome-annotation-info:
-    status: gap
-    issue: https://github.com/turbomam/feature-table-corpus/issues/144
-    note: >-
-      The Populus v4.1 table differs from TAIR10's in layout and peptide names, so the dialect
-      doesn't read it yet. TAIR10 round-trips byte for byte outside CI; TAIR restricts
-      redistribution.
+    status: clean
+    mapping: phytozome_annotation_map
+    inputs:
+    - corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3
+    - corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt

@@ -70,7 +70,9 @@ def parse_row(line_number, text, header=HEADER, slots=None):
 
 
 def parse_lines(lines, source_file):
-    rows, number, layout = [], 0, None
+    """A derived excerpt may carry gff3.PROVENANCE's three lines right after the header, in order;
+    a table as Phytozome serves it has none, and any other comment is refused."""
+    rows, number, layout, provenance = [], 0, None, []
     for number, raw in enumerate(lines, start=1):
         text = gff3.strip(number, raw)
         if number == 1:
@@ -82,11 +84,21 @@ def parse_lines(lines, source_file):
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
+            tag = gff3.PROVENANCE[len(provenance)] if len(provenance) < len(gff3.PROVENANCE) else None
+            if number == 2 + len(provenance) and tag and text.startswith(tag):
+                provenance.append(text)
+                continue
             raise DialectError(f"line {number}: comment after the header")
         rows.append(parse_row(number, text, LAYOUTS[layout], LAYOUT_SLOTS[layout]))
     if number == 0:
         raise DialectError("line 1: empty file, expected a header")
-    return {"source_file": str(source_file), "layout": layout, "rows": rows}
+    if provenance and len(provenance) != len(gff3.PROVENANCE):
+        raise DialectError(f"line {2 + len(provenance)}: expected the provenance line "
+                           f"'{gff3.PROVENANCE[len(provenance)].strip()} ...'")
+    document = {"source_file": str(source_file), "layout": layout, "rows": rows}
+    if provenance:
+        document["provenance"] = provenance
+    return document
 
 
 def parse(path):
@@ -119,9 +131,11 @@ def write(document):
     """Table text for a document, refused unless it parses back to the same rows."""
     layout = document.get("layout", "clamy_rice")
     header = LAYOUTS[layout]
-    text = "\t".join(header) + "\n" + "".join(write_row(row, header, LAYOUT_SLOTS[layout]) + "\n"
-                                              for row in document["rows"])
+    text = ("\t".join(header) + "\n" + "".join(f"{line}\n" for line in document.get("provenance") or [])
+            + "".join(write_row(row, header, LAYOUT_SLOTS[layout]) + "\n" for row in document["rows"]))
     reparsed = parse_lines(io.StringIO(text, newline=""), document.get("source_file", ""))
+    if reparsed.get("provenance") != document.get("provenance"):
+        raise DialectError("provenance lines parse back differently")
     for row, again in zip(document["rows"], reparsed["rows"], strict=True):
         if {**row, "line": 0} != {**again, "line": 0}:
             changed = sorted(k for k in set(row) | set(again) if row.get(k) != again.get(k))
