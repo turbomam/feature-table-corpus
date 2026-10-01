@@ -36,8 +36,9 @@ def basis_problem(basis):
     def is_https_url(term):
         try:
             parts = urlsplit(term)
-            return parts.scheme == "https" and bool(parts.hostname)
-        except ValueError:  # e.g. https://[ , an unclosed IPv6 host
+            # .port raises ValueError for a port that is not a number in range
+            return parts.scheme == "https" and bool(parts.hostname) and (parts.port is None or parts.port > 0)
+        except ValueError:  # e.g. https://[ (an unclosed IPv6 host) or https://example.org:x
             return False
 
     terms = basis.get("terms")
