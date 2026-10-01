@@ -52,17 +52,17 @@
   "summary": {
     "genometools": {
       "accepted": 11,
-      "not_checked": 18,
+      "not_checked": 19,
       "rejected": 40
     },
     "gff3toolkit": {
       "accepted": 6,
-      "not_checked": 18,
+      "not_checked": 19,
       "rejected": 45
     },
     "agat": {
       "blocked": 51,
-      "not_checked": 18
+      "not_checked": 19
     }
   },
   "records": [
@@ -3300,6 +3300,26 @@
         "agat": {
           "verdict": "blocked",
           "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "populus-v4.1-chr01-200-genes-annotation-info",
+      "path": "corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt",
+      "format": "TSV",
+      "sha256": "64bbc6e9a8fc1f9ca8b6309aed64cef767c649d5e67c685ae13af8978f01eb7d",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
         }
       }
     }

@@ -283,3 +283,12 @@ the first 200 Chr01 genes of Populus trichocarpa v4.1 (`Phytozome-533`), made by
 from it. The `derived` tier's definition now allows a restricted source whose md5 is recorded.
 Terms and citations are in [the derived-examples README](derived-examples/README.md). The corpus
 now has 96 entries: 58 vendored, 22 linked, 4 restricted, 1 not located and 11 derived.
+
+## October 1, 2026: the Populus annotation_info excerpt
+
+For https://github.com/turbomam/feature-table-corpus/issues/144, the 293 annotation_info rows of the
+200 excerpted Populus genes are now in
+`corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt`, derived from the
+restricted entry `jgi-phytozome-populus-v4.1-annotation-info`. With the gene_exons excerpt they make
+the annotation_info dialect's round trip clean in CI. The corpus now has 98 entries: 58 vendored,
+22 linked, 5 restricted, 1 not located and 12 derived.

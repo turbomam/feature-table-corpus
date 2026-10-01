@@ -480,6 +480,22 @@ class PopulusLayoutTests(Case):
             status, out = self.run_command(table.validate, [text], [".txt"])
             self.assertEqual(status, 0, out)
 
+    def test_a_derived_excerpts_provenance_lines_are_kept_after_the_header(self):
+        lines = self.populus_text().splitlines(keepends=True)
+        block = ["# derived-from: x\n", "# single-change: y\n", "# validity: z\n"]
+        text = "".join(lines[:1] + block + lines[1:])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "excerpt.annotation_info.txt"
+            path.write_text(text)
+            document = table.parse(path)
+            self.assertEqual(document["provenance"], [line.rstrip("\n") for line in block])
+            self.assertEqual(document["rows"][0]["line"], 5)
+            self.assertEqual(table.write(document), text)
+        self.assert_rejected(table.validate, ["".join(lines[:1] + block[:2] + lines[1:])], [".txt"],
+                             "expected the provenance line '# validity: ...'")
+        self.assert_rejected(table.validate, ["".join(lines[:2] + block + lines[2:])], [".txt"],
+                             "comment after the header")
+
     def test_populus_rules(self):
         text = self.populus_text()
         no_suffix = text.replace(".1.p\t", ".1\t", 1)

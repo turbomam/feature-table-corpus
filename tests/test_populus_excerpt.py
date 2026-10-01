@@ -38,6 +38,22 @@ class ExcerptTests(unittest.TestCase):
         self.assertIn("md5 abc", lines[3])
         self.assertEqual("".join(lines[6:]), gene(1) + gene(2))
 
+    def test_the_table_excerpt_keeps_the_excerpts_genes_in_table_order(self):
+        header = "#pacId\tlocusName\ttranscriptName\tpeptideName\tPfam\n"
+        rows = ["PAC:1\tPotri.001G000001\tPotri.001G000001.1\tPotri.001G000001.1.p\t\n",
+                "PAC:2\tPotri.001G000002\tPotri.001G000002.1\tPotri.001G000002.1.p\t\n",
+                "PAC:3\tPotri.001G000003\tPotri.001G000003.1\tPotri.001G000003.1.p\t\n"]
+        with tempfile.TemporaryDirectory() as tmp:
+            table = Path(tmp) / "table.txt"
+            table.write_text(header + "".join(rows))
+            text = populus_excerpt.table_excerpt(table, HEAD + gene(1) + gene(2), digest="def")
+            lines = text.splitlines(keepends=True)
+            self.assertEqual(lines[0], header)
+            self.assertEqual([line.split(":")[0] for line in lines[1:4]], ["# derived-from", "# single-change", "# validity"])
+            self.assertEqual("".join(lines[4:]), "".join(rows[:2]))
+            with self.assertRaisesRegex(ValueError, "no rows for 1 of the excerpt's genes"):
+                populus_excerpt.table_excerpt(table, HEAD + gene(1) + gene(4))
+
     def test_too_few_genes_on_chr01_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
             source = self.write(tmp, HEAD + gene(1) + gene(2, chrom="Chr02"))

@@ -115,6 +115,23 @@ def forward(gff3_document, table_document, table_url, transformers=None):
     return dataset
 
 
+HEADER_EXTRAS = gff3_map.HEADER_EXTRAS + ("table_provenance",)
+
+
+def read_header_extras(path):
+    """(extras, errors) from a --header file: the GFF3's extras plus the table's provenance lines."""
+    if path is None:
+        return {}, []
+    try:
+        extras = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return {}, [f"header: {error}"]
+    if not isinstance(extras, dict) or set(extras) - set(HEADER_EXTRAS):
+        return {}, [f"header: expected a JSON object with only {list(HEADER_EXTRAS)}"]
+    errors = gff3_map.check_header_extras(extras, HEADER_EXTRAS)
+    return ({}, errors) if errors else (extras, [])
+
+
 def table_layout(dataset):
     """The table layout a Dataset's mRNA Attributes show. With no best-hit or peptideName
     Attribute the two layouts look the same, so that is an error; pass the layout instead."""
@@ -128,7 +145,8 @@ def table_layout(dataset):
     return found[0]
 
 
-def reverse(dataset, gff3_source, table_source, transformers=None, species=None, provenance=None, layout=None):
+def reverse(dataset, gff3_source, table_source, transformers=None, species=None, provenance=None, layout=None,
+            table_provenance=None):
     """Return (gff3_document, table_document) that forward maps back to dataset.
 
     layout is the table's header layout; given none, it is read from the Attributes (table_layout),
@@ -188,11 +206,14 @@ def reverse(dataset, gff3_source, table_source, transformers=None, species=None,
         raise ValueError(f"the mRNA source_files name {len(urls)} different table URLs; "
                          "a Dataset holds one annotation_info table")
     rows.sort(key=table_order)
-    for number, row in enumerate(rows, start=2):
+    # Rows follow the header line, and a derived excerpt's provenance lines when present.
+    for number, row in enumerate(rows, start=2 + len(table_provenance or [])):
         row["line"] = number
     gff3_document = gff3_map.reverse({**dataset, "features": stripped}, gff3_source, transformers, species,
                                      provenance)
     table_document = {"source_file": table_source, "layout": layout, "rows": rows}
+    if table_provenance:
+        table_document["provenance"] = list(table_provenance)
     again = forward(gff3_document, table_document, urls.pop() if urls else "", transformers)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(dataset, again)}")
@@ -232,7 +253,7 @@ def roundtrip(gff3_path, table_path):
     try:
         back_gff3, back_table = reverse(dataset, str(gff3_path), str(table_path), transformers,
                                         gff3_document.get("species"), gff3_document.get("provenance"),
-                                        table_document.get("layout"))
+                                        table_document.get("layout"), table_document.get("provenance"))
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
     with gff3_dialect.open_text(gff3_path) as handle:
@@ -289,7 +310,10 @@ def main(argv=None):
             return 1
         outputs = [(args.output, json.dumps(dataset, indent=1) + "\n")]
         if args.header:
-            outputs.append((args.header, json.dumps(gff3_map.header_extras(gff3_document), indent=1) + "\n"))
+            extras = gff3_map.header_extras(gff3_document)
+            if table_document.get("provenance"):
+                extras["table_provenance"] = table_document["provenance"]
+            outputs.append((args.header, json.dumps(extras, indent=1) + "\n"))
         return write_new_files(outputs)
     if args.command == "reverse":
         try:
@@ -297,7 +321,7 @@ def main(argv=None):
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
             report_errors([f"input: {error}"])
             return 1
-        extras, errors = gff3_map.read_header_extras(args.header)
+        extras, errors = read_header_extras(args.header)
         errors += [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if args.gff3_output.resolve() == args.table_output.resolve():
             errors.append("output: the GFF3 and the table need different paths")

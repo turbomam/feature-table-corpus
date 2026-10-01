@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 96
+entry_count: 98
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -2010,9 +2010,41 @@ entries:
   mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the three provenance comment lines after the directives.
   validity: 'valid GFF3: selected source rows, not a complete genome annotation; checked with GenomeTools 1.6.6, and valid under the phytozome-gene-exons-gff3 dialect'
   notes: The real Phytozome input for the gene_exons dialect's clean round trip (https://github.com/turbomam/feature-table-corpus/issues/107). The full file is behind a JGI login and too large to vendor.
+- id: jgi-phytozome-populus-v4.1-annotation-info
+  label: Populus trichocarpa v4.1 (Phytozome-533) annotation_info table
+  tier: restricted
+  format: TSV
+  source: JGI Phytozome, Populus trichocarpa v4.1 (Phytozome-533)
+  producer: JGI plant annotation pipeline
+  producer_kind: reference annotation
+  origin_url: https://files.jgi.doe.gov/search/?q=Phytozome-533&file=annotation_info
+  jgi_file_id: 5d94dc9ec0d65a87debccfcc
+  file_name: Ptrichocarpa_533_v4.1.annotation_info.txt
+  bytes: 8742751
+  md5: aaf04aa3515d96748d1229d36ac7dfe4
+  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
+  barrier: requires a JGI account
+  notes: The source of the derived excerpt populus-v4.1-chr01-200-genes-annotation-info. Its header swaps the KOG and ec labels; the JGI files API lists a sibling named ...annotation_info.txtwrong_header. md5 from the JGI files API, matching the downloaded file (2026-09-30).
+  retrieved: '2026-09-29'
+- id: populus-v4.1-chr01-200-genes-annotation-info
+  label: Populus trichocarpa v4.1 first 200 Chr01 genes, annotation_info excerpt
+  tier: derived
+  source: JGI Phytozome, Populus trichocarpa v4.1 (Phytozome-533)
+  format: TSV
+  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
+  retrieved: '2026-09-29'
+  path: corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt
+  bytes: 48995
+  md5: ad144e70afe346facbd9b6b39056e63e
+  sha256: 64bbc6e9a8fc1f9ca8b6309aed64cef767c649d5e67c685ae13af8978f01eb7d
+  origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
+  derived_from: jgi-phytozome-populus-v4.1-annotation-info
+  mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the three provenance comment lines after the header.
+  validity: selected source rows, not a complete genome annotation; valid under the phytozome-annotation-info dialect
+  notes: The real Phytozome input for the annotation_info dialect's clean round trip, with the gene_exons excerpt (https://github.com/turbomam/feature-table-corpus/issues/144). 293 rows, 2 of them with a peptideName naming another locus's transcript.
 tier_counts:
   vendored: 58
   linked: 22
-  restricted: 4
+  restricted: 5
   not located: 1
-  derived: 11
+  derived: 12
