@@ -105,7 +105,7 @@ def read_header(lines):
 
 
 # The comment lines a derived excerpt in corpus/derived-examples/ carries after its directives:
-# the three scripts/verify.py requires, then the citation Phytozome requires
+# the three scripts/verify.py requires, then a citation line
 # (https://github.com/turbomam/feature-table-corpus/issues/151). A file straight from Phytozome has none.
 PROVENANCE = ("# derived-from: ", "# single-change: ", "# validity: ", "# cite: ")
 

@@ -296,8 +296,9 @@ the annotation_info dialect's round trip clean in CI. The corpus now has 98 entr
 ## October 1, 2026: the Populus excerpts cite their sources
 
 For https://github.com/turbomam/feature-table-corpus/issues/151, both Populus excerpts now carry a
-fourth provenance line, `# cite:`, with the citations Phytozome requires (Tuskan et al. 2006,
-Goodstein et al. 2012, and JGI's acknowledgment), so the files name them and not only
+fourth provenance line, `# cite:`, with the two publications Phytozome asks users to cite
+(Tuskan et al. 2006, Goodstein et al. 2012) and JGI's legacy-policy acknowledgment, which is
+kept although whether that policy governs this genome is undetermined (`docs/jgi-inputs.md`), so the files name them and not only
 `corpus/derived-examples/README.md`. The Phytozome dialects require the line in an excerpt's
 provenance block, and the converters' `--header` JSON keeps it. `scripts/populus_excerpt.py`
 regenerated both files from the same source md5s; the only change is that line.

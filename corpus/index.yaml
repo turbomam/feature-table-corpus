@@ -2007,7 +2007,7 @@ entries:
   sha256: 9cea4c1a1dcc4ef89186341513ae91035efb52b94d6d10e236fbf85fd849f679
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
   derived_from: jgi-phytozome-populus-v4.1-gene-exons
-  mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the four provenance comment lines after the directives, the last citing the sources Phytozome requires.
+  mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the four provenance comment lines after the directives, the last giving the citations in corpus/derived-examples/README.md.
   validity: 'valid GFF3: selected source rows, not a complete genome annotation; checked with GenomeTools 1.6.6, and valid under the phytozome-gene-exons-gff3 dialect'
   notes: The real Phytozome input for the gene_exons dialect's clean round trip (https://github.com/turbomam/feature-table-corpus/issues/107). The full file is behind a JGI login and too large to vendor.
 - id: jgi-phytozome-populus-v4.1-annotation-info
@@ -2039,7 +2039,7 @@ entries:
   sha256: 229a9a60d3671cd37c2a566ed55520439167cfb5725f211b47b8a0f5b8bcd16a
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
   derived_from: jgi-phytozome-populus-v4.1-annotation-info
-  mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the four provenance comment lines after the header, the last citing the sources Phytozome requires.
+  mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the four provenance comment lines after the header, the last giving the citations in corpus/derived-examples/README.md.
   validity: selected source rows, not a complete genome annotation; valid under the phytozome-annotation-info dialect
   notes: The real Phytozome input for the annotation_info dialect's clean round trip, with the gene_exons excerpt (https://github.com/turbomam/feature-table-corpus/issues/144). 293 rows, 2 of them with a peptideName naming another locus's transcript.
 tier_counts:

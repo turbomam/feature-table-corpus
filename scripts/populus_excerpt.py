@@ -6,8 +6,9 @@ SOURCE_GFF3_GZ is Ptrichocarpa_533_v4.1.gene_exons.gff3.gz from Phytozome (Phyto
 which needs a JGI login to download, so the full file isn't vendored (112.8 MB uncompressed).
 This keeps its directives and the first GENES genes on Chr01 in file order, each with all of
 its mRNA, exon, CDS and UTR rows, byte for byte, and adds four provenance lines after the
-directives: the three scripts/verify.py requires of a derived file, then the citation Phytozome
-requires (https://github.com/turbomam/feature-table-corpus/issues/151). The source's md5 is checked
+directives: the three scripts/verify.py requires of a derived file, then a `# cite:` line with the
+citations in corpus/derived-examples/README.md
+(https://github.com/turbomam/feature-table-corpus/issues/151). The source's md5 is checked
 first, so the excerpt can only be made from the file the index records.
 
 --table also writes the rows of Ptrichocarpa_533_v4.1.annotation_info.txt for the excerpt's
@@ -24,8 +25,9 @@ SOURCE_MD5 = "3fdcfdd5af213c5f4dde0c01f2cdbfda"
 TABLE_MD5 = "aaf04aa3515d96748d1229d36ac7dfe4"
 TABLE_NAME = "Ptrichocarpa_533_v4.1.annotation_info.txt"
 GENES = 200
-# Phytozome lists this genome as public with citation required; corpus/derived-examples/README.md
-# gives the same citations.
+# The citations corpus/derived-examples/README.md gives: the two publications Phytozome asks users
+# to cite, and JGI's legacy-policy acknowledgment, kept although whether that policy governs this
+# genome is undetermined (docs/jgi-inputs.md).
 CITE = ("# cite: Tuskan et al. 2006, Science 313:1596, doi:10.1126/science.1128691; Goodstein et al. 2012, Nucleic Acids Res 40:D1178; JGI acknowledgment: These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in collaboration with the user community.\n")
 SOURCE_NAME = "Ptrichocarpa_533_v4.1.gene_exons.gff3.gz"
 
