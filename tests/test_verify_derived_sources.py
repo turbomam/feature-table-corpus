@@ -13,6 +13,7 @@ verify = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(verify)
 
 BASE = {"label": "x", "source": "x", "license": "x", "retrieved": "2026-09-30"}
+BASIS = {"terms": ["https://example.org/terms"], "read": "2026-09-30", "allows": "public with citation"}
 
 
 def entry(eid, tier, **fields):
@@ -39,8 +40,24 @@ class DerivedSourceTests(unittest.TestCase):
         cases = {
             "vendored source": ([entry("s", "vendored"), entry("d", "derived", derived_from="s")], None),
             "vendored source by path": ([entry("s", "vendored"), entry("d", "derived", derived_from="s.gff")], None),
-            "restricted with md5": ([entry("s", "restricted", md5="a"), entry("d", "derived", derived_from="s")], None),
-            "restricted without md5": ([entry("s", "restricted"), entry("d", "derived", derived_from="s")],
+            "restricted with md5 and basis": ([entry("s", "restricted", md5="a"),
+                                              entry("d", "derived", derived_from="s", redistribution_basis=BASIS)], None),
+            "restricted without basis": ([entry("s", "restricted", md5="a"), entry("d", "derived", derived_from="s")],
+                                         "needs redistribution_basis"),
+            "basis without https terms": ([entry("s", "restricted", md5="a"),
+                                          entry("d", "derived", derived_from="s",
+                                                redistribution_basis={**BASIS, "terms": ["ftp://x"]})],
+                                         "terms is a non-empty list of https URLs"),
+            "basis without a read date": ([entry("s", "restricted", md5="a"),
+                                          entry("d", "derived", derived_from="s",
+                                                redistribution_basis={**BASIS, "read": "last week"})],
+                                         "read is the YYYY-MM-DD"),
+            "basis without allows": ([entry("s", "restricted", md5="a"),
+                                     entry("d", "derived", derived_from="s",
+                                           redistribution_basis={**BASIS, "allows": " "})],
+                                    "allows says what the terms permit"),
+            "restricted without md5": ([entry("s", "restricted"),
+                                        entry("d", "derived", derived_from="s", redistribution_basis=BASIS)],
                                        "restricted source 's' has no md5"),
             "linked source": ([entry("s", "linked"), entry("d", "derived", derived_from="s")], "is 'linked'"),
             "missing source": ([entry("d", "derived", derived_from="nope")], "'nope' is not an entry id or path"),

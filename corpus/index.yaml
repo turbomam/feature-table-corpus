@@ -6,7 +6,7 @@ tiers:
   vendored: the file is in this repository, with its origin URL and a checksum
   linked: the file is too large or not redistributable; a stable public URL is recorded instead
   restricted: the content sits behind a login; recorded for completeness and not fetchable here
-  derived: built here from a vendored file, or from a restricted one whose md5 is recorded, by exactly one documented change; traceable, but NOT observed
+  derived: built here from a vendored file, or from a restricted one whose md5 and redistribution_basis are recorded (docs/restricted-sources.md), by exactly one documented change; traceable, but NOT observed
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
@@ -2006,6 +2006,12 @@ entries:
   md5: 6632f7b2b6de8bcc553aaf030ad22759
   sha256: 82c4e5916b1379a444946709d1c843fcd528c5f03942abf1fbb710e088e48391
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
+  redistribution_basis:
+    terms:
+    - https://phytozome-next.jgi.doe.gov/api/db/properties/proteome/533
+    - https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+    read: '2026-09-29'
+    allows: Phytozome marks the genome unrestricted ("data_restriction_policy":"unrestricted"). JGI's legacy data policy, which covers proposals accepted before November 2018, makes unreserved data freely available for any subsequent use with the JGI acknowledgment. The legacy policy was read 2026-09-25 and the Phytozome record on 2026-09-29. Mark accepted redistributing excerpts on 2026-10-01.
   derived_from: jgi-phytozome-populus-v4.1-gene-exons
   mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the three provenance comment lines after the directives.
   validity: 'valid GFF3: selected source rows, not a complete genome annotation; checked with GenomeTools 1.6.6, and valid under the phytozome-gene-exons-gff3 dialect'
@@ -2038,6 +2044,12 @@ entries:
   md5: ad144e70afe346facbd9b6b39056e63e
   sha256: 64bbc6e9a8fc1f9ca8b6309aed64cef767c649d5e67c685ae13af8978f01eb7d
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
+  redistribution_basis:
+    terms:
+    - https://phytozome-next.jgi.doe.gov/api/db/properties/proteome/533
+    - https://jgi.doe.gov/sites/default/files/2025-01/Data%26Support_LegacyDataPolicy.pdf
+    read: '2026-09-29'
+    allows: Phytozome marks the genome unrestricted ("data_restriction_policy":"unrestricted"). JGI's legacy data policy, which covers proposals accepted before November 2018, makes unreserved data freely available for any subsequent use with the JGI acknowledgment. The legacy policy was read 2026-09-25 and the Phytozome record on 2026-09-29. Mark accepted redistributing excerpts on 2026-10-01.
   derived_from: jgi-phytozome-populus-v4.1-annotation-info
   mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the three provenance comment lines after the header.
   validity: selected source rows, not a complete genome annotation; valid under the phytozome-annotation-info dialect

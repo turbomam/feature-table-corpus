@@ -25,6 +25,22 @@ REQUIRED_BY_TIER = {
 }
 
 
+def basis_problem(basis):
+    """What is missing from a derived entry's redistribution_basis, or None when it is complete:
+    terms (https URLs), read (the YYYY-MM-DD they were read), and allows (what they permit)."""
+    import re
+    if not isinstance(basis, dict):
+        return "needs redistribution_basis with terms, read and allows (docs/restricted-sources.md)"
+    terms = basis.get("terms")
+    if not (isinstance(terms, list) and terms and all(isinstance(t, str) and t.startswith("https://") for t in terms)):
+        return "redistribution_basis.terms is a non-empty list of https URLs"
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(basis.get("read", ""))):
+        return "redistribution_basis.read is the YYYY-MM-DD the terms were read"
+    if not (isinstance(basis.get("allows"), str) and basis["allows"].strip()):
+        return "redistribution_basis.allows says what the terms permit"
+    return None
+
+
 def check_index(entries):
     """Enforce the invariants the index relies on.
 
@@ -86,6 +102,11 @@ def check_index(entries):
             bad += 1
         elif parent.get("tier") == "restricted" and not parent.get("md5"):
             print(f"DERIVED-SOURCE  {e.get('id')}  restricted source {parent.get('id')!r} has no md5")
+            bad += 1
+        elif parent.get("tier") == "restricted" and basis_problem(e.get("redistribution_basis")):
+            # Each excerpt of a login-only source records the terms that allow redistributing it
+            # (docs/restricted-sources.md), so the next source is decided on its own terms.
+            print(f"DERIVED-BASIS   {e.get('id')}  {basis_problem(e.get('redistribution_basis'))}")
             bad += 1
         elif parent.get("tier") not in ("vendored", "restricted"):
             print(f"DERIVED-SOURCE  {e.get('id')}  source {parent.get('id')!r} is {parent.get('tier')!r}, "
