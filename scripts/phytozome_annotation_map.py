@@ -6,12 +6,14 @@
 
 The table has no positions: one row per transcript, joined to the GFF3's mRNA on
 pacid. The GFF3 goes through scripts/phytozome_gene_exons_map.py; each table value
-then becomes one Attribute on its mRNA Feature, keyed by the table's column name
-(Pfam, Panther, ec, KOG, KO, GO, and the Best-hit columns), with a list column
+then becomes one Attribute on its mRNA Feature, keyed by what it is (Pfam, Panther,
+ec, KOG, KO, GO, and the best-hit columns of the table's layout), with a list column
 giving one Attribute per value in table order, and the table's URL is added to the
-mRNA's source_files. locusName, transcriptName and peptideName are not stored: they
-are the gene's Name, the mRNA's Name, and (in every measured row) the mRNA's Name
-again, and a row where they disagree is refused.
+mRNA's source_files. locusName and transcriptName are not stored: they are the gene's
+Name and the mRNA's Name, and a row where they disagree is refused. peptideName is the
+mRNA's Name in TAIR10 and the Name plus ".p" in Populus v4.1; a Populus row that names
+another transcript keeps it as a peptideName Attribute. Populus's header swaps the KOG
+and ec labels, so its EC numbers are keyed "ec" (scripts/phytozome_annotation_info.py).
 
 The reverse direction rebuilds each table row's text from those Attributes and
 parses it with the table dialect's own row parser. Rows are written sorted by
@@ -32,11 +34,30 @@ from img_functional_map import reports_hidden_warnings
 from validate_closed import make_validator, validation_errors
 
 MODEL = gff3_map.MODEL
-# Columns the Dataset carries as Attributes, in table order; the first four are the join.
-VALUE_COLUMNS = table_dialect.HEADER[4:]
-VALUE_COLUMN_SET = frozenset(VALUE_COLUMNS)
-SLOT = table_dialect.COLUMN_TO_SLOT
 LISTS = table_dialect.LIST_SLOTS
+
+
+def value_keys(layout):
+    """[(Attribute key, slot)] for a layout's value columns, in its header order; the first four
+    columns are the join. A value is keyed by TAIR10's column name for its slot, so EC numbers
+    are keyed "ec" whatever label Populus's header gives their column."""
+    names = {slot: column for column, slot in table_dialect.LAYOUT_SLOTS["clamy_rice"].items()}
+    slots = table_dialect.LAYOUT_SLOTS[layout]
+    return [(names.get(slots[column], column), slots[column]) for column in table_dialect.LAYOUTS[layout][4:]]
+
+
+VALUE_KEYS = {layout: value_keys(layout) for layout in table_dialect.LAYOUTS}
+# Columns the Dataset carries as Attributes, for TAIR10's layout, kept for callers that read it.
+VALUE_COLUMNS = tuple(key for key, _ in VALUE_KEYS["clamy_rice"])
+# A Populus peptideName is the mRNA's Name plus ".p"; one that names another transcript (560 of
+# 52,400 rows) is kept as a peptideName Attribute. TAIR10's always equals the Name.
+PEPTIDE_SUFFIX = {"clamy_rice": "", "arabi": ".p"}
+PEPTIDE_KEY = "peptideName"
+TABLE_KEYS = frozenset(key for keys in VALUE_KEYS.values() for key, _ in keys) | {PEPTIDE_KEY}
+LAYOUT_ONLY_KEYS = {layout: {key for key, _ in keys} - {key for other, others in VALUE_KEYS.items()
+                                                        if other != layout for key, _ in others}
+                    for layout, keys in VALUE_KEYS.items()}
+LAYOUT_ONLY_KEYS["arabi"].add(PEPTIDE_KEY)
 
 
 def transcript_number(name):
@@ -49,9 +70,6 @@ def table_order(row):
 
 def forward(gff3_document, table_document, table_url, transformers=None):
     layout = table_document.get("layout", "clamy_rice")
-    if layout != "clamy_rice":
-        raise ValueError(f"table layout {layout!r}: this mapping reads only TAIR10's clamy_rice layout so far "
-                         "(https://github.com/turbomam/feature-table-corpus/issues/144)")
     dataset = gff3_map.forward(gff3_document, transformers)
     features = {f["feature_id"]: f for f in dataset["features"]}
     mrnas = {}
@@ -74,17 +92,22 @@ def forward(gff3_document, table_document, table_url, transformers=None):
         name = next(a["value"] for a in mrna["attributes"] if a["key"] == "Name")
         gene = features[mrna["parent"][0]]
         gene_name = next(a["value"] for a in gene["attributes"] if a["key"] == "Name")
-        if (row.get("locusName"), row.get("transcriptName"), row.get("peptideName")) != (gene_name, name, name):
-            raise ValueError(f"{where}: locusName, transcriptName and peptideName are not the gene's Name, "
-                             f"the mRNA's Name and the mRNA's Name ({gene_name}, {name})")
-        clash = {a["key"] for a in mrna["attributes"]} & VALUE_COLUMN_SET
+        peptide = name + PEPTIDE_SUFFIX[layout]
+        if (row.get("locusName"), row.get("transcriptName")) != (gene_name, name):
+            raise ValueError(f"{where}: locusName and transcriptName are not the gene's Name and the mRNA's Name "
+                             f"({gene_name}, {name})")
+        if layout == "clamy_rice" and row.get("peptideName") != peptide:
+            raise ValueError(f"{where}: peptideName is not the mRNA's Name ({name}), as in every TAIR10 row")
+        clash = {a["key"] for a in mrna["attributes"]} & TABLE_KEYS
         if clash:
             raise ValueError(f"{where}: the GFF3 mRNA already has {sorted(clash)}, so a table value "
                              "would be indistinguishable from a GFF3 one")
-        for column in VALUE_COLUMNS:
-            value = row.get(SLOT[column])
+        for key, slot in VALUE_KEYS[layout]:
+            value = row.get(slot)
             for item in value if isinstance(value, list) else ([] if value is None else [value]):
-                mrna["attributes"].append({"key": column, "value": item})
+                mrna["attributes"].append({"key": key, "value": item})
+        if row.get("peptideName") != peptide:
+            mrna["attributes"].append({"key": PEPTIDE_KEY, "value": row.get("peptideName")})
         mrna["source_files"] = [table_url]
     missing = sorted(set(mrnas) - seen)
     if missing:
@@ -92,12 +115,32 @@ def forward(gff3_document, table_document, table_url, transformers=None):
     return dataset
 
 
-def reverse(dataset, gff3_source, table_source, transformers=None, species=None, provenance=None):
-    """Return (gff3_document, table_document) that forward maps back to dataset."""
+def table_layout(dataset):
+    """The table layout a Dataset's mRNA Attributes show. With no best-hit or peptideName
+    Attribute the two layouts look the same, so that is an error; pass the layout instead."""
+    keys = {a["key"] for f in dataset.get("features", []) for a in f.get("attributes", [])}
+    found = [layout for layout, only in LAYOUT_ONLY_KEYS.items() if keys & only]
+    if len(found) > 1:
+        raise ValueError(f"the Attributes mix table layouts {found}; a Dataset holds one table")
+    if not found:
+        raise ValueError("can't tell the table layout from the Attributes (no best-hit or peptideName "
+                         f"values); give it with --layout ({', '.join(sorted(table_dialect.LAYOUTS))})")
+    return found[0]
+
+
+def reverse(dataset, gff3_source, table_source, transformers=None, species=None, provenance=None, layout=None):
+    """Return (gff3_document, table_document) that forward maps back to dataset.
+
+    layout is the table's header layout; given none, it is read from the Attributes (table_layout),
+    which refuses a Dataset that doesn't show it."""
+    layout = layout or table_layout(dataset)
+    keys = VALUE_KEYS[layout]
+    key_names = [key for key, _ in keys]
+    header, slots = table_dialect.LAYOUTS[layout], table_dialect.LAYOUT_SLOTS[layout]
     features = {f.get("feature_id"): f for f in dataset["features"]}
     stripped, rows, urls = [], [], set()
     for feature in dataset["features"]:
-        values = [a for a in feature.get("attributes", []) if a["key"] in VALUE_COLUMNS]
+        values = [a for a in feature.get("attributes", []) if a["key"] in TABLE_KEYS]
         if feature.get("type") != "mRNA":
             if values or feature.get("source_files"):
                 raise ValueError(f"{feature.get('feature_id')}: only an mRNA carries table values")
@@ -107,19 +150,27 @@ def reverse(dataset, gff3_source, table_source, transformers=None, species=None,
         if len(feature.get("source_files") or []) != 1:
             raise ValueError(f"{name}: an mRNA needs exactly one source_files entry, the table's URL")
         urls.add(feature["source_files"][0])
-        gff3_part = [a for a in feature.get("attributes", []) if a["key"] not in VALUE_COLUMNS]
+        gff3_part = [a for a in feature.get("attributes", []) if a["key"] not in TABLE_KEYS]
         if feature.get("attributes", [])[:len(gff3_part)] != gff3_part:
             raise ValueError(f"{name}: table values are not all after the GFF3's own attributes")
         by_column = {}
         for attribute in values:
             by_column.setdefault(attribute["key"], []).append(attribute["value"])
-        if [a["key"] for a in values] != [c for c in VALUE_COLUMNS for _ in by_column.get(c, [])]:
+        unknown = sorted(set(by_column) - set(key_names) - {PEPTIDE_KEY})
+        if unknown:
+            raise ValueError(f"{name}: {unknown} are not columns of the {layout} table layout")
+        expected = [c for c in key_names + [PEPTIDE_KEY] for _ in by_column.get(c, [])]
+        if [a["key"] for a in values] != expected:
             raise ValueError(f"{name}: table values are not in table column order")
         attrs = {a["key"]: a["value"] for a in gff3_part}
         gene = features.get((feature.get("parent") or [None])[0]) or {}
         gene_name = next((a["value"] for a in gene.get("attributes", []) if a["key"] == "Name"), "")
-        cells = [f"{table_dialect.PAC}{attrs.get('pacid', '')}", gene_name, attrs.get("Name", ""), attrs.get("Name", "")]
-        for column in VALUE_COLUMNS:
+        peptides = by_column.get(PEPTIDE_KEY, [attrs.get("Name", "") + PEPTIDE_SUFFIX[layout]])
+        if len(peptides) != 1 or (layout == "clamy_rice" and PEPTIDE_KEY in by_column):
+            raise ValueError(f"{name}: a {layout} table row holds one peptideName, "
+                             + ("the mRNA's Name" if layout == "clamy_rice" else "given at most once"))
+        cells = [f"{table_dialect.PAC}{attrs.get('pacid', '')}", gene_name, attrs.get("Name", ""), peptides[0]]
+        for column, _ in keys:
             items = by_column.get(column, [])
             if column not in LISTS and len(items) > 1:
                 raise ValueError(f"{name}: {column} has {len(items)} values; the table holds one")
@@ -129,7 +180,7 @@ def reverse(dataset, gff3_source, table_source, transformers=None, species=None,
                         raise ValueError(f"{name}: {column} value {item!r} contains {character!r}")
             cells.append(" ".join(items))
         try:
-            rows.append(table_dialect.parse_row(0, "\t".join(cells)))
+            rows.append(table_dialect.parse_row(0, "\t".join(cells), header, slots))
         except table_dialect.DialectError as error:
             raise ValueError(f"{name}: {error}") from None
         stripped.append({**{k: v for k, v in feature.items() if k != "source_files"}, "attributes": gff3_part})
@@ -141,9 +192,7 @@ def reverse(dataset, gff3_source, table_source, transformers=None, species=None,
         row["line"] = number
     gff3_document = gff3_map.reverse({**dataset, "features": stripped}, gff3_source, transformers, species,
                                      provenance)
-    # This mapping reads TAIR10's layout only; Populus's arabi layout is
-    # https://github.com/turbomam/feature-table-corpus/issues/144.
-    table_document = {"source_file": table_source, "layout": "clamy_rice", "rows": rows}
+    table_document = {"source_file": table_source, "layout": layout, "rows": rows}
     again = forward(gff3_document, table_document, urls.pop() if urls else "", transformers)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(dataset, again)}")
@@ -182,7 +231,8 @@ def roundtrip(gff3_path, table_path):
         return problems, report
     try:
         back_gff3, back_table = reverse(dataset, str(gff3_path), str(table_path), transformers,
-                                        gff3_document.get("species"), gff3_document.get("provenance"))
+                                        gff3_document.get("species"), gff3_document.get("provenance"),
+                                        table_document.get("layout"))
     except Exception as error:  # linkml-map raises its own TransformationError
         return [f"reverse: {error}"], report
     with gff3_dialect.open_text(gff3_path) as handle:
@@ -200,7 +250,7 @@ def roundtrip(gff3_path, table_path):
             problems.append(f"{label}: written text differs from the source")
     mrnas = [f for f in dataset["features"] if f["type"] == "mRNA"]
     report |= {"features": len(dataset["features"]), "mRNA": len(mrnas),
-               "table_attributes": sum(1 for f in mrnas for a in f["attributes"] if a["key"] in VALUE_COLUMNS)}
+               "table_attributes": sum(1 for f in mrnas for a in f["attributes"] if a["key"] in TABLE_KEYS)}
     return problems, report
 
 
@@ -220,6 +270,8 @@ def main(argv=None):
     rev.add_argument("gff3_output", type=Path)
     rev.add_argument("table_output", type=Path)
     rev.add_argument("--header", type=Path, help="the GFF3 header lines from forward --header")
+    rev.add_argument("--layout", choices=sorted(table_dialect.LAYOUTS),
+                     help="the table's header layout; by default read from the Attributes")
     trip = commands.add_parser("roundtrip")
     trip.add_argument("gff3", type=Path)
     trip.add_argument("table", type=Path)
@@ -253,7 +305,7 @@ def main(argv=None):
         if not errors:
             try:
                 gff3_document, table_document = reverse(dataset, str(args.gff3_output), str(args.table_output),
-                                                        **extras)
+                                                        layout=args.layout, **extras)
             except Exception as error:  # linkml-map raises its own TransformationError
                 errors = [f"reverse: {error}"]
             else:

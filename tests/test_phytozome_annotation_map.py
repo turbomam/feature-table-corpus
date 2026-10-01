@@ -60,7 +60,7 @@ class MappingTests(unittest.TestCase):
             mapping.forward(self.gff3, table, URL, self.transformers)
         table = copy.deepcopy(self.table)
         table["rows"][0]["peptideName"] = "Exa01g00010.1.p"
-        with self.assertRaisesRegex(ValueError, "peptideName are not"):
+        with self.assertRaisesRegex(ValueError, "peptideName is not the mRNA's Name"):
             mapping.forward(self.gff3, table, URL, self.transformers)
         table = copy.deepcopy(self.table)
         del table["rows"][1]
@@ -92,12 +92,6 @@ class MappingTests(unittest.TestCase):
                 change(dataset)
                 with self.assertRaisesRegex(ValueError, expected):
                     self.back(dataset)
-
-    def test_forward_refuses_the_populus_layout_for_now(self):
-        table = copy.deepcopy(self.table)
-        table["layout"] = "arabi"
-        with self.assertRaisesRegex(ValueError, "only TAIR10's clamy_rice layout so far"):
-            mapping.forward(self.gff3, table, URL, self.transformers)
 
     def test_forward_refuses_a_table_row_with_no_mrna(self):
         table = copy.deepcopy(self.table)
@@ -222,6 +216,52 @@ class HeaderExtraTests(unittest.TestCase):
                                                "--header", str(header)]), 0, err.getvalue())
             self.assertEqual(gff3.read_bytes(), source.read_bytes())
             self.assertEqual(table.read_bytes(), TABLE.read_bytes())
+
+
+def populus_table(text, other_peptide=False):
+    """The constructed table rewritten in Populus's arabi layout: twelve columns, the ec and KOG
+    values where TAIR10 has them (under swapped labels), and peptideName the Name plus ".p"."""
+    lines = text.splitlines()
+    rows = []
+    for number, line in enumerate(lines[1:]):
+        cells = line.split("\t")
+        cells[3] = (cells[2].rsplit(".", 1)[0] + ".9.p") if other_peptide and number == 0 else cells[2] + ".p"
+        rows.append("\t".join(cells[:10] + ["AT1G01010", "a defline"]))
+    return "\n".join(["\t".join(table_dialect.LAYOUTS["arabi"])] + rows) + "\n"
+
+
+class PopulusLayoutTests(unittest.TestCase):
+    def test_the_arabi_layout_round_trips_byte_for_byte(self):
+        for other in (False, True):
+            with self.subTest(other_peptide=other), tempfile.TemporaryDirectory() as tmp:
+                table = Path(tmp) / "populus.annotation_info.txt"
+                table.write_text(populus_table(TABLE.read_text(), other))
+                problems, report = mapping.roundtrip(GFF3, table)
+                self.assertEqual(problems, [])
+
+    def test_values_are_keyed_by_what_they_are_and_odd_peptides_kept(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            table = Path(tmp) / "populus.annotation_info.txt"
+            table.write_text(populus_table(TABLE.read_text(), other_peptide=True))
+            gff3, populus = gff3_dialect.parse(GFF3), table_dialect.parse(table)
+        tair = mapping.forward(gff3, table_dialect.parse(TABLE), URL)
+        dataset = mapping.forward(gff3, populus, URL)
+        def values(ds, key):
+            return [a["value"] for f in ds["features"] for a in f.get("attributes", []) if a["key"] == key]
+        self.assertEqual(values(dataset, "ec"), values(tair, "ec"))
+        self.assertEqual(values(dataset, "KOG"), values(tair, "KOG"))
+        self.assertEqual(len(values(dataset, "peptideName")), 1)
+        self.assertEqual(mapping.table_layout(dataset), "arabi")
+        self.assertEqual(mapping.table_layout(tair), "clamy_rice")
+        # With no best-hit or peptideName values the layouts look alike: refuse rather than guess.
+        bare = copy.deepcopy(dataset)
+        for feature in bare["features"]:
+            feature["attributes"] = [x for x in feature.get("attributes", [])
+                                     if x["key"] not in mapping.LAYOUT_ONLY_KEYS["arabi"]]
+        with self.assertRaisesRegex(ValueError, "can't tell the table layout"):
+            mapping.table_layout(bare)
+        back_gff3, back_table = mapping.reverse(bare, "g.gff3", "t.txt", layout="arabi")
+        self.assertEqual(back_table["layout"], "arabi")
 
 if __name__ == "__main__":
     unittest.main()
