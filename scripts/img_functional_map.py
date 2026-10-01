@@ -442,8 +442,13 @@ def write_new_files(outputs):
         if made:
             created.append(Path(path))
         if not ok:
+            # Each removal is tried on its own, so one that fails (a read-only directory, say)
+            # is reported and the rest are still removed.
             for done in created:
-                done.unlink(missing_ok=True)
+                try:
+                    done.unlink(missing_ok=True)
+                except OSError as error:
+                    report_errors([f"output: couldn't remove {done}: {error}"])
             return 1
     return 0
 

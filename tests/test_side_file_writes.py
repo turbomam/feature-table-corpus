@@ -60,6 +60,28 @@ class SideFileWriteTests(unittest.TestCase):
                 self.assertEqual(len(calls), 2)
                 self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), [])
 
+    def test_a_failed_removal_is_reported_and_the_rest_are_still_removed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, second, third = (Path(tmp) / name for name in ("a.json", "b.json", "c.json"))
+            real_write, real_unlink = img_functional_map.write_new, Path.unlink
+
+            def fail_third(path, text):
+                if Path(path) == third:
+                    Path(path).write_text("partial")
+                    return False, True
+                return real_write(path, text)
+
+            def unlink(path, missing_ok=False):
+                if path == first:
+                    raise PermissionError("read-only")
+                return real_unlink(path, missing_ok=missing_ok)
+            err = io.StringIO()
+            with mock.patch.object(img_functional_map, "write_new", fail_third), \
+                    mock.patch.object(Path, "unlink", unlink), contextlib.redirect_stderr(err):
+                self.assertEqual(img_functional_map.write_new_files([(first, "1"), (second, "2"), (third, "3")]), 1)
+            self.assertIn(f"couldn't remove {first}", err.getvalue())
+            self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), ["a.json"])
+
     def test_a_file_another_process_made_first_is_left_alone(self):
         with tempfile.TemporaryDirectory() as tmp:
             Path(tmp, "side.json").write_text("theirs")
