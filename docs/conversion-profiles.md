@@ -451,9 +451,11 @@ writes back byte for byte, all 52,400 rows (measured 2026-09-30). It has 12 colu
 labels column 7 `KOG` and column 8 `ec`, but all 17,431 values under `KOG` are EC numbers and all
 18,574 under `ec` are KOG IDs. So the columns are in TAIR10's order with the two labels swapped,
 and the parser puts each value in the slot it is; JGI's files API lists a sibling file named
-`...annotation_info.txtwrong_header`. Every `peptideName` ends in `.p`, and in 560 rows it names
-another locus's transcript, so the mapping can't derive it from the GFF3. The mapping reads only
-TAIR10's layout so far and refuses the Populus one by name
+`...annotation_info.txtwrong_header`. The mapping reads both layouts. It keys each value by what
+it is, so Populus's EC numbers are `ec` Attributes despite their column's label. A Populus
+`peptideName` is the mRNA's Name plus `.p`; in 560 rows it names another locus's transcript
+instead, and the mapping keeps that one as a `peptideName` Attribute. Reverse reads the layout from
+the Attributes, or from `--layout`. A vendored excerpt of the Populus table is still to come
 (https://github.com/turbomam/feature-table-corpus/issues/144).
 
 [`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)
