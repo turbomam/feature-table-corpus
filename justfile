@@ -195,6 +195,12 @@ query-attribute key value db=duckdb_path:
 query-overlap space seqid start end db=duckdb_path:
     uv run --with duckdb python3 scripts/query_duckdb.py "$5" overlap "$1" "$2" "$3" "$4"
 
+[doc("List features of one type around a contig position, nearest first on each side.")]
+[group("Queries")]
+query-neighbors seqid position db=duckdb_path *options:
+    query_database="$3"; query_seqid="$1"; query_position="$2"; shift 3; \
+        uv run --with duckdb python3 scripts/query_duckdb.py "$query_database" neighbors "$query_seqid" "$query_position" "$@"
+
 # ---- Source documents -------------------------------------------------------
 
 # Additional options go to the existing parser: --profile, --source-uri, --strict.

@@ -59,6 +59,41 @@ def interval_overlap(con, sequence_id, start, end, coordinate_system="contig"):
     """, [coordinate_system, end, start, end, start, sequence_id]).fetchall()
 
 
+def neighbors(con, sequence_id, position, count=2, feature_type="gene"):
+    """Features of one type around a 1-based contig position: those containing it, and the
+    nearest count on each side, in chromosome order.
+
+    side is left, contains or right in chromosome coordinates; strand is returned so the caller
+    can read upstream and downstream for whichever feature they mean. intervening_bases counts
+    the bases strictly between the position and the feature, as in the BGC gene-order exercise.
+    Uses each feature's start and end, so a spliced feature's introns count as occupied.
+    A circular contig is refused: its nearest features may lie across the origin."""
+    if type(position) is not int or position < 1:
+        raise ValueError("position must be a 1-based integer")
+    if type(count) is not int or count < 0:
+        raise ValueError("count must be a non-negative integer")
+    if con.execute("SELECT count(*) FROM contig WHERE contig_id = ? AND topology = 'circular'",
+                   [sequence_id]).fetchone()[0]:
+        raise ValueError("circular contig: neighbors across the origin are not handled")
+    rows = con.execute("""
+        WITH placed AS (
+            SELECT feature_id, start, "end", strand,
+                   CASE WHEN "end" < ? THEN 'left' WHEN start > ? THEN 'right' ELSE 'contains' END AS side,
+                   CASE WHEN "end" < ? THEN ? - "end" - 1 WHEN start > ? THEN start - ? - 1 ELSE 0 END AS gap
+            FROM feature
+            WHERE seqid = ? AND type = ? AND coordinate_system = 'contig'),
+        ranked AS (
+            SELECT *, row_number() OVER (PARTITION BY side ORDER BY gap, start, feature_id) AS nearness
+            FROM placed)
+        SELECT feature_id, start, "end", strand, side, gap
+        FROM ranked WHERE side = 'contains' OR nearness <= ?
+        ORDER BY start, "end", feature_id
+    """, [position, position, position, position, position, position,
+          sequence_id, feature_type, count]).fetchall()
+    names = ("feature_id", "start", "end", "strand", "side", "intervening_bases")
+    return [dict(zip(names, row)) for row in rows]
+
+
 def by_attribute(con, key, value):
     return con.execute("""
         SELECT DISTINCT f.feature_id
@@ -79,6 +114,11 @@ def main():
     overlap.add_argument("sequence_id", help="Contig ID for contig coordinates; parent CDS ID for protein coordinates")
     overlap.add_argument("start", type=int)
     overlap.add_argument("end", type=int)
+    near = commands.add_parser("neighbors")
+    near.add_argument("sequence_id", help="Contig ID")
+    near.add_argument("position", type=int, help="1-based contig position")
+    near.add_argument("--count", type=int, default=2, help="features to list on each side (default 2)")
+    near.add_argument("--type", dest="feature_type", default="gene", help="feature type (default gene)")
     attribute = commands.add_parser("attribute")
     attribute.add_argument("key")
     attribute.add_argument("value")
@@ -89,6 +129,8 @@ def main():
             rows = multiple_pfams(con, args.accessions)
         elif args.command == "overlap":
             rows = interval_overlap(con, args.sequence_id, args.start, args.end, args.coordinate_system)
+        elif args.command == "neighbors":
+            rows = neighbors(con, args.sequence_id, args.position, args.count, args.feature_type)
         else:
             rows = by_attribute(con, args.key, args.value)
         print(json.dumps(rows, indent=2))

@@ -11,8 +11,8 @@ prompts were counted separately from human messages.
 This PR uses that existing aggregate summary to choose regression cases; it does not rerun
 the trace census. The underlying audit stays internal. No account identifiers, raw traces,
 or transcript quotations are included here. Proximity queries are also indicated by the
-census but remain a separate extension: strand, distance, and neighboring-feature semantics
-need to be specified before claiming support.
+census. The neighbors query below fixes their semantics: chromosome order on one linear
+contig, strand returned rather than interpreted, and distance as intervening bases.
 
 | Requirement | Executable coverage |
 |---|---|
@@ -21,6 +21,7 @@ need to be specified before claiming support.
 | Protein interval overlap | Explicit protein coordinate space and parent CDS ID; never compared directly to genomic offsets |
 | Source annotation lookup | Exact `key`/`value` match through a nested attribute list |
 | Identifier and product access | Scalar `feature_id` and `product` columns retained by the mapping |
+| Features on either side of a position | Real actinorhodin genes from the RefSeq excerpt; inclusive endpoints, overlapping genes, a wrong sequence version, and circular contigs refused |
 
 `scripts/query_duckdb.py` runs parameterized queries against a read-only database. Examples
 after `just build-duckdb`:
@@ -29,7 +30,17 @@ after `just build-duckdb`:
 just query-overlap contig nmdc:wfmgas-11-19jh9v28.1_scf_1_c1 104 104
 just query-overlap protein nmdc:wfmgas-11-19jh9v28.1_scf_1_c1_104_853 13 13
 just query-attribute Name adh_short_C2
+just query-neighbors NC_003888.3 5531500 local/build/actinorhodin.duckdb --count 2
 ```
+
+The neighbors example needs a database built from the actinorhodin excerpt
+(`corpus/derived-examples/actinorhodin.gff3`, imported with `gff3-contig/4.0.0`). It lists the
+genes containing position 5,531,500 and the two nearest on each side, with `side` (`left`,
+`contains` or `right` in chromosome coordinates), `strand`, and `intervening_bases`, the
+bases strictly between the position and the gene. Upstream and downstream depend on whose
+strand is meant, so the query returns strand and leaves that reading to the caller. A gene's
+start and end are used, so introns count as occupied. Circular contigs are refused, because
+the nearest feature can lie across the origin.
 
 Both new query recipes accept an optional database path as their last argument.
 The default is `local/build/ber_feature_model.duckdb`. Quote attribute values and paths
