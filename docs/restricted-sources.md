@@ -20,6 +20,8 @@ Before adding an excerpt of a restricted source:
 4. Give the `derived` entry a `redistribution_basis`: `terms`, the https URLs read; `read`, the
    date they were read; and `allows`, what they permit and who accepted it. `scripts/verify.py`
    refuses a derived entry from a restricted source without one.
+   Cite only terms shown to govern this file. When the governing policy can't be determined, say
+   so in `allows` and rest the basis on what the source's own record states.
 5. Put the required citations in `corpus/derived-examples/README.md` and the entry's `license`.
 6. Write the excerpt with a script that checks the source's md5 first, as
    `scripts/populus_excerpt.py` does, and add a dated note to `corpus/PROVENANCE.md`.

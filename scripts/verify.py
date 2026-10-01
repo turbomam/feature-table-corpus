@@ -28,13 +28,21 @@ REQUIRED_BY_TIER = {
 def basis_problem(basis):
     """What is missing from a derived entry's redistribution_basis, or None when it is complete:
     terms (https URLs), read (the YYYY-MM-DD they were read), and allows (what they permit)."""
+    import datetime
     import re
+    from urllib.parse import urlsplit
     if not isinstance(basis, dict):
         return "needs redistribution_basis with terms, read and allows (docs/restricted-sources.md)"
     terms = basis.get("terms")
-    if not (isinstance(terms, list) and terms and all(isinstance(t, str) and t.startswith("https://") for t in terms)):
+    if not (isinstance(terms, list) and terms
+            and all(isinstance(t, str) and urlsplit(t).scheme == "https" and urlsplit(t).hostname for t in terms)):
         return "redistribution_basis.terms is a non-empty list of https URLs"
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(basis.get("read", ""))):
+    read = str(basis.get("read", ""))
+    try:
+        datetime.date.fromisoformat(read)
+    except ValueError:
+        read = ""
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", read):
         return "redistribution_basis.read is the YYYY-MM-DD the terms were read"
     if not (isinstance(basis.get("allows"), str) and basis["allows"].strip()):
         return "redistribution_basis.allows says what the terms permit"
