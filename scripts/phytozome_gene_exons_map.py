@@ -101,6 +101,14 @@ def read_header_extras(path):
         return {}, [f"header: {error}"]
     if not isinstance(extras, dict) or set(extras) - set(HEADER_EXTRAS):
         return {}, [f"header: expected a JSON object with only {list(HEADER_EXTRAS)}"]
+    species, provenance = extras.get("species"), extras.get("provenance")
+    if "species" in extras and not (isinstance(species, str) and species.strip()):
+        return {}, ["header: species is a non-empty string, the ##species line's value"]
+    if "provenance" in extras and not (isinstance(provenance, list) and len(provenance) == len(dialect.PROVENANCE)
+                                       and all(isinstance(line, str) and line.startswith(tag)
+                                               for line, tag in zip(provenance, dialect.PROVENANCE))):
+        return {}, [f"header: provenance is the {len(dialect.PROVENANCE)} lines "
+                    f"{[t.strip() for t in dialect.PROVENANCE]}, in order"]
     return extras, []
 
 

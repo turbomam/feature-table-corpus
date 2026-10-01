@@ -169,6 +169,16 @@ class HeaderExtraTests(unittest.TestCase):
                 self.assertEqual(mapping.main(["reverse", str(dataset), str(Path(tmp) / "o.gff3"),
                                                "--header", str(bad)]), 1)
             self.assertIn("header: expected a JSON object", err.getvalue())
+            for text, expected in (('{"species": 0}', "species is a non-empty string"),
+                                   ('{"provenance": []}', "provenance is the 3 lines"),
+                                   ('{"provenance": ["# validity: a", "# derived-from: b", "# single-change: c"]}',
+                                    "in order")):
+                bad.write_text(text)
+                err = io.StringIO()
+                with self.subTest(text), contextlib.redirect_stderr(err):
+                    self.assertEqual(mapping.main(["reverse", str(dataset), str(Path(tmp) / "o.gff3"),
+                                                   "--header", str(bad)]), 1)
+                self.assertIn(expected, err.getvalue())
             self.assertFalse((Path(tmp) / "o.gff3").exists())
 
 if __name__ == "__main__":

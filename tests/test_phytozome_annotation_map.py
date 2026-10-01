@@ -199,5 +199,23 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(result.stderr, "")
 
 
+class HeaderExtraTests(unittest.TestCase):
+    def test_the_commands_keep_species_and_provenance_lines(self):
+        lines = GFF3.read_text().splitlines(keepends=True)
+        extra = ["##species Exemplum fictum\n", "# derived-from: x\n", "# single-change: y\n", "# validity: z\n"]
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "with-extra.gene_exons.gff3"
+            source.write_text("".join(lines[:2] + extra + lines[2:]))
+            dataset, header = Path(tmp) / "d.json", Path(tmp) / "h.json"
+            gff3, table = Path(tmp) / "back.gff3", Path(tmp) / "back.txt"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(mapping.main(["forward", str(source), str(TABLE), str(dataset), "--table-url", URL,
+                                               "--header", str(header)]), 0, err.getvalue())
+                self.assertEqual(mapping.main(["reverse", str(dataset), str(gff3), str(table),
+                                               "--header", str(header)]), 0, err.getvalue())
+            self.assertEqual(gff3.read_bytes(), source.read_bytes())
+            self.assertEqual(table.read_bytes(), TABLE.read_bytes())
+
 if __name__ == "__main__":
     unittest.main()

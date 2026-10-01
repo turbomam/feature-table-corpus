@@ -20,7 +20,7 @@ GENES = 200
 SOURCE_NAME = "Ptrichocarpa_533_v4.1.gene_exons.gff3.gz"
 
 
-def excerpt(source, genes=GENES):
+def excerpt(source, genes=GENES, digest=SOURCE_MD5):
     """The excerpt's text from the gzipped source GFF3."""
     head, rows, count = [], [], 0
     with gzip.open(source, "rt", encoding="utf-8", newline="") as handle:
@@ -39,7 +39,7 @@ def excerpt(source, genes=GENES):
                 raise ValueError(f"{source}: reached {columns[0]} before {genes} genes on Chr01")
             rows.append(line)
     provenance = [
-        f"# derived-from: jgi-phytozome-populus-v4.1-gene-exons ({SOURCE_NAME}, md5 {SOURCE_MD5})\n",
+        f"# derived-from: jgi-phytozome-populus-v4.1-gene-exons ({SOURCE_NAME}, md5 {digest})\n",
         f"# single-change: select the first {genes} genes on Chr01 in file order with all their rows; "
         "retain the directives, row bytes and chromosome coordinates\n",
         "# validity: valid GFF3; selected source rows, not a complete genome annotation\n",
@@ -52,13 +52,18 @@ def main(argv=None):
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
     args = parser.parse_args(argv)
-    digest = hashlib.md5(args.source.read_bytes()).hexdigest()
-    if digest != SOURCE_MD5:
-        print(f"{args.source}: md5 {digest}, expected {SOURCE_MD5}", file=sys.stderr)
+    try:
+        digest = hashlib.md5(args.source.read_bytes()).hexdigest()
+        if digest != SOURCE_MD5:
+            print(f"{args.source}: md5 {digest}, expected {SOURCE_MD5}", file=sys.stderr)
+            return 1
+        text = excerpt(args.source)
+        with open(args.output, "x", encoding="utf-8", newline="") as handle:
+            handle.write(text)
+    except (OSError, UnicodeDecodeError, ValueError) as error:
+        # The source needs a JGI login, so a missing or unreadable file is the usual failure.
+        print(f"populus_excerpt: {error}", file=sys.stderr)
         return 1
-    text = excerpt(args.source)
-    with open(args.output, "x", encoding="utf-8", newline="") as handle:
-        handle.write(text)
     print(f"wrote {args.output}: {text.count(chr(10))} lines")
     return 0
 

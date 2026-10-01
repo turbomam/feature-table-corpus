@@ -73,6 +73,25 @@ def check_index(entries):
             print(f"MISSING-FIELDS  {eid}  ({tier})  {', '.join(missing)}")
             bad += 1
 
+    # The derived tier's definition: built from a vendored file, or from a restricted one whose
+    # md5 is recorded. Checked here so the definition can't drift from the entries.
+    # derived_from names the source by entry id or, in the older fixtures, by its path.
+    by_key = {e.get("id"): e for e in entries} | {e["path"]: e for e in entries if e.get("path")}
+    for e in entries:
+        if e.get("tier") != "derived" or not e.get("derived_from"):
+            continue
+        parent = by_key.get(e["derived_from"])
+        if parent is None:
+            print(f"DERIVED-SOURCE  {e.get('id')}  derived_from {e['derived_from']!r} is not an entry id or path")
+            bad += 1
+        elif parent.get("tier") == "restricted" and not parent.get("md5"):
+            print(f"DERIVED-SOURCE  {e.get('id')}  restricted source {parent.get('id')!r} has no md5")
+            bad += 1
+        elif parent.get("tier") not in ("vendored", "restricted"):
+            print(f"DERIVED-SOURCE  {e.get('id')}  source {parent.get('id')!r} is {parent.get('tier')!r}, "
+                  "not vendored or restricted")
+            bad += 1
+
     print(f"index: {len(entries)} entries, {len(seen_ids)} distinct ids, "
           f"{bad} invariant problem(s)")
     return bad
