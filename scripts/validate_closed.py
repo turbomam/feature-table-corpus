@@ -18,7 +18,10 @@ from pathlib import Path
 import jsonschema
 import yaml
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
-from feature_locations import location_errors
+try:  # inside the installed ber_feature_model package
+    from .feature_locations import location_errors
+except ImportError:  # run from scripts/, where modules import each other by name
+    from feature_locations import location_errors
 
 
 # Assigned NCBI genetic codes, from https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
@@ -222,7 +225,12 @@ def dataset_errors(data):
 
 
 def validation_errors(data, validator, class_name="Dataset"):
-    errors = [f"{list(e.path)}: {e.message}" for e in validator.iter_errors(data)]
+    # jsonschema recurses into the data and into repr() for its messages, so nesting a loader
+    # accepted, or that was built in memory, can still exceed the recursion limit here.
+    try:
+        errors = [f"{list(e.path)}: {e.message}" for e in validator.iter_errors(data)]
+    except RecursionError:
+        return ["nested too deeply to validate"]
     # Only traverse data whose shape and primitive types have already been checked.
     if not errors and class_name == "Dataset":
         errors.extend(dataset_errors(data))
@@ -257,7 +265,9 @@ def _check_values(data):
     while pending or frames:
         if pending:
             value, key = pending.pop()
-            if isinstance(value, float) and not math.isfinite(value):
+            # jsonschema counts Decimal as a number too; is_finite also covers its signaling NaN.
+            if (isinstance(value, float) and not math.isfinite(value)
+                    or isinstance(value, Decimal) and not value.is_finite()):
                 raise ValueError(f"{path(frames, key)} is not a finite number")
             if isinstance(value, (dict, list)) and id(value) not in done:
                 if id(value) in active:
