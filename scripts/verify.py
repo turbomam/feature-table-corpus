@@ -33,9 +33,15 @@ def basis_problem(basis):
     from urllib.parse import urlsplit
     if not isinstance(basis, dict):
         return "needs redistribution_basis with terms, read and allows (docs/restricted-sources.md)"
+    def is_https_url(term):
+        try:
+            parts = urlsplit(term)
+            return parts.scheme == "https" and bool(parts.hostname)
+        except ValueError:  # e.g. https://[ , an unclosed IPv6 host
+            return False
+
     terms = basis.get("terms")
-    if not (isinstance(terms, list) and terms
-            and all(isinstance(t, str) and urlsplit(t).scheme == "https" and urlsplit(t).hostname for t in terms)):
+    if not (isinstance(terms, list) and terms and all(isinstance(t, str) and is_https_url(t) for t in terms)):
         return "redistribution_basis.terms is a non-empty list of https URLs"
     read = str(basis.get("read", ""))
     try:
