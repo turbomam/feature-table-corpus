@@ -70,7 +70,7 @@ def parse_row(line_number, text, header=HEADER, slots=None):
 
 
 def parse_lines(lines, source_file):
-    """A derived excerpt may carry gff3.PROVENANCE's three lines right after the header, in order;
+    """A derived excerpt may carry gff3.PROVENANCE's lines right after the header, in order;
     a table as Phytozome serves it has none, and any other comment is refused."""
     rows, number, layout, provenance = [], 0, None, []
     for number, raw in enumerate(lines, start=1):

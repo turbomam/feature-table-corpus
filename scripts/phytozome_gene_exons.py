@@ -104,9 +104,10 @@ def read_header(lines):
     return found
 
 
-# The three comment lines a derived excerpt in corpus/derived-examples/ carries after its
-# directives (scripts/verify.py requires them); a file straight from Phytozome has none.
-PROVENANCE = ("# derived-from: ", "# single-change: ", "# validity: ")
+# The comment lines a derived excerpt in corpus/derived-examples/ carries after its directives:
+# the three scripts/verify.py requires, then a citation line
+# (https://github.com/turbomam/feature-table-corpus/issues/151). A file straight from Phytozome has none.
+PROVENANCE = ("# derived-from: ", "# single-change: ", "# validity: ", "# cite: ")
 
 
 def read_head(lines):
@@ -114,7 +115,7 @@ def read_head(lines):
 
     The two opening directives are required. An optional third, `##species <name>`, is kept
     too: Populus trichocarpa v4.1 writes one, TAIR10 doesn't. So is a derived excerpt's
-    provenance block, exactly the three PROVENANCE lines in that order.
+    provenance block, exactly the PROVENANCE lines in that order.
     """
     header = read_header(lines)
     number = 3

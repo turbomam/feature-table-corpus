@@ -292,3 +292,13 @@ For https://github.com/turbomam/feature-table-corpus/issues/144, the 293 annotat
 restricted entry `jgi-phytozome-populus-v4.1-annotation-info`. With the gene_exons excerpt they make
 the annotation_info dialect's round trip clean in CI. The corpus now has 98 entries: 58 vendored,
 22 linked, 5 restricted, 1 not located and 12 derived.
+
+## October 1, 2026: the Populus excerpts cite their sources
+
+For https://github.com/turbomam/feature-table-corpus/issues/151, both Populus excerpts now carry a
+fourth provenance line, `# cite:`, with the two publications Phytozome asks users to cite
+(Tuskan et al. 2006, Goodstein et al. 2012) and JGI's legacy-policy acknowledgment, which is
+kept although whether that policy governs this genome is undetermined (`docs/jgi-inputs.md`), so the files name them and not only
+`corpus/derived-examples/README.md`. The Phytozome dialects require the line in an excerpt's
+provenance block, and the converters' `--header` JSON keeps it. `scripts/populus_excerpt.py`
+regenerated both files from the same source md5s; the only change is that line.

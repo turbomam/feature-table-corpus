@@ -111,7 +111,7 @@ def is_provenance(lines):
 
 
 def check_header_extras(extras, keys=HEADER_EXTRAS):
-    """Errors in the values of a header-extras object; a provenance-valued key must hold the three lines."""
+    """Errors in the values of a header-extras object; a provenance-valued key must hold the PROVENANCE lines."""
     species = extras.get("species")
     if "species" in extras and not (isinstance(species, str) and species.strip()):
         return ["header: species is a non-empty string, the ##species line's value"]

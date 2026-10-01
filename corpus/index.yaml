@@ -2002,12 +2002,12 @@ entries:
   license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
   retrieved: '2026-09-29'
   path: corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3
-  bytes: 658959
-  md5: 6632f7b2b6de8bcc553aaf030ad22759
-  sha256: 82c4e5916b1379a444946709d1c843fcd528c5f03942abf1fbb710e088e48391
+  bytes: 659259
+  md5: 1832c9478a744a3e776cde9d1c154254
+  sha256: 9cea4c1a1dcc4ef89186341513ae91035efb52b94d6d10e236fbf85fd849f679
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
   derived_from: jgi-phytozome-populus-v4.1-gene-exons
-  mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the three provenance comment lines after the directives.
+  mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the four provenance comment lines after the directives, the last giving the citations in corpus/derived-examples/README.md.
   validity: 'valid GFF3: selected source rows, not a complete genome annotation; checked with GenomeTools 1.6.6, and valid under the phytozome-gene-exons-gff3 dialect'
   notes: The real Phytozome input for the gene_exons dialect's clean round trip (https://github.com/turbomam/feature-table-corpus/issues/107). The full file is behind a JGI login and too large to vendor.
 - id: jgi-phytozome-populus-v4.1-annotation-info
@@ -2034,12 +2034,12 @@ entries:
   license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
   retrieved: '2026-09-29'
   path: corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt
-  bytes: 48995
-  md5: ad144e70afe346facbd9b6b39056e63e
-  sha256: 64bbc6e9a8fc1f9ca8b6309aed64cef767c649d5e67c685ae13af8978f01eb7d
+  bytes: 49295
+  md5: 9d568c6fee654f4df3ee15b64de0dff7
+  sha256: 229a9a60d3671cd37c2a566ed55520439167cfb5725f211b47b8a0f5b8bcd16a
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
   derived_from: jgi-phytozome-populus-v4.1-annotation-info
-  mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the three provenance comment lines after the header.
+  mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the four provenance comment lines after the header, the last giving the citations in corpus/derived-examples/README.md.
   validity: selected source rows, not a complete genome annotation; valid under the phytozome-annotation-info dialect
   notes: The real Phytozome input for the annotation_info dialect's clean round trip, with the gene_exons excerpt (https://github.com/turbomam/feature-table-corpus/issues/144). 293 rows, 2 of them with a peptideName naming another locus's transcript.
 tier_counts:

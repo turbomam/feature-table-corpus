@@ -9,18 +9,20 @@ selection rule, full source and limits on round-trip claims.
 
 `populus-v4.1-chr01-200-genes.gene_exons.gff3` holds the first 200 genes on Chr01 of Populus
 trichocarpa v4.1 (`Phytozome-533`), with all their mRNA, exon, CDS and UTR rows unchanged, the
-source's three directives, and the three provenance lines. `scripts/populus_excerpt.py` writes it
+source's three directives, and four provenance lines: the three every derived file carries and a
+`# cite:` line with the citations below, so the file names them itself. `scripts/populus_excerpt.py` writes it
 from `Ptrichocarpa_533_v4.1.gene_exons.gff3.gz` (JGI file 5d94dc9fc0d65a87debccfce, md5
 3fdcfdd5af213c5f4dde0c01f2cdbfda), which needs a JGI login and is too large to vendor, and checks
 that md5 first. Phytozome lists this genome as public with citation required. Cite Tuskan et al.
 2006, Science 313:1596 (doi:10.1126/science.1128691), and Goodstein et al. 2012, Nucleic Acids Res
-40:D1178. JGI's legacy data policy asks for this acknowledgment: "These sequence data were
+40:D1178. JGI's legacy data policy asks for this acknowledgment (whether that policy governs this
+genome is undetermined, see `docs/jgi-inputs.md`): "These sequence data were
 produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in
 collaboration with the user community."
 
 `populus-v4.1-chr01-200-genes.annotation_info.txt` holds the 293 rows of
 `Ptrichocarpa_533_v4.1.annotation_info.txt` (JGI file 5d94dc9ec0d65a87debccfcc, md5
 aaf04aa3515d96748d1229d36ac7dfe4) for the 200 genes of the gene_exons excerpt, unchanged and in
-table order, after the header and the three provenance lines. `scripts/populus_excerpt.py --table`
+table order, after the header and the same four provenance lines. `scripts/populus_excerpt.py --table`
 writes it, checking that md5 first. Two of its rows have a peptideName naming another locus's
 transcript. The header's KOG and ec labels are swapped, as in the source. The same citations apply.

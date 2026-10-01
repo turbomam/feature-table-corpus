@@ -47,10 +47,10 @@ classes:
         description: Which of the measured header lines the file has, so it can be written back.
       provenance:
         multivalued: true
-        pattern: "^# (derived-from|single-change|validity): \\S"
+        pattern: "^# (derived-from|single-change|validity|cite): \\S"
         description: >-
-          The three comment lines after the header that a derived excerpt in corpus/derived-examples/
-          carries, in the order derived-from, single-change, validity. A table as Phytozome serves it
+          The four comment lines after the header that a derived excerpt in corpus/derived-examples/
+          carries, in the order derived-from, single-change, validity, cite. A table as Phytozome serves it
           has none.
       rows:
         description: Every data row, in file order.

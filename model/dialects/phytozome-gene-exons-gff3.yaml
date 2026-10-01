@@ -57,10 +57,10 @@ classes:
           (`Populus trichocarpa`); TAIR10 doesn't.
       provenance:
         multivalued: true
-        pattern: "^# (derived-from|single-change|validity): \\S"
+        pattern: "^# (derived-from|single-change|validity|cite): \\S"
         description: >-
-          The three comment lines after the directives that a derived excerpt in
-          corpus/derived-examples/ carries, in the order derived-from, single-change, validity.
+          The four comment lines after the directives that a derived excerpt in
+          corpus/derived-examples/ carries, in the order derived-from, single-change, validity, cite.
           A file as Phytozome serves it has none.
       rows:
         description: Every feature row, in file order.

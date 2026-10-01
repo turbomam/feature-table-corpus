@@ -203,7 +203,7 @@ class MappingTests(unittest.TestCase):
 class HeaderExtraTests(unittest.TestCase):
     def test_the_commands_keep_species_and_provenance_lines(self):
         lines = GFF3.read_text().splitlines(keepends=True)
-        extra = ["##species Exemplum fictum\n", "# derived-from: x\n", "# single-change: y\n", "# validity: z\n"]
+        extra = ["##species Exemplum fictum\n", "# derived-from: x\n", "# single-change: y\n", "# validity: z\n", "# cite: w\n"]
         with tempfile.TemporaryDirectory() as tmp:
             source = Path(tmp) / "with-extra.gene_exons.gff3"
             source.write_text("".join(lines[:2] + extra + lines[2:]))

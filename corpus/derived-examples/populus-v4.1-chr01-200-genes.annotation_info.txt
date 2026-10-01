@@ -2,6 +2,7 @@
 # derived-from: jgi-phytozome-populus-v4.1-annotation-info (Ptrichocarpa_533_v4.1.annotation_info.txt, md5 aaf04aa3515d96748d1229d36ac7dfe4)
 # single-change: select the rows of the 200 genes in the gene_exons excerpt, in table order; retain the header and row bytes
 # validity: selected source rows, not a complete genome annotation
+# cite: Tuskan et al. 2006, Science 313:1596, doi:10.1126/science.1128691; Goodstein et al. 2012, Nucleic Acids Res 40:D1178; JGI acknowledgment: These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in collaboration with the user community.
 PAC:42788989	Potri.001G000400	Potri.001G000400.5	Potri.001G000400.5.p	PF11779	PTHR33727					AT1G06515	Protein of unknown function (DUF3317)
 PAC:42789197	Potri.001G000450	Potri.001G000450.1	Potri.001G000450.1.p		PTHR34724 PTHR34724:SF2						
 PAC:42791718	Potri.001G000500	Potri.001G000500.1	Potri.001G000500.1.p	PF00394 PF07731 PF07732	PTHR11709 PTHR11709:SF27	EC:1.10.3.3		K00423	GO:0005507 GO:0016491 GO:0055114	AT3G13400	SKU5  similar 13
