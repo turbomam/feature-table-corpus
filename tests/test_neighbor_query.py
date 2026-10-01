@@ -86,6 +86,43 @@ class NeighborQueryTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "circular"):
                     neighbors(con, SEQID, 5531500)
 
+    def changed_copy(self, work, *statements):
+        copy = Path(work) / "changed.duckdb"
+        copy.write_bytes(self.db.read_bytes())
+        with duckdb.connect(str(copy)) as con:
+            for statement, parameters in statements:
+                con.execute(statement, parameters)
+        return duckdb.connect(str(copy), read_only=True)
+
+    def test_positions_past_the_contig_end_are_refused(self):
+        # The excerpt's ##sequence-region gives NC_003888.3 as 8,667,507 bases.
+        with duckdb.connect(str(self.db), read_only=True) as con:
+            self.assertEqual(con.execute("SELECT length_bp FROM contig").fetchone()[0], 8667507)
+            self.assertEqual(self.query(SEQID, 8667507, count=1)[-1]["side"], "left")
+            with self.assertRaisesRegex(ValueError, "beyond"):
+                neighbors(con, SEQID, 8667508)
+
+    def test_a_protein_coordinate_reference_is_refused(self):
+        # A CDS is the seqid of its protein-coordinate hits; this excerpt has none, so add one.
+        cds = "cds-WP_011030038.1"
+        with tempfile.TemporaryDirectory() as work:
+            with self.changed_copy(work, ("""INSERT INTO feature (feature_id, seqid, type, start, "end", coordinate_system, parent)
+                                              VALUES ('hit', ?, 'PF00001', 10, 20, 'protein', [?])""", [cds, cds])) as con:
+                with self.assertRaisesRegex(ValueError, "protein"):
+                    neighbors(con, cds, 15)
+
+    def test_inexact_endpoints_are_refused(self):
+        # SCO5089's start made uncertain, as INSDC writes <5532449..5532709.
+        location = {"operator": "single", "parts": [{"seqid": SEQID, "start": 5532449, "end": 5532709, "strand": "+",
+                                                       "start_status": "before", "end_status": "exact"}]}
+        with tempfile.TemporaryDirectory() as work:
+            with self.changed_copy(work, ("""UPDATE feature SET location = ?::JSON
+                                              WHERE type = 'gene' AND start = 5532449""", [json.dumps(location)])) as con:
+                with self.assertRaisesRegex(ValueError, "uncertain"):
+                    neighbors(con, SEQID, 5531500)
+                # Other feature types on the same contig are unaffected.
+                self.assertEqual(len(neighbors(con, SEQID, 5531500, count=1, feature_type="CDS")), 3)
+
 
 if __name__ == "__main__":
     unittest.main()

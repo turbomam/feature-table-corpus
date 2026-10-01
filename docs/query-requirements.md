@@ -21,7 +21,7 @@ contig, strand returned rather than interpreted, and distance as intervening bas
 | Protein interval overlap | Explicit protein coordinate space and parent CDS ID; never compared directly to genomic offsets |
 | Source annotation lookup | Exact `key`/`value` match through a nested attribute list |
 | Identifier and product access | Scalar `feature_id` and `product` columns retained by the mapping |
-| Features on either side of a position | Real actinorhodin genes from the RefSeq excerpt; inclusive endpoints, overlapping genes, a wrong sequence version, and circular contigs refused |
+| Features on either side of a position | Real actinorhodin genes from the RefSeq excerpt; inclusive endpoints, overlapping genes, a wrong sequence version; circular contigs, positions past the contig end, protein-coordinate references and uncertain endpoints refused |
 
 `scripts/query_duckdb.py` runs parameterized queries against a read-only database. Examples
 after `just build-duckdb`:
@@ -39,8 +39,10 @@ genes containing position 5,531,500 and the two nearest on each side, with `side
 `contains` or `right` in chromosome coordinates), `strand`, and `intervening_bases`, the
 bases strictly between the position and the gene. Upstream and downstream depend on whose
 strand is meant, so the query returns strand and leaves that reading to the caller. A gene's
-start and end are used, so introns count as occupied. Circular contigs are refused, because
-the nearest feature can lie across the origin.
+start and end are used, so introns count as occupied. It refuses, rather than answering
+wrongly, a circular contig (the nearest feature can lie across the origin), a position past
+the contig's recorded length, a CDS used as the reference for protein-coordinate hits, and
+features with uncertain endpoints such as INSDC `<10..20`.
 
 Both new query recipes accept an optional database path as their last argument.
 The default is `local/build/ber_feature_model.duckdb`. Quote attribute values and paths

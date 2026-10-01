@@ -67,7 +67,9 @@ def neighbors(con, sequence_id, position, count=2, feature_type="gene"):
     can read upstream and downstream for whichever feature they mean. intervening_bases counts
     the bases strictly between the position and the feature, as in the BGC gene-order exercise.
     Uses each feature's start and end, so a spliced feature's introns count as occupied.
-    A circular contig is refused: its nearest features may lie across the origin."""
+    Refused rather than answered wrongly: a circular contig (its nearest features may lie across
+    the origin), a position past the contig's recorded length, a CDS that protein-coordinate hits
+    use as their reference, and features of the requested type with uncertain endpoints."""
     if type(position) is not int or position < 1:
         raise ValueError("position must be a 1-based integer")
     if type(count) is not int or count < 0:
@@ -75,6 +77,18 @@ def neighbors(con, sequence_id, position, count=2, feature_type="gene"):
     if con.execute("SELECT count(*) FROM contig WHERE contig_id = ? AND topology = 'circular'",
                    [sequence_id]).fetchone()[0]:
         raise ValueError("circular contig: neighbors across the origin are not handled")
+    length = con.execute("SELECT max(length_bp) FROM contig WHERE contig_id = ?", [sequence_id]).fetchone()[0]
+    if length is not None and position > length:
+        raise ValueError(f"position {position} is beyond the contig's {length} bases")
+    if con.execute("SELECT count(*) FROM feature WHERE seqid = ? AND coordinate_system = 'protein'",
+                   [sequence_id]).fetchone()[0]:
+        raise ValueError("reference is a protein-coordinate sequence; neighbors needs a contig")
+    if con.execute('''
+        SELECT count(*) FROM feature f, json_each(f.location, '$.parts') p
+        WHERE f.seqid = ? AND f.type = ? AND f.coordinate_system = 'contig' AND
+          ((p.value->>'start_status') != 'exact' OR (p.value->>'end_status') != 'exact')
+    ''', [sequence_id, feature_type]).fetchone()[0]:
+        raise ValueError("features of this type have uncertain endpoints, so their side and distance are unknown")
     rows = con.execute("""
         WITH placed AS (
             SELECT feature_id, start, "end", strand,
