@@ -194,9 +194,9 @@ class GeneExonsRuleTests(Case):
         self.rejected(5, "scaffold_1", "#scaffold_1", "comment or directive after the opening directives")
 
     def test_species_and_provenance_lines_are_kept_and_written_back(self):
-        # Populus v4.1 writes ##species; a derived excerpt adds three provenance lines.
+        # Populus v4.1 writes ##species; a derived excerpt adds four provenance lines.
         lines = GFF3.read_text().splitlines(keepends=True)
-        extra = ["##species Exemplum fictum\n", "# derived-from: x\n", "# single-change: y\n", "# validity: z\n"]
+        extra = ["##species Exemplum fictum\n", "# derived-from: x\n", "# single-change: y\n", "# validity: z\n", "# cite: w\n"]
         text = "".join(lines[:2] + extra + lines[2:])
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "with-extra.gff3"
@@ -204,12 +204,12 @@ class GeneExonsRuleTests(Case):
             document = gff3.parse(path)
             self.assertEqual(document["species"], "Exemplum fictum")
             self.assertEqual(document["provenance"], [line.rstrip("\n") for line in extra[1:]])
-            self.assertEqual(document["rows"][0]["line"], 7)
+            self.assertEqual(document["rows"][0]["line"], 8)
             self.assertEqual(gff3.write(document), text)
             status, out = self.run_command(gff3.validate, [text], [".gff3"])
             self.assertEqual(status, 0, out)
-        partial = "".join(lines[:2] + extra[1:3] + lines[2:])
-        self.assert_rejected(gff3.validate, [partial], [".gff3"], "expected the provenance line '# validity: ...'")
+        partial = "".join(lines[:2] + extra[1:4] + lines[2:])
+        self.assert_rejected(gff3.validate, [partial], [".gff3"], "expected the provenance line '# cite: ...'")
 
     def test_line_shape(self):
         self.rejected(2, "\tgene\t", "\t", "8 columns, expected 9")
@@ -482,17 +482,17 @@ class PopulusLayoutTests(Case):
 
     def test_a_derived_excerpts_provenance_lines_are_kept_after_the_header(self):
         lines = self.populus_text().splitlines(keepends=True)
-        block = ["# derived-from: x\n", "# single-change: y\n", "# validity: z\n"]
+        block = ["# derived-from: x\n", "# single-change: y\n", "# validity: z\n", "# cite: w\n"]
         text = "".join(lines[:1] + block + lines[1:])
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "excerpt.annotation_info.txt"
             path.write_text(text)
             document = table.parse(path)
             self.assertEqual(document["provenance"], [line.rstrip("\n") for line in block])
-            self.assertEqual(document["rows"][0]["line"], 5)
+            self.assertEqual(document["rows"][0]["line"], 6)
             self.assertEqual(table.write(document), text)
-        self.assert_rejected(table.validate, ["".join(lines[:1] + block[:2] + lines[1:])], [".txt"],
-                             "expected the provenance line '# validity: ...'")
+        self.assert_rejected(table.validate, ["".join(lines[:1] + block[:3] + lines[1:])], [".txt"],
+                             "expected the provenance line '# cite: ...'")
         self.assert_rejected(table.validate, ["".join(lines[:2] + block + lines[2:])], [".txt"],
                              "comment after the header")
 

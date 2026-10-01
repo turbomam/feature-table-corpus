@@ -1,4 +1,4 @@
-"""The Populus excerpt keeps whole gene blocks up to the limit and adds the three provenance lines."""
+"""The Populus excerpt keeps whole gene blocks up to the limit and adds the four provenance lines."""
 import contextlib
 import gzip
 import io
@@ -28,15 +28,16 @@ class ExcerptTests(unittest.TestCase):
             handle.write(text)
         return path
 
-    def test_whole_blocks_up_to_the_limit_and_three_provenance_lines(self):
+    def test_whole_blocks_up_to_the_limit_and_four_provenance_lines(self):
         with tempfile.TemporaryDirectory() as tmp:
             source = self.write(tmp, HEAD + gene(1) + gene(2) + gene(3))
             text = populus_excerpt.excerpt(source, genes=2, digest="abc")
         lines = text.splitlines(keepends=True)
         self.assertEqual("".join(lines[:3]), HEAD)
-        self.assertEqual([line.split(":")[0] for line in lines[3:6]], ["# derived-from", "# single-change", "# validity"])
+        self.assertEqual([line.split(":")[0] for line in lines[3:7]], ["# derived-from", "# single-change", "# validity", "# cite"])
         self.assertIn("md5 abc", lines[3])
-        self.assertEqual("".join(lines[6:]), gene(1) + gene(2))
+        self.assertIn("doi:10.1126/science.1128691", lines[6])
+        self.assertEqual("".join(lines[7:]), gene(1) + gene(2))
 
     def test_the_table_excerpt_keeps_the_excerpts_genes_in_table_order(self):
         header = "#pacId\tlocusName\ttranscriptName\tpeptideName\tPfam\n"
@@ -49,8 +50,8 @@ class ExcerptTests(unittest.TestCase):
             text = populus_excerpt.table_excerpt(table, HEAD + gene(1) + gene(2), digest="def")
             lines = text.splitlines(keepends=True)
             self.assertEqual(lines[0], header)
-            self.assertEqual([line.split(":")[0] for line in lines[1:4]], ["# derived-from", "# single-change", "# validity"])
-            self.assertEqual("".join(lines[4:]), "".join(rows[:2]))
+            self.assertEqual([line.split(":")[0] for line in lines[1:5]], ["# derived-from", "# single-change", "# validity", "# cite"])
+            self.assertEqual("".join(lines[5:]), "".join(rows[:2]))
             with self.assertRaisesRegex(ValueError, "no rows for 1 of the excerpt's genes"):
                 populus_excerpt.table_excerpt(table, HEAD + gene(1) + gene(4))
 

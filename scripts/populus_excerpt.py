@@ -5,12 +5,13 @@
 SOURCE_GFF3_GZ is Ptrichocarpa_533_v4.1.gene_exons.gff3.gz from Phytozome (Phytozome-533),
 which needs a JGI login to download, so the full file isn't vendored (112.8 MB uncompressed).
 This keeps its directives and the first GENES genes on Chr01 in file order, each with all of
-its mRNA, exon, CDS and UTR rows, byte for byte, and adds the three provenance lines
-scripts/verify.py requires of a derived file after the directives. The source's md5 is checked
+its mRNA, exon, CDS and UTR rows, byte for byte, and adds four provenance lines after the
+directives: the three scripts/verify.py requires of a derived file, then the citation Phytozome
+requires (https://github.com/turbomam/feature-table-corpus/issues/151). The source's md5 is checked
 first, so the excerpt can only be made from the file the index records.
 
 --table also writes the rows of Ptrichocarpa_533_v4.1.annotation_info.txt for the excerpt's
-genes, in table order, after the header and its own three provenance lines, after checking that
+genes, in table order, after the header and its own four provenance lines, after checking that
 file's md5 too.
 """
 import argparse
@@ -23,6 +24,9 @@ SOURCE_MD5 = "3fdcfdd5af213c5f4dde0c01f2cdbfda"
 TABLE_MD5 = "aaf04aa3515d96748d1229d36ac7dfe4"
 TABLE_NAME = "Ptrichocarpa_533_v4.1.annotation_info.txt"
 GENES = 200
+# Phytozome lists this genome as public with citation required; corpus/derived-examples/README.md
+# gives the same citations.
+CITE = ("# cite: Tuskan et al. 2006, Science 313:1596, doi:10.1126/science.1128691; Goodstein et al. 2012, Nucleic Acids Res 40:D1178; JGI acknowledgment: These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in collaboration with the user community.\n")
 SOURCE_NAME = "Ptrichocarpa_533_v4.1.gene_exons.gff3.gz"
 
 
@@ -49,13 +53,14 @@ def excerpt(source, genes=GENES, digest=SOURCE_MD5):
         f"# single-change: select the first {genes} genes on Chr01 in file order with all their rows; "
         "retain the directives, row bytes and chromosome coordinates\n",
         "# validity: valid GFF3; selected source rows, not a complete genome annotation\n",
+        CITE,
     ]
     return "".join(head + provenance + rows)
 
 
 def table_excerpt(table, gff3_text, digest=TABLE_MD5):
     """The annotation_info rows of the genes in a gene_exons excerpt, in table order, after its header
-    and the three provenance lines."""
+    and the four provenance lines."""
     genes = {line.split("Name=")[1].split(";")[0].rstrip("\n") for line in gff3_text.splitlines()
              if not line.startswith("#") and line.split("\t")[2] == "gene"}
     with open(table, encoding="utf-8", newline="") as handle:
@@ -69,6 +74,7 @@ def table_excerpt(table, gff3_text, digest=TABLE_MD5):
         f"# single-change: select the rows of the {len(genes)} genes in the gene_exons excerpt, in table order; "
         "retain the header and row bytes\n",
         "# validity: selected source rows, not a complete genome annotation\n",
+        CITE,
     ]
     return "".join([lines[0]] + provenance + rows)
 

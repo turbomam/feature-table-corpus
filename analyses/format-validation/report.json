@@ -3250,7 +3250,7 @@
       "id": "populus-v4.1-chr01-200-genes",
       "path": "corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3",
       "format": "GFF3",
-      "sha256": "82c4e5916b1379a444946709d1c843fcd528c5f03942abf1fbb710e088e48391",
+      "sha256": "9cea4c1a1dcc4ef89186341513ae91035efb52b94d6d10e236fbf85fd849f679",
       "profile": "phytozome-gene-exons-gff3/1.0.0",
       "validators": {
         "genometools": {
@@ -3258,7 +3258,7 @@
           "rules": [],
           "exit_code": 0,
           "stdout": "input is valid GFF3",
-          "stderr": "warning: unknown meta-directive encountered in line 2 in file \"corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3\", keep anyway: ##annot-version v4.1\nwarning: seqid \"Chr01\" on line 7 in file \"corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically",
+          "stderr": "warning: unknown meta-directive encountered in line 2 in file \"corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3\", keep anyway: ##annot-version v4.1\nwarning: seqid \"Chr01\" on line 8 in file \"corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3\" has not been previously introduced with a \"##sequence-region\" line, create such a line automatically",
           "expected_from_validity": "accepted",
           "expected_rules": []
         },
@@ -3307,7 +3307,7 @@
       "id": "populus-v4.1-chr01-200-genes-annotation-info",
       "path": "corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt",
       "format": "TSV",
-      "sha256": "64bbc6e9a8fc1f9ca8b6309aed64cef767c649d5e67c685ae13af8978f01eb7d",
+      "sha256": "229a9a60d3671cd37c2a566ed55520439167cfb5725f211b47b8a0f5b8bcd16a",
       "validators": {
         "genometools": {
           "verdict": "not_checked",

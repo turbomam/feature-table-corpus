@@ -170,8 +170,8 @@ class HeaderExtraTests(unittest.TestCase):
                                                "--header", str(bad)]), 1)
             self.assertIn("header: expected a JSON object", err.getvalue())
             for text, expected in (('{"species": 0}', "species is a non-empty string"),
-                                   ('{"provenance": []}', "provenance is the 3 lines"),
-                                   ('{"provenance": ["# validity: a", "# derived-from: b", "# single-change: c"]}',
+                                   ('{"provenance": []}', "provenance is the 4 lines"),
+                                   ('{"provenance": ["# validity: a", "# derived-from: b", "# single-change: c", "# cite: d"]}',
                                     "in order")):
                 bad.write_text(text)
                 err = io.StringIO()
