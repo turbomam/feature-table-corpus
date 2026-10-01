@@ -18,8 +18,8 @@ comments:
     TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
     of that file is kept in this repository. The test fixture is constructed.
   - >-
-    The file is tab separated, with LF line endings and a final newline, and a 14-column
-    header line starting "#pacId". An empty cell is parsed as absent. In the columns typed
+    The file is tab separated, with LF line endings and a final newline, and a header line
+    starting "#pacId": 14 columns in TAIR10's clamy_rice layout, 12 in Populus's arabi layout. An empty cell is parsed as absent. In the columns typed
     multivalued below, one space separates values; no cell read has a leading, trailing or
     doubled space. Header names that are not valid slot
     names are mapped in scripts/phytozome_annotation_info.py: "#pacId" to pacId and each
@@ -80,7 +80,10 @@ classes:
       peptideName:
         required: true
         pattern: "^\\S+$"
-        description: Equal to transcriptName in every row read.
+        description: >-
+          Equal to transcriptName in every TAIR10 (clamy_rice) row. In Populus (arabi) every one ends
+          in ".p": transcriptName plus ".p" in 51,840 of 52,400 rows, and another locus's transcript
+          plus ".p" in the other 560.
       Pfam:
         multivalued: true
         pattern: "^PF[0-9]{5}$"
@@ -96,7 +99,7 @@ classes:
         pattern: "^EC:([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+|PROLINE-MULTI)$"
         description: >-
           EC numbers, prefixed EC:. Every one read has four numeric parts, so partial forms such
-          as EC:1.1.1.- are rejected until a file with one is read. Six rows read also have the
+          as EC:1.1.1.- are rejected until a file with one is read. Six TAIR10 rows also have the
           token EC:PROLINE-MULTI, which is not an EC number; it is accepted as written.
       KOG:
         multivalued: true
@@ -109,7 +112,7 @@ classes:
       GO:
         multivalued: true
         pattern: "^GO:[0-9]{7}$"
-        description: Gene Ontology terms. The most read in one cell is 70.
+        description: Gene Ontology terms. The most in one TAIR10 cell is 70.
       best_hit_clamy_name:
         pattern: "^\\S+$"
         description: >-
