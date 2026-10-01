@@ -116,18 +116,23 @@ def forward(gff3_document, table_document, table_url, transformers=None):
 
 
 def table_layout(dataset):
-    """The table layout a Dataset's mRNA Attributes show, or TAIR10's when none shows either."""
+    """The table layout a Dataset's mRNA Attributes show. With no best-hit or peptideName
+    Attribute the two layouts look the same, so that is an error; pass the layout instead."""
     keys = {a["key"] for f in dataset.get("features", []) for a in f.get("attributes", [])}
     found = [layout for layout, only in LAYOUT_ONLY_KEYS.items() if keys & only]
     if len(found) > 1:
         raise ValueError(f"the Attributes mix table layouts {found}; a Dataset holds one table")
-    return found[0] if found else "clamy_rice"
+    if not found:
+        raise ValueError("can't tell the table layout from the Attributes (no best-hit or peptideName "
+                         f"values); give it with --layout ({', '.join(sorted(table_dialect.LAYOUTS))})")
+    return found[0]
 
 
 def reverse(dataset, gff3_source, table_source, transformers=None, species=None, provenance=None, layout=None):
     """Return (gff3_document, table_document) that forward maps back to dataset.
 
-    layout is the table's header layout; given none, it is read from the Attributes (table_layout)."""
+    layout is the table's header layout; given none, it is read from the Attributes (table_layout),
+    which refuses a Dataset that doesn't show it."""
     layout = layout or table_layout(dataset)
     keys = VALUE_KEYS[layout]
     key_names = [key for key, _ in keys]

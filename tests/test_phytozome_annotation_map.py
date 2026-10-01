@@ -253,6 +253,15 @@ class PopulusLayoutTests(unittest.TestCase):
         self.assertEqual(len(values(dataset, "peptideName")), 1)
         self.assertEqual(mapping.table_layout(dataset), "arabi")
         self.assertEqual(mapping.table_layout(tair), "clamy_rice")
+        # With no best-hit or peptideName values the layouts look alike: refuse rather than guess.
+        bare = copy.deepcopy(dataset)
+        for feature in bare["features"]:
+            feature["attributes"] = [x for x in feature.get("attributes", [])
+                                     if x["key"] not in mapping.LAYOUT_ONLY_KEYS["arabi"]]
+        with self.assertRaisesRegex(ValueError, "can't tell the table layout"):
+            mapping.table_layout(bare)
+        back_gff3, back_table = mapping.reverse(bare, "g.gff3", "t.txt", layout="arabi")
+        self.assertEqual(back_table["layout"], "arabi")
 
 if __name__ == "__main__":
     unittest.main()

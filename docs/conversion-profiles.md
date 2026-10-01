@@ -477,12 +477,18 @@ and `just map-phytozome-gff3-back DATASET OUT` run each direction and never over
 
 `scripts/phytozome_annotation_map.py` maps the GFF3 and its `annotation_info.txt` together into one
 Dataset. The table has no positions, so each of its values becomes one Attribute on the mRNA its
-`pacId` names, keyed by the table's column name (`Pfam`, `Panther`, `ec`, `KOG`, `KO`, `GO` and the
-four `Best-hit` columns) and placed after the GFF3's own attributes. A list column gives one
-Attribute per value in table order. The table's URL goes in the mRNA's `source_files`, since the
-model has no provenance per attribute. `locusName`, `transcriptName` and `peptideName` are not
-stored: they are the gene's `Name`, the mRNA's `Name`, and, in all 35,386 TAIR10 rows, the mRNA's
-`Name` again, and a row where they differ is refused. The reverse step writes rows sorted by
+`pacId` names and placed after the GFF3's own attributes. Each is keyed by what it is: `Pfam`,
+`Panther`, `ec`, `KOG`, `KO`, `GO`, then the layout's best-hit columns, the four `Best-hit` columns
+in TAIR10 or `best_arabi_gene` and `best_arabi_defline` in Populus. Populus's header swaps the `KOG`
+and `ec` labels, and its EC numbers are still keyed `ec`. A list column gives one Attribute per
+value in table order. The table's URL goes in the mRNA's `source_files`, since the model has no
+provenance per attribute. `locusName` and `transcriptName` are not stored: they are the gene's
+`Name` and the mRNA's `Name`, and a row where they differ is refused. `peptideName` is the mRNA's
+`Name` in all 35,386 TAIR10 rows, and a TAIR10 row where it differs is refused. In Populus it is the
+`Name` plus `.p`, and in the 560 rows where it names another transcript the mapping keeps it as a
+`peptideName` Attribute. The reverse step reads the layout from the best-hit or `peptideName`
+Attributes. When there are none, it can't tell the two layouts apart, so it refuses unless
+`--layout` is given. The reverse step writes rows sorted by
 `locusName` and then transcript number, which is the TAIR10 table's own order (it is not the
 GFF3's mRNA order), and forward refuses a table in any other order. It also refuses an mRNA whose
 GFF3 attributes already use one of the table's column names.
