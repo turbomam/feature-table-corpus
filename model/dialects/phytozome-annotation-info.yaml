@@ -7,15 +7,19 @@ description: >-
   gene_exons GFF3 whose pacid it names (model/dialects/phytozome-gene-exons-gff3.yaml).
 comments:
   - >-
-    Measured 2026-09-25 on one file only, Athaliana_167_TAIR10.annotation_info.txt
-    (Phytozome-167, md5 e33a44eea32f95fb7b133590f4463a14, 35,386 rows, 10,498,567 bytes), listed
-    in model/examples/jgi-inputs.yaml. Other Phytozome genomes may differ; none has been read.
+    Measured on two files, which write different header lines (see PhytozomeAnnotationLayout).
+    Athaliana_167_TAIR10.annotation_info.txt (Phytozome-167, md5 e33a44eea32f95fb7b133590f4463a14,
+    35,386 rows, 10,498,567 bytes), listed in model/examples/jgi-inputs.yaml, on 2026-09-25.
+    Ptrichocarpa_533_v4.1.annotation_info.txt (Phytozome-533, JGI file 5d94dc9ec0d65a87debccfcc,
+    md5 aaf04aa3515d96748d1229d36ac7dfe4, 52,400 rows, 8,742,751 bytes) on 2026-09-30. Counts in
+    the clamy and rice slot descriptions are TAIR10's; the arabi ones are Populus's. Other
+    Phytozome genomes may differ.
   - >-
     TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
     of that file is kept in this repository. The test fixture is constructed.
   - >-
-    The file is tab separated, with LF line endings and a final newline, and a 14-column
-    header line starting "#pacId". An empty cell is parsed as absent. In the columns typed
+    The file is tab separated, with LF line endings and a final newline, and a header line
+    starting "#pacId": 14 columns in TAIR10's clamy_rice layout, 12 in Populus's arabi layout. An empty cell is parsed as absent. In the columns typed
     multivalued below, one space separates values; no cell read has a leading, trailing or
     doubled space. Header names that are not valid slot
     names are mapped in scripts/phytozome_annotation_info.py: "#pacId" to pacId and each
@@ -37,6 +41,10 @@ classes:
       source_file:
         required: true
         description: Path or URI of the parsed file.
+      layout:
+        required: true
+        range: PhytozomeAnnotationLayout
+        description: Which of the measured header lines the file has, so it can be written back.
       rows:
         description: Every data row, in file order.
         range: PhytozomeAnnotationInfoRow
@@ -72,7 +80,10 @@ classes:
       peptideName:
         required: true
         pattern: "^\\S+$"
-        description: Equal to transcriptName in every row read.
+        description: >-
+          Equal to transcriptName in every TAIR10 (clamy_rice) row. In Populus (arabi) every one ends
+          in ".p": transcriptName plus ".p" in 51,840 of 52,400 rows, and another locus's transcript
+          plus ".p" in the other 560.
       Pfam:
         multivalued: true
         pattern: "^PF[0-9]{5}$"
@@ -88,7 +99,7 @@ classes:
         pattern: "^EC:([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+|PROLINE-MULTI)$"
         description: >-
           EC numbers, prefixed EC:. Every one read has four numeric parts, so partial forms such
-          as EC:1.1.1.- are rejected until a file with one is read. Six rows read also have the
+          as EC:1.1.1.- are rejected until a file with one is read. Six TAIR10 rows also have the
           token EC:PROLINE-MULTI, which is not an EC number; it is accepted as written.
       KOG:
         multivalued: true
@@ -101,7 +112,7 @@ classes:
       GO:
         multivalued: true
         pattern: "^GO:[0-9]{7}$"
-        description: Gene Ontology terms. The most read in one cell is 70.
+        description: Gene Ontology terms. The most in one TAIR10 cell is 70.
       best_hit_clamy_name:
         pattern: "^\\S+$"
         description: >-
@@ -122,3 +133,24 @@ classes:
         description: >-
           Source column "Best-hit-rice-defline", free text starting "(i of n) ". Never present
           without its name.
+      best_arabi_gene:
+        pattern: "^AT[1-5CM]G[0-9]{5}$"
+        description: >-
+          Source column "best_arabi_gene" (Populus v4.1 layout), the best Arabidopsis thaliana hit, an
+          AGI locus. Present in 36,033 of 52,400 rows read, 1,909 of them without a defline.
+      best_arabi_defline:
+        description: >-
+          Source column "best_arabi_defline" (Populus v4.1 layout), free text describing that hit.
+          Never present without its gene.
+
+enums:
+  PhytozomeAnnotationLayout:
+    description: The measured header lines, named by their best-hit columns.
+    permissible_values:
+      clamy_rice:
+        description: TAIR10, 14 columns, ec before KOG, Chlamydomonas and rice best hits.
+      arabi:
+        description: >-
+          Populus trichocarpa v4.1, 12 columns, Arabidopsis best hits. Its header labels column 7
+          KOG and column 8 ec, but the values are the other way round, EC numbers in column 7 and
+          KOG IDs in column 8, as in TAIR10; the parser reads them into the slot they belong to.
