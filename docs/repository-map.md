@@ -49,7 +49,7 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Conversions | `conversion-import`, `conversion-export`, `conversion-validate`, `conversion-check`, `conversion-report` | Create new conversion outputs, check preserved fields/bytes, or explicitly regenerate the tracked report |
 | Corpus | `verify`, `verify-links`, `fixtures-generate`, `pr-validation` | Link checks and the default PR audit use the network; fixture generation rewrites tracked derived files |
 | Model | `diagram`, `flat-profile-audit [schema]` | Print results; a schema URL may require network access |
-| Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap` | Build/update a database, then query it read-only |
+| Queries | `build-duckdb`, `query-duckdb`, `query-attribute`, `query-overlap`, `query-neighbors` | Build/update a database, then query it read-only |
 | Queries | `lakehouse-export` | Write one Parquet file per collection through linkml-store under `local/` ([guide](lakehouse-export.md)) |
 | Queries | `bgc-check`, `bgc-report` | Check the real BGC exercise offline, or explicitly regenerate its selected excerpt and query report |
 | Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
