@@ -353,13 +353,10 @@ def main(argv=None):
                 errors = [f"model: {m}" for m in validation_errors(dataset, make_validator(str(MODEL)))]
         if report_errors(errors):
             return 1
-        if write_output(args.output, json.dumps(dataset, indent=1) + "\n"):
-            return 1
-        scores = functional.score_spellings(dataset, spellings)
-        if args.spelling and write_output(args.spelling, json.dumps(scores, indent=1) + "\n"):
-            args.output.unlink()
-            return 1
-        return 0
+        outputs = [(args.output, json.dumps(dataset, indent=1) + "\n")]
+        if args.spelling:
+            outputs.append((args.spelling, json.dumps(functional.score_spellings(dataset, spellings), indent=1) + "\n"))
+        return functional.write_new_files(outputs)
     if args.command == "reverse":
         try:
             dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
