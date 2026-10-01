@@ -443,9 +443,17 @@ now accepts. It opens with a third directive, `##species Populus trichocarpa`. A
 may carry `ancestorIdentifier`, their v3.1 identifier: on 30,924 of 34,699 genes and 32,185 of
 52,400 mRNAs, always after `Name` on a gene and before `Parent` on an mRNA. A
 [200-gene excerpt](../corpus/derived-examples/README.md) is in the repository, and the gene_exons
-mapping round-trips it byte for byte in CI (`model/examples/clean-round-trips.yaml`). The table
-differs more: other best-hit columns, `KOG` before `ec`, and peptide names that can't be derived
-from the GFF3. So the annotation_info dialect doesn't read it yet
+mapping round-trips it byte for byte in CI (`model/examples/clean-round-trips.yaml`).
+
+The Populus table has its own header layout, which the annotation_info dialect now reads and
+writes back byte for byte, all 52,400 rows (measured 2026-09-30). It has 12 columns, with
+`best_arabi_gene` and `best_arabi_defline` in place of TAIR10's clamy and rice best hits. Its header
+labels column 7 `KOG` and column 8 `ec`, but all 17,431 values under `KOG` are EC numbers and all
+18,574 under `ec` are KOG IDs. So the columns are in TAIR10's order with the two labels swapped,
+and the parser puts each value in the slot it is; JGI's files API lists a sibling file named
+`...annotation_info.txtwrong_header`. Every `peptideName` ends in `.p`, and in 560 rows it names
+another locus's transcript, so the mapping can't derive it from the GFF3. The mapping reads only
+TAIR10's layout so far and refuses the Populus one by name
 (https://github.com/turbomam/feature-table-corpus/issues/144).
 
 [`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)

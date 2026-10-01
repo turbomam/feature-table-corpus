@@ -21,13 +21,26 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "model/dialects/phytozome-annotation-info.yaml"
 TARGET = "PhytozomeAnnotationInfoDocument"
 ROW_CLASS = "PhytozomeAnnotationInfoRow"
-HEADER = ("#pacId", "locusName", "transcriptName", "peptideName", "Pfam", "Panther", "ec", "KOG",
-          "KO", "GO", "Best-hit-clamy-name", "Best-hit-clamy-defline", "Best-hit-rice-name",
-          "Best-hit-rice-defline")
+# The two measured header lines, by the best-hit columns that tell them apart. TAIR10 writes
+# clamy_rice; Populus trichocarpa v4.1 writes arabi, with KOG before ec (measured 2026-09-30).
+LAYOUTS = {
+    "clamy_rice": ("#pacId", "locusName", "transcriptName", "peptideName", "Pfam", "Panther", "ec", "KOG",
+                   "KO", "GO", "Best-hit-clamy-name", "Best-hit-clamy-defline", "Best-hit-rice-name",
+                   "Best-hit-rice-defline"),
+    "arabi": ("#pacId", "locusName", "transcriptName", "peptideName", "Pfam", "Panther", "KOG", "ec",
+              "KO", "GO", "best_arabi_gene", "best_arabi_defline"),
+}
+HEADER = LAYOUTS["clamy_rice"]
 # "#pacId" becomes pacId, and each Best-hit column the same name in lower
 # case with underscores. Every other column keeps its source spelling.
 COLUMN_TO_SLOT = {name: (name.lower().replace("-", "_") if name.startswith("Best-hit-") else name.lstrip("#"))
-                  for name in HEADER}
+                  for header in LAYOUTS.values() for name in header}
+# Populus v4.1's header has the KOG and ec labels the wrong way round: all 17,431 values under
+# "KOG" are EC numbers and all 18,574 under "ec" are KOG IDs (measured 2026-09-30; JGI's files
+# API also lists a sibling "Ptrichocarpa_533_v4.1.annotation_info.txtwrong_header"). So each
+# value goes to the slot it is, and the header is written back as JGI wrote it.
+LAYOUT_SLOTS = {name: dict(COLUMN_TO_SLOT) for name in LAYOUTS}
+LAYOUT_SLOTS["arabi"].update({"KOG": "ec", "ec": "KOG"})
 LIST_SLOTS = ("Pfam", "Panther", "ec", "KOG", "KO", "GO")
 PAC = "PAC:"
 
@@ -36,15 +49,16 @@ PAC = "PAC:"
 DialectError = gff3.DialectError
 
 
-def parse_row(line_number, text):
+def parse_row(line_number, text, header=HEADER, slots=None):
     cells = text.split("\t")
-    if len(cells) != len(HEADER):
-        raise DialectError(f"line {line_number}: {len(cells)} columns, expected {len(HEADER)}")
+    if len(cells) != len(header):
+        raise DialectError(f"line {line_number}: {len(cells)} columns, expected {len(header)}")
+    slots = slots or COLUMN_TO_SLOT
     row = {"line": line_number}
-    for column, cell in zip(HEADER, cells):
+    for column, cell in zip(header, cells):
         if cell == "":
             continue
-        slot = COLUMN_TO_SLOT[column]
+        slot = slots[column]
         if slot in LIST_SLOTS:
             values = cell.split(" ")
             if "" in values:
@@ -56,21 +70,23 @@ def parse_row(line_number, text):
 
 
 def parse_lines(lines, source_file):
-    rows, number = [], 0
+    rows, number, layout = [], 0, None
     for number, raw in enumerate(lines, start=1):
         text = gff3.strip(number, raw)
         if number == 1:
-            if tuple(text.split("\t")) != HEADER:
-                raise DialectError(f"line 1: header is not the {len(HEADER)} Phytozome columns")
+            layout = next((name for name, header in LAYOUTS.items() if tuple(text.split("\t")) == header), None)
+            if layout is None:
+                raise DialectError("line 1: header is not one of the measured Phytozome layouts "
+                                   f"({', '.join(LAYOUTS)})")
             continue
         if not text:
             raise DialectError(f"line {number}: blank line")
         if text.startswith("#"):
             raise DialectError(f"line {number}: comment after the header")
-        rows.append(parse_row(number, text))
+        rows.append(parse_row(number, text, LAYOUTS[layout], LAYOUT_SLOTS[layout]))
     if number == 0:
         raise DialectError("line 1: empty file, expected a header")
-    return {"source_file": str(source_file), "rows": rows}
+    return {"source_file": str(source_file), "layout": layout, "rows": rows}
 
 
 def parse(path):
@@ -81,10 +97,11 @@ def parse(path):
 LINE_BREAKS = ("\t", "\n", "\r")
 
 
-def write_row(row):
+def write_row(row, header=HEADER, slots=None):
+    slots = slots or COLUMN_TO_SLOT
     cells = []
-    for column in HEADER:
-        slot = COLUMN_TO_SLOT[column]
+    for column in header:
+        slot = slots[column]
         value = row.get(slot)
         where = f"line {row.get('line', '?')} {column}"
         if value is None:
@@ -100,7 +117,10 @@ def write_row(row):
 
 def write(document):
     """Table text for a document, refused unless it parses back to the same rows."""
-    text = "\t".join(HEADER) + "\n" + "".join(write_row(row) + "\n" for row in document["rows"])
+    layout = document.get("layout", "clamy_rice")
+    header = LAYOUTS[layout]
+    text = "\t".join(header) + "\n" + "".join(write_row(row, header, LAYOUT_SLOTS[layout]) + "\n"
+                                              for row in document["rows"])
     reparsed = parse_lines(io.StringIO(text, newline=""), document.get("source_file", ""))
     for row, again in zip(document["rows"], reparsed["rows"], strict=True):
         if {**row, "line": 0} != {**again, "line": 0}:
@@ -110,8 +130,14 @@ def write(document):
 
 
 def cross_checks(document):
-    """Rules a schema can't express, each holding on every row of the measured file."""
+    """Rules a schema can't express, each holding on every row of the measured files.
+
+    TAIR10 (clamy_rice) writes peptideName equal to transcriptName. Populus v4.1 (arabi) ends every
+    peptideName in ".p", usually transcriptName plus ".p", but in 560 of 52,400 rows naming another
+    locus's transcript, so only the suffix is a rule there (measured 2026-09-30).
+    """
     problems = []
+    layout = document.get("layout", "clamy_rice")
     seen = {"pacId": set(), "transcriptName": set()}
     for row in document["rows"]:
         where = f"line {row['line']}"
@@ -121,8 +147,10 @@ def cross_checks(document):
             values.add(row.get(slot))
         if not gff3.is_transcript_name(row.get("transcriptName"), row.get("locusName")):
             problems.append(f"{where}: transcriptName is not locusName plus '.' and a number")
-        if row.get("peptideName") != row.get("transcriptName"):
+        if layout == "clamy_rice" and row.get("peptideName") != row.get("transcriptName"):
             problems.append(f"{where}: peptideName differs from transcriptName")
+        if layout == "arabi" and not str(row.get("peptideName", "")).endswith(".p"):
+            problems.append(f"{where}: peptideName doesn't end in '.p'")
         for slot in LIST_SLOTS:
             values = row.get(slot, [])
             if len(values) != len(set(values)):
@@ -130,6 +158,8 @@ def cross_checks(document):
         for species in ("clamy", "rice"):
             if f"best_hit_{species}_defline" in row and f"best_hit_{species}_name" not in row:
                 problems.append(f"{where}: Best-hit-{species}-defline without its name")
+        if "best_arabi_defline" in row and "best_arabi_gene" not in row:
+            problems.append(f"{where}: best_arabi_defline without its gene")
     return problems
 
 

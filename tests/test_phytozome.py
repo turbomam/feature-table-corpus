@@ -369,7 +369,7 @@ class AnnotationInfoTests(Case):
             self.assertEqual(table.write(table.parse(path)), text)
 
     def test_file_shape(self):
-        self.rejected(0, "#pacId", "pacId", "header is not the 14 Phytozome columns")
+        self.rejected(0, "#pacId", "pacId", "header is not one of the measured Phytozome layouts")
         self.rejected(1, "\tPF00001 PF00002\t", "\tPF00001 PF00002 ", "13 columns, expected 14")
         self.rejected(1, "PF00001 PF00002", "PF00001  PF00002", "has an empty value")
         self.rejected(3, "PAC:90000003", "#PAC:90000003", "comment after the header")
@@ -448,6 +448,46 @@ class JoinTests(Case):
         self.assertEqual(status, 1, out)
         self.assertIn("expected '##gff-version <value>'", out)
 
+
+
+class PopulusLayoutTests(Case):
+    """The arabi layout: Populus v4.1's header, with its KOG and ec labels swapped."""
+
+    HEADER = "\t".join(table.LAYOUTS["arabi"])
+
+    def populus_text(self):
+        # The constructed TAIR10-layout rows, rewritten as Populus would write them: twelve
+        # columns, the values of ec and KOG in the same places, best_arabi in place of clamy/rice.
+        lines = TABLE.read_text().splitlines()
+        rows = []
+        for line in lines[1:]:
+            cells = line.split("\t")
+            cells[3] = cells[2] + ".p"
+            rows.append("\t".join(cells[:10] + ["AT1G01010", "a defline"]))
+        return "\n".join([self.HEADER] + rows) + "\n"
+
+    def test_values_land_in_the_slot_they_are_and_write_back_unchanged(self):
+        text = self.populus_text()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "populus.annotation_info.txt"
+            path.write_text(text)
+            document = table.parse(path)
+            self.assertEqual(document["layout"], "arabi")
+            tair = table.parse(TABLE)
+            for row, before in zip(document["rows"], tair["rows"]):
+                self.assertEqual((row.get("ec"), row.get("KOG")), (before.get("ec"), before.get("KOG")))
+            self.assertEqual(table.write(document), text)
+            status, out = self.run_command(table.validate, [text], [".txt"])
+            self.assertEqual(status, 0, out)
+
+    def test_populus_rules(self):
+        text = self.populus_text()
+        no_suffix = text.replace(".1.p\t", ".1\t", 1)
+        self.assert_rejected(table.validate, [no_suffix], [".txt"], "peptideName doesn't end in '.p'")
+        orphan = text.replace("\tAT1G01010\ta defline", "\t\ta defline", 1)
+        self.assert_rejected(table.validate, [orphan], [".txt"], "best_arabi_defline without its gene")
+        bad_gene = text.replace("AT1G01010", "Potri.001G000100", 1)
+        self.assert_rejected(table.validate, [bad_gene], [".txt"], "does not match")
 
 if __name__ == "__main__":
     unittest.main()

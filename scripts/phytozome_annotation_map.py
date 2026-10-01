@@ -48,6 +48,10 @@ def table_order(row):
 
 
 def forward(gff3_document, table_document, table_url, transformers=None):
+    layout = table_document.get("layout", "clamy_rice")
+    if layout != "clamy_rice":
+        raise ValueError(f"table layout {layout!r}: this mapping reads only TAIR10's clamy_rice layout so far "
+                         "(https://github.com/turbomam/feature-table-corpus/issues/144)")
     dataset = gff3_map.forward(gff3_document, transformers)
     features = {f["feature_id"]: f for f in dataset["features"]}
     mrnas = {}
@@ -137,7 +141,9 @@ def reverse(dataset, gff3_source, table_source, transformers=None, species=None,
         row["line"] = number
     gff3_document = gff3_map.reverse({**dataset, "features": stripped}, gff3_source, transformers, species,
                                      provenance)
-    table_document = {"source_file": table_source, "rows": rows}
+    # This mapping reads TAIR10's layout only; Populus's arabi layout is
+    # https://github.com/turbomam/feature-table-corpus/issues/144.
+    table_document = {"source_file": table_source, "layout": "clamy_rice", "rows": rows}
     again = forward(gff3_document, table_document, urls.pop() if urls else "", transformers)
     if canonical(again) != canonical(dataset):
         raise ValueError(f"the dialects can't hold this Dataset without loss: {difference(dataset, again)}")

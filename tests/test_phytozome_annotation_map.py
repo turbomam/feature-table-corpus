@@ -93,6 +93,12 @@ class MappingTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, expected):
                     self.back(dataset)
 
+    def test_forward_refuses_the_populus_layout_for_now(self):
+        table = copy.deepcopy(self.table)
+        table["layout"] = "arabi"
+        with self.assertRaisesRegex(ValueError, "only TAIR10's clamy_rice layout so far"):
+            mapping.forward(self.gff3, table, URL, self.transformers)
+
     def test_forward_refuses_a_table_row_with_no_mrna(self):
         table = copy.deepcopy(self.table)
         table["rows"][0]["pacId"] = "PAC:99999999"
