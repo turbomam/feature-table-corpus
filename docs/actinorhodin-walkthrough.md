@@ -72,7 +72,7 @@ them. The [Parquet export guide](lakehouse-export.md) describes the checks. Read
 ```sql
 SELECT seqid, type, count(*) AS n
 FROM 'local/actinorhodin/parquet/features.parquet'
-GROUP BY seqid, type ORDER BY n DESC;
+GROUP BY seqid, type ORDER BY n DESC, type;
 -- NC_003888.3  CDS   22
 -- NC_003888.3  gene  22
 ```
@@ -100,7 +100,7 @@ full statement; a bare table name is a syntax error.
 SELECT seqid, type, count(*) AS n
 FROM mamillerpa.feature_model_demo.features
 GROUP BY seqid, type
-ORDER BY n DESC
+ORDER BY n DESC, type
 LIMIT 5
 ```
 
