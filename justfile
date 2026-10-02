@@ -153,12 +153,12 @@ bgc-check:
 [doc("Regenerate the committed actinorhodin Dataset and Parquet files in model/examples/actinorhodin/.")]
 [group("Queries")]
 actinorhodin-parquet:
-    uv run --python '>=3.11.8' python3 scripts/actinorhodin_parquet.py
+    uv run --with-requirements requirements-lakehouse.txt python3 scripts/actinorhodin_parquet.py
 
-[doc("Require the committed actinorhodin Dataset and Parquet files to reproduce byte for byte.")]
+[doc("Require the committed actinorhodin Dataset to reproduce byte for byte and its Parquet files row for row.")]
 [group("Queries")]
 actinorhodin-check:
-    uv run --python '>=3.11.8' python3 scripts/actinorhodin_parquet.py --check
+    uv run --with-requirements requirements-lakehouse.txt python3 scripts/actinorhodin_parquet.py --check
 
 # This recipe prints Mermaid; the checked-in diagram also contains maintained prose.
 [doc("Print the feature model's Mermaid ER diagram.")]

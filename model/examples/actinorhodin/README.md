@@ -22,13 +22,18 @@ SCO5071 to SCO5092 of *Streptomyces coelicolor* A3(2), not an analysis made here
 
 ```sh
 just actinorhodin-parquet   # regenerate these files
-just actinorhodin-check     # fail unless every file here reproduces byte for byte
+just actinorhodin-check     # fail unless every file here reproduces
 ```
 
 Both run [`scripts/actinorhodin_parquet.py`](../../../scripts/actinorhodin_parquet.py), which
 imports the excerpt with `just conversion-import` (profile `gff3-contig/4.0.0`, reference
 `refseq:NC_003888.3`, metadata profile `ncbi`) and exports with `just lakehouse-export`, so the
 pinned toolchains in `requirements-conversion.txt` and `requirements-lakehouse.txt` apply.
+The check requires `dataset.json` to match byte for byte and each Parquet file to have the same
+schema, metadata included, and the same rows in the same order. It does not compare Parquet bytes:
+on 2026-10-02, with the same DuckDB build and the same rows, `features.parquet` came out 11,305
+bytes on macOS, 11,294 bytes in a Linux container, and different again in GitHub Actions, because a few column chunks compressed to slightly
+different sizes. The committed files are the macOS bytes, the ones loaded into BERDL.
 `just check` includes `actinorhodin-check`, so a change to the model, a converter or the export
 that changes these files fails CI until they are regenerated and committed.
 
