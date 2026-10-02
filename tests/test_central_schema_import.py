@@ -79,12 +79,13 @@ class CentralSchemaImportTests(unittest.TestCase):
         with self.assertRaises(NameError):
             generated_python_runs(stub_root(self.dir))
 
-    @unittest.expectedFailure
-    def test_importer_with_its_own_name_slot_builds(self):
-        # bridge-central-schema's root defines name, and so does this model, so the import
-        # fails with "Conflicting URIs ... for item: name". PR 5 renames the copy's slot to
-        # display_name with alias name; whether this model should do the same is undecided.
-        generated_python_runs(stub_root(self.dir, extra_prefixes=meaning_prefixes(), name_slot=True))
+    def test_importer_with_its_own_name_slot_conflicts(self):
+        # bridge-central-schema's root defines name, and so does this model. PR 5 renames the
+        # copy's slot to display_name with alias name; whether this model should do the same is
+        # undecided. Only this clash is accepted here: if it goes away, or the build fails some
+        # other way, this test fails and needs updating.
+        with self.assertRaisesRegex(ValueError, r"Conflicting URIs \(.*\) for item: name$"):
+            generated_python_runs(stub_root(self.dir, extra_prefixes=meaning_prefixes(), name_slot=True))
 
 
 if __name__ == "__main__":
