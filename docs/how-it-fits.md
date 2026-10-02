@@ -2,7 +2,7 @@
 
 The BER feature model, the code that converts real annotation files into it, the NMDC pipeline
 that uses it, and where its output goes. Read this first if you want to use, check or extend any
-of them. Stated as of 2026-09-30.
+of them. Stated as of 2026-09-30, with the BERDL, central schema and release rows updated 2026-10-02.
 
 ## The pieces
 
@@ -15,8 +15,8 @@ of them. Stated as of 2026-09-30.
 | Corpus | [`corpus/`](../corpus/) | The real files the converters are tested against, with provenance and licenses in [`corpus/index.yaml`](../corpus/index.yaml). |
 | Flat profile | [`model/flat/`](../model/flat/) | A scalar-only version of the model, generated from it, for catalogs that take only flat tables. |
 | NMDC feature tables | [microbiomedata/nmdc-lakehouse](https://github.com/microbiomedata/nmdc-lakehouse), `src/nmdc_lakehouse/feature_convert.py`, documented in its [`docs/nmdc_feature_tables.md`](https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/nmdc_feature_tables.md) | Picks which of an NMDC run's annotation files to use, drops observations repeated across files, and writes `features.parquet` and `contigs.parquet` in the model's shape. Run as `just feature-plan`, `feature-sample`, `feature-download`, `feature-check` and `feature-convert`. |
-| BERDL | the KBase lakehouse | Where the NMDC Parquet is meant to be loaded. None has been loaded as of 2026-09-30. |
-| Central schema | [ber-data/bridge-central-schema](https://github.com/ber-data/bridge-central-schema) | Where the model's elements are to be copied, keeping the code here ([issue 9](https://github.com/turbomam/feature-table-corpus/issues/9)). Not done yet; open questions are listed in [issue 131](https://github.com/turbomam/feature-table-corpus/issues/131#issuecomment-5913488027). |
+| BERDL | the KBase lakehouse | Where the NMDC Parquet is meant to be loaded (https://github.com/microbiomedata/nmdc-lakehouse/issues/388). No NMDC feature tables are loaded as of 2026-10-02; the [actinorhodin example](actinorhodin-walkthrough.md) is loaded in a personal namespace. |
+| Central schema | [ber-data/bridge-central-schema](https://github.com/ber-data/bridge-central-schema) | Where the model's elements are copied, keeping the code here ([issue 9](https://github.com/turbomam/feature-table-corpus/issues/9)). The copy of v0.1.0 is in draft https://github.com/ber-data/bridge-central-schema/pull/5; [downstream copies](downstream-copies.md) lists how it differs. |
 
 ## How they depend on each other
 
@@ -34,8 +34,8 @@ of them. Stated as of 2026-09-30.
 
 ## What isn't in place yet
 
-- No release is tagged, so nothing can pin a version yet
-  ([issue 131](https://github.com/turbomam/feature-table-corpus/issues/131)).
+- v0.1.0 is tagged, but neither downstream copy checks itself against it yet
+  ([downstream copies](downstream-copies.md)).
 - The converters are scripts, not part of the installable package
   ([issue 142](https://github.com/turbomam/feature-table-corpus/issues/142)).
 - nmdc-lakehouse doesn't yet say which model version its tables follow
@@ -66,5 +66,7 @@ in it yet.
 - To read the model: the [schema guide](../model/schema/README.md) and the class pages on this site.
 - To convert a file: [conversion profiles](conversion-profiles.md) and the `just` tasks in the
   [repository map](repository-map.md).
+- To follow one example from source file to BERDL table: the [actinorhodin walkthrough](actinorhodin-walkthrough.md).
+- To see where other people's work overlaps or conflicts with this model: [overlaps and conflicts](overlaps-and-conflicts.md).
 - To see how far the converters can be trusted: the [round-trip evidence](../analyses/conversion-roundtrips/README.md)
   and [independent validation](../analyses/format-validation/README.md), both checked in CI.
