@@ -10,6 +10,13 @@ ALLOWED = {
      f"Permissible value of Enum 'StrandEnum' has name '{symbol}'")
     for symbol in ("+", "-", ".", "?")
 }
+# The linter's canonical prefix is EDAM.DATA, but LinkML's Python generator can't name a
+# prefix with a dot (https://github.com/linkml/linkml/issues/3458), so an importing schema that
+# runs gen-python, as bridge-central-schema does, fails. Same conflict as
+# https://github.com/linkml/linkml/issues/1512 for EDAM.TOPIC.
+ALLOWED.add(("ber-feature-model", "canonical_prefixes", "warning",
+             "Schema maps prefix 'EDAM_DATA' to namespace 'http://edamontology.org/data_' "
+             "instead of using prefix 'EDAM.DATA'"))
 
 # A dialect schema spells keys and values exactly as its source file does, so
 # its naming exceptions are the source's own spellings, listed one by one.

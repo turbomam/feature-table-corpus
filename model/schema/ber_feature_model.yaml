@@ -45,7 +45,7 @@ prefixes:
   bfm: https://w3id.org/ber-data/gff-feature-model/
   kb_cdm: http://kbase.github.io/cdm-schema/linkml/
   MIXS: https://w3id.org/mixs/
-  EDAM.DATA: http://edamontology.org/data_
+  EDAM_DATA: http://edamontology.org/data_
   biolink: https://w3id.org/biolink/vocab/
   # The IRI Biolink itself uses for GFF3 columns and tags (biolink-model 4.4.4).
   gff3: https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md#
@@ -712,16 +712,16 @@ enums:
     permissible_values:
       bit_score:
         description: A score normalised so that scores from different searches compare, in bits.
-        meaning: EDAM.DATA:2335
+        meaning: EDAM_DATA:2335
       e_value:
         description: Expected number of hits at least this good by chance.
-        meaning: EDAM.DATA:1667
+        meaning: EDAM_DATA:1667
       p_value:
         description: Probability of a result at least this extreme by chance.
-        meaning: EDAM.DATA:1669
+        meaning: EDAM_DATA:1669
       score:
         description: A tool-specific score of no more specific kind.
-        meaning: EDAM.DATA:1772
+        meaning: EDAM_DATA:1772
   TopologyEnum:
     description: Reference topology used by location validation and distance queries.
     permissible_values:
