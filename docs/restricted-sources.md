@@ -27,6 +27,7 @@ Before adding an excerpt of a restricted source:
    `scripts/populus_excerpt.py` does, and add a dated note to `corpus/PROVENANCE.md`.
 
 Known limits of this rule are tracked separately:
+
 - the excerpt can't be rebuilt in CI (https://github.com/turbomam/feature-table-corpus/issues/148);
 - terms or file IDs may change later (https://github.com/turbomam/feature-table-corpus/issues/149);
 - citations don't yet travel with outputs made from an excerpt

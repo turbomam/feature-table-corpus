@@ -105,7 +105,8 @@ def check_index(entries):
             bad += 1
 
     # The derived tier's definition: built from a vendored file, or from a restricted one whose
-    # md5 is recorded. Checked here so the definition can't drift from the entries.
+    # md5 and complete redistribution_basis are recorded (docs/restricted-sources.md). Checked
+    # here so the definition can't drift from the entries.
     # derived_from names the source by entry id or, in the older fixtures, by its path.
     by_key = {e.get("id"): e for e in entries} | {e["path"]: e for e in entries if e.get("path")}
     for e in entries:
