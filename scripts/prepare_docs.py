@@ -12,7 +12,7 @@ PUBLIC_ROOTS = {"docs", "model", "analyses", "corpus", "scripts", "tests"}
 ROOT_FILES = {"README.md", "LICENSE", "justfile", "requirements-conversion.txt", "requirements-docs.txt",
               "requirements-mapping.txt", "requirements-lakehouse.txt"}
 EXTENSIONS = {".md", ".yaml", ".yml", ".json", ".csv", ".tsv", ".gff", ".gff3", ".gtf",
-              ".bed", ".gb", ".faa", ".fna", ".sql", ".py", ".txt", ".rst", ".svg", ".png", ".crisprs"}
+              ".bed", ".gb", ".faa", ".fna", ".sql", ".py", ".txt", ".rst", ".svg", ".png", ".crisprs", ".parquet"}
 
 
 def publishable(path):
