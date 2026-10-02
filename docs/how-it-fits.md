@@ -41,6 +41,21 @@ of them. Stated as of 2026-09-30, with the BERDL, central schema and release row
 - nmdc-lakehouse doesn't yet say which model version its tables follow
   (https://github.com/microbiomedata/nmdc-lakehouse/issues/382).
 
+## Open questions from the GFF modeling meetings
+
+The BER GFF modeling group's notes
+(https://docs.google.com/document/d/17Z1o7KNNqlMFq4WArIlvVlBvNeaW9ADBwZPG8R6u52o) record these as
+open after the 2026-10-02 meeting. Each is tracked here:
+
+- Whether only the schema moves to bridge-central-schema as a module, and how much of the
+  scripting moves to the `ber-data` organization:
+  https://github.com/turbomam/feature-table-corpus/issues/9.
+- How JGI's Secondary Metabolite Clusters (SMC) database maps to the model, whether SMC gets a
+  LinkML schema for its current tables, and whether its SQL DDL is available:
+  https://github.com/turbomam/feature-table-corpus/issues/166.
+- Whether one feature representation covers eukaryotic and prokaryotic genomes well:
+  https://github.com/turbomam/feature-table-corpus/issues/48.
+
 ## Using the validator from another repository
 
 The validator and the schema install together as the Python package `ber-feature-model`, whose
