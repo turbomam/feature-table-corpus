@@ -101,6 +101,7 @@ requirement. Add concise help and a task group when introducing a new public rec
 | How were the original NMDC GFF files selected? | [Selection report guide](../analyses/nmdc-selection/README.md) and [saved selection](../analyses/nmdc-selection/selection.json) | This sampled selection is distinct from the full DataObject analysis. `just nmdc-sample` writes a new live sample to `local/nmdc-selection/selection.json`; inspect errors and changed selections before replacing the saved report. |
 | Where does other work overlap or conflict with this model? | [Overlaps and conflicts](overlaps-and-conflicts.md) and [downstream copies](downstream-copies.md) | A running list, each row marked measured, observed or read with a date. Copies in bridge-central-schema and nmdc-lakehouse are listed with the version they follow and how they differ. |
 | What should I read beyond one format's advocates? | [Cross-format reading guide](feature-format-reading.md) | Sources are dated and their perspectives identified. Literature and tool documentation motivate tests; they do not establish conversion fidelity. |
+| Who will judge the format, and by what test? | [Acceptance tests by discipline](acceptance-tests.md) | Predicted tests and metrics for each discipline, with what this repository has today, and unusual gene structures from https://github.com/cmdcolin/oddgenes as representation tests. |
 
 `corpus/PROVENANCE.md` is a historical account, so its intermediate counts can differ
 from the current index. Likewise, a fresh upstream download or API traversal is a new
