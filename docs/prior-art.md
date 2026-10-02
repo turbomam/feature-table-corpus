@@ -9,6 +9,9 @@ For a broader and more recent assessment, see the
 cross-format reviews, comparative measurements, and consumer documentation, with
 each source's perspective and limits identified. This older inventory is GFF-focused.
 
+For the running list of overlaps and conflicts with other people's current work, including
+BRIDGE, KBase CDM and nmdc-lakehouse, see [overlaps and conflicts](overlaps-and-conflicts.md).
+
 ## Four models of a genome feature already exist
 
 Three of the four have not been touched in months or years, **measured 2026-09-11** against the
