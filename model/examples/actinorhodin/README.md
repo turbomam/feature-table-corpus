@@ -20,6 +20,9 @@ SCO5071 to SCO5092 of *Streptomyces coelicolor* A3(2), not an analysis made here
 
 ## Reproducing and checking
 
+The [actinorhodin walkthrough](../../../docs/actinorhodin-walkthrough.md) explains each step,
+from the source GFF3 to the BERDL tables.
+
 ```sh
 just actinorhodin-parquet   # regenerate these files
 just actinorhodin-check     # fail unless every file here reproduces
