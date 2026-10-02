@@ -33,12 +33,12 @@ writing to the same path at the same time are not supported. Within that:
 ## Layout
 
 The collections are the inlined list slots of the schema's tree root, read from
-[`ber_feature_model.yaml`](../model/schema/ber_feature_model.yaml), so today the export
-writes `contigs.parquet` and `features.parquet`. A collection the schema adds later, such
-as `contig_collections` from
-https://github.com/turbomam/feature-table-corpus/pull/62, gets its own file
-without a change to the export. The row-count check below also needs `build_duckdb.py` to
-have a table for it, which that pull request adds. Each file has one column per slot of its class, in schema order. A
+[`ber_feature_model.yaml`](../model/schema/ber_feature_model.yaml), so the export writes
+`contig_collections.parquet`, `contigs.parquet` and `features.parquet`. `contig_collections`
+was added by https://github.com/turbomam/feature-table-corpus/pull/62, merged 2026-09-26,
+and got its own file without a change to the export; that pull request also gave
+`build_duckdb.py` the table the row-count check needs. A collection the schema adds later
+works the same way. Each file has one column per slot of its class, in schema order. A
 collection with no rows still gets a file with every column, so the files for different
 Datasets have the same columns.
 
