@@ -19,6 +19,12 @@ biosynthetic gene cluster's boundaries.
 
 ## 2. A Dataset that conforms to the model
 
+The outputs of this step and the next are committed in
+[`model/examples/actinorhodin/`](../model/examples/actinorhodin/README.md), and
+`just actinorhodin-check` (part of `just check`) requires them to reproduce. Run the commands
+below to make your own copies under `local/`.
+
+
 Import the excerpt with the `gff3-contig` [conversion profile](conversion-profiles.md), then take
 the Dataset out of the conversion bundle:
 

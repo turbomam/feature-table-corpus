@@ -19,7 +19,7 @@ default:
 
 [doc("Run corpus, schema, example, and regression checks.")]
 [group("Validation")]
-check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check bgc-check
+check: verify validate-schema lint-schema-recommended validate-example validate-example-closed validate-source-example test conversion-check validity-check bgc-check actinorhodin-check
     @echo "all checks passed"
 
 [doc("Check every LinkML schema and transform specification against its metamodel.")]
@@ -149,6 +149,16 @@ bgc-report:
 [group("Queries")]
 bgc-check:
     uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/bgc_example.py --check
+
+[doc("Regenerate the committed actinorhodin Dataset and Parquet files in model/examples/actinorhodin/.")]
+[group("Queries")]
+actinorhodin-parquet:
+    uv run --with-requirements requirements-lakehouse.txt python3 scripts/actinorhodin_parquet.py
+
+[doc("Require the committed actinorhodin Dataset to reproduce byte for byte and its Parquet files row for row.")]
+[group("Queries")]
+actinorhodin-check:
+    uv run --with-requirements requirements-lakehouse.txt python3 scripts/actinorhodin_parquet.py --check
 
 # This recipe prints Mermaid; the checked-in diagram also contains maintained prose.
 [doc("Print the feature model's Mermaid ER diagram.")]

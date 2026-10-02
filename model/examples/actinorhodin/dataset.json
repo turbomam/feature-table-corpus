@@ -1,0 +1,2486 @@
+{
+  "contigs": [
+    {
+      "contig_id": "NC_003888.3",
+      "length_bp": 8667507
+    }
+  ],
+  "features": [
+    {
+      "feature_id": "gene-SC_RS27515",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5513809,
+      "end": 5514249,
+      "coordinate_system": "contig",
+      "strand": "-",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27515"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27515"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27515"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5071"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27515"
+    },
+    {
+      "feature_id": "cds-WP_011030037.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5513809,
+      "end": 5514249,
+      "coordinate_system": "contig",
+      "strand": "-",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030037.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27515"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030037.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030037.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030037.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27515"
+        },
+        {
+          "key": "product",
+          "value": "nuclear transport factor 2 family protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030037.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27515"
+      ],
+      "product": "nuclear transport factor 2 family protein",
+      "name": "WP_011030037.1",
+      "dbxref": [
+        "GenBank:WP_011030037.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27520",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5514323,
+      "end": 5515246,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27520"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27520"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27520"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5072"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27520"
+    },
+    {
+      "feature_id": "cds-WP_011030038.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5514323,
+      "end": 5515246,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030038.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27520"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030038.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030038.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0006631"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0070403"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "NAD+ binding|0070403||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "fatty acid metabolic process|0006631||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030038.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27520"
+        },
+        {
+          "key": "product",
+          "value": "3-hydroxyacyl-CoA dehydrogenase NAD-binding domain-containing protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030038.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27520"
+      ],
+      "product": "3-hydroxyacyl-CoA dehydrogenase NAD-binding domain-containing protein",
+      "name": "WP_011030038.1",
+      "dbxref": [
+        "GenBank:WP_011030038.1"
+      ],
+      "ontology_term": [
+        "GO:0006631",
+        "GO:0070403"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27525",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5515246,
+      "end": 5516232,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27525"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27525"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27525"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5073"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27525"
+    },
+    {
+      "feature_id": "cds-WP_202492530.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5515246,
+      "end": 5516232,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_202492530.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27525"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_202492530.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_202492530.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0008270"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016616"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0030554"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0048038"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "zinc ion binding|0008270||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor|0016616||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "adenyl nucleotide binding|0030554||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "quinone binding|0048038||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_005481698.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27525"
+        },
+        {
+          "key": "product",
+          "value": "quinone oxidoreductase family protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_202492530.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27525"
+      ],
+      "product": "quinone oxidoreductase family protein",
+      "name": "WP_202492530.1",
+      "dbxref": [
+        "GenBank:WP_202492530.1"
+      ],
+      "ontology_term": [
+        "GO:0008270",
+        "GO:0016616",
+        "GO:0030554",
+        "GO:0048038"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27530",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5516299,
+      "end": 5516943,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27530"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27530"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27530"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5074"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27530"
+    },
+    {
+      "feature_id": "cds-WP_003973904.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5516299,
+      "end": 5516943,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973904.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27530"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973904.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973904.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973904.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27530"
+        },
+        {
+          "key": "product",
+          "value": "hypothetical protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973904.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27530"
+      ],
+      "product": "hypothetical protein",
+      "name": "WP_003973904.1",
+      "dbxref": [
+        "GenBank:WP_003973904.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27535",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5516977,
+      "end": 5517897,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27535"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27535"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27535"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5075"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27535"
+    },
+    {
+      "feature_id": "cds-WP_003973903.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5516977,
+      "end": 5517897,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973903.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27535"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973903.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973903.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016491"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "oxidoreductase activity|0016491||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973903.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27535"
+        },
+        {
+          "key": "product",
+          "value": "NADP-dependent oxidoreductase"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973903.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27535"
+      ],
+      "product": "NADP-dependent oxidoreductase",
+      "name": "WP_003973903.1",
+      "dbxref": [
+        "GenBank:WP_003973903.1"
+      ],
+      "ontology_term": [
+        "GO:0016491"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27540",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5517894,
+      "end": 5519495,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27540"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27540"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27540"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5076"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27540"
+    },
+    {
+      "feature_id": "cds-WP_011030040.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5517894,
+      "end": 5519495,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030040.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27540"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030040.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030040.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0055085"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0022857"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016020"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_component",
+          "value": "membrane|0016020||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "transmembrane transporter activity|0022857||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "transmembrane transport|0055085||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030040.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27540"
+        },
+        {
+          "key": "product",
+          "value": "MFS transporter"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030040.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27540"
+      ],
+      "product": "MFS transporter",
+      "name": "WP_011030040.1",
+      "dbxref": [
+        "GenBank:WP_011030040.1"
+      ],
+      "ontology_term": [
+        "GO:0055085",
+        "GO:0022857",
+        "GO:0016020"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27545",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5519497,
+      "end": 5519892,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27545"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27545"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27545"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5077"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27545"
+    },
+    {
+      "feature_id": "cds-WP_003973901.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5519497,
+      "end": 5519892,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973901.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27545"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973901.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973901.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016491"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0070967"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "oxidoreductase activity|0016491||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "coenzyme F420 binding|0070967||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973901.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27545"
+        },
+        {
+          "key": "product",
+          "value": "PPOX class F420-dependent oxidoreductase"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973901.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27545"
+      ],
+      "product": "PPOX class F420-dependent oxidoreductase",
+      "name": "WP_003973901.1",
+      "dbxref": [
+        "GenBank:WP_003973901.1"
+      ],
+      "ontology_term": [
+        "GO:0016491",
+        "GO:0070967"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27550",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5519987,
+      "end": 5520832,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27550"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27550"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27550"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5078"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27550"
+    },
+    {
+      "feature_id": "cds-WP_011030041.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5519987,
+      "end": 5520832,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030041.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27550"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030041.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030041.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973900.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27550"
+        },
+        {
+          "key": "product",
+          "value": "DUF6081 family protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030041.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27550"
+      ],
+      "product": "DUF6081 family protein",
+      "name": "WP_011030041.1",
+      "dbxref": [
+        "GenBank:WP_011030041.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27555",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5520857,
+      "end": 5521741,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27555"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27555"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27555"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5079"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27555"
+    },
+    {
+      "feature_id": "cds-WP_011030042.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5520857,
+      "end": 5521741,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030042.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27555"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030042.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030042.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0070403"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "NAD+ binding|0070403||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973899.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27555"
+        },
+        {
+          "key": "product",
+          "value": "NmrA/HSCARG family protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030042.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27555"
+      ],
+      "product": "NmrA/HSCARG family protein",
+      "name": "WP_011030042.1",
+      "dbxref": [
+        "GenBank:WP_011030042.1"
+      ],
+      "ontology_term": [
+        "GO:0070403"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27560",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5521738,
+      "end": 5522883,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27560"
+        },
+        {
+          "key": "Name",
+          "value": "actVA"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene",
+          "value": "actVA"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27560"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5080"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "actVA"
+    },
+    {
+      "feature_id": "cds-WP_011030043.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5521738,
+      "end": 5522883,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030043.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27560"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030043.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030043.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "gene",
+          "value": "actVA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030043.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27560"
+        },
+        {
+          "key": "product",
+          "value": "actinorhodin polyketide dimerase ActVA"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030043.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27560"
+      ],
+      "product": "actinorhodin polyketide dimerase ActVA",
+      "name": "WP_011030043.1",
+      "dbxref": [
+        "GenBank:WP_011030043.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27565",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5522876,
+      "end": 5523217,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27565"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27565"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27565"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5081"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27565"
+    },
+    {
+      "feature_id": "cds-WP_011030044.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5522876,
+      "end": 5523217,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030044.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27565"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030044.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030044.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973897.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27565"
+        },
+        {
+          "key": "product",
+          "value": "antibiotic biosynthesis monooxygenase"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030044.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27565"
+      ],
+      "product": "antibiotic biosynthesis monooxygenase",
+      "name": "WP_011030044.1",
+      "dbxref": [
+        "GenBank:WP_011030044.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27570",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5523183,
+      "end": 5523962,
+      "coordinate_system": "contig",
+      "strand": "-",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27570"
+        },
+        {
+          "key": "Name",
+          "value": "actII"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene",
+          "value": "actII"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27570"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5082"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "actII"
+    },
+    {
+      "feature_id": "cds-WP_011030045.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5523183,
+      "end": 5523962,
+      "coordinate_system": "contig",
+      "strand": "-",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030045.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27570"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030045.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030045.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "gene",
+          "value": "actII"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030045.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27570"
+        },
+        {
+          "key": "product",
+          "value": "TetR family transcriptional regulator ActII"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030045.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27570"
+      ],
+      "product": "TetR family transcriptional regulator ActII",
+      "name": "WP_011030045.1",
+      "dbxref": [
+        "GenBank:WP_011030045.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27575",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5524073,
+      "end": 5525809,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27575"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27575"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27575"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5083"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27575"
+    },
+    {
+      "feature_id": "cds-WP_011030046.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5524073,
+      "end": 5525809,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030046.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27575"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030046.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030046.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0055085"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0022857"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016020"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_component",
+          "value": "membrane|0016020||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "transmembrane transporter activity|0022857||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "transmembrane transport|0055085||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973895.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27575"
+        },
+        {
+          "key": "product",
+          "value": "MFS transporter"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030046.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27575"
+      ],
+      "product": "MFS transporter",
+      "name": "WP_011030046.1",
+      "dbxref": [
+        "GenBank:WP_011030046.1"
+      ],
+      "ontology_term": [
+        "GO:0055085",
+        "GO:0022857",
+        "GO:0016020"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27580",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5525809,
+      "end": 5527944,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27580"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27580"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27580"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5084"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27580"
+    },
+    {
+      "feature_id": "cds-WP_011030047.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5525809,
+      "end": 5527944,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030047.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27580"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030047.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030047.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0005215"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016020"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_component",
+          "value": "membrane|0016020||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "transporter activity|0005215||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030047.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27580"
+        },
+        {
+          "key": "product",
+          "value": "MMPL family transporter"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030047.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27580"
+      ],
+      "product": "MMPL family transporter",
+      "name": "WP_011030047.1",
+      "dbxref": [
+        "GenBank:WP_011030047.1"
+      ],
+      "ontology_term": [
+        "GO:0005215",
+        "GO:0016020"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27585",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5528094,
+      "end": 5528861,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27585"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27585"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27585"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5085"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27585"
+    },
+    {
+      "feature_id": "cds-WP_003973893.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5528094,
+      "end": 5528861,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973893.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27585"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973893.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973893.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0000160"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0006355"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0003677"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "DNA binding|0003677||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "phosphorelay signal transduction system|0000160||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "regulation of DNA-templated transcription|0006355||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973893.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27585"
+        },
+        {
+          "key": "product",
+          "value": "AfsR/SARP family transcriptional regulator"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973893.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27585"
+      ],
+      "product": "AfsR/SARP family transcriptional regulator",
+      "name": "WP_003973893.1",
+      "dbxref": [
+        "GenBank:WP_003973893.1"
+      ],
+      "ontology_term": [
+        "GO:0000160",
+        "GO:0006355",
+        "GO:0003677"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27590",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5528935,
+      "end": 5529720,
+      "coordinate_system": "contig",
+      "strand": "-",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27590"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27590"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27590"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5086"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27590"
+    },
+    {
+      "feature_id": "cds-WP_003973892.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5528935,
+      "end": 5529720,
+      "coordinate_system": "contig",
+      "strand": "-",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973892.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27590"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973892.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973892.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973892.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27590"
+        },
+        {
+          "key": "product",
+          "value": "3-oxoacyl-ACP reductase"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973892.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27590"
+      ],
+      "product": "3-oxoacyl-ACP reductase",
+      "name": "WP_003973892.1",
+      "dbxref": [
+        "GenBank:WP_003973892.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27595",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5529801,
+      "end": 5531204,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27595"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27595"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27595"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5087"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27595"
+    },
+    {
+      "feature_id": "cds-WP_003973891.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5529801,
+      "end": 5531204,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973891.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27595"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973891.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973891.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0006633"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0004315"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "3-oxoacyl-[acyl-carrier-protein] synthase activity|0004315||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "fatty acid biosynthetic process|0006633||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973891.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27595"
+        },
+        {
+          "key": "product",
+          "value": "beta-ketoacyl-[acyl-carrier-protein] synthase family protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973891.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27595"
+      ],
+      "product": "beta-ketoacyl-[acyl-carrier-protein] synthase family protein",
+      "name": "WP_003973891.1",
+      "dbxref": [
+        "GenBank:WP_003973891.1"
+      ],
+      "ontology_term": [
+        "GO:0006633",
+        "GO:0004315"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27600",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5531201,
+      "end": 5532424,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27600"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27600"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27600"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5088"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27600"
+    },
+    {
+      "feature_id": "cds-WP_011030048.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5531201,
+      "end": 5532424,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030048.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27600"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030048.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030048.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973890.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27600"
+        },
+        {
+          "key": "product",
+          "value": "ketosynthase chain-length factor"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030048.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27600"
+      ],
+      "product": "ketosynthase chain-length factor",
+      "name": "WP_011030048.1",
+      "dbxref": [
+        "GenBank:WP_011030048.1"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27605",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5532449,
+      "end": 5532709,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27605"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27605"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27605"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5089"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27605"
+    },
+    {
+      "feature_id": "cds-WP_003973889.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5532449,
+      "end": 5532709,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973889.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27605"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973889.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973889.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0006633"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0009245"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0000035"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0000036"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "acyl binding|0000035||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "acyl carrier activity|0000036||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "fatty acid biosynthetic process|0006633||IEA"
+        },
+        {
+          "key": "go_process",
+          "value": "lipid A biosynthetic process|0009245||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973889.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27605"
+        },
+        {
+          "key": "product",
+          "value": "acyl carrier protein"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973889.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27605"
+      ],
+      "product": "acyl carrier protein",
+      "name": "WP_003973889.1",
+      "dbxref": [
+        "GenBank:WP_003973889.1"
+      ],
+      "ontology_term": [
+        "GO:0006633",
+        "GO:0009245",
+        "GO:0000035",
+        "GO:0000036"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27610",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5532706,
+      "end": 5533656,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27610"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27610"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27610"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5090"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27610"
+    },
+    {
+      "feature_id": "cds-WP_011030049.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5532706,
+      "end": 5533656,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030049.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27610"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030049.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030049.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0005488"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "binding|0005488||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973888.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27610"
+        },
+        {
+          "key": "product",
+          "value": "aromatase/cyclase"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030049.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27610"
+      ],
+      "product": "aromatase/cyclase",
+      "name": "WP_011030049.1",
+      "dbxref": [
+        "GenBank:WP_011030049.1"
+      ],
+      "ontology_term": [
+        "GO:0005488"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27615",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5533653,
+      "end": 5534546,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27615"
+        },
+        {
+          "key": "Name",
+          "value": "SC_RS27615"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27615"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5091"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "SC_RS27615"
+    },
+    {
+      "feature_id": "cds-WP_011030050.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5533653,
+      "end": 5534546,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_011030050.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27615"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_011030050.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_011030050.1"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0016787"
+        },
+        {
+          "key": "Ontology_term",
+          "value": "GO:0046872"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "go_function",
+          "value": "hydrolase activity|0016787||IEA"
+        },
+        {
+          "key": "go_function",
+          "value": "metal ion binding|0046872||IEA"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_011030050.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27615"
+        },
+        {
+          "key": "product",
+          "value": "MBL fold metallo-hydrolase"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_011030050.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27615"
+      ],
+      "product": "MBL fold metallo-hydrolase",
+      "name": "WP_011030050.1",
+      "dbxref": [
+        "GenBank:WP_011030050.1"
+      ],
+      "ontology_term": [
+        "GO:0016787",
+        "GO:0046872"
+      ]
+    },
+    {
+      "feature_id": "gene-SC_RS27620",
+      "seqid": "NC_003888.3",
+      "type": "gene",
+      "start": 5534558,
+      "end": 5535091,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "gene-SC_RS27620"
+        },
+        {
+          "key": "Name",
+          "value": "actVB"
+        },
+        {
+          "key": "gbkey",
+          "value": "Gene"
+        },
+        {
+          "key": "gene",
+          "value": "actVB"
+        },
+        {
+          "key": "gene_biotype",
+          "value": "protein_coding"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27620"
+        },
+        {
+          "key": "old_locus_tag",
+          "value": "SCO5092"
+        }
+      ],
+      "source": "RefSeq",
+      "name": "actVB"
+    },
+    {
+      "feature_id": "cds-WP_003973886.1",
+      "seqid": "NC_003888.3",
+      "type": "CDS",
+      "start": 5534558,
+      "end": 5535091,
+      "coordinate_system": "contig",
+      "strand": "+",
+      "attributes": [
+        {
+          "key": "ID",
+          "value": "cds-WP_003973886.1"
+        },
+        {
+          "key": "Parent",
+          "value": "gene-SC_RS27620"
+        },
+        {
+          "key": "Dbxref",
+          "value": "GenBank:WP_003973886.1"
+        },
+        {
+          "key": "Name",
+          "value": "WP_003973886.1"
+        },
+        {
+          "key": "gbkey",
+          "value": "CDS"
+        },
+        {
+          "key": "gene",
+          "value": "actVB"
+        },
+        {
+          "key": "inference",
+          "value": "COORDINATES: similar to AA sequence:RefSeq:WP_003973886.1"
+        },
+        {
+          "key": "locus_tag",
+          "value": "SC_RS27620"
+        },
+        {
+          "key": "product",
+          "value": "actinorhodin polyketide dimerase ActVB"
+        },
+        {
+          "key": "protein_id",
+          "value": "WP_003973886.1"
+        },
+        {
+          "key": "transl_table",
+          "value": "11"
+        }
+      ],
+      "source": "Protein Homology",
+      "phase": 0,
+      "parent": [
+        "gene-SC_RS27620"
+      ],
+      "product": "actinorhodin polyketide dimerase ActVB",
+      "name": "WP_003973886.1",
+      "dbxref": [
+        "GenBank:WP_003973886.1"
+      ]
+    }
+  ]
+}
