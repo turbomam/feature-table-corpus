@@ -6,7 +6,7 @@ tiers:
   vendored: the file is in this repository, with its origin URL and a checksum
   linked: the file is too large or not redistributable; a stable public URL is recorded instead
   restricted: the content sits behind a login; recorded for completeness and not fetchable here
-  derived: built here from a vendored file, or from a restricted one whose md5 is recorded, by exactly one documented change; traceable, but NOT observed
+  derived: built here from a vendored file, or from a restricted one whose md5 and redistribution_basis are recorded (docs/restricted-sources.md), by exactly one documented change; traceable, but NOT observed
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
@@ -2006,6 +2006,11 @@ entries:
   md5: 1832c9478a744a3e776cde9d1c154254
   sha256: 9cea4c1a1dcc4ef89186341513ae91035efb52b94d6d10e236fbf85fd849f679
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
+  redistribution_basis:
+    terms:
+    - https://phytozome-next.jgi.doe.gov/api/db/properties/proteome/533
+    read: '2026-10-01'
+    allows: Phytozome's public record for the genome gives "data_restriction_policy" as "unrestricted" (read 2026-09-29 and again 2026-10-01). Which JGI data policy governs it is undetermined, because the JGI search API gives no proposal acceptance date (model/examples/jgi-inputs.yaml). The genome's own Ptrichocarpa_533_v4.1.DataReleasePolicy.html (JGI file 5d94dc9ec0d65a87debccfc7, behind a JGI login) asks only for citation, as docs/jgi-inputs.md records. Mark accepted redistributing excerpts with those citations on 2026-10-01.
   derived_from: jgi-phytozome-populus-v4.1-gene-exons
   mutation: Select the first 200 genes on Chr01 in file order with all their mRNA, exon, CDS and UTR rows; retain the three directives, row bytes and chromosome coordinates; add the four provenance comment lines after the directives, the last giving the citations in corpus/derived-examples/README.md.
   validity: 'valid GFF3: selected source rows, not a complete genome annotation; checked with GenomeTools 1.6.6, and valid under the phytozome-gene-exons-gff3 dialect'
@@ -2038,6 +2043,11 @@ entries:
   md5: 9d568c6fee654f4df3ee15b64de0dff7
   sha256: 229a9a60d3671cd37c2a566ed55520439167cfb5725f211b47b8a0f5b8bcd16a
   origin_url: https://github.com/turbomam/feature-table-corpus/blob/main/scripts/populus_excerpt.py
+  redistribution_basis:
+    terms:
+    - https://phytozome-next.jgi.doe.gov/api/db/properties/proteome/533
+    read: '2026-10-01'
+    allows: Phytozome's public record for the genome gives "data_restriction_policy" as "unrestricted" (read 2026-09-29 and again 2026-10-01). Which JGI data policy governs it is undetermined, because the JGI search API gives no proposal acceptance date (model/examples/jgi-inputs.yaml). The genome's own Ptrichocarpa_533_v4.1.DataReleasePolicy.html (JGI file 5d94dc9ec0d65a87debccfc7, behind a JGI login) asks only for citation, as docs/jgi-inputs.md records. Mark accepted redistributing excerpts with those citations on 2026-10-01.
   derived_from: jgi-phytozome-populus-v4.1-annotation-info
   mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the four provenance comment lines after the header, the last giving the citations in corpus/derived-examples/README.md.
   validity: selected source rows, not a complete genome annotation; valid under the phytozome-annotation-info dialect
