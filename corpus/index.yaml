@@ -1990,7 +1990,7 @@ entries:
   file_name: Ptrichocarpa_533_v4.1.gene_exons.gff3.gz
   bytes: 9769649
   md5: 3fdcfdd5af213c5f4dde0c01f2cdbfda
-  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
+  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give JGI's acknowledgment as worded in corpus/derived-examples/README.md (which JGI data policy governs this genome is undetermined)
   barrier: requires a JGI account; 112.8 MB uncompressed (849,981 lines), too large to vendor
   notes: The source of the derived excerpt populus-v4.1-chr01-200-genes. md5 from the JGI files API, matching the downloaded file (2026-09-30).
   retrieved: '2026-09-29'
@@ -1999,7 +1999,7 @@ entries:
   tier: derived
   source: JGI Phytozome, Populus trichocarpa v4.1 (Phytozome-533)
   format: GFF3
-  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
+  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give JGI's acknowledgment as worded in corpus/derived-examples/README.md (which JGI data policy governs this genome is undetermined)
   retrieved: '2026-09-29'
   path: corpus/derived-examples/populus-v4.1-chr01-200-genes.gene_exons.gff3
   bytes: 659259
@@ -2027,7 +2027,7 @@ entries:
   file_name: Ptrichocarpa_533_v4.1.annotation_info.txt
   bytes: 8742751
   md5: aaf04aa3515d96748d1229d36ac7dfe4
-  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
+  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give JGI's acknowledgment as worded in corpus/derived-examples/README.md (which JGI data policy governs this genome is undetermined)
   barrier: requires a JGI account
   notes: The source of the derived excerpt populus-v4.1-chr01-200-genes-annotation-info. Its header swaps the KOG and ec labels; the JGI files API lists a sibling named ...annotation_info.txtwrong_header. md5 from the JGI files API, matching the downloaded file (2026-09-30).
   retrieved: '2026-09-29'
@@ -2036,7 +2036,7 @@ entries:
   tier: derived
   source: JGI Phytozome, Populus trichocarpa v4.1 (Phytozome-533)
   format: TSV
-  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give the JGI acknowledgment of the legacy data policy
+  license: Public; cite Tuskan et al. 2006 (Science 313:1596) and Goodstein et al. 2012 (Nucleic Acids Res 40:D1178), and give JGI's acknowledgment as worded in corpus/derived-examples/README.md (which JGI data policy governs this genome is undetermined)
   retrieved: '2026-09-29'
   path: corpus/derived-examples/populus-v4.1-chr01-200-genes.annotation_info.txt
   bytes: 49295

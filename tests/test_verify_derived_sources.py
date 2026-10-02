@@ -1,4 +1,5 @@
-"""A derived entry's source is an index entry: vendored, or restricted with an md5 recorded."""
+"""A derived entry's source is an index entry: vendored, or restricted with an md5 and a complete
+redistribution_basis recorded."""
 import contextlib
 import importlib.util
 import io
