@@ -20,7 +20,7 @@ newly measured unless it says so.
 
 | discipline | likely question | acceptance test | metric | status here |
 |---|---|---|---|---|
-| Microbial ecologists and metagenome users (NMDC) | Does it scale to every sample and keep MAG membership? | Load one full NMDC annotation run into BERDL; contig-collection queries work | Load time per million features; table size per million features | Not measured: https://github.com/turbomam/feature-table-corpus/issues/167, which waits on loading (https://github.com/microbiomedata/nmdc-lakehouse/issues/388) |
+| Microbial ecologists and metagenome users (NMDC) | Does it scale to every sample and keep MAG membership? | Load one full NMDC annotation run into BERDL; contig-collection queries work | Load time and table size per million features; result counts and latency of the contig-collection queries | Not measured: https://github.com/turbomam/feature-table-corpus/issues/167, which waits on loading (https://github.com/microbiomedata/nmdc-lakehouse/issues/388) |
 | Comparative genomics researchers | Can I join the same gene across annotation versions and sources? | Join features from two sources on stable identifiers | Share of features with a usable cross-source identifier | `stable_identifiers` exists on `Feature`; join coverage is not measured |
 | Genome browser developers (JBrowse, IGV) | Can I get GFF3 or BED back out, by region, fast enough to draw? | Region query returns nested features; exported GFF3 loads in a browser | Region-query latency on a large table | Overlap and neighbor queries exist in DuckDB ([query examples](query-requirements.md)); latency is not measured (https://github.com/turbomam/feature-table-corpus/issues/167) |
 | Agent and LLM users (BERIL) | Can an agent answer questions from the tables without being told the schema? | A fixed question set gets correct SQL and correct answers | Share of questions answered correctly | Not started |
@@ -52,7 +52,7 @@ the schema, and none was tested for this page.
 | Circular chromosomes | A feature crossing the origin | Supported: `FeatureLocation.crosses_origin`, tested on six origin-crossing joins in phiX174 through `insdc-locations`; `gff3-contig` refuses the phiX174 GFF3 |
 | Translational (ribosomal) frameshift | One CDS whose parts overlap by one or more bases | Refused: a structured location requires nonoverlapping parts |
 | Trans-splicing of exons on different strands | One feature with parts on both strands | Refused: mixed strands are refused |
-| Exon shared across different genes | A feature with more than one parent | `Feature.parent` is multivalued; the GFF3 case is the fixture `corpus/fixtures/edge-cases/multiple_parents.gff3`; not checked whether `gff3-contig` accepts it |
+| Exon shared across different genes | A feature with more than one parent | Supported: `Feature.parent` is multivalued, and `tests/test_conversion_profiles.py` round-trips a GFF3 exon with two parents through `gff3-contig`; the corpus fixture `corpus/fixtures/edge-cases/multiple_parents.gff3` is not run through it |
 | 0 bp exon | A zero-length site between two bases | Refused: between-base sites are refused |
 | 1 bp exon | A part whose start equals its end | Not checked |
 | Stop codon reassignment, alternative codon tables | A genetic code per sequence, and exceptions within a gene | Per contig only, through `Contig.translation_table`; no slot for an exception within one gene |
