@@ -22,7 +22,7 @@ newly measured unless it says so.
 |---|---|---|---|---|
 | Microbial ecologists and metagenome users (NMDC) | Does it scale to every sample and keep MAG membership? | Load one full NMDC annotation run into BERDL; contig-collection queries work | Load time and table size per million features; result counts and latency of the contig-collection queries | Not measured: https://github.com/turbomam/feature-table-corpus/issues/167, which waits on loading (https://github.com/microbiomedata/nmdc-lakehouse/issues/388) |
 | Comparative genomics researchers | Can I join the same gene across annotation versions and sources? | Join features from two sources on stable identifiers | Share of features with a usable cross-source identifier | `stable_identifiers` exists on `Feature`; join coverage is not measured |
-| Genome browser developers (JBrowse, IGV) | Can I get GFF3 or BED back out, by region, fast enough to draw? | Region query returns nested features; exported GFF3 loads in a browser | Region-query latency on a large table | Overlap and neighbor queries exist in DuckDB ([query examples](query-requirements.md)); latency is not measured (https://github.com/turbomam/feature-table-corpus/issues/167) |
+| Genome browser developers (JBrowse, IGV) | Can I get GFF3 or BED back out, by region, fast enough to draw? | Region query returns nested features; exported GFF3 loads in a browser | Region-query latency on a large table | Overlap and neighbor queries exist in DuckDB ([query examples](query-requirements.md)); latency is not measured (https://github.com/turbomam/feature-table-corpus/issues/167), and no exported GFF3 has been loaded in JBrowse or IGV |
 | Agent and LLM users (BERIL) | Can an agent answer questions from the tables without being told the schema? | A fixed question set gets correct SQL and correct answers | Share of questions answered correctly | Not started |
 | Statisticians and machine-learning users | Do nulls, types and counts mean the same thing across sources? | Each column has one type and one meaning in every source's tables | Columns whose types disagree across sources | The [Parquet export](lakehouse-export.md) checks types for one export; nmdc-lakehouse writes `phase` as `int8` where the export writes `int64` |
 
@@ -43,9 +43,9 @@ newly measured unless it says so.
 https://github.com/cmdcolin/oddgenes (text CC0, checked 2026-10-02) is a curated list of gene
 annotations that break common bioinformatics assumptions, with literature links. Its cases are a
 ready source of tests for the representation, as distinct from the format. The rows below are
-the cases that touch this model; the status comes from reading
+a selection of the cases that touch this model, not all of them; the status comes from reading
 [feature locations](feature-locations.md), [columns and discretion](columns-and-discretion.md) and
-the schema, and none was tested for this page.
+the schema, and none was tested for this page; where an existing test already covers a case, the row names it.
 
 | oddgenes case | what the model must hold | status here |
 |---|---|---|
@@ -54,9 +54,11 @@ the schema, and none was tested for this page.
 | Trans-splicing of exons on different strands | One feature with parts on both strands | Refused: mixed strands are refused |
 | Exon shared across different genes | A feature with more than one parent | Supported: `Feature.parent` is multivalued, and `tests/test_conversion_profiles.py` round-trips a GFF3 exon with two parents through `gff3-contig`; the corpus fixture `corpus/fixtures/edge-cases/multiple_parents.gff3` is not run through it |
 | 0 bp exon | A zero-length site between two bases | Refused: between-base sites are refused |
-| 1 bp exon | A part whose start equals its end | Not checked |
+| 1 bp exon | A part whose start equals its end | A feature with start equal to end validates (`test_legitimate_absence_and_boundary_values` in `tests/test_feature_model.py`); a one-base part inside a joined location is not checked |
+| Ribosome hopping | One CDS whose parts skip a stretch of the mRNA | Expressible as a joined location of nonoverlapping parts; not checked |
+| Stop codon readthrough | A CDS that continues past a stop codon | A plain interval holds it, but no slot marks the read-through stop; not checked |
 | Stop codon reassignment, alternative codon tables | A genetic code per sequence, and exceptions within a gene | Per contig only, through `Contig.translation_table`; no slot for an exception within one gene |
-| Overlapping genes, nested genes, antisense transcription | Independent intervals that overlap, on either strand | Plain intervals; overlap queries exist; no corpus case labelled as such |
+| Overlapping genes, nested genes, antisense transcription | Independent intervals that overlap, on either strand | Plain intervals. Two real overlapping genes, SCO5087 and SCO5088 in the actinorhodin excerpt (4 bases), are tested by `tests/test_neighbor_query.py`; nested and antisense cases are not |
 | Polycistronic transcripts and operons | One transcript parent to several CDS | Expressible through `parent`; not checked |
 | Polyproteins and inteins | Protein products cut from one CDS | No class for protein products; not checked |
 | Very large introns, many exons, many isoforms | Large part counts and isoform counts per gene | Not measured |
