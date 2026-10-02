@@ -44,10 +44,11 @@ of them. Stated as of 2026-09-30, with the BERDL, central schema and release row
 ## Using the validator from another repository
 
 The validator and the schema install together as the Python package `ber-feature-model`, whose
-version is the model's version. Until a release is tagged, install from main:
+version is the model's version. Pin a release tag (checked 2026-10-02: installing v0.1.0 this way
+validates the actinorhodin Dataset with 0 errors):
 
 ```bash
-uv add "ber-feature-model @ git+https://github.com/turbomam/feature-table-corpus"
+uv add "ber-feature-model @ git+https://github.com/turbomam/feature-table-corpus@v0.1.0"
 uv run ber-feature-validate features.yaml # YAML or JSON; exit status 1 when invalid
 ```
 

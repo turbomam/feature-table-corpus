@@ -64,8 +64,10 @@ just lakehouse-export local/actinorhodin/dataset.json local/actinorhodin/parquet
 
 This validates the Dataset, writes `features.parquet` (44 rows), `contigs.parquet` (1 row) and
 `contig_collections.parquet` (0 rows), and checks each file's column types, row counts and values
-against the validated Dataset; any failure leaves no output. The [Parquet export guide](lakehouse-export.md)
-describes the checks. Read the files locally with DuckDB:
+against the validated Dataset. Those checks run in a staging directory, so a failed check writes
+nothing to the output directory. A failure later, while the checked files are being linked into
+the output directory, can leave that directory and the files already linked; the error names
+them. The [Parquet export guide](lakehouse-export.md) describes the checks. Read the files locally with DuckDB:
 
 ```sql
 SELECT seqid, type, count(*) AS n
@@ -80,7 +82,8 @@ and the [BGC exercise](../analyses/bgc-query/README.md).
 
 ## 4. BERDL tables
 
-The two Parquet files with rows were loaded on 2026-10-02 into a personal BERDL namespace,
+The two Parquet files with rows, `features.parquet` and `contigs.parquet`, were loaded; the empty
+`contig_collections.parquet` was not. They were loaded on 2026-10-02 into a personal BERDL namespace,
 `mamillerpa.feature_model_demo`, as `features` (44 rows) and `contigs` (1 row). The load script
 ran on the BERDL JupyterHub and is not in this repository. Two things it had to handle:
 

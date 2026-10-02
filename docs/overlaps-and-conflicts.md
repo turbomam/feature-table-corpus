@@ -27,7 +27,7 @@ schemas.
 | https://github.com/cmungall/bridge-schemas, `src/bridge_schemas/schema/jgi/smc.linkml.yaml` | Its own JGI SMC schema with `Contig`, `Gene`, `BGC` and `BGCAnnotation`, plus schemas inferred from IMG, Phytozome and MycoCosm databases in the same directory. No license. | read 2026-10-02 (license, file list); 2026-09-29 (classes) | not tracked |
 | JGI database survey sheet (BRIDGE) | Describes four more feature-table shapes: SMC gene, Phytozome Feature, IMG_Core Gene and gene_pfam_families, and MycoCosm gene_feature. Most of its mapping cells are empty. | read 2026-09-30 | not tracked |
 | BRIDGE harmonization sheet, `harmonization_targets` row 42, "Genomic feature" | Lists NMDC `GenomeFeature`, the nmdc-lakehouse-schema `GenomeFeatureFlat` and CDM `Feature` as the things to harmonize (shared slots start, end, strand, type, seqid, phase), and doesn't mention this model. | read 2026-09-30 | not tracked |
-| nmdc-schema `GenomeFeature` (`src/schema/annotation.yaml`) | Not yet compared slot by slot with this model. | not compared | not tracked |
+| nmdc-schema `GenomeFeature` (`src/schema/annotation.yaml`) | The class exists, but it has not been compared slot by slot with this model. | read 2026-10-02 (class exists in nmdc-schema main); no comparison made | not tracked |
 | linkml/valuesets, `genome_features.yaml` | `ContigCollectionType` is identical to ours. `StrandType` and `CdsPhaseType` carry the same meanings spelled differently. `GenomeFeatureType` covers 44,312 of the corpus's 77,959 feature rows (56.8%). | measured 2026-09-30 | https://github.com/turbomam/feature-table-corpus/issues/131#issuecomment-5913488027 |
 
 ## Inside bridge-central-schema
@@ -39,7 +39,7 @@ measurements module. These rows are about that combination; see
 | other work | what overlaps or conflicts | how known | tracked in |
 |---|---|---|---|
 | The root schema's `name` slot | The root and this model both define a slot named `name`, and `gen-project` stops with "Conflicting URIs ... for item: name". PR 5 renames ours to `display_name` with `alias: name`. Generated JSON Schema still keys on `name`, and the actinorhodin Dataset validates against it with 0 errors. Tools that read slot names instead of aliases see `display_name`, including SchemaView, which `scripts/lakehouse_export.py` uses to name Parquet columns. | measured 2026-10-02 (conflict, validation); read, not run (SchemaView effect) | PR 5 body |
-| LinkML Python generator | `gen-python` writes `EDAM.DATA[...]` but declares only `EDAM_DATA`, so the dotted prefix in v0.1.0 breaks the generated Python. It also leaves out `MIXS` and `EDAM` unless the root declares them. PR 5 changes the prefix to `EDAM` with `EDAM:data_NNNN` meanings (same IRIs). The LinkML issue tracker hasn't been searched for this yet. | measured 2026-10-02 | PR 5 body |
+| LinkML Python generator | `gen-python` writes `EDAM.DATA[...]` but declares only `EDAM_DATA`, so the dotted prefix in v0.1.0 breaks the generated Python. It also leaves out `MIXS` and `EDAM` unless the root declares them. PR 5 changes the prefix to `EDAM` with `EDAM:data_NNNN` meanings; https://github.com/turbomam/feature-table-corpus/pull/163 changes it here to `EDAM_DATA` (same IRIs either way). | measured 2026-10-02 | https://github.com/linkml/linkml/issues/3458, https://github.com/linkml/linkml/issues/2632, PR 5 body |
 | measurements module (`measurements.yaml`, from https://github.com/ber-data/bridge-central-schema/pull/2 by @sierra-moxon) | `numeric_value` is defined twice: a top-level `double` in measurements and a `float` attribute of our `Attribute`. After `gen-linkml --mergeimports` the global slot lists both classes in `domain_of` with range `double`, while `Attribute` keeps its own definition. | observed 2026-10-02 in the merged output; ranges read 2026-10-02 | not tracked |
 | measurements module | The source text is `raw_value` on `MeasurementValue` and `value` on our `Attribute`, and both descriptions say they follow NMDC's AttributeValue pattern. | read 2026-10-02 | not tracked |
 | measurements module | This model owns the top-level slots `type`, `source`, `start`, `end` and `note` with their GFF meanings. https://github.com/ber-data/bridge-central-schema/issues/4 proposes source-tracking slots for measurements; a slot there named `source` or `type` would collide. Names such as `source_system` or `source_field` would not. No class, enum or type names collide today. | read 2026-10-02 | not tracked |
@@ -68,15 +68,15 @@ BERDL is the KBase lakehouse that BRIDGE publishes to.
 | limit | effect on this model | how known | tracked in |
 |---|---|---|---|
 | Iceberg v2 refuses a column whose type is unknown | A column that is null in every row loses its type when written through pandas, and the load fails with "unknown is not supported until v3". It happened for `stable_identifiers`, `source_files`, `is_selected` and `is_representative` in the actinorhodin load. Passing the Parquet schema explicitly fixes it. Iceberg accepted the `list<struct>` column `attributes`. | observed 2026-10-02 | not tracked |
-| BRIDGE Data Catalog profile refuses ARRAY columns | The model has several: `parent`, `attributes`, `source_files`, `stable_identifiers`, `member_of`, `taxonomic_lineage`. The [flat profile](flat-profile.md) is this repository's answer. | read | https://github.com/microbiomedata/nmdc-lakehouse/issues/342 |
+| BRIDGE Data Catalog profile refuses ARRAY columns | The model has several: `parent`, `attributes`, `source_files`, `stable_identifiers`, `member_of`, `taxonomic_lineage`. The [flat profile](flat-profile.md) is this repository's answer. | read 2026-09-10 (catalog specification, as recorded in the issue) | https://github.com/microbiomedata/nmdc-lakehouse/issues/342 |
 | Lakehouse registry can't link one schema to another | A registry entry for this model can't say how it relates to `schema-jgi-gff`. | read 2026-09-29 | https://github.com/ber-data/lakehouse-registry/issues/22, https://github.com/ber-data/lakehouse-registry/issues/21, https://github.com/ber-data/lakehouse-registry/issues/15 |
 
 ## Inside this repository
 
 | conflict | how known | tracked in |
 |---|---|---|
-| The JGI data policy that governs the Phytozome Populus excerpt is recorded as undetermined in `model/examples/jgi-inputs.yaml`, but four `license` fields in `corpus/index.yaml` imply the legacy policy. | read | https://github.com/turbomam/feature-table-corpus/issues/161 |
-| `corpus/index.yaml` records each source's terms of use, but the model has no slot that carries them into converted data. | read | https://github.com/turbomam/feature-table-corpus/issues/151 |
+| The JGI data policy that governs the Phytozome Populus excerpt is recorded as undetermined in `model/examples/jgi-inputs.yaml`, but four `license` fields in `corpus/index.yaml` imply the legacy policy. | read 2026-10-02 | https://github.com/turbomam/feature-table-corpus/issues/161 |
+| `corpus/index.yaml` records each source's terms of use, but the model has no slot that carries them into converted data. | read 2026-10-02 (issue comment) | https://github.com/turbomam/feature-table-corpus/issues/151 |
 
 ## Keeping this page current
 
