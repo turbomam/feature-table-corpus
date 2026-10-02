@@ -28,7 +28,7 @@ schemas.
 | JGI database survey sheet (BRIDGE) | Describes four more feature-table shapes: SMC gene, Phytozome Feature, IMG_Core Gene and gene_pfam_families, and MycoCosm gene_feature. Most of its mapping cells are empty. | read 2026-09-30 | not tracked |
 | BRIDGE harmonization sheet, `harmonization_targets` row 42, "Genomic feature" | Lists NMDC `GenomeFeature`, the nmdc-lakehouse-schema `GenomeFeatureFlat` and CDM `Feature` as the things to harmonize (shared slots start, end, strand, type, seqid, phase), and doesn't mention this model. | read 2026-09-30 | not tracked |
 | nmdc-schema `GenomeFeature` (`src/schema/annotation.yaml`) | The class exists, but it has not been compared slot by slot with this model. | read 2026-10-02 (class exists in nmdc-schema main); no comparison made | not tracked |
-| linkml/valuesets, `genome_features.yaml` | `ContigCollectionType` is identical to ours. `StrandType` and `CdsPhaseType` carry the same meanings spelled differently. `GenomeFeatureType` covers 44,312 of the corpus's 77,959 feature rows (56.8%). | measured 2026-09-30 | https://github.com/turbomam/feature-table-corpus/issues/131#issuecomment-5913488027 |
+| linkml/valuesets, `src/valuesets/schema/bio/genomics.yaml` (`ContigCollectionType`, `StrandType`, `CdsPhaseType`) and `genome_features.yaml` (`GenomeFeatureType`) | `ContigCollectionType` has the same seven values as ours, but valuesets spells them in uppercase (`ISOLATE`, `MAG`, ...) where this model uses lowercase, so serialized data differs. `StrandType` and `CdsPhaseType` carry the same meanings spelled differently. `GenomeFeatureType` covers 44,312 of the corpus's 77,959 feature rows (56.8%). | measured 2026-09-30 (coverage); read 2026-10-02 (file locations, casing) | https://github.com/turbomam/feature-table-corpus/issues/131#issuecomment-5913488027 |
 
 ## Inside bridge-central-schema
 
@@ -50,16 +50,16 @@ measurements module. These rows are about that combination; see
 
 nmdc-lakehouse has its own converter, `src/nmdc_lakehouse/feature_convert.py`, that writes Parquet
 in this model's shape without importing this repository ([how the pieces fit](how-it-fits.md)).
-Compared on 2026-10-02 at nmdc-lakehouse main 0e4619d against this repository's export of the demo
-inputs at 4aaca94 (measured).
+Columns compared on 2026-10-02 at nmdc-lakehouse main 0e4619d against this repository's export of
+the demo inputs at 4aaca94.
 
-| table | difference from this repository's export | tracked in |
-|---|---|---|
-| features | `feature_convert.py` has no `stable_identifiers`, `score_type` or `is_representative`; adds `source_data_object_type`; writes `phase` as `int8` where the export writes `int64`. | `source_data_object_type` is in nmdc-lakehouse `docs/nmdc_feature_tables.md`; the rest is not tracked |
-| contigs | `feature_convert.py` adds `assembly_contig_id`; has no `member_of`, `length_bp`, `topology` or `translation_table`. | not tracked |
-| contig_collections | The export writes it; `feature_convert.py` writes no such table. | not tracked |
-| any | No check of `feature_convert.py` output against the model. Two model changes in the week of 2026-09-28 each needed a matching nmdc-lakehouse pull request. | https://github.com/microbiomedata/nmdc-lakehouse/issues/381 |
-| `nmdc.results.pfam_annotation_gff` in BERDL | The table loaded in May has an unrelated shape (`workflow_run_id`, `gene_id`, `pfam_accession`, `start`, `end`, `score`, `e_value` and more), and nothing maps it to this model. | https://github.com/microbiomedata/nmdc-lakehouse/issues/388 |
+| table | difference from this repository's export | how known | tracked in |
+|---|---|---|---|
+| features | `feature_convert.py` has no `stable_identifiers`, `score_type` or `is_representative`; adds `source_data_object_type`; writes `phase` as `int8` where the export writes `int64`. | measured 2026-10-02 | `source_data_object_type` is in nmdc-lakehouse `docs/nmdc_feature_tables.md`; the rest is not tracked |
+| contigs | `feature_convert.py` adds `assembly_contig_id`; has no `member_of`, `length_bp`, `topology` or `translation_table`. | measured 2026-10-02 | not tracked |
+| contig_collections | The export writes it; `feature_convert.py` writes no such table. | measured 2026-10-02 | not tracked |
+| any | No check of `feature_convert.py` output against the model. Two model changes in the week of 2026-09-28 each needed a matching nmdc-lakehouse pull request. | read 2026-10-02 | https://github.com/microbiomedata/nmdc-lakehouse/issues/381 |
+| `nmdc.results.pfam_annotation_gff` in BERDL | The table loaded in May has an unrelated shape (`workflow_run_id`, `gene_id`, `pfam_accession`, `start`, `end`, `score`, `e_value` and more), and nothing maps it to this model. | observed 2026-10-01 (live BERDL check recorded in the issue) | https://github.com/microbiomedata/nmdc-lakehouse/issues/388 |
 
 ## BERDL and the BRIDGE catalog
 
