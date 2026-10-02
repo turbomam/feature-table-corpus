@@ -50,12 +50,13 @@ measurements module. These rows are about that combination; see
 
 nmdc-lakehouse has its own converter, `src/nmdc_lakehouse/feature_convert.py`, that writes Parquet
 in this model's shape without importing this repository ([how the pieces fit](how-it-fits.md)).
-Columns compared on 2026-10-02 at nmdc-lakehouse main 0e4619d against this repository's export of
-the demo inputs at 4aaca94.
+Columns compared on 2026-10-02 by listing the columns of `_feature_schema()` and `_contig_schema()`
+in `feature_convert.py` at nmdc-lakehouse main 0e4619d against the columns of this repository's
+export of the actinorhodin example at 4aaca94.
 
 | table | difference from this repository's export | how known | tracked in |
 |---|---|---|---|
-| features | `feature_convert.py` has no `stable_identifiers`, `score_type` or `is_representative`; adds `source_data_object_type`; writes `phase` as `int8` where the export writes `int64`. | measured 2026-10-02 | `source_data_object_type` is in nmdc-lakehouse `docs/nmdc_feature_tables.md`; the rest is not tracked |
+| features | `feature_convert.py` has none of `stable_identifiers`, `score_type`, `is_representative`, `name`, `note`, `dbxref`, `ontology_term`, `translated_sequence`, `location` or `target`; its `attributes` entries have only `key` and `value`, without `attribute_cv_id` and `numeric_value`; it adds `source_data_object_type`; and it writes `phase` as `int8` where the export writes `int64`. | measured 2026-10-02 | `source_data_object_type` is in nmdc-lakehouse `docs/nmdc_feature_tables.md`; the rest is not tracked |
 | contigs | `feature_convert.py` adds `assembly_contig_id`; has no `member_of`, `length_bp`, `topology` or `translation_table`. | measured 2026-10-02 | not tracked |
 | contig_collections | The export writes it; `feature_convert.py` writes no such table. | measured 2026-10-02 | not tracked |
 | any | No check of `feature_convert.py` output against the model. Two model changes in the week of 2026-09-28 each needed a matching nmdc-lakehouse pull request. | read 2026-10-02 | https://github.com/microbiomedata/nmdc-lakehouse/issues/381 |
