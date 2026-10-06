@@ -126,6 +126,7 @@
    "feature_id": "gene_1|pfam|PF00001",
    "seqid": "gene_1",
    "type": "PF00001",
+   "method": "pfam",
    "start": 5,
    "end": 90,
    "coordinate_system": "protein",

@@ -417,14 +417,15 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 63 pairs and 43 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 64 pairs and 44 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
         # score_type (issue 46), the scalar is_representative (issue 48), and the GFF3 reserved tags
         # name (scalar) and note, dbxref and ontology_term (lists) on Feature (issue 43).
         # Feature.target is a value object with five scalar slots of its own (issue 94).
         # Attribute gains the scalars attribute_cv_id and numeric_value (issue 42).
-        self.assertEqual(len(rows), 63)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 43)
+        # Feature gains the scalar enum method, so a table of hits can be filtered by method.
+        self.assertEqual(len(rows), 64)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 44)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
