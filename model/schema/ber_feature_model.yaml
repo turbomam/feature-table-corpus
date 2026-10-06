@@ -500,10 +500,12 @@ slots:
       - Distinct from source, which is the tool and version (GFF3 column 2), and from
         generated_by, which is the run. Set it on evidence hits; leave it unset on gene and RNA
         calls, where source already names the caller.
-      - A Dataset that holds hits of several methods forms a hit's feature_id as
-        <source ID>|<method>|<type> (https://github.com/turbomam/feature-table-corpus/issues/98);
-        when method is set it should equal that middle part, except that the IMG TMHMM and
-        SignalP mapping writes the file suffixes tmh and cleavage_sites there.
+      - feature_id has no required format, which is why method is a separate slot to filter on.
+        The IMG per-method mapping forms a hit's feature_id as <source ID>|<method>|<type>
+        (https://github.com/turbomam/feature-table-corpus/issues/98), and when method is set on
+        such a hit it equals that middle part, except that the IMG TMHMM and SignalP mapping
+        writes the file suffixes tmh and cleavage_sites there. The hand-built NMDC example in
+        model/examples/one-biosample-sequencing/harmonized.yaml uses <source ID>_<method> instead.
       - Added 2026-10-05 so one table can hold every method's hits and still be filtered or
         partitioned by method. Before it, the method was only inside feature_id, and
         scripts/img_per_method_gff.py and nmdc-lakehouse spelled SUPERFAMILY hits differently
