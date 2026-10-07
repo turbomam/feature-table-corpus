@@ -675,6 +675,17 @@ class DatabaseTests(unittest.TestCase):
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])
 
+    def test_method_is_stored_and_filterable(self):
+        # A table of every method's hits is only useful if it can be filtered by method.
+        build_database(SCHEMA, PFAMS, self.db)
+        con = self.connect()
+        self.assertEqual(con.execute("""SELECT type, method FROM feature
+                                        WHERE coordinate_system = 'protein' ORDER BY type""").fetchall(),
+                         [("PF13358", "pfam"), ("PF13518", "pfam"), ("PF13592", "pfam")])
+        self.assertEqual(con.execute("SELECT count(*) FROM feature WHERE method = 'pfam'").fetchone()[0], 3)
+        # The CDS sets no method, and it stays null rather than empty.
+        self.assertEqual(con.execute("SELECT count(*) FROM feature WHERE method IS NULL").fetchone()[0], 1)
+
     def test_real_multiple_pfams_and_distinctness(self):
         build_database(SCHEMA, PFAMS, self.db)
         con = self.connect()

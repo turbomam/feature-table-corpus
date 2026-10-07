@@ -31,7 +31,7 @@ CONTIG_COLUMNS = (
 ATTRIBUTE_TYPE = "STRUCT(key VARCHAR, value VARCHAR, attribute_cv_id VARCHAR, numeric_value DOUBLE)"
 OPTIONAL_ATTRIBUTE_FIELDS = {"attribute_cv_id": None, "numeric_value": None}
 FEATURE_COLUMNS = (
-    "feature_id", "stable_identifiers", "seqid", "source", "type", "start", "end", "coordinate_system",
+    "feature_id", "stable_identifiers", "seqid", "source", "type", "method", "start", "end", "coordinate_system",
     "score", "score_type", "strand", "phase", "generated_by", "source_files", "is_selected",
     "is_representative", "product", "product_source", "name", "note", "dbxref", "ontology_term",
     "translated_sequence", "parent", "attributes", "location", "target",
@@ -92,6 +92,7 @@ def _populate_database(data, db_path):
                 seqid VARCHAR NOT NULL,
                 source VARCHAR,
                 type VARCHAR,
+                method VARCHAR,
                 start BIGINT NOT NULL CHECK (start >= 1),
                 "end" BIGINT NOT NULL CHECK ("end" >= start),
                 coordinate_system VARCHAR NOT NULL
