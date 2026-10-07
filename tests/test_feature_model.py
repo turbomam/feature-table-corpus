@@ -392,6 +392,29 @@ class ValidationTests(unittest.TestCase):
             data[collection][0]['source_files'] = ['urn:example:artifact']
             self.assertEqual(validation_errors(data, self.validator), [])
 
+    def test_method_accepts_its_nine_values_and_rejects_other_spellings(self):
+        # The enum is what stops two converters writing one method two ways
+        # (nmdc-lakehouse's superfamily and ko against supfam and ko_ec here).
+        pfams = yaml.safe_load(PFAMS.read_text())
+        hit = next(i for i, f in enumerate(pfams["features"]) if f.get("method") == "pfam")
+        values = SchemaView(str(SCHEMA)).get_enum("MethodEnum").permissible_values
+        self.assertEqual(sorted(values), sorted(["pfam", "cog", "tigrfam", "smart", "supfam",
+                                                 "cath_funfam", "ko_ec", "tmhmm", "signalp"]))
+        for value in [*values, None]:
+            data = copy.deepcopy(pfams)
+            if value is None:
+                data["features"][hit].pop("method")
+            else:
+                data["features"][hit]["method"] = value
+            with self.subTest(method=value):
+                self.assertEqual(validation_errors(data, self.validator), [])
+        for alias in ("superfamily", "ko", "Pfam"):
+            data = copy.deepcopy(pfams)
+            data["features"][hit]["method"] = alias
+            with self.subTest(method=alias):
+                errors = validation_errors(data, self.validator)
+                self.assertTrue(any(repr(alias) in e for e in errors), errors)
+
     def test_legitimate_absence_and_boundary_values(self):
         data = copy.deepcopy(self.example)
         data["features"][0].pop("translated_sequence")
