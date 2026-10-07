@@ -347,6 +347,7 @@ slots:
       - gff3:Note
     title: Note
     multivalued: true
+    list_elements_ordered: true
     description: GFF3 Note values, free-text remarks about the feature, in source order.
   dbxref:
     exact_mappings:
@@ -355,6 +356,7 @@ slots:
       - biolink:xref
     title: Database cross-reference
     multivalued: true
+    list_elements_ordered: true
     description: >-
       GFF3 Dbxref values, db:id references to records in other databases, in source order. Unlike
       stable_identifiers, a cross-reference can point at a related record rather than at this
@@ -364,6 +366,7 @@ slots:
       - gff3:Ontology_term
     title: Ontology term
     multivalued: true
+    list_elements_ordered: true
     description: GFF3 Ontology_term values, ontology term CURIEs such as GO:0003677, in source order.
     notes:
       - name, note, dbxref and ontology_term hold the GFF3 reserved tags of the same names
@@ -389,6 +392,7 @@ slots:
   taxonomic_lineage:
     title: Taxonomic lineage
     multivalued: true
+    list_elements_ordered: true
     description: Ranked lineage path, domain to strain, one string per rank.
     notes:
       - Left as a list rather than named rank slots (domain, phylum, class, ...), because
@@ -817,7 +821,7 @@ enums:
       "-":
         description: Minus/reverse strand.
       ".":
-        description: Strand is irrelevant or unknown (GFF3 default).
+        description: Not stranded (GFF3 default).
       "?":
         description: Strand is relevant but unknown (GFF3 allowance).
   CoordinateSystemEnum:

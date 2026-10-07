@@ -584,7 +584,7 @@ enums:
       '-':
         description: Minus/reverse strand.
       .:
-        description: Strand is irrelevant or unknown (GFF3 default).
+        description: Not stranded (GFF3 default).
       '?':
         description: Strand is relevant but unknown (GFF3 allowance).
   TopologyEnum:
