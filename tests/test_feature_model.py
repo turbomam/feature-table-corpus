@@ -392,6 +392,29 @@ class ValidationTests(unittest.TestCase):
             data[collection][0]['source_files'] = ['urn:example:artifact']
             self.assertEqual(validation_errors(data, self.validator), [])
 
+    def test_method_accepts_its_nine_values_and_rejects_other_spellings(self):
+        # The enum is what stops two converters writing one method two ways
+        # (nmdc-lakehouse's superfamily and ko against supfam and ko_ec here).
+        pfams = yaml.safe_load(PFAMS.read_text())
+        hit = next(i for i, f in enumerate(pfams["features"]) if f.get("method") == "pfam")
+        values = SchemaView(str(SCHEMA)).get_enum("MethodEnum").permissible_values
+        self.assertEqual(sorted(values), sorted(["pfam", "cog", "tigrfam", "smart", "supfam",
+                                                 "cath_funfam", "ko_ec", "tmhmm", "signalp"]))
+        for value in [*values, None]:
+            data = copy.deepcopy(pfams)
+            if value is None:
+                data["features"][hit].pop("method")
+            else:
+                data["features"][hit]["method"] = value
+            with self.subTest(method=value):
+                self.assertEqual(validation_errors(data, self.validator), [])
+        for alias in ("superfamily", "ko", "Pfam"):
+            data = copy.deepcopy(pfams)
+            data["features"][hit]["method"] = alias
+            with self.subTest(method=alias):
+                errors = validation_errors(data, self.validator)
+                self.assertTrue(any(repr(alias) in e for e in errors), errors)
+
     def test_legitimate_absence_and_boundary_values(self):
         data = copy.deepcopy(self.example)
         data["features"][0].pop("translated_sequence")
@@ -417,14 +440,15 @@ class ValidationTests(unittest.TestCase):
 
     def test_flat_audit_follows_imports_and_inheritance(self):
         rows = {(r[0], r[1]): r for r in audit(SchemaView(str(SCHEMA)))}
-        # 63 pairs and 43 admissible: ContigCollection, member_of and stable_identifiers (issues
+        # 64 pairs and 44 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
         # score_type (issue 46), the scalar is_representative (issue 48), and the GFF3 reserved tags
         # name (scalar) and note, dbxref and ontology_term (lists) on Feature (issue 43).
         # Feature.target is a value object with five scalar slots of its own (issue 94).
         # Attribute gains the scalars attribute_cv_id and numeric_value (issue 42).
-        self.assertEqual(len(rows), 63)
-        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 43)
+        # Feature gains the scalar enum method, so a table of hits can be filtered by method.
+        self.assertEqual(len(rows), 64)
+        self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 44)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
         self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
         self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
@@ -650,6 +674,17 @@ class DatabaseTests(unittest.TestCase):
 
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])
+
+    def test_method_is_stored_and_filterable(self):
+        # A table of every method's hits is only useful if it can be filtered by method.
+        build_database(SCHEMA, PFAMS, self.db)
+        con = self.connect()
+        self.assertEqual(con.execute("""SELECT type, method FROM feature
+                                        WHERE coordinate_system = 'protein' ORDER BY type""").fetchall(),
+                         [("PF13358", "pfam"), ("PF13518", "pfam"), ("PF13592", "pfam")])
+        self.assertEqual(con.execute("SELECT count(*) FROM feature WHERE method = 'pfam'").fetchone()[0], 3)
+        # The CDS sets no method, and it stays null rather than empty.
+        self.assertEqual(con.execute("SELECT count(*) FROM feature WHERE method IS NULL").fetchone()[0], 1)
 
     def test_real_multiple_pfams_and_distinctness(self):
         build_database(SCHEMA, PFAMS, self.db)

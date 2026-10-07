@@ -160,6 +160,10 @@ classes:
       type:
         range: string
         description: GFF3 column 3, nominally a Sequence Ontology term or accession.
+      method:
+        range: MethodEnum
+        description: The annotation method or reference database whose search produced this feature, such
+          as Pfam or KEGG Orthology.
       start:
         range: integer
         minimum_value: 1
@@ -540,6 +544,27 @@ enums:
         description: Parts are joined end to end.
       order:
         description: Parts have known order without asserting a joined sequence.
+  MethodEnum:
+    description: Annotation method or reference database that produced an evidence hit.
+    permissible_values:
+      pfam:
+        description: Pfam protein families, https://www.ebi.ac.uk/interpro/entry/pfam/
+      cog:
+        description: Clusters of Orthologous Genes, https://www.ncbi.nlm.nih.gov/research/cog/
+      tigrfam:
+        description: TIGRFAMs protein families, https://www.ncbi.nlm.nih.gov/genome/annotation_prok/tigrfams/
+      smart:
+        description: SMART protein domains, https://smart.embl.de/
+      supfam:
+        description: SUPERFAMILY structural domain assignments, https://supfam.org/
+      cath_funfam:
+        description: CATH functional families (FunFams), https://www.cathdb.info/
+      ko_ec:
+        description: KEGG Orthology assignments and the EC numbers that come with them, https://www.genome.jp/kegg/ko.html
+      tmhmm:
+        description: TMHMM transmembrane helix predictions.
+      signalp:
+        description: SignalP signal peptide predictions.
   ScoreTypeEnum:
     description: Kind of number in a feature's score column.
     permissible_values:

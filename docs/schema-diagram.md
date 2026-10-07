@@ -51,6 +51,7 @@ Feature {
     string generated_by
     boolean is_representative
     boolean is_selected
+    MethodEnum method
     stringList note
     stringList ontology_term
     integer phase
