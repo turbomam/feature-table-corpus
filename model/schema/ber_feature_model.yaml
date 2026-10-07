@@ -509,7 +509,9 @@ slots:
         (https://github.com/turbomam/feature-table-corpus/issues/98), and when method is set on
         such a hit it equals that middle part, except that the IMG TMHMM and SignalP mapping
         writes the file suffixes tmh and cleavage_sites there. The hand-built NMDC example in
-        model/examples/one-biosample-sequencing/harmonized.yaml uses <source ID>_<method> instead.
+        model/examples/one-biosample-sequencing/harmonized.yaml ends hit IDs in source-specific
+        suffixes such as _pfam and _cath instead, which are not always MethodEnum values (_cath
+        is cath_funfam), so a method taken from a feature_id needs mapping.
       - Added 2026-10-05 so one table can hold every method's hits and still be filtered or
         partitioned by method. Before it, the method was only inside feature_id, and
         scripts/img_per_method_gff.py and nmdc-lakehouse spelled SUPERFAMILY hits differently
