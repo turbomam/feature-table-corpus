@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 98
+entry_count: 100
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -2052,9 +2052,35 @@ entries:
   mutation: Select the rows of the 200 genes in populus-v4.1-chr01-200-genes, in table order; retain the header and row bytes; add the four provenance comment lines after the header, the last giving the citations in corpus/derived-examples/README.md.
   validity: selected source rows, not a complete genome annotation; valid under the phytozome-annotation-info dialect
   notes: The real Phytozome input for the annotation_info dialect's clean round trip, with the gene_exons excerpt (https://github.com/turbomam/feature-table-corpus/issues/144). 293 rows, 2 of them with a peptideName naming another locus's transcript.
+- id: smc-coelicolor-genome-secmet-gff
+  label: JGI SMC genome GFF3 for Streptomyces coelicolor A3(2), RefSeq-style annotation with antiSMASH features merged in
+  tier: linked
+  format: GFF3
+  source: JGI Secondary Metabolite Collaboratory (SMC), source smc_id 212512, GCA_000203835.1
+  producer: SMC ingest of an NCBI annotwriter GFF3 plus antiSMASH v7.0.0beta1 and EMERALD v0.2.4.1 predictions (run 2023-06-08)
+  producer_kind: database export
+  origin_url: https://smc.jgi.doe.gov/v2/download/1888169
+  origin_record: https://smc.jgi.doe.gov/v2/smc/212512
+  license: not stated; SMC asks users to cite Udwary et al., Nucleic Acids Res, https://doi.org/10.1093/nar/gkae1060
+  why_not_vendored: no license or terms of use stated, and the annotations are SMC's own work; linked until SMC (Dan Udwary or Drew Doering) agrees to copies. Also 19,285,049 bytes.
+  notes: File GCA_000203835.1.filtered.secmet.gff, 19,285,049 bytes, md5 8e69d11eb9c8db64746b86e71f77ee38, fetched without a login. Contig names are GenBank (AL645882.2), not RefSeq (NC_003888.3). The same chromosome as refseq-coelicolor-chromosome, so SMC and RefSeq can be compared feature by feature (https://github.com/turbomam/feature-table-corpus/issues/166).
+  retrieved: '2026-10-09'
+- id: smc-actinorhodin-bgc-annotations
+  label: JGI SMC per-tool GFF3 annotations of the actinorhodin BGC (SMC bgc_id 2559962)
+  tier: linked
+  format: GFF3
+  source: JGI Secondary Metabolite Collaboratory (SMC), bgc_id 2559962 on AL645882.2:5496474-5567376, chemical product "actinorhodin", class Polyketide/T2PKS
+  producer: one GFF3 per annotation tool, served by the SMC API
+  producer_kind: database export
+  origin_url: https://smc.jgi.doe.gov/v2/bgc-tracks/2559962
+  origin_record: https://smc.jgi.doe.gov/v2/bgc/2559962
+  license: not stated; SMC asks users to cite Udwary et al., Nucleic Acids Res, https://doi.org/10.1093/nar/gkae1060
+  why_not_vendored: no license or terms of use stated; small enough to vendor if SMC agrees
+  notes: "Five files, each from https://smc.jgi.doe.gov/v2/bgc/annotation/<id>, fetched without a login: antiSMASH v7.0.0beta1 12203038 (48,373 bytes, 89 feature rows, md5 c8718e0aede2bb5378c9d2b697a9b871); InterProScan 12203044 (58,781 bytes, 250 rows, md5 d600afd067f3307512c37e0fdb83d054); CDDSearch 12203050 (1,355 bytes, 9 rows, md5 30b80113f783b8c32a53eaa07912441f); EMERALD v0.2.4.1 12203043 (365 bytes, 2 rows incl. nearest MIBiG BGC0000194, md5 f188adcb8f443b47c9058ff713d7cee4); GenBank 12203052 (162 bytes, the source region row only, md5 2d68775ea8e2cd77671cb9cc8944d980). antiSMASH's proto_core ends at 5,532,424, the end of SCO5088 in derived-actinorhodin-excerpt."
+  retrieved: '2026-10-09'
 tier_counts:
   vendored: 58
-  linked: 22
+  linked: 24
   restricted: 5
   not located: 1
   derived: 12
