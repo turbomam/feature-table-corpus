@@ -67,6 +67,14 @@ class ConversionTests(unittest.TestCase):
                           for r in contexts], ["4", "11", "11", "11", "11"])
         self.assertTrue(all(r["scope"] == "sequence" and r["context_record"] for r in contexts))
 
+    def test_missing_version_line_is_accepted(self):
+        # GenomeTools refuses a GFF3 file without a leading ##gff-version line, but 33 of
+        # the 37 IMG and NMDC GFF files in corpus/sources lack one, so this profile accepts it.
+        content = b"ERCC-00002\tgffread\texon\t1\t1061\t.\t+\t.\tID=DQ459430\n"
+        b = self.assert_roundtrip(content)
+        self.assertEqual(len(b["dataset"]["features"]), 1)
+        self.assertEqual(export_source(b, mode="exact"), content)
+
     def test_real_bed_blocks_keep_coordinates_order_and_display_fields(self):
         b = self.assert_roundtrip(BED_SOURCE.read_bytes(), BED)
         self.assertEqual(len(b["mappings"]), 19)
