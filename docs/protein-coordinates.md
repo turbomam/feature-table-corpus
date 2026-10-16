@@ -6,7 +6,7 @@ that, the hit's `seqid` was the contig.
 
 ## The rule
 
-A `Feature` with `coordinate_system: protein` has `start` and `end` in one-based, inclusive
+A `SequenceFeature` with `coordinate_system: protein` has `start` and `end` in one-based, inclusive
 amino-acid positions along the translation of one CDS. That CDS is the hit's `seqid`, and it is
 also the hit's only `parent`. The CDS itself is an ordinary contig-coordinate feature, so its own
 `seqid` is the contig.
@@ -69,7 +69,7 @@ the reference:
 
 ```sql
 SELECT feature_id, type, start, "end"
-FROM feature
+FROM sequence_feature
 WHERE coordinate_system = 'protein' AND seqid = ? AND start <= ? AND "end" >= ?;
 ```
 
@@ -79,11 +79,11 @@ been validated. To reach a hit's contig, go through its CDS:
 
 ```sql
 SELECT hit.feature_id, hit.type, cds.seqid AS contig
-FROM feature hit JOIN feature cds ON hit.seqid = cds.feature_id
+FROM sequence_feature hit JOIN sequence_feature cds ON hit.seqid = cds.feature_id
 WHERE hit.coordinate_system = 'protein';
 ```
 
-In the schema, `Feature.seqid` is `any_of` Contig or Feature, while `LocationPart.seqid` stays a
+In the schema, `SequenceFeature.seqid` is `any_of` Contig or SequenceFeature, while `LocationPart.seqid` stays a
 Contig. One column cannot be a foreign key to two tables, so the DuckDB loader
 (`scripts/build_duckdb.py`) has no foreign key on `feature.seqid`; the validator checks it before
 loading.
@@ -100,7 +100,7 @@ for that reason.
 its own keys (`model_start`, `model_end`, `subject_start`, `subject_end`), which the model keeps
 as untyped attribute strings. A typed target (ID, start, end, strand, alignment) would hold
 either form. This answers a different question, where on the Pfam model or reference protein
-the hit aligns, so it does not replace the rule above. It was added as `Feature.target` in
+the hit aligns, so it does not replace the rule above. It was added as `SequenceFeature.target` in
 https://github.com/turbomam/feature-table-corpus/issues/94, and `nmdc-pfam-protein` fills it from
 `model_start` and `model_end`.
 

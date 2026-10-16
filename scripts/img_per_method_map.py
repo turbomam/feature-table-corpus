@@ -42,7 +42,7 @@ MODEL = functional.MODEL
 TRANSFORM = ROOT / "model/transforms/img-per-method-gff.transform.yaml"
 ROW = dialect.ROW_CLASS
 LEXICAL = {"line", "attribute_order"}
-# Columns the reverse direction takes from the Feature, in GFF order.
+# Columns the reverse direction takes from the SequenceFeature, in GFF order.
 COLUMN_SLOTS = ("seqid", "source", "type", "start", "end", "score", "strand")
 
 
@@ -97,7 +97,7 @@ def hit_line_spelling(text, row):
 
 
 def source_spellings(functional_document, hit_documents):
-    """One spelling per Feature forward makes, in its order: functional rows, then each file's hits."""
+    """One spelling per SequenceFeature forward makes, in its order: functional rows, then each file's hits."""
     spellings = functional.source_spellings(functional_document["source_file"], functional_document)
     for document in hit_documents:
         with open(document["source_file"], encoding="utf-8", newline="") as handle:
@@ -181,7 +181,7 @@ def reverse(dataset, source_prefix, transformers=None, scores=None):
             raise ValueError(f"{name}: a hit needs exactly one ID attribute, its source ID")
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system", "parent")}
         core["feature_id"] = source_ids[0]
-        mapped = present(to_dialect.map_object(core, source_type="Feature"))
+        mapped = present(to_dialect.map_object(core, source_type="SequenceFeature"))
         method = dialect.method_of(mapped.get("type"))
         if method is None:
             raise ValueError(f"{name}: type {mapped.get('type')!r} is not an accession of any IMG method")
@@ -203,7 +203,7 @@ def reverse(dataset, source_prefix, transformers=None, scores=None):
         except (ValueError, KeyError) as error:
             raise ValueError(f"{name}: {error}") from None
         if row.get("ID") != mapped.get("ID"):
-            raise ValueError(f"{name}: ID is {mapped.get('ID')!r} in the Feature but "
+            raise ValueError(f"{name}: ID is {mapped.get('ID')!r} in the SequenceFeature but "
                              f"{row.get('ID')!r} in its attributes")
         document["rows"].append(row)
     # Map everything forward again and require the input back, so a slot the

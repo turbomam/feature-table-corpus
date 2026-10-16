@@ -67,12 +67,12 @@ class FlatProfileTests(unittest.TestCase):
 
     def test_value_objects_expand_and_lists_become_child_tables(self):
         flat = flat_profile.flatten(self.every, self.tables)
-        hit = next(r for r in flat["feature"] if r["feature_id"] == "gene_1|pfam|PF00001")
+        hit = next(r for r in flat["sequence_feature"] if r["feature_id"] == "gene_1|pfam|PF00001")
         self.assertEqual((hit["target_id"], hit["target_start"], hit["target_gap"]), ("PF00001", 1, "M86"))
-        self.assertEqual(flat["feature_attributes"][0], {"feature_id": "gene_1", "ordinal": 0, "key": "ID",
+        self.assertEqual(flat["sequence_feature_attributes"][0], {"feature_id": "gene_1", "ordinal": 0, "key": "ID",
                                                          "value": "gene_1"})
-        self.assertEqual([r["parent"] for r in flat["feature_parent"]], ["locus_1", "gene_1"])
-        self.assertEqual([(r["ordinal"], r["start"]) for r in flat["feature_location_parts"]], [(0, 101), (1, 251)])
+        self.assertEqual([r["parent"] for r in flat["sequence_feature_parent"]], ["locus_1", "gene_1"])
+        self.assertEqual([(r["ordinal"], r["start"]) for r in flat["sequence_feature_location_parts"]], [(0, 101), (1, 251)])
 
     def test_loss_is_refused_both_ways(self):
         dataset = copy.deepcopy(self.every)
@@ -87,27 +87,27 @@ class FlatProfileTests(unittest.TestCase):
             flat_profile.flatten(nested, self.tables)
         flat = flat_profile.flatten(self.every, self.tables)
         swapped = copy.deepcopy(flat)
-        swapped["feature_note"].reverse()
+        swapped["sequence_feature_note"].reverse()
         with self.assertRaisesRegex(ValueError, "out of order"):
             flat_profile.unflatten(swapped, self.tables)
         orphan = copy.deepcopy(flat)
-        orphan["feature_dbxref"][0]["feature_id"] = "missing"
-        with self.assertRaisesRegex(ValueError, "has no feature row"):
+        orphan["sequence_feature_dbxref"][0]["feature_id"] = "missing"
+        with self.assertRaisesRegex(ValueError, "has no sequence_feature row"):
             flat_profile.unflatten(orphan, self.tables)
         misspelled = copy.deepcopy(flat)
-        misspelled["feature"][-1]["target_strat"] = 1
+        misspelled["sequence_feature"][-1]["target_strat"] = 1
         with self.assertRaisesRegex(ValueError, r"\['target_strat'\] are not its columns"):
             flat_profile.unflatten(misspelled, self.tables)
         with self.assertRaisesRegex(ValueError, "not tables of the flat profile"):
             flat_profile.unflatten({**flat, "feature_notes": []}, self.tables)
         cases = {
-            "top-level required": (lambda f: f["feature"][0].pop("seqid"), r"required \['seqid'\] missing"),
-            "identifier": (lambda f: f["feature"][0].pop("feature_id"), r"required \['feature_id'\] missing"),
-            "ordinal": (lambda f: f["feature_note"][0].pop("ordinal"), r"required \['ordinal'\] missing"),
-            "child value": (lambda f: f["feature_note"][0].pop("note"), r"required \['note'\] missing"),
-            "struct field": (lambda f: f["feature"][-1].pop("target_id"), r"required \['target_id'\] missing"),
-            "item field": (lambda f: f["feature_attributes"][0].pop("value"), r"required \['value'\] missing"),
-            "required list in a struct": (lambda f: f.update(feature_location_parts=[]), "location.parts is required"),
+            "top-level required": (lambda f: f["sequence_feature"][0].pop("seqid"), r"required \['seqid'\] missing"),
+            "identifier": (lambda f: f["sequence_feature"][0].pop("feature_id"), r"required \['feature_id'\] missing"),
+            "ordinal": (lambda f: f["sequence_feature_note"][0].pop("ordinal"), r"required \['ordinal'\] missing"),
+            "child value": (lambda f: f["sequence_feature_note"][0].pop("note"), r"required \['note'\] missing"),
+            "struct field": (lambda f: f["sequence_feature"][-1].pop("target_id"), r"required \['target_id'\] missing"),
+            "item field": (lambda f: f["sequence_feature_attributes"][0].pop("value"), r"required \['value'\] missing"),
+            "required list in a struct": (lambda f: f.update(sequence_feature_location_parts=[]), "location.parts is required"),
         }
         for name, (change, expected) in cases.items():
             with self.subTest(name):
@@ -116,25 +116,25 @@ class FlatProfileTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, expected):
                     flat_profile.unflatten(broken, self.tables)
         twice = copy.deepcopy(flat)
-        twice["feature"].append(dict(twice["feature"][1], product="other"))
+        twice["sequence_feature"].append(dict(twice["sequence_feature"][1], product="other"))
         with self.assertRaisesRegex(ValueError, "'gene_1' is on more than one row"):
             flat_profile.unflatten(twice, self.tables)
 
     def test_the_flat_schema_keeps_the_model_constraints(self):
         import yaml
         classes = yaml.safe_load(flat_profile.FLAT.read_text())["classes"]
-        feature, parts = classes["Feature"]["attributes"], classes["FeatureLocationParts"]["attributes"]
+        feature, parts = classes["SequenceFeature"]["attributes"], classes["SequenceFeatureLocationParts"]["attributes"]
         self.assertTrue(all(feature[n].get("required") for n in ("feature_id", "seqid", "start", "end",
                                                                  "coordinate_system")))
         self.assertEqual((feature["start"]["minimum_value"], feature["phase"]["maximum_value"]), (1, 2))
         self.assertEqual(parts["start"]["minimum_value"], 1)
         self.assertNotIn("required", feature["target_id"])
         # ...but a struct's required fields are required once any of its columns is present.
-        rules = classes["Feature"]["rules"]
+        rules = classes["SequenceFeature"]["rules"]
         start = next(r for r in rules if list(r["preconditions"]["slot_conditions"]) == ["target_start"])
         self.assertEqual(sorted(start["postconditions"]["slot_conditions"]), ["target_end", "target_id"])
         # The model's rule that a score_type needs a score names two direct columns, so it is kept.
-        rule = next(r for r in classes["Feature"]["rules"] if "score_type" in r["preconditions"]["slot_conditions"])
+        rule = next(r for r in classes["SequenceFeature"]["rules"] if "score_type" in r["preconditions"]["slot_conditions"])
         self.assertEqual((list(rule["preconditions"]["slot_conditions"]), list(rule["postconditions"]["slot_conditions"])),
                          (["score_type"], ["score"]))
 
@@ -146,7 +146,7 @@ class FlatProfileTests(unittest.TestCase):
 
     def test_unflatten_refuses_a_dataset_the_model_rejects(self):
         flat = flat_profile.flatten(self.every, self.tables)
-        flat["feature"][0].update(start=10, end=5)
+        flat["sequence_feature"][0].update(start=10, end=5)
         with tempfile.TemporaryDirectory() as tmp:
             source, out = Path(tmp) / "flat.json", Path(tmp) / "back.json"
             source.write_text(json.dumps(flat))
@@ -210,15 +210,15 @@ class FlatProfileTests(unittest.TestCase):
     def test_input_of_the_wrong_shape_is_a_named_error(self):
         # https://github.com/turbomam/feature-table-corpus/issues/129: each gave a traceback.
         cases = {
-            "flatten": [("[1, 2]", "not a list"), ('{"features": [1]}', r"features\[0\] is a Feature record, not a int"),
+            "flatten": [("[1, 2]", "not a list"), ('{"features": [1]}', r"features\[0\] is a SequenceFeature record, not a int"),
                         ('{"features": [{"seqid": "c", "note": ["x"]}]}', r"features\[0\] has no feature_id"),
                         ('{"features": [{"feature_id": null, "note": ["x"]}]}', r"features\[0\] has no feature_id"),
                         ('{"features": [{"feature_id": "f", "note": "x"}]}', "note is a list, not a str"),
                         ('{"features": [{"feature_id": "f", "attributes": ["x"]}]}', r"attributes\[0\] is an object"),
-                        ('{"features": {}}', "features is a list of Feature records, not a dict"),
+                        ('{"features": {}}', "features is a list of SequenceFeature records, not a dict"),
                         ('{"features": ""}', "not a str"), ('{"features": false}', "not a bool"),
                         ('{"features": [{"feature_id": "f", "note": 0}]}', "note is a list, not a int")],
-            "unflatten": [("[]", "not a list"), ('{"feature": [1]}', "feature is a list of row objects")],
+            "unflatten": [("[]", "not a list"), ('{"sequence_feature": [1]}', "sequence_feature is a list of row objects")],
         }
         with tempfile.TemporaryDirectory() as tmp:
             for command, inputs in cases.items():
@@ -237,7 +237,7 @@ class FlatProfileTests(unittest.TestCase):
     def test_null_is_an_absent_collection_or_list(self):
         flat = flat_profile.flatten({"features": None, "contigs": [{"contig_id": "c", "source_files": None}]},
                                     self.tables)
-        self.assertEqual((flat["feature"], flat["contig_source_files"]), ([], []))
+        self.assertEqual((flat["sequence_feature"], flat["contig_source_files"]), ([], []))
 
     def test_commands_round_trip_and_never_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:

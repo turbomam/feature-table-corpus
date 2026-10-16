@@ -2,7 +2,7 @@ id: https://w3id.org/ber-data/transforms/img-per-method-gff-to-feature-model
 title: IMG per-method protein hit GFF rows to the feature model
 description: >-
   linkml-map specification from the img_per_method_gff dialect (model/dialects/img-per-method-gff.yaml)
-  to Feature in model/schema/ber_feature_model.yaml, for the per-method hit files (_pfam, _cog,
+  to SequenceFeature in model/schema/ber_feature_model.yaml, for the per-method hit files (_pfam, _cog,
   _ko_ec, _tigrfam, _smart, _supfam, _cath_funfam). The reverse specification is generated from this
   one with `linkml-map invert`, not written by hand.
 comments:
@@ -28,7 +28,7 @@ target_schema:
   name: ber-feature-model
   source_file: model/schema/ber_feature_model.yaml
 class_derivations:
-  Feature:
+  SequenceFeature:
     populated_from: ImgPerMethodGffRow
     slot_derivations:
       feature_id:

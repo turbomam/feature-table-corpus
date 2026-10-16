@@ -20,7 +20,7 @@ classes:
       - Records retain all original UTF-8 text and line endings, including comments and unknown syntax.
       - scripts/source_document.py validates checksums and the interpreted projection by re-parsing.
         JSON Schema alone does not enforce record ordering, context references, or source integrity.
-      - This model does not import Feature or NMDC DataObject. A source feature row is not necessarily
+      - This model does not import SequenceFeature or NMDC DataObject. A source feature row is not necessarily
         one biological feature; GFF3 can describe a discontinuous feature with multiple rows.
     slots:
       - artifact

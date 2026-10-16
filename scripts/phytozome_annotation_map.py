@@ -6,7 +6,7 @@
 
 The table has no positions: one row per transcript, joined to the GFF3's mRNA on
 pacid. The GFF3 goes through scripts/phytozome_gene_exons_map.py; each table value
-then becomes one Attribute on its mRNA Feature, keyed by what it is (Pfam, Panther,
+then becomes one Attribute on its mRNA SequenceFeature, keyed by what it is (Pfam, Panther,
 ec, KOG, KO, GO, and the best-hit columns of the table's layout), with a list column
 giving one Attribute per value in table order, and the table's URL is added to the
 mRNA's source_files. locusName and transcriptName are not stored: they are the gene's

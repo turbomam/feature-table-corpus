@@ -57,7 +57,7 @@ def _populate_database(data, db_path):
     con = duckdb.connect(str(db_path))
     try:
         con.execute("BEGIN TRANSACTION")
-        con.execute("DROP TABLE IF EXISTS feature")
+        con.execute("DROP TABLE IF EXISTS sequence_feature")
         con.execute("DROP TABLE IF EXISTS contig")
         con.execute("DROP TABLE IF EXISTS contig_collection")
         con.execute("""
@@ -84,7 +84,7 @@ def _populate_database(data, db_path):
             )
         """)
         con.execute(f"""
-            CREATE TABLE feature (
+            CREATE TABLE sequence_feature (
                 feature_id VARCHAR PRIMARY KEY,
                 stable_identifiers VARCHAR[],
                 -- A contig, or for protein coordinates the CDS they are measured along (issue 40).
@@ -121,7 +121,7 @@ def _populate_database(data, db_path):
         for table, collection, columns in (
             ("contig_collection", "contig_collections", COLLECTION_COLUMNS),
             ("contig", "contigs", CONTIG_COLUMNS),
-            ("feature", "features", FEATURE_COLUMNS),
+            ("sequence_feature", "features", FEATURE_COLUMNS),
         ):
             # DuckDB interprets a Python dict with exactly key/value keys as a MAP.
             # Cast JSON explicitly so the generic attribute stays a STRUCT.
@@ -140,7 +140,7 @@ def _populate_database(data, db_path):
                 con.execute(f"INSERT INTO {table} VALUES ({placeholders})", values)
         counts = (
             con.execute("SELECT count(*) FROM contig").fetchone()[0],
-            con.execute("SELECT count(*) FROM feature").fetchone()[0],
+            con.execute("SELECT count(*) FROM sequence_feature").fetchone()[0],
             con.execute("SELECT count(*) FROM contig_collection").fetchone()[0],
         )
         con.execute("COMMIT")

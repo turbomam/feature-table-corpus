@@ -21,7 +21,7 @@ sequence feature.
 | MAG binning | `wfmag-*` | CheckM quality stats, GTDB-Tk taxonomy, bin compression files | No. One row per genome bin, a different granularity from a feature table. |
 
 **Practical consequence for this repository:** fetch tooling, corpus entries, and the schema in
-`model/schema/ber_feature_model.yaml` should target `wfmgan` DataObjects for `Feature` instances and
+`model/schema/ber_feature_model.yaml` should target `wfmgan` DataObjects for `SequenceFeature` instances and
 `wfmgas` DataObjects (specifically `Assembly Contigs`) for `Contig` instances. The other three
 workflow types are a different data category, not an incomplete version of this one, and adding
 them to this corpus would not extend its scope so much as change what it is about.
@@ -32,10 +32,10 @@ This is easy to get wrong from the naming convention alone. Every `seqid` in a `
 references the assembly workflow's id, not the annotation workflow's own id: for example, features
 in `nmdc:wfmgan-11-5xxrm214.2_prodigal.gff` are all `seqid`-tagged
 `nmdc:wfmgas-11-19jh9v28.1_scf_N_cM`, an entirely different workflow execution. A `Contig` and the
-`Feature` rows on it come from two different pipeline stages, connected only by the fact that one
+`SequenceFeature` rows on it come from two different pipeline stages, connected only by the fact that one
 ran against the other's output. `model/schema/ber_feature_model.yaml`'s `generated_by` slot records
-the producer separately on each Contig and Feature; `source_files` also lists contributing
-artifacts, including sidecars from other workflows. Anything that parses a `Feature.seqid` to find the
+the producer separately on each Contig and SequenceFeature; `source_files` also lists contributing
+artifacts, including sidecars from other workflows. Anything that parses a `SequenceFeature.seqid` to find the
 producing annotation workflow there will be wrong.
 
 ## AGP: a related, uncovered format

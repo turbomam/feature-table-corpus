@@ -61,7 +61,7 @@ class MappingTests(unittest.TestCase):
             "coordinate_system": (lambda f: f.update(coordinate_system="protein"), "only contig"),
             "strand": (lambda f: f.update(strand="."), "loses or changes \\['strand'\\]"),
             "ID": (lambda f: f.update(feature_id="Ga0000001_101.9"), "feature_id is"),
-            "product": (lambda f: f.update(product="kinase"), "product is 'kinase' in the Feature"),
+            "product": (lambda f: f.update(product="kinase"), "product is 'kinase' in the SequenceFeature"),
             "conf spelling": (lambda f: f["attributes"][1].update(value="100.0"), "decimals"),
             "semicolon": (lambda f: f["attributes"][1].update(value="1;2"), "contains ';'"),
             "unknown key": (lambda f: f["attributes"].append({"key": "Note", "value": "x"}), "Note|without loss"),

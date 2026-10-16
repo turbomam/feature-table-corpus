@@ -42,7 +42,7 @@ MODEL = functional.MODEL
 TRANSFORM = ROOT / "model/transforms/img-tmhmm-signalp-gff.transform.yaml"
 ROW = dialect.ROW_CLASS
 LEXICAL = {"line", "attribute_order"}
-# Columns the reverse direction takes from the Feature, in GFF order; column 8 is always ".".
+# Columns the reverse direction takes from the SequenceFeature, in GFF order; column 8 is always ".".
 COLUMN_SLOTS = ("seqid", "source", "type", "start", "end", "score", "strand")
 
 
@@ -88,7 +88,7 @@ def line_spelling(text):
 
 
 def source_spellings(functional_document, documents):
-    """One spelling per Feature forward makes, in its order: functional rows, then each file's rows."""
+    """One spelling per SequenceFeature forward makes, in its order: functional rows, then each file's rows."""
     spellings = functional.source_spellings(functional_document["source_file"], functional_document)
     for document in documents:
         with open(document["source_file"], encoding="utf-8", newline="") as handle:
@@ -143,7 +143,7 @@ def reverse(dataset, source_prefix, transformers=None, scores=None):
         if feature.get("stable_identifiers") or feature.get("score_type"):
             raise ValueError(f"{name}: these files hold no stable_identifiers or score_type")
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system", "parent")}
-        mapped = present(to_dialect.map_object(core, source_type="Feature"))
+        mapped = present(to_dialect.map_object(core, source_type="SequenceFeature"))
         method = dialect.method_of(mapped.get("type"))
         if method is None:
             raise ValueError(f"{name}: type {mapped.get('type')!r} is not a TMHMM segment or SignalP site")

@@ -102,7 +102,7 @@ class PackageTests(unittest.TestCase):
         self.assertIn("nested too deeply to validate", result.stdout)
 
     def test_installed_function_refuses_values_json_cannot_hold(self):
-        # jsonschema counts complex numbers and Decimals as numbers, and Feature.score has no limit.
+        # jsonschema counts complex numbers and Decimals as numbers, and SequenceFeature.score has no limit.
         values = ["1+2j", "Decimal('1.5')", "{1, 2}", "object()"]
         script = ("import json, yaml, ber_feature_model as m; from decimal import Decimal; "
                   f"d = yaml.safe_load(open({str(EXAMPLE)!r})); "
@@ -118,7 +118,7 @@ class PackageTests(unittest.TestCase):
 
     def test_installed_function_refuses_non_finite_scores(self):
         # JSON can't carry NaN, so the Dataset is built in memory, as a dataframe conversion would.
-        # Feature.score has no range limit, so only the value check stands between these and [].
+        # SequenceFeature.score has no range limit, so only the value check stands between these and [].
         values = ["float('nan')", "float('inf')", "Decimal('NaN')", "Decimal('-Infinity')", "Decimal('sNaN')"]
         script = ("import json, yaml, ber_feature_model as m; from decimal import Decimal; "
                   f"d = yaml.safe_load(open({str(EXAMPLE)!r})); "

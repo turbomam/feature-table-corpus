@@ -406,7 +406,7 @@ class HiddenWarningTests(unittest.TestCase):
         # Measured 2026-09-29: the fixture's CRISPR row has repeat units whose Parent linkml-map
         # can't map itself; the script does.
         self.assertEqual(report["linkml_map_warnings"], 4)
-        self.assertIn("for type Feature", report["first_linkml_map_warning"])
+        self.assertIn("for type SequenceFeature", report["first_linkml_map_warning"])
 
     def test_each_invocation_counts_only_its_own_warnings(self):
         import contextlib

@@ -2,7 +2,7 @@ id: https://w3id.org/ber-data/transforms/img-tmhmm-signalp-gff-to-feature-model
 title: IMG TMHMM and SignalP GFF rows to the feature model
 description: >-
   linkml-map specification from the img_tmhmm_signalp_gff dialect
-  (model/dialects/img-tmhmm-signalp-gff.yaml) to Feature in model/schema/ber_feature_model.yaml,
+  (model/dialects/img-tmhmm-signalp-gff.yaml) to SequenceFeature in model/schema/ber_feature_model.yaml,
   for the TMHMM segment (_tmh) and SignalP cleavage site (_cleavage_sites) files. The reverse
   specification is generated from this one with `linkml-map invert`, not written by hand.
 comments:
@@ -28,7 +28,7 @@ target_schema:
   name: ber-feature-model
   source_file: model/schema/ber_feature_model.yaml
 class_derivations:
-  Feature:
+  SequenceFeature:
     populated_from: ImgTmhmmSignalpGffRow
     slot_derivations:
       seqid:

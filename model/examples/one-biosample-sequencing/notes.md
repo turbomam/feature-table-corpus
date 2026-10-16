@@ -43,7 +43,7 @@ GFF file from the annotation workflow reference the ASSEMBLY workflow's id
 (`nmdc:wfmgas-11-19jh9v28.1_scf_N_cM`), not the annotation workflow's own id
 (`wfmgan-11-5xxrm214.2`). A Contig and the Features on it come from two different workflow
 executions. Both classes now carry `generated_by`; every record in this example populates it.
-The former Feature-only `predicted_by` name was replaced to cover assembly as well as annotation.
+The former SequenceFeature-only `predicted_by` name was replaced to cover assembly as well as annotation.
 `source_files` lists the artifact URLs used for the record, including lineage and other sidecars.
 These are record-level sources, not a claim that every field came from `generated_by`.
 
@@ -59,7 +59,7 @@ would not make any clearer.
 
 - **`scf_1_c1_104_853`**: a gene where Prodigal and GeneMark called the identical 104-853 boundary
   independently. Recorded once, from Prodigal (the roll-up's choice), with GeneMark's agreement
-  noted as an attribute rather than a second, redundant Feature row, since the coordinates are
+  noted as an attribute rather than a second, redundant SequenceFeature row, since the coordinates are
   identical, not a competing claim. Carries five real functional-evidence hits: COG, CATH-FunFam,
   Pfam, SUPERFAMILY, and a combined KO/EC hit.
 - **The KO/EC hit is one row, not three.** `ec.tsv`, `ko.tsv`, and `KO_EC Annotation GFF` all
@@ -101,7 +101,7 @@ case study (in meeting notes, not in this repository) called them "MAG scaffolds
 directly contradicts.
 
 **Not represented, and why:** Product Names duplicates `product`/`product_source` exactly (checked
-for both genes here); Gene Phylogeny and Scaffold Lineage are used but folded into the Feature and
+for both genes here); Gene Phylogeny and Scaffold Lineage are used but folded into the SequenceFeature and
 Contig they describe rather than kept as separate rows; the tiny gene's absence from Annotation
 Amino Acid FASTA is recorded as an absence of `translated_sequence`, not invented.
 

@@ -9,7 +9,7 @@ the contig, so it is set there only when the evidence is complete and consistent
 
 Values that disagree on one contig are a conflict for the caller to report; this module
 never picks one. A contig is left unset when any CDS on it lacks the attribute, or when
-all its CDS name the same non-integer or unassigned value. The attribute itself stays in Feature.attributes, so a
+all its CDS name the same non-integer or unassigned value. The attribute itself stays in SequenceFeature.attributes, so a
 round trip that writes attributes back never needs the derived slot.
 """
 from validate_closed import NCBI_GENETIC_CODES, table_value

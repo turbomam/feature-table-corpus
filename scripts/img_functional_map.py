@@ -250,7 +250,7 @@ def reverse(dataset, source_file, transformers=None, scores=None):
     transformers = transformers or _transformers()
     _, to_dialect = transformers
     slots = dialect.row_slots()
-    # Column 9 keys that the specification also maps to a Feature slot.
+    # Column 9 keys that the specification also maps to a SequenceFeature slot.
     derivations = to_dialect.specification.class_derivations
     derivations = derivations.values() if isinstance(derivations, dict) else derivations
     promoted = {name for cd in derivations for name in cd.slot_derivations} - dialect.CORE
@@ -264,22 +264,22 @@ def reverse(dataset, source_file, transformers=None, scores=None):
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system")}
         # linkml-map reduces a one-item parent list to the dialect's single Parent,
         # and raises TransformationError for two or more.
-        mapped = present(to_dialect.map_object(core, source_type="Feature"))
+        mapped = present(to_dialect.map_object(core, source_type="SequenceFeature"))
         try:
             row = rows_from_attributes(feature.get("attributes", []), slots)
         except ValueError as error:
             raise ValueError(f"{feature['feature_id']}: {error}") from None
         for name in promoted & row.keys() - mapped.keys():
-            raise ValueError(f"{feature['feature_id']}: {name} is an attribute but not set on the Feature")
+            raise ValueError(f"{feature['feature_id']}: {name} is an attribute but not set on the SequenceFeature")
         for name, value in mapped.items():
             if name in dialect.CORE:
                 continue
-            # A column 9 key promoted to a Feature slot must also be an attribute,
+            # A column 9 key promoted to a SequenceFeature slot must also be an attribute,
             # which is where its position in the row comes from.
             if name not in row:
                 raise ValueError(f"{feature['feature_id']}: {name} has no attribute copy")
             if row[name] != value:
-                raise ValueError(f"{feature['feature_id']}: {name} is {value!r} in the Feature "
+                raise ValueError(f"{feature['feature_id']}: {name} is {value!r} in the SequenceFeature "
                                  f"but {row[name]!r} in its attributes")
         row.update(mapped)
         row["line"] = number

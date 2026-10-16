@@ -11,15 +11,15 @@ The nested model stays the canonical form: ingest nested, then flatten.
 from it:
 
 - Each class a Dataset lists is a table keyed by its identifier: `contig_collection`, `contig`,
-  `feature`.
+  `sequence_feature`.
 - A single-valued scalar or enum is a column. A reference to an identified class, such as
-  `Feature.seqid` or `LocationPart.seqid`, holds that row's identifier.
-- A single-valued struct with no identifier expands into its owner's row: `Feature.target` gives
+  `SequenceFeature.seqid` or `LocationPart.seqid`, holds that row's identifier.
+- A single-valued struct with no identifier expands into its owner's row: `SequenceFeature.target` gives
   `target_id`, `target_start`, `target_end`, `target_strand` and `target_gap`, and
-  `Feature.location` gives `location_operator` and `location_crosses_origin`.
+  `SequenceFeature.location` gives `location_operator` and `location_crosses_origin`.
 - A list is a child table `<table>_<slot>` keyed by the owner's identifier and an `ordinal` from
-  0 that keeps the list's order, for example `feature_attributes(feature_id, ordinal, key, value)`,
-  `feature_parent(feature_id, ordinal, parent)` and `feature_location_parts(feature_id, ordinal,
+  0 that keeps the list's order, for example `sequence_feature_attributes(feature_id, ordinal, key, value)`,
+  `sequence_feature_parent(feature_id, ordinal, parent)` and `sequence_feature_location_parts(feature_id, ordinal,
   seqid, start, end, ...)`.
 
 `scripts/flat_profile_audit.py` finds that the model has 20 of 61 class/slot pairs a scalar-only
@@ -27,12 +27,12 @@ catalog would reject. The derived profile has 80, and it rejects none of them (m
 2026-09-29). Lists became child tables rather than array columns because the catalog document
 rejects both multivalued and nested columns.
 
-Required slots stay required. A top-level required slot, such as `Feature.seqid`, is a required
+Required slots stay required. A top-level required slot, such as `SequenceFeature.seqid`, is a required
 column. A struct's required fields, such as `target_id`, `target_start` and `target_end`, are
 required once any of that struct's columns is present, written as class rules. A required list
 inside a struct, such as `FeatureLocation.parts`, lives in a child table that one row's rules can't
-see, so `unflatten` checks it: a Feature with a location must have at least one row in
-`feature_location_parts`.
+see, so `unflatten` checks it: a SequenceFeature with a location must have at least one row in
+`sequence_feature_location_parts`.
 
 ## Commands
 

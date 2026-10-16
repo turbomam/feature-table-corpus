@@ -2,8 +2,8 @@ id: https://w3id.org/ber-data/transforms/phytozome-gene-exons-gff3-to-feature-mo
 title: Phytozome gene_exons GFF3 rows to the feature model
 description: >-
   linkml-map specification from the phytozome_gene_exons_gff3 dialect
-  (model/dialects/phytozome-gene-exons-gff3.yaml) to Feature in model/schema/ber_feature_model.yaml.
-  It maps the nine columns and the column 9 keys that have a Feature slot (ID, Parent). The reverse
+  (model/dialects/phytozome-gene-exons-gff3.yaml) to SequenceFeature in model/schema/ber_feature_model.yaml.
+  It maps the nine columns and the column 9 keys that have a SequenceFeature slot (ID, Parent). The reverse
   specification is generated from this one with `linkml-map invert`, not written by hand.
 comments:
   - >-
@@ -13,10 +13,10 @@ comments:
     constant "contig"; Dataset.contigs holds one Contig per distinct seqid; and mirror_source is
     restored on the inverted strand mapping.
   - >-
-    longest also sets Feature.is_representative in the script (1 true, 0 false, absent unset),
+    longest also sets SequenceFeature.is_representative in the script (1 true, 0 false, absent unset),
     because linkml-map can't invert an expression. Like ID and Parent, it keeps its attribute copy,
     which holds its position in column 9; the reverse step requires the two to agree. Name and pacid
-    have no Feature slot and travel only as attributes.
+    have no SequenceFeature slot and travel only as attributes.
 source_schema:
   name: phytozome_gene_exons_gff3
   source_file: model/dialects/phytozome-gene-exons-gff3.yaml
@@ -24,7 +24,7 @@ target_schema:
   name: ber-feature-model
   source_file: model/schema/ber_feature_model.yaml
 class_derivations:
-  Feature:
+  SequenceFeature:
     populated_from: PhytozomeGeneExonsRow
     slot_derivations:
       feature_id:

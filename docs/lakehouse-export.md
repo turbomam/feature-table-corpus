@@ -118,7 +118,7 @@ the reported parent directories):
   enough here because DuckDB's own `COPY` writes the files and cannot produce those.
 - **Row counts.** Each collection's row count must equal the matching table that
   [`build_duckdb.py`](../scripts/build_duckdb.py) builds from the same Dataset (the table
-  name is the range class in snake case, such as `feature`). A table with no matching
+  name is the range class in snake case, such as `sequence_feature`). A table with no matching
   collection is also an error. https://github.com/turbomam/feature-table-corpus/issues/57
   asked for this check. The value check already compares row counts against the input, and
   both paths read the file with the same `load_validated`, so this adds no independent reading.
