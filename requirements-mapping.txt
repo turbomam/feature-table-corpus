@@ -3,3 +3,4 @@ linkml==1.11.1
 linkml-map==0.5.4
 jsonschema==4.26.0
 PyYAML==6.0.3
+pint==0.26.1
