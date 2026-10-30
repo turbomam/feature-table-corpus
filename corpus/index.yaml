@@ -2221,7 +2221,7 @@ entries:
   selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
   retrieved: '2026-10-30'
   license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
-  notes: "linear single-stranded RNA genome, 4,215 bp. CDS NP_046750.1 is the readthrough product of the coat protein CDS and carries `transl_except=(pos:1742..1744,aa:Trp)`. Byte-identical to the copy @simroux shared."
+  notes: "linear single-stranded RNA genome, 4,215 bp. CDS NP_046750.1 is the readthrough product of the coat protein CDS and carries `transl_except=(pos:1742..1744%2Caa:Trp)`. Byte-identical to the copy @simroux shared."
 tier_counts:
   vendored: 66
   linked: 24
