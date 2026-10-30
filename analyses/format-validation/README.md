@@ -1,15 +1,15 @@
 # Independent format validation
 
-Ran on macOS arm64 on **2026-09-25**: GenomeTools **1.6.6** and GFF3toolkit
-**2.1.0** checked all 50 retained GFF3 inputs. The existing
+Ran on macOS arm64 on **2026-09-25**, and again on **2026-10-30** after eight viral RefSeq GFF3 files
+were added: GenomeTools **1.6.6** and GFF3toolkit **2.1.0** checked all 59 retained GFF3 inputs. The existing
 [report.json](report.json) now records each input's checksum and separate results
 for each validator. Linked/restricted/unlocated files are not fetched.
 
 | Validator | Accepted | Rejected | Other formats, not checked | Installation blocked |
 |---|---:|---:|---:|---:|
-| GenomeTools | 10 | 40 | 18 | 0 |
-| GFF3toolkit | 6 | 44 | 18 | 0 |
-| AGAT | 0 | 0 | 18 | 50 |
+| GenomeTools | 19 | 40 | 19 | 0 |
+| GFF3toolkit | 12 | 47 | 19 | 0 |
+| AGAT | 0 | 0 | 19 | 59 |
 
 A rejected result means the configured tool reported at least one rule, including
 QC warnings. An expected rejection passes the regression check only when its

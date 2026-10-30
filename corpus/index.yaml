@@ -10,7 +10,7 @@ tiers:
     in the wild. See the validity field, which says whether the result is invalid GFF3 or valid and merely
     refused
   not located: known to exist, no public URL found; recorded so the gap stays visible
-entry_count: 100
+entry_count: 108
 entries:
 - id: nmdc-cath-funfam
   label: CATH FunFams (Functional Families) Annotation GFF
@@ -2078,8 +2078,152 @@ entries:
   why_not_vendored: no license or terms of use stated; small enough to vendor if SMC agrees
   notes: "Five files, each from https://smc.jgi.doe.gov/v2/bgc/annotation/<id>, fetched without a login: antiSMASH v7.0.0beta1 12203038 (48,373 bytes, 89 feature rows, md5 c8718e0aede2bb5378c9d2b697a9b871); InterProScan 12203044 (58,781 bytes, 250 rows, md5 d600afd067f3307512c37e0fdb83d054); CDDSearch 12203050 (1,355 bytes, 9 rows, md5 30b80113f783b8c32a53eaa07912441f); EMERALD v0.2.4.1 12203043 (365 bytes, 2 rows incl. nearest MIBiG BGC0000194, md5 f188adcb8f443b47c9058ff713d7cee4); GenBank 12203052 (162 bytes, the source region row only, md5 2d68775ea8e2cd77671cb9cc8944d980). antiSMASH's proto_core ends at 5,532,424, the end of SCO5088 in derived-actinorhodin-excerpt."
   retrieved: '2026-10-09'
+- id: refseq-viral-nc-067194-1
+  label: "NCBI RefSeq GFF3, Carjivirus communis (metagenome-assembled), complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_067194.1_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_067194.1
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 40225
+  md5: 7d940187128aebda168a704471878a93
+  sha256: 8f1fe80f6b6aaf28324602dcf917cfc1c22aac1bff7dbf56de1d05aec0e5934b
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_067194.1&retmode=text
+  origin_record: NC_067194.1
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "circular DNA, 97,065 bp, assembled from a human fecal metagenome (`metagenomic=true`). Gene and CDS OIE19_gp01 end at 97,165, past the sequence length, the GFF3 way of writing an origin-crossing feature. CDS YP_010509440.1 is two rows with one ID. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-001497-2
+  label: "NCBI RefSeq GFF3, Cauliflower mosaic virus, complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_001497.2_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_001497.2
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 3816
+  md5: 6fb5f311c02c6b21b217a65c189cb40a
+  sha256: 501da196ff1a4f0270ad9191cce10743fbc785335574cf881627805c711ff473
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_001497.2&retmode=text
+  origin_record: NC_001497.2
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "circular DNA, 8,024 bp. CDS NP_597788.1 is partial at its start (`partial=true;start_range=.,2`). Two sequence_feature rows mark single-stranded gaps, and one modified_DNA_base row. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-021798-1
+  label: "NCBI RefSeq GFF3, Cellulophaga phage phi17:2, complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_021798.1_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_021798.1
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 100889
+  md5: d6181af99357e78dca3ab4d3a3775e43
+  sha256: 118d793bc949b8bff464daaead26d6164b024bf6eeaa8dc16c622fdd08375d39
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_021798.1&retmode=text
+  origin_record: NC_021798.1
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "circular DNA, 145,343 bp. 22 tRNA genes with exon children and one pseudogenic_tRNA. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-014649-1
+  label: "NCBI RefSeq GFF3, Acanthamoeba polyphaga mimivirus, complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_014649.1_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_014649.1
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 1301423
+  md5: bf738642c916bc905a73ebaf7152bfe6
+  sha256: 312564505aa0ed80cd12e7fe4976104c38153fa8b18b91febfb065209483c8b8
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_014649.1&retmode=text
+  origin_record: NC_014649.1
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "linear DNA, 1,181,549 bp. 1,094 promoter, 732 stem_loop and 1,086 UTR rows. Three spliced CDS span two to four rows each with one ID. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-001417-2
+  label: "NCBI RefSeq GFF3, phage MS2 genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_001417.2_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_001417.2
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 2961
+  md5: 60665e37a536d173ca3142bd30492bd7
+  sha256: e617dc472015e0e180927e49cc615f85658eefdcea262df701ce64078e79a718
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_001417.2&retmode=text
+  origin_record: NC_001417.2
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "linear single-stranded RNA genome (`mol_type=genomic RNA`), 3,569 bp. Overlapping CDS and two sequence_difference rows. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-003291-2
+  label: "NCBI RefSeq GFF3, Bacteriophage PSA complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_003291.2_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_003291.2
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 28319
+  md5: 459f6217809f136dcce9122fb5001cc7
+  sha256: e56f8d85bd479e02ec49b55560ef6ec26fcefd89abc1d680368888a8ee248b41
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_003291.2&retmode=text
+  origin_record: NC_003291.2
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "linear DNA, 37,618 bp. Two CDS with `Note=ribosomal slippage`, each written as two rows with one ID, the second row at phase 1. A sequence_feature marks the cohesive end. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-001421-2
+  label: "NCBI RefSeq GFF3, Enterobacteria phage PRD1, complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_001421.2_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_001421.2
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 12911
+  md5: 3b2cfc81e21222ecc3ff887822fb89c0
+  sha256: 83819caff39bd86743a51ae33832d25d83f2b92be28089442c44fce434ad48de
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_001421.2&retmode=text
+  origin_record: NC_001421.2
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "linear DNA, 14,927 bp, 31 genes and CDS, many overlapping. Byte-identical to the copy @simroux shared."
+- id: refseq-viral-nc-001890-1
+  label: "NCBI RefSeq GFF3, Enterobacteria phage Qbeta, complete genome"
+  tier: vendored
+  path: corpus/sources/ncbi-refseq/NC_001890.1_2026-10-30.gff3
+  format: GFF3
+  gff_spec_version: '1.21'
+  source: NCBI RefSeq NC_001890.1
+  producer: NCBI annotwriter
+  producer_kind: reference annotation
+  bytes: 3090
+  md5: f0700d338b45f01a823d21422e19f499
+  sha256: d2cebe06fdf3f5db1d2c35a12867ccc90dff0c9bea48564fda62f8037cf6623c
+  origin_url: https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=NC_001890.1&retmode=text
+  origin_record: NC_001890.1
+  selection: one of nine NCBI virus GFF3 files chosen by @simroux to show unusual viral genome features (https://github.com/turbomam/feature-table-corpus/issues/179)
+  retrieved: '2026-10-30'
+  license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  notes: "linear single-stranded RNA genome, 4,215 bp. CDS NP_046750.1 is the readthrough product of the coat protein CDS and carries `transl_except=(pos:1742..1744,aa:Trp)`. Byte-identical to the copy @simroux shared."
 tier_counts:
-  vendored: 58
+  vendored: 66
   linked: 24
   restricted: 5
   not located: 1
