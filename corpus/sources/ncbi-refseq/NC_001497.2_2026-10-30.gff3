@@ -1,0 +1,24 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+##sequence-region NC_001497.2 1 8024
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=10641
+NC_001497.2	RefSeq	region	1	8024	.	+	.	ID=NC_001497.2:1..8024;Dbxref=taxon:10641;Is_circular=true;gbkey=Src;genome=genomic;mol_type=genomic DNA
+NC_001497.2	RefSeq	gene	2	304	.	+	.	ID=gene-CaMVgp1;Dbxref=GeneID:1489547;Name=CaMVgp1;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp1;partial=true;start_range=.,2
+NC_001497.2	RefSeq	CDS	2	304	.	+	0	ID=cds-NP_597788.1;Parent=gene-CaMVgp1;Dbxref=GenBank:NP_597788.1,GeneID:1489547;Name=NP_597788.1;gbkey=CDS;locus_tag=CaMVgp1;partial=true;product=hypothetical protein;protein_id=NP_597788.1;start_range=.,2
+NC_001497.2	RefSeq	gene	365	1348	.	+	.	ID=gene-CaMVgp2;Dbxref=GeneID:1489544;Name=CaMVgp2;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp2
+NC_001497.2	RefSeq	CDS	365	1348	.	+	0	ID=cds-NP_056724.1;Parent=gene-CaMVgp2;Dbxref=GOA:P03545,InterPro:IPR001022,UniProtKB/Swiss-Prot:P03545,GenBank:NP_056724.1,GeneID:1489544;Name=NP_056724.1;gbkey=CDS;locus_tag=CaMVgp2;product=Movement protein;protein_id=NP_056724.1
+NC_001497.2	RefSeq	gene	1350	1829	.	+	.	ID=gene-CaMVgp3;Dbxref=GeneID:1489546;Name=CaMVgp3;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp3
+NC_001497.2	RefSeq	CDS	1350	1829	.	+	0	ID=cds-NP_056725.1;Parent=gene-CaMVgp3;Dbxref=GOA:P03548,InterPro:IPR004917,InterPro:IPR010989,UniProtKB/Swiss-Prot:P03548,GenBank:NP_056725.1,GeneID:1489546;Name=NP_056725.1;gbkey=CDS;locus_tag=CaMVgp3;product=Aphid transmission protein;protein_id=NP_056725.1
+NC_001497.2	RefSeq	sequence_feature	1629	1629	.	+	.	ID=id-CaMVgp3;Dbxref=GeneID:1489546;Note=single-stranded gap (gap3);gbkey=misc_feature;locus_tag=CaMVgp3
+NC_001497.2	RefSeq	gene	1831	2220	.	+	.	ID=gene-CaMVgp4;Dbxref=GeneID:1489543;Name=CaMVgp4;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp4
+NC_001497.2	RefSeq	CDS	1831	2220	.	+	0	ID=cds-NP_056726.1;Parent=gene-CaMVgp4;Dbxref=GOA:P03551,InterPro:IPR004986,UniProtKB/Swiss-Prot:P03551,GenBank:NP_056726.1,GeneID:1489543;Name=NP_056726.1;gbkey=CDS;locus_tag=CaMVgp4;product=DNA-binding protein;protein_id=NP_056726.1
+NC_001497.2	RefSeq	gene	2202	3671	.	+	.	ID=gene-CaMVgp5;Dbxref=GeneID:1489541;Name=CaMVgp5;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp5
+NC_001497.2	RefSeq	CDS	2202	3671	.	+	0	ID=cds-NP_056727.1;Parent=gene-CaMVgp5;Dbxref=GOA:P03542,InterPro:IPR001878,UniProtKB/Swiss-Prot:P03542,GenBank:NP_056727.1,GeneID:1489541;Name=NP_056727.1;gbkey=CDS;locus_tag=CaMVgp5;product=capsid protein;protein_id=NP_056727.1
+NC_001497.2	RefSeq	gene	3634	5673	.	+	.	ID=gene-CaMVgp6;Dbxref=GeneID:1489542;Name=CaMVgp6;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp6
+NC_001497.2	RefSeq	CDS	3634	5673	.	+	0	ID=cds-NP_056728.1;Parent=gene-CaMVgp6;Dbxref=GOA:P03554,InterPro:IPR000477,InterPro:IPR000588,InterPro:IPR001969,InterPro:IPR009007,UniProtKB/Swiss-Prot:P03554,GenBank:NP_056728.1,GeneID:1489542;Name=NP_056728.1;gbkey=CDS;locus_tag=CaMVgp6;product=reverse transcriptase;protein_id=NP_056728.1
+NC_001497.2	RefSeq	sequence_feature	4211	4211	.	+	.	ID=id-CaMVgp6;Dbxref=GeneID:1489542;Note=single-stranded gap (gap2);gbkey=misc_feature;locus_tag=CaMVgp6
+NC_001497.2	RefSeq	gene	5777	7339	.	+	.	ID=gene-CaMVgp7;Dbxref=GeneID:1489545;Name=CaMVgp7;gbkey=Gene;gene_biotype=protein_coding;locus_tag=CaMVgp7
+NC_001497.2	RefSeq	CDS	5777	7339	.	+	0	ID=cds-NP_056729.1;Parent=gene-CaMVgp7;Dbxref=GOA:P03559,InterPro:IPR002609,UniProtKB/Swiss-Prot:P03559,GenBank:NP_056729.1,GeneID:1489545;Name=NP_056729.1;gbkey=CDS;locus_tag=CaMVgp7;product=inclusion body matrix protein;protein_id=NP_056729.1
+NC_001497.2	RefSeq	modified_DNA_base	6659	6659	.	-	.	ID=id-NC_001497.2:6659..6659;Note=modified D-C residue;gbkey=modified_base;mod_base=OTHER
+

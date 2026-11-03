@@ -24,6 +24,8 @@ validation:
       Ema0003: The reversed-coordinate control is reported outside its parent boundaries.
       Ema0005: The RefSeq chromosome contains pseudogene children that this QC rule rejects.
       Emr0003: The duplicate-ID control is reported as a duplicate.
+      Esf0001: The Cellulophaga phage phi17:2 RefSeq GFF3 has a pseudogenic_tRNA, which QC suggests
+        changing to pseudogene.
       Esf0003: QC reports any strand other than + or - as missing. That covers . in the protein-relative
         Pfam hits and unstranded annotation families, and the numeric 1 and -1 of the IMG pipeline 4.14.0
         Bacillus GFF.
@@ -303,3 +305,29 @@ validation:
       genometools: []
       gff3toolkit:
       - Esf0036
+    refseq-viral-nc-067194-1:
+      genometools: []
+      gff3toolkit: []
+    refseq-viral-nc-001497-2:
+      genometools: []
+      gff3toolkit:
+      - Esf0036
+    refseq-viral-nc-021798-1:
+      genometools: []
+      gff3toolkit:
+      - Esf0001
+    refseq-viral-nc-014649-1:
+      genometools: []
+      gff3toolkit: []
+    refseq-viral-nc-001417-2:
+      genometools: []
+      gff3toolkit: []
+    refseq-viral-nc-003291-2:
+      genometools: []
+      gff3toolkit: []
+    refseq-viral-nc-001421-2:
+      genometools: []
+      gff3toolkit: []
+    refseq-viral-nc-001890-1:
+      genometools: []
+      gff3toolkit: []

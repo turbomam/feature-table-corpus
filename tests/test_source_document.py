@@ -38,7 +38,7 @@ class SourceDocumentTests(unittest.TestCase):
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff"))
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff3"))
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gtf"))
-        self.assertEqual(len(paths), 21)
+        self.assertEqual(len(paths), 29)
         for path in paths:
             with self.subTest(path=path.name):
                 original = path.read_bytes()
