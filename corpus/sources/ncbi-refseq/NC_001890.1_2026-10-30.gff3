@@ -1,0 +1,15 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+##sequence-region NC_001890.1 1 4215
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2789016
+NC_001890.1	RefSeq	region	1	4215	.	+	.	ID=NC_001890.1:1..4215;Dbxref=taxon:2789016;gbkey=Src;genome=genomic;mol_type=genomic RNA;nat-host=Escherichia coli;old-name=Enterobacteriophage Qbeta;serogroup=III;strain=Enterobacteria phage MX1
+NC_001890.1	RefSeq	gene	56	1321	.	+	.	ID=gene-MX1p1;Dbxref=GeneID:1261501;Name=mat;gbkey=Gene;gene=mat;gene_biotype=protein_coding;locus_tag=MX1p1
+NC_001890.1	RefSeq	CDS	56	1321	.	+	0	ID=cds-NP_046749.1;Parent=gene-MX1p1;Dbxref=GenBank:NP_046749.1,GeneID:1261501;Name=NP_046749.1;Note=Icosahedral Leviviridae virions contain 180 molecules of the coat protein and a single copy of the maturation protein%2C bound to the ssRNA genome. Binding of the maturation protein to genomic RNA may be the first step in assembly. In addition%2C the maturation protein in virions binds to the sides of host pili. Upon binding%2C it is cleaved and the RNA genome is released. Naked complexes of maturation protein and genomic RNA are infectious. other names: A protein.;gbkey=CDS;gene=mat;locus_tag=MX1p1;product=head maturation protease;protein_id=NP_046749.1;transl_table=11
+NC_001890.1	RefSeq	gene	1343	2332	.	+	.	ID=gene-MX1p2;Dbxref=GeneID:1261503;Name=MX1p2;gbkey=Gene;gene_biotype=protein_coding;locus_tag=MX1p2
+NC_001890.1	RefSeq	CDS	1343	2332	.	+	0	ID=cds-NP_046750.1;Parent=gene-MX1p2;Dbxref=GenBank:NP_046750.1,GeneID:1261503;Name=NP_046750.1;Note=produced by translational readthrough of the leaky stop codon of the major coat protein cistron%3B 5%25 chance that stop codon is read as tryptophan;gbkey=CDS;locus_tag=MX1p2;product=minor head protein;protein_id=NP_046750.1;transl_except=(pos:1742..1744%2Caa:Trp);transl_table=11
+NC_001890.1	RefSeq	gene	1343	1744	.	+	.	ID=gene-MX1p3;Dbxref=GeneID:1261502;Name=MX1p3;gbkey=Gene;gene_biotype=protein_coding;locus_tag=MX1p3
+NC_001890.1	RefSeq	CDS	1343	1744	.	+	0	ID=cds-NP_046751.1;Parent=gene-MX1p3;Dbxref=GenBank:NP_046751.1,GeneID:1261502;Name=NP_046751.1;gbkey=CDS;locus_tag=MX1p3;product=minor head protein;protein_id=NP_046751.1;transl_table=11
+NC_001890.1	RefSeq	gene	2351	4111	.	+	.	ID=gene-MX1p4;Dbxref=GeneID:1261500;Name=rep;gbkey=Gene;gene=rep;gene_biotype=protein_coding;locus_tag=MX1p4
+NC_001890.1	RefSeq	CDS	2351	4111	.	+	0	ID=cds-NP_046752.1;Parent=gene-MX1p4;Dbxref=GenBank:NP_046752.1,GeneID:1261500;Name=NP_046752.1;Note=The replicase holoenzyme of Leviviridae consists of the phage encoded replicase (the beta subunit)%2C as well as three host encoded proteins (alpha subunit: ribosomal protein S1%3B gamma subunit: EF-Tu%3B delta subunit: EF-Ts). The ribosomal protein S1 mediates binding of the holoenzyme to internal sites in the RNA%2C which allows the replicase to compete with translation for genomic RNA%2C since S1 also mediates the binding of the ribosome to the coat protein start site.;gbkey=CDS;gene=rep;locus_tag=MX1p4;product=RNA replicase beta subunit;protein_id=NP_046752.1;transl_table=11
+

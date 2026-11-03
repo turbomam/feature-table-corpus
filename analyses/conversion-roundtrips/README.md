@@ -17,6 +17,14 @@ See the [profile contract and worked commands](../../docs/conversion-profiles.md
 | RefSeq lambda GFF3, 308 rows | Supported | Exact bytes | Same fields/relationships; escape spelling may normalize |
 | BLAT BED12, 19 rows / 23 blocks | Supported | Exact bytes | Same coordinates, ordered blocks and optional fields |
 | RefSeq phiX174 GFF3 | Unsupported by linear adapter | Not attempted here | Circular-reference semantics rejected |
+| RefSeq phage MS2 GFF3, RNA genome | Supported | Exact bytes | Same fields/relationships; escape spelling may normalize |
+| RefSeq phage PRD1 GFF3 | Supported | Exact bytes | Same fields/relationships; escape spelling may normalize |
+| RefSeq phage Qbeta GFF3, RNA genome | Supported | Exact bytes | Same fields/relationships; the readthrough CDS's `transl_except` is kept as an attribute |
+| RefSeq Carjivirus communis GFF3, circular | Unsupported by linear adapter | Not attempted here | Circular-reference semantics rejected |
+| RefSeq cauliflower mosaic virus GFF3, circular | Unsupported by linear adapter | Not attempted here | Circular-reference semantics rejected |
+| RefSeq Cellulophaga phage phi17:2 GFF3, circular | Unsupported by linear adapter | Not attempted here | Circular-reference semantics rejected |
+| RefSeq mimivirus GFF3 | Unsupported | Not attempted here | Spliced CDSs, one ID on several rows, rejected as duplicate feature IDs |
+| RefSeq phage PSA GFF3 | Unsupported | Not attempted here | Ribosomal-slippage CDSs, one ID on two rows, rejected as duplicate feature IDs |
 | RefSeq lambda GTF | No conversion adapter | Existing source-reader replay is separate | Not attempted |
 | INSDC plant records, 38 features | Supported by bounded location profile | Exact bytes | Same joined/partial locations and repeated qualifiers |
 | INSDC phiX174, 32 features | Supported by bounded location profile | Exact bytes | Same circular topology and six origin-crossing joins |
