@@ -91,3 +91,72 @@ cases:
     reference_context: synthetic:c
     expected: unsupported
     expected_code: empty-interval
+  - id: refseq-viral-carjivirus
+    path: corpus/sources/ncbi-refseq/NC_067194.1_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_067194.1
+    expected: unsupported
+    expected_code: circular-location
+  - id: refseq-viral-cauliflower-mosaic
+    path: corpus/sources/ncbi-refseq/NC_001497.2_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_001497.2
+    expected: unsupported
+    expected_code: circular-location
+  - id: refseq-viral-cellulophaga-phi17-2
+    path: corpus/sources/ncbi-refseq/NC_021798.1_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_021798.1
+    expected: unsupported
+    expected_code: circular-location
+  - id: refseq-viral-mimivirus
+    path: corpus/sources/ncbi-refseq/NC_014649.1_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_014649.1
+    expected: unsupported
+    expected_code: dataset-invalid
+  - id: refseq-viral-ms2
+    path: corpus/sources/ncbi-refseq/NC_001417.2_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_001417.2
+    expected: supported
+  - id: refseq-viral-psa
+    path: corpus/sources/ncbi-refseq/NC_003291.2_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_003291.2
+    expected: unsupported
+    expected_code: dataset-invalid
+  - id: refseq-viral-prd1
+    path: corpus/sources/ncbi-refseq/NC_001421.2_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_001421.2
+    expected: supported
+  - id: refseq-viral-qbeta
+    path: corpus/sources/ncbi-refseq/NC_001890.1_2026-10-30.gff3
+    case_kind: observed
+    format: gff3
+    profile: gff3-contig/4.0.0
+    metadata_profile: ncbi
+    reference_context: refseq:NC_001890.1
+    expected: supported

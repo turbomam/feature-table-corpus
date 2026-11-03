@@ -323,6 +323,169 @@
         "code": "empty-interval",
         "message": "line-2: zero-length or reversed BED intervals are outside this profile"
       }
+    },
+    {
+      "id": "refseq-viral-carjivirus",
+      "path": "corpus/sources/ncbi-refseq/NC_067194.1_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "8f1fe80f6b6aaf28324602dcf917cfc1c22aac1bff7dbf56de1d05aec0e5934b",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "circular-location",
+        "message": "line-6: circular reference semantics require a different location profile"
+      }
+    },
+    {
+      "id": "refseq-viral-cauliflower-mosaic",
+      "path": "corpus/sources/ncbi-refseq/NC_001497.2_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "501da196ff1a4f0270ad9191cce10743fbc785335574cf881627805c711ff473",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "circular-location",
+        "message": "line-6: circular reference semantics require a different location profile"
+      }
+    },
+    {
+      "id": "refseq-viral-cellulophaga-phi17-2",
+      "path": "corpus/sources/ncbi-refseq/NC_021798.1_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "118d793bc949b8bff464daaead26d6164b024bf6eeaa8dc16c622fdd08375d39",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "circular-location",
+        "message": "line-6: circular reference semantics require a different location profile"
+      }
+    },
+    {
+      "id": "refseq-viral-mimivirus",
+      "path": "corpus/sources/ncbi-refseq/NC_014649.1_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "312564505aa0ed80cd12e7fe4976104c38153fa8b18b91febfb065209483c8b8",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "dataset-invalid",
+        "message": "features: duplicate feature_id 'cds-YP_003986740.1'; features: duplicate feature_id 'cds-YP_003986740.1'; features: duplicate feature_id 'cds-YP_003986740.1'; features: duplicate feature_id 'cds-YP_003986929.1'; features: duplicate feature_id 'cds-YP_003986929.1'; features: duplicate feature_id 'cds-YP_003987013.1'"
+      }
+    },
+    {
+      "id": "refseq-viral-ms2",
+      "path": "corpus/sources/ncbi-refseq/NC_001417.2_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "e617dc472015e0e180927e49cc615f85658eefdcea262df701ce64078e79a718",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 9,
+          "changed_records": 7
+        }
+      ],
+      "source_feature_rows": 11,
+      "model_features": 11,
+      "nonfeature_records": 6,
+      "reconstructed_sha256": "afc88a2ac2a72e05f233efac73e8a5665d7fb638e0cb0da5c43bbf921e21cf9f",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "refseq-viral-psa",
+      "path": "corpus/sources/ncbi-refseq/NC_003291.2_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "e56f8d85bd479e02ec49b55560ef6ec26fcefd89abc1d680368888a8ee248b41",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "unsupported",
+      "source_byte_recovery": "not-attempted",
+      "modeled_field_reconstruction": "not-attempted",
+      "diagnostic": {
+        "code": "dataset-invalid",
+        "message": "features: duplicate feature_id 'cds-NP_821152.1'; features: duplicate feature_id 'cds-NP_821153.1'"
+      }
+    },
+    {
+      "id": "refseq-viral-prd1",
+      "path": "corpus/sources/ncbi-refseq/NC_001421.2_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "83819caff39bd86743a51ae33832d25d83f2b92be28089442c44fce434ad48de",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 9,
+          "changed_records": 25
+        }
+      ],
+      "source_feature_rows": 63,
+      "model_features": 63,
+      "nonfeature_records": 6,
+      "reconstructed_sha256": "af9f1f4522d67904ee715a9ea79421355f2087d55c6e0720882ed09bbd7fad1b",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
+    },
+    {
+      "id": "refseq-viral-qbeta",
+      "path": "corpus/sources/ncbi-refseq/NC_001890.1_2026-10-30.gff3",
+      "format": "gff3",
+      "profile": "gff3-contig/4.0.0",
+      "source_sha256": "d2cebe06fdf3f5db1d2c35a12867ccc90dff0c9bea48564fda62f8037cf6623c",
+      "case_kind": "observed",
+      "losses": [],
+      "edited_export": "unsupported",
+      "status": "supported",
+      "source_byte_recovery": "exact-bytes",
+      "modeled_field_reconstruction": "preserved-interpreted-meaning",
+      "reconstructed_bytes_identical": false,
+      "normalization": "documented lexical normalization",
+      "normalized_columns": [
+        {
+          "column": 9,
+          "changed_records": 5
+        }
+      ],
+      "source_feature_rows": 9,
+      "model_features": 9,
+      "nonfeature_records": 6,
+      "reconstructed_sha256": "8ce530917872e505da1518a484eebf2d56fdc6264b095cb0e9d34bb07eca00b3",
+      "validation": "profile constraints and closed Dataset checks passed; not a full source-format validator"
     }
   ]
 }
