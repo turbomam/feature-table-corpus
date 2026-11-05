@@ -11,6 +11,7 @@ import unittest
 from unittest.mock import patch
 
 import duckdb
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -74,6 +75,26 @@ class ConversionTests(unittest.TestCase):
         b = self.assert_roundtrip(content)
         self.assertEqual(len(b["dataset"]["features"]), 1)
         self.assertEqual(export_source(b, mode="exact"), content)
+
+    def test_profile_text_after_a_gff_directive_is_not_a_yaml_comment(self):
+        # An unquoted " ##gff-version" in a profile value starts a YAML comment, which
+        # silently drops the rest of the sentence from the loaded profile.
+        for path in sorted((ROOT / "model/profiles").glob("*.yaml")):
+            strings = []
+            stack = [yaml.safe_load(path.read_text())]
+            while stack:
+                value = stack.pop()
+                if isinstance(value, dict):
+                    stack.extend(value.values())
+                elif isinstance(value, list):
+                    stack.extend(value)
+                elif isinstance(value, str):
+                    strings.append(value)
+            for line in path.read_text().splitlines():
+                if " ##" in line:
+                    tail = line.split(" ##", 1)[1].rstrip('"')
+                    with self.subTest(path=path.name, line=line):
+                        self.assertTrue(any(tail in s for s in strings))
 
     def test_real_bed_blocks_keep_coordinates_order_and_display_fields(self):
         b = self.assert_roundtrip(BED_SOURCE.read_bytes(), BED)

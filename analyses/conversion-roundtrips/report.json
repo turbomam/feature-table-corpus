@@ -15,7 +15,7 @@
     },
     "gff3-contig/4.0.0": {
       "path": "model/profiles/gff3-contig.yaml",
-      "sha256": "3fc65b6ebf35b8d4b18c266414b9332854a909941e0bc75fb4a1455d5c616c4c"
+      "sha256": "c19c151eb6e8cd9a866bf0a6a4f906b7ca2c264ceb8766855fe0bf1c874de1a9"
     },
     "insdc-locations/1.0.0": {
       "path": "model/profiles/insdc-locations.yaml",
