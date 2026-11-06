@@ -1,0 +1,515 @@
+record_id,line_number,raw_text,kind,scope,sequence_id,metadata_type,metadata,feature_columns
+line-8,8,"Mito	R64-1-1	chromosome	1	85779	.	.	.	ID=chromosome:Mito;Alias=AJ011856.1;Is_circular=true
+",feature,sequence,Mito,,,"[Mito, R64-1-1, chromosome, 1, 85779, ., ., ., 'ID=chromosome:Mito;Alias=AJ011856.1;Is_circular=true']"
+line-10,10,"Mito	sgd	ncRNA_gene	731	802	.	+	.	ID=gene:tP(UGG)Q;biotype=tRNA;description=Mitochondrial proline tRNA (tRNA-Pro) [Source:SGD%3BAcc:S000007328];gene_id=tP(UGG)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 731, 802, ., +, ., 'ID=gene:tP(UGG)Q;biotype=tRNA;description=Mitochondrial proline tRNA (tRNA-Pro) [Source:SGD%3BAcc:S000007328];gene_id=tP(UGG)Q;logic_name=sgd']"
+line-11,11,"Mito	sgd	tRNA	731	802	.	+	.	ID=transcript:tP(UGG)Q_tRNA;Parent=gene:tP(UGG)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tP(UGG)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 731, 802, ., +, ., 'ID=transcript:tP(UGG)Q_tRNA;Parent=gene:tP(UGG)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tP(UGG)Q_tRNA']"
+line-12,12,"Mito	sgd	exon	731	802	.	+	.	Parent=transcript:tP(UGG)Q_tRNA;Name=tP(UGG)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tP(UGG)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 731, 802, ., +, ., 'Parent=transcript:tP(UGG)Q_tRNA;Name=tP(UGG)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tP(UGG)Q_tRNA-E1;rank=1']"
+line-14,14,"Mito	sgd	gene	3952	4338	.	+	.	ID=gene:Q0010;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a protein%2C based on available experimental and comparative sequence data%3B partially overlaps the dubious ORF Q0017 [Source:SGD%3BAcc:S000007257];gene_id=Q0010;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 3952, 4338, ., +, ., 'ID=gene:Q0010;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a protein%2C based on available experimental and comparative sequence data%3B partially overlaps the dubious ORF Q0017 [Source:SGD%3BAcc:S000007257];gene_id=Q0010;logic_name=sgd']"
+line-15,15,"Mito	sgd	mRNA	3952	4338	.	+	.	ID=transcript:Q0010_mRNA;Parent=gene:Q0010;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0010_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 3952, 4338, ., +, ., 'ID=transcript:Q0010_mRNA;Parent=gene:Q0010;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0010_mRNA']"
+line-16,16,"Mito	sgd	exon	3952	4338	.	+	.	Parent=transcript:Q0010_mRNA;Name=Q0010_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0010_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 3952, 4338, ., +, ., 'Parent=transcript:Q0010_mRNA;Name=Q0010_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0010_mRNA-E1;rank=1']"
+line-17,17,"Mito	sgd	CDS	3952	4338	.	+	0	ID=CDS:Q0010;Parent=transcript:Q0010_mRNA;protein_id=Q0010
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 3952, 4338, ., +, 0, 'ID=CDS:Q0010;Parent=transcript:Q0010_mRNA;protein_id=Q0010']"
+line-19,19,"Mito	sgd	gene	4254	4415	.	+	.	ID=gene:Q0017;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a protein%2C based on available experimental and comparative sequence data%3B partially overlaps the dubious ORF Q0010 [Source:SGD%3BAcc:S000007258];gene_id=Q0017;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 4254, 4415, ., +, ., 'ID=gene:Q0017;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a protein%2C based on available experimental and comparative sequence data%3B partially overlaps the dubious ORF Q0010 [Source:SGD%3BAcc:S000007258];gene_id=Q0017;logic_name=sgd']"
+line-20,20,"Mito	sgd	mRNA	4254	4415	.	+	.	ID=transcript:Q0017_mRNA;Parent=gene:Q0017;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0017_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 4254, 4415, ., +, ., 'ID=transcript:Q0017_mRNA;Parent=gene:Q0017;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0017_mRNA']"
+line-21,21,"Mito	sgd	exon	4254	4415	.	+	.	Parent=transcript:Q0017_mRNA;Name=Q0017_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0017_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 4254, 4415, ., +, ., 'Parent=transcript:Q0017_mRNA;Name=Q0017_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0017_mRNA-E1;rank=1']"
+line-22,22,"Mito	sgd	CDS	4254	4415	.	+	0	ID=CDS:Q0017;Parent=transcript:Q0017_mRNA;protein_id=Q0017
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 4254, 4415, ., +, 0, 'ID=CDS:Q0017;Parent=transcript:Q0017_mRNA;protein_id=Q0017']"
+line-24,24,"Mito	sgd	ncRNA_gene	6546	8194	.	+	.	ID=gene:Q0020;Name=15S_RRNA;biotype=rRNA;description=Ribosomal RNA of the small mitochondrial ribosomal subunit%3B MSU1 allele suppresses ochre stop mutations in mitochondrial protein-coding genes [Source:SGD%3BAcc:S000007287];gene_id=Q0020;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 6546, 8194, ., +, ., 'ID=gene:Q0020;Name=15S_RRNA;biotype=rRNA;description=Ribosomal RNA of the small mitochondrial ribosomal subunit%3B MSU1 allele suppresses ochre stop mutations in mitochondrial protein-coding genes [Source:SGD%3BAcc:S000007287];gene_id=Q0020;logic_name=sgd']"
+line-25,25,"Mito	sgd	rRNA	6546	8194	.	+	.	ID=transcript:Q0020_rRNA;Parent=gene:Q0020;biotype=rRNA;tag=Ensembl_canonical;transcript_id=Q0020_rRNA
+",feature,sequence,Mito,,,"[Mito, sgd, rRNA, 6546, 8194, ., +, ., 'ID=transcript:Q0020_rRNA;Parent=gene:Q0020;biotype=rRNA;tag=Ensembl_canonical;transcript_id=Q0020_rRNA']"
+line-26,26,"Mito	sgd	exon	6546	8194	.	+	.	Parent=transcript:Q0020_rRNA;Name=Q0020_rRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0020_rRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 6546, 8194, ., +, ., 'Parent=transcript:Q0020_rRNA;Name=Q0020_rRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0020_rRNA-E1;rank=1']"
+line-28,28,"Mito	sgd	ncRNA_gene	9374	9447	.	+	.	ID=gene:tW(UCA)Q;biotype=tRNA;description=Mitochondrial tRNA%2C annotated as tryptophanyl tRNA (tRNA-Trp)%3B predicted by tRNAscan-SE analysis to have specificity for selenocysteine [Source:SGD%3BAcc:S000007337];gene_id=tW(UCA)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 9374, 9447, ., +, ., 'ID=gene:tW(UCA)Q;biotype=tRNA;description=Mitochondrial tRNA%2C annotated as tryptophanyl tRNA (tRNA-Trp)%3B predicted by tRNAscan-SE analysis to have specificity for selenocysteine [Source:SGD%3BAcc:S000007337];gene_id=tW(UCA)Q;logic_name=sgd']"
+line-29,29,"Mito	sgd	tRNA	9374	9447	.	+	.	ID=transcript:tW(UCA)Q_tRNA;Parent=gene:tW(UCA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tW(UCA)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 9374, 9447, ., +, ., 'ID=transcript:tW(UCA)Q_tRNA;Parent=gene:tW(UCA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tW(UCA)Q_tRNA']"
+line-30,30,"Mito	sgd	exon	9374	9447	.	+	.	Parent=transcript:tW(UCA)Q_tRNA;Name=tW(UCA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tW(UCA)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 9374, 9447, ., +, ., 'Parent=transcript:tW(UCA)Q_tRNA;Name=tW(UCA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tW(UCA)Q_tRNA-E1;rank=1']"
+line-32,32,"Mito	sgd	gene	11667	11957	.	+	.	ID=gene:Q0032;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007259];gene_id=Q0032;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 11667, 11957, ., +, ., 'ID=gene:Q0032;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007259];gene_id=Q0032;logic_name=sgd']"
+line-33,33,"Mito	sgd	mRNA	11667	11957	.	+	.	ID=transcript:Q0032_mRNA;Parent=gene:Q0032;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0032_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 11667, 11957, ., +, ., 'ID=transcript:Q0032_mRNA;Parent=gene:Q0032;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0032_mRNA']"
+line-34,34,"Mito	sgd	exon	11667	11957	.	+	.	Parent=transcript:Q0032_mRNA;Name=Q0032_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0032_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 11667, 11957, ., +, ., 'Parent=transcript:Q0032_mRNA;Name=Q0032_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0032_mRNA-E1;rank=1']"
+line-35,35,"Mito	sgd	CDS	11667	11957	.	+	0	ID=CDS:Q0032;Parent=transcript:Q0032_mRNA;protein_id=Q0032
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 11667, 11957, ., +, 0, 'ID=CDS:Q0032;Parent=transcript:Q0032_mRNA;protein_id=Q0032']"
+line-37,37,"Mito	sgd	gene	13818	16322	.	+	.	ID=gene:Q0050;Name=AI1;biotype=protein_coding;description=Reverse transcriptase required for splicing of the COX1 pre-mRNA%3B encoded by a mobile group II intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007261];gene_id=Q0050;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 13818, 16322, ., +, ., 'ID=gene:Q0050;Name=AI1;biotype=protein_coding;description=Reverse transcriptase required for splicing of the COX1 pre-mRNA%3B encoded by a mobile group II intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007261];gene_id=Q0050;logic_name=sgd']"
+line-38,38,"Mito	sgd	mRNA	13818	16322	.	+	.	ID=transcript:Q0050_mRNA;Parent=gene:Q0050;Name=AI1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0050_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 13818, 16322, ., +, ., 'ID=transcript:Q0050_mRNA;Parent=gene:Q0050;Name=AI1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0050_mRNA']"
+line-39,39,"Mito	sgd	exon	13818	16322	.	+	.	Parent=transcript:Q0050_mRNA;Name=Q0050_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0050_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 13818, 16322, ., +, ., 'Parent=transcript:Q0050_mRNA;Name=Q0050_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0050_mRNA-E1;rank=1']"
+line-40,40,"Mito	sgd	CDS	13818	16322	.	+	0	ID=CDS:Q0050;Parent=transcript:Q0050_mRNA;protein_id=Q0050
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 13818, 16322, ., +, 0, 'ID=CDS:Q0050;Parent=transcript:Q0050_mRNA;protein_id=Q0050']"
+line-42,42,"Mito	sgd	gene	13818	18830	.	+	.	ID=gene:Q0055;Name=AI2;biotype=protein_coding;description=Reverse transcriptase required for splicing of the COX1 pre-mRNA%3B encoded by a mobile group II intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007262];gene_id=Q0055;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 13818, 18830, ., +, ., 'ID=gene:Q0055;Name=AI2;biotype=protein_coding;description=Reverse transcriptase required for splicing of the COX1 pre-mRNA%3B encoded by a mobile group II intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007262];gene_id=Q0055;logic_name=sgd']"
+line-43,43,"Mito	sgd	mRNA	13818	18830	.	+	.	ID=transcript:Q0055_mRNA;Parent=gene:Q0055;Name=AI2;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0055_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 13818, 18830, ., +, ., 'ID=transcript:Q0055_mRNA;Parent=gene:Q0055;Name=AI2;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0055_mRNA']"
+line-44,44,"Mito	sgd	exon	13818	13986	.	+	.	Parent=transcript:Q0055_mRNA;Name=Q0055_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0055_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 13818, 13986, ., +, ., 'Parent=transcript:Q0055_mRNA;Name=Q0055_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0055_mRNA-E1;rank=1']"
+line-45,45,"Mito	sgd	CDS	13818	13986	.	+	0	ID=CDS:Q0055;Parent=transcript:Q0055_mRNA;protein_id=Q0055
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 13818, 13986, ., +, 0, 'ID=CDS:Q0055;Parent=transcript:Q0055_mRNA;protein_id=Q0055']"
+line-46,46,"Mito	sgd	exon	16435	18830	.	+	.	Parent=transcript:Q0055_mRNA;Name=Q0055_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0055_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 16435, 18830, ., +, ., 'Parent=transcript:Q0055_mRNA;Name=Q0055_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0055_mRNA-E2;rank=2']"
+line-47,47,"Mito	sgd	CDS	16435	18830	.	+	2	ID=CDS:Q0055;Parent=transcript:Q0055_mRNA;protein_id=Q0055
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 16435, 18830, ., +, 2, 'ID=CDS:Q0055;Parent=transcript:Q0055_mRNA;protein_id=Q0055']"
+line-49,49,"Mito	sgd	gene	13818	19996	.	+	.	ID=gene:Q0060;Name=AI3;biotype=protein_coding;description=Endonuclease I-SceIII%3B encoded by a mobile group I intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007263];gene_id=Q0060;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 13818, 19996, ., +, ., 'ID=gene:Q0060;Name=AI3;biotype=protein_coding;description=Endonuclease I-SceIII%3B encoded by a mobile group I intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007263];gene_id=Q0060;logic_name=sgd']"
+line-50,50,"Mito	sgd	mRNA	13818	19996	.	+	.	ID=transcript:Q0060_mRNA;Parent=gene:Q0060;Name=AI3;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0060_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 13818, 19996, ., +, ., 'ID=transcript:Q0060_mRNA;Parent=gene:Q0060;Name=AI3;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0060_mRNA']"
+line-51,51,"Mito	sgd	exon	13818	13986	.	+	.	Parent=transcript:Q0060_mRNA;Name=Q0060_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0060_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 13818, 13986, ., +, ., 'Parent=transcript:Q0060_mRNA;Name=Q0060_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0060_mRNA-E1;rank=1']"
+line-52,52,"Mito	sgd	CDS	13818	13986	.	+	0	ID=CDS:Q0060;Parent=transcript:Q0060_mRNA;protein_id=Q0060
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 13818, 13986, ., +, 0, 'ID=CDS:Q0060;Parent=transcript:Q0060_mRNA;protein_id=Q0060']"
+line-53,53,"Mito	sgd	exon	16435	16470	.	+	.	Parent=transcript:Q0060_mRNA;Name=Q0060_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0060_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 16435, 16470, ., +, ., 'Parent=transcript:Q0060_mRNA;Name=Q0060_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0060_mRNA-E2;rank=2']"
+line-54,54,"Mito	sgd	CDS	16435	16470	.	+	2	ID=CDS:Q0060;Parent=transcript:Q0060_mRNA;protein_id=Q0060
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 16435, 16470, ., +, 2, 'ID=CDS:Q0060;Parent=transcript:Q0060_mRNA;protein_id=Q0060']"
+line-55,55,"Mito	sgd	exon	18954	19996	.	+	.	Parent=transcript:Q0060_mRNA;Name=Q0060_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0060_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 18954, 19996, ., +, ., 'Parent=transcript:Q0060_mRNA;Name=Q0060_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0060_mRNA-E3;rank=3']"
+line-56,56,"Mito	sgd	CDS	18954	19996	.	+	2	ID=CDS:Q0060;Parent=transcript:Q0060_mRNA;protein_id=Q0060
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 18954, 19996, ., +, 2, 'ID=CDS:Q0060;Parent=transcript:Q0060_mRNA;protein_id=Q0060']"
+line-58,58,"Mito	sgd	gene	13818	21935	.	+	.	ID=gene:Q0065;Name=AI4;biotype=protein_coding;description=Endonuclease I-SceII%3B encoded by a mobile group I intron within the mitochondrial COX1 gene%3B intron is normally spliced by the BI4p maturase but AI4p can mutate to acquire the same maturase activity [Source:SGD%3BAcc:S000007264];gene_id=Q0065;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 13818, 21935, ., +, ., 'ID=gene:Q0065;Name=AI4;biotype=protein_coding;description=Endonuclease I-SceII%3B encoded by a mobile group I intron within the mitochondrial COX1 gene%3B intron is normally spliced by the BI4p maturase but AI4p can mutate to acquire the same maturase activity [Source:SGD%3BAcc:S000007264];gene_id=Q0065;logic_name=sgd']"
+line-59,59,"Mito	sgd	mRNA	13818	21935	.	+	.	ID=transcript:Q0065_mRNA;Parent=gene:Q0065;Name=AI4;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0065_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 13818, 21935, ., +, ., 'ID=transcript:Q0065_mRNA;Parent=gene:Q0065;Name=AI4;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0065_mRNA']"
+line-60,60,"Mito	sgd	exon	13818	13986	.	+	.	Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0065_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 13818, 13986, ., +, ., 'Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0065_mRNA-E1;rank=1']"
+line-61,61,"Mito	sgd	CDS	13818	13986	.	+	0	ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 13818, 13986, ., +, 0, 'ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065']"
+line-62,62,"Mito	sgd	exon	16435	16470	.	+	.	Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0065_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 16435, 16470, ., +, ., 'Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0065_mRNA-E2;rank=2']"
+line-63,63,"Mito	sgd	CDS	16435	16470	.	+	2	ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 16435, 16470, ., +, 2, 'ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065']"
+line-64,64,"Mito	sgd	exon	18954	18991	.	+	.	Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0065_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 18954, 18991, ., +, ., 'Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0065_mRNA-E3;rank=3']"
+line-65,65,"Mito	sgd	CDS	18954	18991	.	+	2	ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 18954, 18991, ., +, 2, 'ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065']"
+line-66,66,"Mito	sgd	exon	20508	21935	.	+	.	Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0065_mRNA-E4;rank=4
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 20508, 21935, ., +, ., 'Parent=transcript:Q0065_mRNA;Name=Q0065_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0065_mRNA-E4;rank=4']"
+line-67,67,"Mito	sgd	CDS	20508	21935	.	+	0	ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 20508, 21935, ., +, 0, 'ID=CDS:Q0065;Parent=transcript:Q0065_mRNA;protein_id=Q0065']"
+line-69,69,"Mito	sgd	gene	13818	23167	.	+	.	ID=gene:Q0070;Name=AI5_ALPHA;biotype=protein_coding;description=Endonuclease I-SceIV%3B involved in intron mobility%3B encoded by a mobile group I intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007265];gene_id=Q0070;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 13818, 23167, ., +, ., 'ID=gene:Q0070;Name=AI5_ALPHA;biotype=protein_coding;description=Endonuclease I-SceIV%3B involved in intron mobility%3B encoded by a mobile group I intron within the mitochondrial COX1 gene [Source:SGD%3BAcc:S000007265];gene_id=Q0070;logic_name=sgd']"
+line-70,70,"Mito	sgd	mRNA	13818	23167	.	+	.	ID=transcript:Q0070_mRNA;Parent=gene:Q0070;Name=AI5_ALPHA;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0070_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 13818, 23167, ., +, ., 'ID=transcript:Q0070_mRNA;Parent=gene:Q0070;Name=AI5_ALPHA;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0070_mRNA']"
+line-71,71,"Mito	sgd	exon	13818	13986	.	+	.	Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0070_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 13818, 13986, ., +, ., 'Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0070_mRNA-E1;rank=1']"
+line-72,72,"Mito	sgd	CDS	13818	13986	.	+	0	ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 13818, 13986, ., +, 0, 'ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070']"
+line-73,73,"Mito	sgd	exon	16435	16470	.	+	.	Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0070_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 16435, 16470, ., +, ., 'Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0070_mRNA-E2;rank=2']"
+line-74,74,"Mito	sgd	CDS	16435	16470	.	+	2	ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 16435, 16470, ., +, 2, 'ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070']"
+line-75,75,"Mito	sgd	exon	18954	18991	.	+	.	Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0070_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 18954, 18991, ., +, ., 'Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0070_mRNA-E3;rank=3']"
+line-76,76,"Mito	sgd	CDS	18954	18991	.	+	2	ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 18954, 18991, ., +, 2, 'ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070']"
+line-77,77,"Mito	sgd	exon	20508	20984	.	+	.	Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0070_mRNA-E4;rank=4
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 20508, 20984, ., +, ., 'Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0070_mRNA-E4;rank=4']"
+line-78,78,"Mito	sgd	CDS	20508	20984	.	+	0	ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 20508, 20984, ., +, 0, 'ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070']"
+line-79,79,"Mito	sgd	exon	21995	23167	.	+	.	Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E5;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0070_mRNA-E5;rank=5
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 21995, 23167, ., +, ., 'Parent=transcript:Q0070_mRNA;Name=Q0070_mRNA-E5;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0070_mRNA-E5;rank=5']"
+line-80,80,"Mito	sgd	CDS	21995	23167	.	+	0	ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 21995, 23167, ., +, 0, 'ID=CDS:Q0070;Parent=transcript:Q0070_mRNA;protein_id=Q0070']"
+line-82,82,"Mito	sgd	gene	13818	26701	.	+	.	ID=gene:Q0045;Name=COX1;biotype=protein_coding;description=Subunit I of cytochrome c oxidase (Complex IV)%3B Complex IV is the terminal member of the mitochondrial inner membrane electron transport chain%3B one of three mitochondrially-encoded subunits [Source:SGD%3BAcc:S000007260];gene_id=Q0045;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 13818, 26701, ., +, ., 'ID=gene:Q0045;Name=COX1;biotype=protein_coding;description=Subunit I of cytochrome c oxidase (Complex IV)%3B Complex IV is the terminal member of the mitochondrial inner membrane electron transport chain%3B one of three mitochondrially-encoded subunits [Source:SGD%3BAcc:S000007260];gene_id=Q0045;logic_name=sgd']"
+line-83,83,"Mito	sgd	mRNA	13818	26701	.	+	.	ID=transcript:Q0045_mRNA;Parent=gene:Q0045;Name=COX1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0045_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 13818, 26701, ., +, ., 'ID=transcript:Q0045_mRNA;Parent=gene:Q0045;Name=COX1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0045_mRNA']"
+line-84,84,"Mito	sgd	exon	13818	13986	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0045_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 13818, 13986, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0045_mRNA-E1;rank=1']"
+line-85,85,"Mito	sgd	CDS	13818	13986	.	+	0	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 13818, 13986, ., +, 0, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-86,86,"Mito	sgd	exon	16435	16470	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0045_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 16435, 16470, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E2;constitutive=1;ensembl_end_phase=1;ensembl_phase=1;exon_id=Q0045_mRNA-E2;rank=2']"
+line-87,87,"Mito	sgd	CDS	16435	16470	.	+	2	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 16435, 16470, ., +, 2, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-88,88,"Mito	sgd	exon	18954	18991	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0045_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 18954, 18991, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0045_mRNA-E3;rank=3']"
+line-89,89,"Mito	sgd	CDS	18954	18991	.	+	2	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 18954, 18991, ., +, 2, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-90,90,"Mito	sgd	exon	20508	20984	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0045_mRNA-E4;rank=4
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 20508, 20984, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0045_mRNA-E4;rank=4']"
+line-91,91,"Mito	sgd	CDS	20508	20984	.	+	0	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 20508, 20984, ., +, 0, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-92,92,"Mito	sgd	exon	21995	22246	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E5;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0045_mRNA-E5;rank=5
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 21995, 22246, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E5;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0045_mRNA-E5;rank=5']"
+line-93,93,"Mito	sgd	CDS	21995	22246	.	+	0	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 21995, 22246, ., +, 0, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-94,94,"Mito	sgd	exon	23612	23746	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E6;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0045_mRNA-E6;rank=6
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 23612, 23746, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E6;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0045_mRNA-E6;rank=6']"
+line-95,95,"Mito	sgd	CDS	23612	23746	.	+	0	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 23612, 23746, ., +, 0, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-96,96,"Mito	sgd	exon	25318	25342	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E7;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0045_mRNA-E7;rank=7
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 25318, 25342, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E7;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0045_mRNA-E7;rank=7']"
+line-97,97,"Mito	sgd	CDS	25318	25342	.	+	0	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 25318, 25342, ., +, 0, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-98,98,"Mito	sgd	exon	26229	26701	.	+	.	Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E8;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0045_mRNA-E8;rank=8
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 26229, 26701, ., +, ., 'Parent=transcript:Q0045_mRNA;Name=Q0045_mRNA-E8;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0045_mRNA-E8;rank=8']"
+line-99,99,"Mito	sgd	CDS	26229	26701	.	+	2	ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 26229, 26701, ., +, 2, 'ID=CDS:Q0045;Parent=transcript:Q0045_mRNA;protein_id=Q0045']"
+line-101,101,"Mito	sgd	gene	24156	25255	.	+	.	ID=gene:Q0075;Name=AI5_BETA;biotype=protein_coding;description=Protein of unknown function%3B encoded within an intron of the mitochondrial COX1 gene%3B translational initiation codon is predicted to be ATA rather than ATG [Source:SGD%3BAcc:S000007266];gene_id=Q0075;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 24156, 25255, ., +, ., 'ID=gene:Q0075;Name=AI5_BETA;biotype=protein_coding;description=Protein of unknown function%3B encoded within an intron of the mitochondrial COX1 gene%3B translational initiation codon is predicted to be ATA rather than ATG [Source:SGD%3BAcc:S000007266];gene_id=Q0075;logic_name=sgd']"
+line-102,102,"Mito	sgd	mRNA	24156	25255	.	+	.	ID=transcript:Q0075_mRNA;Parent=gene:Q0075;Name=AI5_BETA;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0075_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 24156, 25255, ., +, ., 'ID=transcript:Q0075_mRNA;Parent=gene:Q0075;Name=AI5_BETA;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0075_mRNA']"
+line-103,103,"Mito	sgd	exon	24156	24870	.	+	.	Parent=transcript:Q0075_mRNA;Name=Q0075_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0075_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 24156, 24870, ., +, ., 'Parent=transcript:Q0075_mRNA;Name=Q0075_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0075_mRNA-E1;rank=1']"
+line-104,104,"Mito	sgd	CDS	24156	24870	.	+	0	ID=CDS:Q0075;Parent=transcript:Q0075_mRNA;protein_id=Q0075
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 24156, 24870, ., +, 0, 'ID=CDS:Q0075;Parent=transcript:Q0075_mRNA;protein_id=Q0075']"
+line-105,105,"Mito	sgd	exon	24906	25255	.	+	.	Parent=transcript:Q0075_mRNA;Name=Q0075_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0075_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 24906, 25255, ., +, ., 'Parent=transcript:Q0075_mRNA;Name=Q0075_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0075_mRNA-E2;rank=2']"
+line-106,106,"Mito	sgd	CDS	24906	25255	.	+	2	ID=CDS:Q0075;Parent=transcript:Q0075_mRNA;protein_id=Q0075
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 24906, 25255, ., +, 2, 'ID=CDS:Q0075;Parent=transcript:Q0075_mRNA;protein_id=Q0075']"
+line-108,108,"Mito	sgd	gene	27666	27812	.	+	.	ID=gene:Q0080;Name=ATP8;biotype=protein_coding;description=Subunit 8 of the F0 sector of mitochondrial F1F0 ATP synthase%3B encoded on the mitochondrial genome%3B ATP8 and ATP6 mRNAs are not translated in the absence of the F1 sector of ATPase [Source:SGD%3BAcc:S000007267];gene_id=Q0080;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 27666, 27812, ., +, ., 'ID=gene:Q0080;Name=ATP8;biotype=protein_coding;description=Subunit 8 of the F0 sector of mitochondrial F1F0 ATP synthase%3B encoded on the mitochondrial genome%3B ATP8 and ATP6 mRNAs are not translated in the absence of the F1 sector of ATPase [Source:SGD%3BAcc:S000007267];gene_id=Q0080;logic_name=sgd']"
+line-109,109,"Mito	sgd	mRNA	27666	27812	.	+	.	ID=transcript:Q0080_mRNA;Parent=gene:Q0080;Name=ATP8;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0080_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 27666, 27812, ., +, ., 'ID=transcript:Q0080_mRNA;Parent=gene:Q0080;Name=ATP8;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0080_mRNA']"
+line-110,110,"Mito	sgd	exon	27666	27812	.	+	.	Parent=transcript:Q0080_mRNA;Name=Q0080_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0080_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 27666, 27812, ., +, ., 'Parent=transcript:Q0080_mRNA;Name=Q0080_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0080_mRNA-E1;rank=1']"
+line-111,111,"Mito	sgd	CDS	27666	27812	.	+	0	ID=CDS:Q0080;Parent=transcript:Q0080_mRNA;protein_id=Q0080
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 27666, 27812, ., +, 0, 'ID=CDS:Q0080;Parent=transcript:Q0080_mRNA;protein_id=Q0080']"
+line-113,113,"Mito	sgd	gene	28487	29266	.	+	.	ID=gene:Q0085;Name=ATP6;biotype=protein_coding;description=Subunit a of the F0 sector of mitochondrial F1F0 ATP synthase%3B mitochondrially encoded%3B translation is specifically activated by Atp22p%3B ATP6 and ATP8 mRNAs are not translated in the absence of the F1 sector of ATPase%3B mutations in human ortholog MT-ATP6 are associated with neurodegenerative disorders such as Neurogenic Ataxia and Retinitis Pigmentosa (NARP)%2C Leigh syndrome (LS)%2C Charcot-Marie-Tooth (CMT)%2C and ataxia telangiectasia [Source:SGD%3BAcc:S000007268];gene_id=Q0085;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 28487, 29266, ., +, ., 'ID=gene:Q0085;Name=ATP6;biotype=protein_coding;description=Subunit a of the F0 sector of mitochondrial F1F0 ATP synthase%3B mitochondrially encoded%3B translation is specifically activated by Atp22p%3B ATP6 and ATP8 mRNAs are not translated in the absence of the F1 sector of ATPase%3B mutations in human ortholog MT-ATP6 are associated with neurodegenerative disorders such as Neurogenic Ataxia and Retinitis Pigmentosa (NARP)%2C Leigh syndrome (LS)%2C Charcot-Marie-Tooth (CMT)%2C and ataxia telangiectasia [Source:SGD%3BAcc:S000007268];gene_id=Q0085;logic_name=sgd']"
+line-114,114,"Mito	sgd	mRNA	28487	29266	.	+	.	ID=transcript:Q0085_mRNA;Parent=gene:Q0085;Name=ATP6;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0085_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 28487, 29266, ., +, ., 'ID=transcript:Q0085_mRNA;Parent=gene:Q0085;Name=ATP6;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0085_mRNA']"
+line-115,115,"Mito	sgd	exon	28487	29266	.	+	.	Parent=transcript:Q0085_mRNA;Name=Q0085_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0085_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 28487, 29266, ., +, ., 'Parent=transcript:Q0085_mRNA;Name=Q0085_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0085_mRNA-E1;rank=1']"
+line-116,116,"Mito	sgd	CDS	28487	29266	.	+	0	ID=CDS:Q0085;Parent=transcript:Q0085_mRNA;protein_id=Q0085
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 28487, 29266, ., +, 0, 'ID=CDS:Q0085;Parent=transcript:Q0085_mRNA;protein_id=Q0085']"
+line-118,118,"Mito	sgd	gene	30874	31014	.	+	.	ID=gene:Q0092;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007269];gene_id=Q0092;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 30874, 31014, ., +, ., 'ID=gene:Q0092;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007269];gene_id=Q0092;logic_name=sgd']"
+line-119,119,"Mito	sgd	mRNA	30874	31014	.	+	.	ID=transcript:Q0092_mRNA;Parent=gene:Q0092;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0092_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 30874, 31014, ., +, ., 'ID=transcript:Q0092_mRNA;Parent=gene:Q0092;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0092_mRNA']"
+line-120,120,"Mito	sgd	exon	30874	31014	.	+	.	Parent=transcript:Q0092_mRNA;Name=Q0092_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0092_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 30874, 31014, ., +, ., 'Parent=transcript:Q0092_mRNA;Name=Q0092_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0092_mRNA-E1;rank=1']"
+line-121,121,"Mito	sgd	CDS	30874	31014	.	+	0	ID=CDS:Q0092;Parent=transcript:Q0092_mRNA;protein_id=Q0092
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 30874, 31014, ., +, 0, 'ID=CDS:Q0092;Parent=transcript:Q0092_mRNA;protein_id=Q0092']"
+line-123,123,"Mito	sgd	ncRNA_gene	35373	35444	.	+	.	ID=gene:tE(UUC)Q;biotype=tRNA;description=Mitochondrial glutamate tRNA (tRNA-Glu)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007318];gene_id=tE(UUC)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 35373, 35444, ., +, ., 'ID=gene:tE(UUC)Q;biotype=tRNA;description=Mitochondrial glutamate tRNA (tRNA-Glu)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007318];gene_id=tE(UUC)Q;logic_name=sgd']"
+line-124,124,"Mito	sgd	tRNA	35373	35444	.	+	.	ID=transcript:tE(UUC)Q_tRNA;Parent=gene:tE(UUC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tE(UUC)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 35373, 35444, ., +, ., 'ID=transcript:tE(UUC)Q_tRNA;Parent=gene:tE(UUC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tE(UUC)Q_tRNA']"
+line-125,125,"Mito	sgd	exon	35373	35444	.	+	.	Parent=transcript:tE(UUC)Q_tRNA;Name=tE(UUC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tE(UUC)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 35373, 35444, ., +, ., 'Parent=transcript:tE(UUC)Q_tRNA;Name=tE(UUC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tE(UUC)Q_tRNA-E1;rank=1']"
+line-127,127,"Mito	sgd	gene	36540	38579	.	+	.	ID=gene:Q0110;Name=BI2;biotype=protein_coding;description=Mitochondrial mRNA maturase with a role in splicing%3B encoded by both exon and intron sequences of partially processed COB mRNA [Source:SGD%3BAcc:S000007271];gene_id=Q0110;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 36540, 38579, ., +, ., 'ID=gene:Q0110;Name=BI2;biotype=protein_coding;description=Mitochondrial mRNA maturase with a role in splicing%3B encoded by both exon and intron sequences of partially processed COB mRNA [Source:SGD%3BAcc:S000007271];gene_id=Q0110;logic_name=sgd']"
+line-128,128,"Mito	sgd	mRNA	36540	38579	.	+	.	ID=transcript:Q0110_mRNA;Parent=gene:Q0110;Name=BI2;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0110_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 36540, 38579, ., +, ., 'ID=transcript:Q0110_mRNA;Parent=gene:Q0110;Name=BI2;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0110_mRNA']"
+line-129,129,"Mito	sgd	exon	36540	36954	.	+	.	Parent=transcript:Q0110_mRNA;Name=Q0110_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0110_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 36540, 36954, ., +, ., 'Parent=transcript:Q0110_mRNA;Name=Q0110_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0110_mRNA-E1;rank=1']"
+line-130,130,"Mito	sgd	CDS	36540	36954	.	+	0	ID=CDS:Q0110;Parent=transcript:Q0110_mRNA;protein_id=Q0110
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 36540, 36954, ., +, 0, 'ID=CDS:Q0110;Parent=transcript:Q0110_mRNA;protein_id=Q0110']"
+line-131,131,"Mito	sgd	exon	37723	38579	.	+	.	Parent=transcript:Q0110_mRNA;Name=Q0110_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0110_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 37723, 38579, ., +, ., 'Parent=transcript:Q0110_mRNA;Name=Q0110_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0110_mRNA-E2;rank=2']"
+line-132,132,"Mito	sgd	CDS	37723	38579	.	+	2	ID=CDS:Q0110;Parent=transcript:Q0110_mRNA;protein_id=Q0110
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 37723, 38579, ., +, 2, 'ID=CDS:Q0110;Parent=transcript:Q0110_mRNA;protein_id=Q0110']"
+line-134,134,"Mito	sgd	gene	36540	40265	.	+	.	ID=gene:Q0115;Name=BI3;biotype=protein_coding;description=Mitochondrial mRNA maturase%3B forms a complex with Mrs1p to mediate splicing of the bI3 intron of the COB gene%3B encoded by both exon and intron sequences of partially processed COB mRNA [Source:SGD%3BAcc:S000007272];gene_id=Q0115;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 36540, 40265, ., +, ., 'ID=gene:Q0115;Name=BI3;biotype=protein_coding;description=Mitochondrial mRNA maturase%3B forms a complex with Mrs1p to mediate splicing of the bI3 intron of the COB gene%3B encoded by both exon and intron sequences of partially processed COB mRNA [Source:SGD%3BAcc:S000007272];gene_id=Q0115;logic_name=sgd']"
+line-135,135,"Mito	sgd	mRNA	36540	40265	.	+	.	ID=transcript:Q0115_mRNA;Parent=gene:Q0115;Name=BI3;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0115_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 36540, 40265, ., +, ., 'ID=transcript:Q0115_mRNA;Parent=gene:Q0115;Name=BI3;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0115_mRNA']"
+line-136,136,"Mito	sgd	exon	36540	36954	.	+	.	Parent=transcript:Q0115_mRNA;Name=Q0115_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0115_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 36540, 36954, ., +, ., 'Parent=transcript:Q0115_mRNA;Name=Q0115_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0115_mRNA-E1;rank=1']"
+line-137,137,"Mito	sgd	CDS	36540	36954	.	+	0	ID=CDS:Q0115;Parent=transcript:Q0115_mRNA;protein_id=Q0115
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 36540, 36954, ., +, 0, 'ID=CDS:Q0115;Parent=transcript:Q0115_mRNA;protein_id=Q0115']"
+line-138,138,"Mito	sgd	exon	37723	37736	.	+	.	Parent=transcript:Q0115_mRNA;Name=Q0115_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0115_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 37723, 37736, ., +, ., 'Parent=transcript:Q0115_mRNA;Name=Q0115_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0115_mRNA-E2;rank=2']"
+line-139,139,"Mito	sgd	CDS	37723	37736	.	+	2	ID=CDS:Q0115;Parent=transcript:Q0115_mRNA;protein_id=Q0115
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 37723, 37736, ., +, 2, 'ID=CDS:Q0115;Parent=transcript:Q0115_mRNA;protein_id=Q0115']"
+line-140,140,"Mito	sgd	exon	39141	40265	.	+	.	Parent=transcript:Q0115_mRNA;Name=Q0115_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0115_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 39141, 40265, ., +, ., 'Parent=transcript:Q0115_mRNA;Name=Q0115_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0115_mRNA-E3;rank=3']"
+line-141,141,"Mito	sgd	CDS	39141	40265	.	+	0	ID=CDS:Q0115;Parent=transcript:Q0115_mRNA;protein_id=Q0115
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 39141, 40265, ., +, 0, 'ID=CDS:Q0115;Parent=transcript:Q0115_mRNA;protein_id=Q0115']"
+line-143,143,"Mito	sgd	gene	36540	42251	.	+	.	ID=gene:Q0120;Name=BI4;biotype=protein_coding;description=Mitochondrial mRNA maturase%3B forms a complex with Nam2p to mediate splicing of the bI4 intron of the COB gene%3B encoded by both exon and intron sequences of partially processed COB mRNA [Source:SGD%3BAcc:S000007273];gene_id=Q0120;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 36540, 42251, ., +, ., 'ID=gene:Q0120;Name=BI4;biotype=protein_coding;description=Mitochondrial mRNA maturase%3B forms a complex with Nam2p to mediate splicing of the bI4 intron of the COB gene%3B encoded by both exon and intron sequences of partially processed COB mRNA [Source:SGD%3BAcc:S000007273];gene_id=Q0120;logic_name=sgd']"
+line-144,144,"Mito	sgd	mRNA	36540	42251	.	+	.	ID=transcript:Q0120_mRNA;Parent=gene:Q0120;Name=BI4;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0120_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 36540, 42251, ., +, ., 'ID=transcript:Q0120_mRNA;Parent=gene:Q0120;Name=BI4;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0120_mRNA']"
+line-145,145,"Mito	sgd	exon	36540	36954	.	+	.	Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0120_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 36540, 36954, ., +, ., 'Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0120_mRNA-E1;rank=1']"
+line-146,146,"Mito	sgd	CDS	36540	36954	.	+	0	ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 36540, 36954, ., +, 0, 'ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120']"
+line-147,147,"Mito	sgd	exon	37723	37736	.	+	.	Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0120_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 37723, 37736, ., +, ., 'Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0120_mRNA-E2;rank=2']"
+line-148,148,"Mito	sgd	CDS	37723	37736	.	+	2	ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 37723, 37736, ., +, 2, 'ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120']"
+line-149,149,"Mito	sgd	exon	39141	39217	.	+	.	Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E3;constitutive=1;ensembl_end_phase=2;ensembl_phase=0;exon_id=Q0120_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 39141, 39217, ., +, ., 'Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E3;constitutive=1;ensembl_end_phase=2;ensembl_phase=0;exon_id=Q0120_mRNA-E3;rank=3']"
+line-150,150,"Mito	sgd	CDS	39141	39217	.	+	0	ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 39141, 39217, ., +, 0, 'ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120']"
+line-151,151,"Mito	sgd	exon	40841	42251	.	+	.	Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=2;exon_id=Q0120_mRNA-E4;rank=4
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 40841, 42251, ., +, ., 'Parent=transcript:Q0120_mRNA;Name=Q0120_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=2;exon_id=Q0120_mRNA-E4;rank=4']"
+line-152,152,"Mito	sgd	CDS	40841	42251	.	+	1	ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 40841, 42251, ., +, 1, 'ID=CDS:Q0120;Parent=transcript:Q0120_mRNA;protein_id=Q0120']"
+line-154,154,"Mito	sgd	gene	36540	43647	.	+	.	ID=gene:Q0105;Name=COB;biotype=protein_coding;description=Cytochrome b%3B mitochondrially encoded subunit of the ubiquinol-cytochrome c reductase complex which includes Cobp%2C Rip1p%2C Cyt1p%2C Cor1p%2C Qcr2p%2C Qcr6p%2C Qcr7p%2C Qcr8p%2C Qcr9p%2C and Qcr10p [Source:SGD%3BAcc:S000007270];gene_id=Q0105;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 36540, 43647, ., +, ., 'ID=gene:Q0105;Name=COB;biotype=protein_coding;description=Cytochrome b%3B mitochondrially encoded subunit of the ubiquinol-cytochrome c reductase complex which includes Cobp%2C Rip1p%2C Cyt1p%2C Cor1p%2C Qcr2p%2C Qcr6p%2C Qcr7p%2C Qcr8p%2C Qcr9p%2C and Qcr10p [Source:SGD%3BAcc:S000007270];gene_id=Q0105;logic_name=sgd']"
+line-155,155,"Mito	sgd	mRNA	36540	43647	.	+	.	ID=transcript:Q0105_mRNA;Parent=gene:Q0105;Name=COB;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0105_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 36540, 43647, ., +, ., 'ID=transcript:Q0105_mRNA;Parent=gene:Q0105;Name=COB;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0105_mRNA']"
+line-156,156,"Mito	sgd	exon	36540	36954	.	+	.	Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0105_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 36540, 36954, ., +, ., 'Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E1;constitutive=1;ensembl_end_phase=1;ensembl_phase=0;exon_id=Q0105_mRNA-E1;rank=1']"
+line-157,157,"Mito	sgd	CDS	36540	36954	.	+	0	ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 36540, 36954, ., +, 0, 'ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105']"
+line-158,158,"Mito	sgd	exon	37723	37736	.	+	.	Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0105_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 37723, 37736, ., +, ., 'Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=1;exon_id=Q0105_mRNA-E2;rank=2']"
+line-159,159,"Mito	sgd	CDS	37723	37736	.	+	2	ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 37723, 37736, ., +, 2, 'ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105']"
+line-160,160,"Mito	sgd	exon	39141	39217	.	+	.	Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E3;constitutive=1;ensembl_end_phase=2;ensembl_phase=0;exon_id=Q0105_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 39141, 39217, ., +, ., 'Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E3;constitutive=1;ensembl_end_phase=2;ensembl_phase=0;exon_id=Q0105_mRNA-E3;rank=3']"
+line-161,161,"Mito	sgd	CDS	39141	39217	.	+	0	ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 39141, 39217, ., +, 0, 'ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105']"
+line-162,162,"Mito	sgd	exon	40841	41090	.	+	.	Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=2;exon_id=Q0105_mRNA-E4;rank=4
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 40841, 41090, ., +, ., 'Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E4;constitutive=1;ensembl_end_phase=0;ensembl_phase=2;exon_id=Q0105_mRNA-E4;rank=4']"
+line-163,163,"Mito	sgd	CDS	40841	41090	.	+	1	ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 40841, 41090, ., +, 1, 'ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105']"
+line-164,164,"Mito	sgd	exon	42508	42558	.	+	.	Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E5;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0105_mRNA-E5;rank=5
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 42508, 42558, ., +, ., 'Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E5;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0105_mRNA-E5;rank=5']"
+line-165,165,"Mito	sgd	CDS	42508	42558	.	+	0	ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 42508, 42558, ., +, 0, 'ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105']"
+line-166,166,"Mito	sgd	exon	43297	43647	.	+	.	Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E6;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0105_mRNA-E6;rank=6
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 43297, 43647, ., +, ., 'Parent=transcript:Q0105_mRNA;Name=Q0105_mRNA-E6;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0105_mRNA-E6;rank=6']"
+line-167,167,"Mito	sgd	CDS	43297	43647	.	+	0	ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 43297, 43647, ., +, 0, 'ID=CDS:Q0105;Parent=transcript:Q0105_mRNA;protein_id=Q0105']"
+line-169,169,"Mito	sgd	gene	46723	46953	.	+	.	ID=gene:Q0130;Name=OLI1;biotype=protein_coding;description=F0-ATP synthase subunit c (ATPase-associated proteolipid)%3B encoded on the mitochondrial genome%3B mutation confers oligomycin resistance%3B expression is specifically dependent on the nuclear genes AEP1 and AEP2 [Source:SGD%3BAcc:S000007274];gene_id=Q0130;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 46723, 46953, ., +, ., 'ID=gene:Q0130;Name=OLI1;biotype=protein_coding;description=F0-ATP synthase subunit c (ATPase-associated proteolipid)%3B encoded on the mitochondrial genome%3B mutation confers oligomycin resistance%3B expression is specifically dependent on the nuclear genes AEP1 and AEP2 [Source:SGD%3BAcc:S000007274];gene_id=Q0130;logic_name=sgd']"
+line-170,170,"Mito	sgd	mRNA	46723	46953	.	+	.	ID=transcript:Q0130_mRNA;Parent=gene:Q0130;Name=OLI1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0130_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 46723, 46953, ., +, ., 'ID=transcript:Q0130_mRNA;Parent=gene:Q0130;Name=OLI1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0130_mRNA']"
+line-171,171,"Mito	sgd	exon	46723	46953	.	+	.	Parent=transcript:Q0130_mRNA;Name=Q0130_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0130_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 46723, 46953, ., +, ., 'Parent=transcript:Q0130_mRNA;Name=Q0130_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0130_mRNA-E1;rank=1']"
+line-172,172,"Mito	sgd	CDS	46723	46953	.	+	0	ID=CDS:Q0130;Parent=transcript:Q0130_mRNA;protein_id=Q0130
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 46723, 46953, ., +, 0, 'ID=CDS:Q0130;Parent=transcript:Q0130_mRNA;protein_id=Q0130']"
+line-174,174,"Mito	sgd	ncRNA_gene	48201	48290	.	+	.	ID=gene:tS(UGA)Q2;biotype=tRNA;description=Mitochondrial serine tRNA (tRNA-Ser)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007333];gene_id=tS(UGA)Q2;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 48201, 48290, ., +, ., 'ID=gene:tS(UGA)Q2;biotype=tRNA;description=Mitochondrial serine tRNA (tRNA-Ser)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007333];gene_id=tS(UGA)Q2;logic_name=sgd']"
+line-175,175,"Mito	sgd	tRNA	48201	48290	.	+	.	ID=transcript:tS(UGA)Q2_tRNA;Parent=gene:tS(UGA)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tS(UGA)Q2_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 48201, 48290, ., +, ., 'ID=transcript:tS(UGA)Q2_tRNA;Parent=gene:tS(UGA)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tS(UGA)Q2_tRNA']"
+line-176,176,"Mito	sgd	exon	48201	48290	.	+	.	Parent=transcript:tS(UGA)Q2_tRNA;Name=tS(UGA)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tS(UGA)Q2_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 48201, 48290, ., +, ., 'Parent=transcript:tS(UGA)Q2_tRNA;Name=tS(UGA)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tS(UGA)Q2_tRNA-E1;rank=1']"
+line-178,178,"Mito	sgd	gene	48901	50097	.	+	.	ID=gene:Q0140;Name=VAR1;biotype=protein_coding;description=Mitochondrial ribosomal protein of the small subunit%3B mitochondrially-encoded%3B polymorphic in different strains due to variation in number of AAT (asparagine) codons%3B translated near the mitochondrial inner membrane%3B may have a role in loss of mitochondrial DNA under stress conditions [Source:SGD%3BAcc:S000007275];gene_id=Q0140;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 48901, 50097, ., +, ., 'ID=gene:Q0140;Name=VAR1;biotype=protein_coding;description=Mitochondrial ribosomal protein of the small subunit%3B mitochondrially-encoded%3B polymorphic in different strains due to variation in number of AAT (asparagine) codons%3B translated near the mitochondrial inner membrane%3B may have a role in loss of mitochondrial DNA under stress conditions [Source:SGD%3BAcc:S000007275];gene_id=Q0140;logic_name=sgd']"
+line-179,179,"Mito	sgd	mRNA	48901	50097	.	+	.	ID=transcript:Q0140_mRNA;Parent=gene:Q0140;Name=VAR1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0140_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 48901, 50097, ., +, ., 'ID=transcript:Q0140_mRNA;Parent=gene:Q0140;Name=VAR1;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0140_mRNA']"
+line-180,180,"Mito	sgd	exon	48901	50097	.	+	.	Parent=transcript:Q0140_mRNA;Name=Q0140_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0140_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 48901, 50097, ., +, ., 'Parent=transcript:Q0140_mRNA;Name=Q0140_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0140_mRNA-E1;rank=1']"
+line-181,181,"Mito	sgd	CDS	48901	50097	.	+	0	ID=CDS:Q0140;Parent=transcript:Q0140_mRNA;protein_id=Q0140
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 48901, 50097, ., +, 0, 'ID=CDS:Q0140;Parent=transcript:Q0140_mRNA;protein_id=Q0140']"
+line-183,183,"Mito	sgd	gene	51052	51228	.	+	.	ID=gene:Q0142;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data%3B partially overlaps dubious open reading frame Q0143 [Source:SGD%3BAcc:S000007276];gene_id=Q0142;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 51052, 51228, ., +, ., 'ID=gene:Q0142;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data%3B partially overlaps dubious open reading frame Q0143 [Source:SGD%3BAcc:S000007276];gene_id=Q0142;logic_name=sgd']"
+line-184,184,"Mito	sgd	mRNA	51052	51228	.	+	.	ID=transcript:Q0142_mRNA;Parent=gene:Q0142;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0142_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 51052, 51228, ., +, ., 'ID=transcript:Q0142_mRNA;Parent=gene:Q0142;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0142_mRNA']"
+line-185,185,"Mito	sgd	exon	51052	51228	.	+	.	Parent=transcript:Q0142_mRNA;Name=Q0142_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0142_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 51052, 51228, ., +, ., 'Parent=transcript:Q0142_mRNA;Name=Q0142_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0142_mRNA-E1;rank=1']"
+line-186,186,"Mito	sgd	CDS	51052	51228	.	+	0	ID=CDS:Q0142;Parent=transcript:Q0142_mRNA;protein_id=Q0142
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 51052, 51228, ., +, 0, 'ID=CDS:Q0142;Parent=transcript:Q0142_mRNA;protein_id=Q0142']"
+line-188,188,"Mito	sgd	gene	51277	51429	.	+	.	ID=gene:Q0143;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007277];gene_id=Q0143;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 51277, 51429, ., +, ., 'ID=gene:Q0143;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007277];gene_id=Q0143;logic_name=sgd']"
+line-189,189,"Mito	sgd	mRNA	51277	51429	.	+	.	ID=transcript:Q0143_mRNA;Parent=gene:Q0143;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0143_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 51277, 51429, ., +, ., 'ID=transcript:Q0143_mRNA;Parent=gene:Q0143;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0143_mRNA']"
+line-190,190,"Mito	sgd	exon	51277	51429	.	+	.	Parent=transcript:Q0143_mRNA;Name=Q0143_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0143_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 51277, 51429, ., +, ., 'Parent=transcript:Q0143_mRNA;Name=Q0143_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0143_mRNA-E1;rank=1']"
+line-191,191,"Mito	sgd	CDS	51277	51429	.	+	0	ID=CDS:Q0143;Parent=transcript:Q0143_mRNA;protein_id=Q0143
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 51277, 51429, ., +, 0, 'ID=CDS:Q0143;Parent=transcript:Q0143_mRNA;protein_id=Q0143']"
+line-193,193,"Mito	sgd	gene	54109	54438	.	+	.	ID=gene:Q0144;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007278];gene_id=Q0144;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 54109, 54438, ., +, ., 'ID=gene:Q0144;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007278];gene_id=Q0144;logic_name=sgd']"
+line-194,194,"Mito	sgd	mRNA	54109	54438	.	+	.	ID=transcript:Q0144_mRNA;Parent=gene:Q0144;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0144_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 54109, 54438, ., +, ., 'ID=transcript:Q0144_mRNA;Parent=gene:Q0144;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0144_mRNA']"
+line-195,195,"Mito	sgd	exon	54109	54438	.	+	.	Parent=transcript:Q0144_mRNA;Name=Q0144_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0144_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 54109, 54438, ., +, ., 'Parent=transcript:Q0144_mRNA;Name=Q0144_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0144_mRNA-E1;rank=1']"
+line-196,196,"Mito	sgd	CDS	54109	54438	.	+	0	ID=CDS:Q0144;Parent=transcript:Q0144_mRNA;protein_id=Q0144
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 54109, 54438, ., +, 0, 'ID=CDS:Q0144;Parent=transcript:Q0144_mRNA;protein_id=Q0144']"
+line-198,198,"Mito	sgd	ncRNA_gene	58009	62447	.	+	.	ID=gene:Q0158;Name=21S_RRNA;biotype=rRNA;description=Mitochondrial 21S rRNA%3B intron encodes the I-SceI DNA endonuclease [Source:SGD%3BAcc:S000007288];gene_id=Q0158;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 58009, 62447, ., +, ., 'ID=gene:Q0158;Name=21S_RRNA;biotype=rRNA;description=Mitochondrial 21S rRNA%3B intron encodes the I-SceI DNA endonuclease [Source:SGD%3BAcc:S000007288];gene_id=Q0158;logic_name=sgd']"
+line-199,199,"Mito	sgd	rRNA	58009	62447	.	+	.	ID=transcript:Q0158_rRNA;Parent=gene:Q0158;biotype=rRNA;tag=Ensembl_canonical;transcript_id=Q0158_rRNA
+",feature,sequence,Mito,,,"[Mito, sgd, rRNA, 58009, 62447, ., +, ., 'ID=transcript:Q0158_rRNA;Parent=gene:Q0158;biotype=rRNA;tag=Ensembl_canonical;transcript_id=Q0158_rRNA']"
+line-200,200,"Mito	sgd	exon	58009	60724	.	+	.	Parent=transcript:Q0158_rRNA;Name=Q0158_rRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0158_rRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 58009, 60724, ., +, ., 'Parent=transcript:Q0158_rRNA;Name=Q0158_rRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0158_rRNA-E1;rank=1']"
+line-201,201,"Mito	sgd	exon	61868	62447	.	+	.	Parent=transcript:Q0158_rRNA;Name=Q0158_rRNA-E2;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0158_rRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 61868, 62447, ., +, ., 'Parent=transcript:Q0158_rRNA;Name=Q0158_rRNA-E2;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0158_rRNA-E2;rank=2']"
+line-203,203,"Mito	sgd	gene	61022	61729	.	+	.	ID=gene:Q0160;Name=SCEI;biotype=protein_coding;description=I-SceI DNA endonuclease%3B encoded by the mitochondrial group I intron of the 21S_rRNA gene%3B mediates gene conversion that propagates the intron into intron-less copies of the 21S_rRNA gene [Source:SGD%3BAcc:S000007279];gene_id=Q0160;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 61022, 61729, ., +, ., 'ID=gene:Q0160;Name=SCEI;biotype=protein_coding;description=I-SceI DNA endonuclease%3B encoded by the mitochondrial group I intron of the 21S_rRNA gene%3B mediates gene conversion that propagates the intron into intron-less copies of the 21S_rRNA gene [Source:SGD%3BAcc:S000007279];gene_id=Q0160;logic_name=sgd']"
+line-204,204,"Mito	sgd	mRNA	61022	61729	.	+	.	ID=transcript:Q0160_mRNA;Parent=gene:Q0160;Name=SCEI;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0160_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 61022, 61729, ., +, ., 'ID=transcript:Q0160_mRNA;Parent=gene:Q0160;Name=SCEI;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0160_mRNA']"
+line-205,205,"Mito	sgd	exon	61022	61729	.	+	.	Parent=transcript:Q0160_mRNA;Name=Q0160_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0160_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 61022, 61729, ., +, ., 'Parent=transcript:Q0160_mRNA;Name=Q0160_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0160_mRNA-E1;rank=1']"
+line-206,206,"Mito	sgd	CDS	61022	61729	.	+	0	ID=CDS:Q0160;Parent=transcript:Q0160_mRNA;protein_id=Q0160
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 61022, 61729, ., +, 0, 'ID=CDS:Q0160;Parent=transcript:Q0160_mRNA;protein_id=Q0160']"
+line-208,208,"Mito	sgd	ncRNA_gene	63862	63937	.	+	.	ID=gene:tT(UGU)Q1;biotype=tRNA;description=Mitochondrial threonine tRNA (tRNA-Thr)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007334];gene_id=tT(UGU)Q1;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 63862, 63937, ., +, ., 'ID=gene:tT(UGU)Q1;biotype=tRNA;description=Mitochondrial threonine tRNA (tRNA-Thr)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007334];gene_id=tT(UGU)Q1;logic_name=sgd']"
+line-209,209,"Mito	sgd	tRNA	63862	63937	.	+	.	ID=transcript:tT(UGU)Q1_tRNA;Parent=gene:tT(UGU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tT(UGU)Q1_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 63862, 63937, ., +, ., 'ID=transcript:tT(UGU)Q1_tRNA;Parent=gene:tT(UGU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tT(UGU)Q1_tRNA']"
+line-210,210,"Mito	sgd	exon	63862	63937	.	+	.	Parent=transcript:tT(UGU)Q1_tRNA;Name=tT(UGU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tT(UGU)Q1_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 63862, 63937, ., +, ., 'Parent=transcript:tT(UGU)Q1_tRNA;Name=tT(UGU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tT(UGU)Q1_tRNA-E1;rank=1']"
+line-212,212,"Mito	sgd	ncRNA_gene	64415	64490	.	+	.	ID=gene:tC(GCA)Q;biotype=tRNA;description=Mitochondrial cysteine tRNA (tRNA-Cys) [Source:SGD%3BAcc:S000007316];gene_id=tC(GCA)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 64415, 64490, ., +, ., 'ID=gene:tC(GCA)Q;biotype=tRNA;description=Mitochondrial cysteine tRNA (tRNA-Cys) [Source:SGD%3BAcc:S000007316];gene_id=tC(GCA)Q;logic_name=sgd']"
+line-213,213,"Mito	sgd	tRNA	64415	64490	.	+	.	ID=transcript:tC(GCA)Q_tRNA;Parent=gene:tC(GCA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tC(GCA)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 64415, 64490, ., +, ., 'ID=transcript:tC(GCA)Q_tRNA;Parent=gene:tC(GCA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tC(GCA)Q_tRNA']"
+line-214,214,"Mito	sgd	exon	64415	64490	.	+	.	Parent=transcript:tC(GCA)Q_tRNA;Name=tC(GCA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tC(GCA)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 64415, 64490, ., +, ., 'Parent=transcript:tC(GCA)Q_tRNA;Name=tC(GCA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tC(GCA)Q_tRNA-E1;rank=1']"
+line-216,216,"Mito	sgd	ncRNA_gene	64596	64670	.	+	.	ID=gene:tH(GUG)Q;biotype=tRNA;description=Mitochondrial histidine tRNA (tRNA-His)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007321];gene_id=tH(GUG)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 64596, 64670, ., +, ., 'ID=gene:tH(GUG)Q;biotype=tRNA;description=Mitochondrial histidine tRNA (tRNA-His)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007321];gene_id=tH(GUG)Q;logic_name=sgd']"
+line-217,217,"Mito	sgd	tRNA	64596	64670	.	+	.	ID=transcript:tH(GUG)Q_tRNA;Parent=gene:tH(GUG)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tH(GUG)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 64596, 64670, ., +, ., 'ID=transcript:tH(GUG)Q_tRNA;Parent=gene:tH(GUG)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tH(GUG)Q_tRNA']"
+line-218,218,"Mito	sgd	exon	64596	64670	.	+	.	Parent=transcript:tH(GUG)Q_tRNA;Name=tH(GUG)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tH(GUG)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 64596, 64670, ., +, ., 'Parent=transcript:tH(GUG)Q_tRNA;Name=tH(GUG)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tH(GUG)Q_tRNA-E1;rank=1']"
+line-220,220,"Mito	sgd	gene	65770	66174	.	+	.	ID=gene:Q0182;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007280];gene_id=Q0182;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 65770, 66174, ., +, ., 'ID=gene:Q0182;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data [Source:SGD%3BAcc:S000007280];gene_id=Q0182;logic_name=sgd']"
+line-221,221,"Mito	sgd	mRNA	65770	66174	.	+	.	ID=transcript:Q0182_mRNA;Parent=gene:Q0182;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0182_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 65770, 66174, ., +, ., 'ID=transcript:Q0182_mRNA;Parent=gene:Q0182;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0182_mRNA']"
+line-222,222,"Mito	sgd	exon	65770	66174	.	+	.	Parent=transcript:Q0182_mRNA;Name=Q0182_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0182_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 65770, 66174, ., +, ., 'Parent=transcript:Q0182_mRNA;Name=Q0182_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0182_mRNA-E1;rank=1']"
+line-223,223,"Mito	sgd	CDS	65770	66174	.	+	0	ID=CDS:Q0182;Parent=transcript:Q0182_mRNA;protein_id=Q0182
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 65770, 66174, ., +, 0, 'ID=CDS:Q0182;Parent=transcript:Q0182_mRNA;protein_id=Q0182']"
+line-225,225,"Mito	sgd	ncRNA_gene	66095	66179	.	+	.	ID=gene:tL(UAA)Q;biotype=tRNA;description=Mitochondrial leucine tRNA (tRNA-Leu)%3B predicted by tRNAscan-SE analysis%3B required for mitochondrial translation and indirectly for maintenance of the mitochondrial genome%3B mutations in the orthologous human gene cause the neurological disease MELAS [Source:SGD%3BAcc:S000007324];gene_id=tL(UAA)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 66095, 66179, ., +, ., 'ID=gene:tL(UAA)Q;biotype=tRNA;description=Mitochondrial leucine tRNA (tRNA-Leu)%3B predicted by tRNAscan-SE analysis%3B required for mitochondrial translation and indirectly for maintenance of the mitochondrial genome%3B mutations in the orthologous human gene cause the neurological disease MELAS [Source:SGD%3BAcc:S000007324];gene_id=tL(UAA)Q;logic_name=sgd']"
+line-226,226,"Mito	sgd	tRNA	66095	66179	.	+	.	ID=transcript:tL(UAA)Q_tRNA;Parent=gene:tL(UAA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tL(UAA)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 66095, 66179, ., +, ., 'ID=transcript:tL(UAA)Q_tRNA;Parent=gene:tL(UAA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tL(UAA)Q_tRNA']"
+line-227,227,"Mito	sgd	exon	66095	66179	.	+	.	Parent=transcript:tL(UAA)Q_tRNA;Name=tL(UAA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tL(UAA)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 66095, 66179, ., +, ., 'Parent=transcript:tL(UAA)Q_tRNA;Name=tL(UAA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tL(UAA)Q_tRNA-E1;rank=1']"
+line-229,229,"Mito	sgd	ncRNA_gene	66210	66285	.	+	.	ID=gene:tQ(UUG)Q;biotype=tRNA;description=Mitochondrial glutamine tRNA (tRNA-Gln)%3B predicted by tRNAscan-SE analysis%3B thiolation of uridine at wobble position (34) requires Ncs6p [Source:SGD%3BAcc:S000007329];gene_id=tQ(UUG)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 66210, 66285, ., +, ., 'ID=gene:tQ(UUG)Q;biotype=tRNA;description=Mitochondrial glutamine tRNA (tRNA-Gln)%3B predicted by tRNAscan-SE analysis%3B thiolation of uridine at wobble position (34) requires Ncs6p [Source:SGD%3BAcc:S000007329];gene_id=tQ(UUG)Q;logic_name=sgd']"
+line-230,230,"Mito	sgd	tRNA	66210	66285	.	+	.	ID=transcript:tQ(UUG)Q_tRNA;Parent=gene:tQ(UUG)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tQ(UUG)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 66210, 66285, ., +, ., 'ID=transcript:tQ(UUG)Q_tRNA;Parent=gene:tQ(UUG)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tQ(UUG)Q_tRNA']"
+line-231,231,"Mito	sgd	exon	66210	66285	.	+	.	Parent=transcript:tQ(UUG)Q_tRNA;Name=tQ(UUG)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tQ(UUG)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 66210, 66285, ., +, ., 'Parent=transcript:tQ(UUG)Q_tRNA;Name=tQ(UUG)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tQ(UUG)Q_tRNA-E1;rank=1']"
+line-233,233,"Mito	sgd	ncRNA_gene	67061	67134	.	+	.	ID=gene:tK(UUU)Q;biotype=tRNA;description=Mitochondrial lysine tRNA (tRNA-Lys)%3B predicted by tRNAscan-SE analysis%3B modification of wobble base U34 is decreased at elevated temperatures%2C decreasing ability to decode AAG codons%3B this function is performed at high temperature by imported cytoplasmic tRNA-Lys with CUU anticodon [Source:SGD%3BAcc:S000007323];gene_id=tK(UUU)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 67061, 67134, ., +, ., 'ID=gene:tK(UUU)Q;biotype=tRNA;description=Mitochondrial lysine tRNA (tRNA-Lys)%3B predicted by tRNAscan-SE analysis%3B modification of wobble base U34 is decreased at elevated temperatures%2C decreasing ability to decode AAG codons%3B this function is performed at high temperature by imported cytoplasmic tRNA-Lys with CUU anticodon [Source:SGD%3BAcc:S000007323];gene_id=tK(UUU)Q;logic_name=sgd']"
+line-234,234,"Mito	sgd	tRNA	67061	67134	.	+	.	ID=transcript:tK(UUU)Q_tRNA;Parent=gene:tK(UUU)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tK(UUU)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 67061, 67134, ., +, ., 'ID=transcript:tK(UUU)Q_tRNA;Parent=gene:tK(UUU)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tK(UUU)Q_tRNA']"
+line-235,235,"Mito	sgd	exon	67061	67134	.	+	.	Parent=transcript:tK(UUU)Q_tRNA;Name=tK(UUU)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tK(UUU)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 67061, 67134, ., +, ., 'Parent=transcript:tK(UUU)Q_tRNA;Name=tK(UUU)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tK(UUU)Q_tRNA-E1;rank=1']"
+line-237,237,"Mito	sgd	ncRNA_gene	67309	67381	.	+	.	ID=gene:tR(UCU)Q1;biotype=tRNA;description=Mitochondrial arginine tRNA (tRNA-Arg)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007331];gene_id=tR(UCU)Q1;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 67309, 67381, ., +, ., 'ID=gene:tR(UCU)Q1;biotype=tRNA;description=Mitochondrial arginine tRNA (tRNA-Arg)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007331];gene_id=tR(UCU)Q1;logic_name=sgd']"
+line-238,238,"Mito	sgd	tRNA	67309	67381	.	+	.	ID=transcript:tR(UCU)Q1_tRNA;Parent=gene:tR(UCU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tR(UCU)Q1_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 67309, 67381, ., +, ., 'ID=transcript:tR(UCU)Q1_tRNA;Parent=gene:tR(UCU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tR(UCU)Q1_tRNA']"
+line-239,239,"Mito	sgd	exon	67309	67381	.	+	.	Parent=transcript:tR(UCU)Q1_tRNA;Name=tR(UCU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tR(UCU)Q1_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 67309, 67381, ., +, ., 'Parent=transcript:tR(UCU)Q1_tRNA;Name=tR(UCU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tR(UCU)Q1_tRNA-E1;rank=1']"
+line-241,241,"Mito	sgd	ncRNA_gene	67468	67542	.	+	.	ID=gene:tG(UCC)Q;biotype=tRNA;description=Mitochondrial glycine tRNA (tRNA-Gly)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007320];gene_id=tG(UCC)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 67468, 67542, ., +, ., 'ID=gene:tG(UCC)Q;biotype=tRNA;description=Mitochondrial glycine tRNA (tRNA-Gly)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007320];gene_id=tG(UCC)Q;logic_name=sgd']"
+line-242,242,"Mito	sgd	tRNA	67468	67542	.	+	.	ID=transcript:tG(UCC)Q_tRNA;Parent=gene:tG(UCC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tG(UCC)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 67468, 67542, ., +, ., 'ID=transcript:tG(UCC)Q_tRNA;Parent=gene:tG(UCC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tG(UCC)Q_tRNA']"
+line-243,243,"Mito	sgd	exon	67468	67542	.	+	.	Parent=transcript:tG(UCC)Q_tRNA;Name=tG(UCC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tG(UCC)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 67468, 67542, ., +, ., 'Parent=transcript:tG(UCC)Q_tRNA;Name=tG(UCC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tG(UCC)Q_tRNA-E1;rank=1']"
+line-245,245,"Mito	sgd	ncRNA_gene	68322	68396	.	+	.	ID=gene:tD(GUC)Q;biotype=tRNA;description=Mitochondrial aspartate tRNA (tRNA-Asp)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007317];gene_id=tD(GUC)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 68322, 68396, ., +, ., 'ID=gene:tD(GUC)Q;biotype=tRNA;description=Mitochondrial aspartate tRNA (tRNA-Asp)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007317];gene_id=tD(GUC)Q;logic_name=sgd']"
+line-246,246,"Mito	sgd	tRNA	68322	68396	.	+	.	ID=transcript:tD(GUC)Q_tRNA;Parent=gene:tD(GUC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tD(GUC)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 68322, 68396, ., +, ., 'ID=transcript:tD(GUC)Q_tRNA;Parent=gene:tD(GUC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tD(GUC)Q_tRNA']"
+line-247,247,"Mito	sgd	exon	68322	68396	.	+	.	Parent=transcript:tD(GUC)Q_tRNA;Name=tD(GUC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tD(GUC)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 68322, 68396, ., +, ., 'Parent=transcript:tD(GUC)Q_tRNA;Name=tD(GUC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tD(GUC)Q_tRNA-E1;rank=1']"
+line-249,249,"Mito	sgd	ncRNA_gene	69203	69288	.	+	.	ID=gene:tS(GCU)Q1;biotype=tRNA;description=Mitochondrial serine tRNA (tRNA-Ser)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007332];gene_id=tS(GCU)Q1;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 69203, 69288, ., +, ., 'ID=gene:tS(GCU)Q1;biotype=tRNA;description=Mitochondrial serine tRNA (tRNA-Ser)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007332];gene_id=tS(GCU)Q1;logic_name=sgd']"
+line-250,250,"Mito	sgd	tRNA	69203	69288	.	+	.	ID=transcript:tS(GCU)Q1_tRNA;Parent=gene:tS(GCU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tS(GCU)Q1_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 69203, 69288, ., +, ., 'ID=transcript:tS(GCU)Q1_tRNA;Parent=gene:tS(GCU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tS(GCU)Q1_tRNA']"
+line-251,251,"Mito	sgd	exon	69203	69288	.	+	.	Parent=transcript:tS(GCU)Q1_tRNA;Name=tS(GCU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tS(GCU)Q1_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 69203, 69288, ., +, ., 'Parent=transcript:tS(GCU)Q1_tRNA;Name=tS(GCU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tS(GCU)Q1_tRNA-E1;rank=1']"
+line-253,253,"Mito	sgd	ncRNA_gene	69289	69362	.	+	.	ID=gene:tR(ACG)Q2;biotype=tRNA;description=Mitochondrial arginine tRNA (tRNA-Arg)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007330];gene_id=tR(ACG)Q2;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 69289, 69362, ., +, ., 'ID=gene:tR(ACG)Q2;biotype=tRNA;description=Mitochondrial arginine tRNA (tRNA-Arg)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007330];gene_id=tR(ACG)Q2;logic_name=sgd']"
+line-254,254,"Mito	sgd	tRNA	69289	69362	.	+	.	ID=transcript:tR(ACG)Q2_tRNA;Parent=gene:tR(ACG)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tR(ACG)Q2_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 69289, 69362, ., +, ., 'ID=transcript:tR(ACG)Q2_tRNA;Parent=gene:tR(ACG)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tR(ACG)Q2_tRNA']"
+line-255,255,"Mito	sgd	exon	69289	69362	.	+	.	Parent=transcript:tR(ACG)Q2_tRNA;Name=tR(ACG)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tR(ACG)Q2_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 69289, 69362, ., +, ., 'Parent=transcript:tR(ACG)Q2_tRNA;Name=tR(ACG)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tR(ACG)Q2_tRNA-E1;rank=1']"
+line-257,257,"Mito	sgd	ncRNA_gene	69846	69921	.	+	.	ID=gene:tA(UGC)Q;biotype=tRNA;description=Mitochondrial alanine tRNA (tRNA-Ala)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007315];gene_id=tA(UGC)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 69846, 69921, ., +, ., 'ID=gene:tA(UGC)Q;biotype=tRNA;description=Mitochondrial alanine tRNA (tRNA-Ala)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007315];gene_id=tA(UGC)Q;logic_name=sgd']"
+line-258,258,"Mito	sgd	tRNA	69846	69921	.	+	.	ID=transcript:tA(UGC)Q_tRNA;Parent=gene:tA(UGC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tA(UGC)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 69846, 69921, ., +, ., 'ID=transcript:tA(UGC)Q_tRNA;Parent=gene:tA(UGC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tA(UGC)Q_tRNA']"
+line-259,259,"Mito	sgd	exon	69846	69921	.	+	.	Parent=transcript:tA(UGC)Q_tRNA;Name=tA(UGC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tA(UGC)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 69846, 69921, ., +, ., 'Parent=transcript:tA(UGC)Q_tRNA;Name=tA(UGC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tA(UGC)Q_tRNA-E1;rank=1']"
+line-261,261,"Mito	sgd	ncRNA_gene	70162	70237	.	+	.	ID=gene:tI(GAU)Q;biotype=tRNA;description=Mitochondrial isoleucine tRNA (tRNA-Ile)%3B predicted by tRNAscan-SE analysis%3B mutations in human ortholog are linked to conditions such as progressive encephalopathy%2C metabolic syndrome%2C and hypomagnesaemia [Source:SGD%3BAcc:S000007322];gene_id=tI(GAU)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 70162, 70237, ., +, ., 'ID=gene:tI(GAU)Q;biotype=tRNA;description=Mitochondrial isoleucine tRNA (tRNA-Ile)%3B predicted by tRNAscan-SE analysis%3B mutations in human ortholog are linked to conditions such as progressive encephalopathy%2C metabolic syndrome%2C and hypomagnesaemia [Source:SGD%3BAcc:S000007322];gene_id=tI(GAU)Q;logic_name=sgd']"
+line-262,262,"Mito	sgd	tRNA	70162	70237	.	+	.	ID=transcript:tI(GAU)Q_tRNA;Parent=gene:tI(GAU)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tI(GAU)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 70162, 70237, ., +, ., 'ID=transcript:tI(GAU)Q_tRNA;Parent=gene:tI(GAU)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tI(GAU)Q_tRNA']"
+line-263,263,"Mito	sgd	exon	70162	70237	.	+	.	Parent=transcript:tI(GAU)Q_tRNA;Name=tI(GAU)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tI(GAU)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 70162, 70237, ., +, ., 'Parent=transcript:tI(GAU)Q_tRNA;Name=tI(GAU)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tI(GAU)Q_tRNA-E1;rank=1']"
+line-265,265,"Mito	sgd	ncRNA_gene	70824	70907	.	+	.	ID=gene:tY(GUA)Q;biotype=tRNA;description=Mitochondrial tyrosine tRNA (tRNA-Tyr) [Source:SGD%3BAcc:S000007338];gene_id=tY(GUA)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 70824, 70907, ., +, ., 'ID=gene:tY(GUA)Q;biotype=tRNA;description=Mitochondrial tyrosine tRNA (tRNA-Tyr) [Source:SGD%3BAcc:S000007338];gene_id=tY(GUA)Q;logic_name=sgd']"
+line-266,266,"Mito	sgd	tRNA	70824	70907	.	+	.	ID=transcript:tY(GUA)Q_tRNA;Parent=gene:tY(GUA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tY(GUA)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 70824, 70907, ., +, ., 'ID=transcript:tY(GUA)Q_tRNA;Parent=gene:tY(GUA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tY(GUA)Q_tRNA']"
+line-267,267,"Mito	sgd	exon	70824	70907	.	+	.	Parent=transcript:tY(GUA)Q_tRNA;Name=tY(GUA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tY(GUA)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 70824, 70907, ., +, ., 'Parent=transcript:tY(GUA)Q_tRNA;Name=tY(GUA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tY(GUA)Q_tRNA-E1;rank=1']"
+line-269,269,"Mito	sgd	ncRNA_gene	71433	71503	.	+	.	ID=gene:tN(GUU)Q;biotype=tRNA;description=Mitochondrial asparagine tRNA (tRNA-Asn)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007327];gene_id=tN(GUU)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 71433, 71503, ., +, ., 'ID=gene:tN(GUU)Q;biotype=tRNA;description=Mitochondrial asparagine tRNA (tRNA-Asn)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007327];gene_id=tN(GUU)Q;logic_name=sgd']"
+line-270,270,"Mito	sgd	tRNA	71433	71503	.	+	.	ID=transcript:tN(GUU)Q_tRNA;Parent=gene:tN(GUU)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tN(GUU)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 71433, 71503, ., +, ., 'ID=transcript:tN(GUU)Q_tRNA;Parent=gene:tN(GUU)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tN(GUU)Q_tRNA']"
+line-271,271,"Mito	sgd	exon	71433	71503	.	+	.	Parent=transcript:tN(GUU)Q_tRNA;Name=tN(GUU)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tN(GUU)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 71433, 71503, ., +, ., 'Parent=transcript:tN(GUU)Q_tRNA;Name=tN(GUU)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tN(GUU)Q_tRNA-E1;rank=1']"
+line-273,273,"Mito	sgd	ncRNA_gene	72630	72705	.	+	.	ID=gene:tM(CAU)Q1;biotype=tRNA;description=Mitochondrial methionine tRNA (tRNA-Met)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007325];gene_id=tM(CAU)Q1;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 72630, 72705, ., +, ., 'ID=gene:tM(CAU)Q1;biotype=tRNA;description=Mitochondrial methionine tRNA (tRNA-Met)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007325];gene_id=tM(CAU)Q1;logic_name=sgd']"
+line-274,274,"Mito	sgd	tRNA	72630	72705	.	+	.	ID=transcript:tM(CAU)Q1_tRNA;Parent=gene:tM(CAU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tM(CAU)Q1_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 72630, 72705, ., +, ., 'ID=transcript:tM(CAU)Q1_tRNA;Parent=gene:tM(CAU)Q1;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tM(CAU)Q1_tRNA']"
+line-275,275,"Mito	sgd	exon	72630	72705	.	+	.	Parent=transcript:tM(CAU)Q1_tRNA;Name=tM(CAU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tM(CAU)Q1_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 72630, 72705, ., +, ., 'Parent=transcript:tM(CAU)Q1_tRNA;Name=tM(CAU)Q1_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tM(CAU)Q1_tRNA-E1;rank=1']"
+line-277,277,"Mito	sgd	gene	73758	74513	.	+	.	ID=gene:Q0250;Name=COX2;biotype=protein_coding;description=Subunit II of cytochrome c oxidase (Complex IV)%3B Complex IV is the terminal member of the mitochondrial inner membrane electron transport chain%3B one of three mitochondrially-encoded subunits [Source:SGD%3BAcc:S000007281];gene_id=Q0250;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 73758, 74513, ., +, ., 'ID=gene:Q0250;Name=COX2;biotype=protein_coding;description=Subunit II of cytochrome c oxidase (Complex IV)%3B Complex IV is the terminal member of the mitochondrial inner membrane electron transport chain%3B one of three mitochondrially-encoded subunits [Source:SGD%3BAcc:S000007281];gene_id=Q0250;logic_name=sgd']"
+line-278,278,"Mito	sgd	mRNA	73758	74513	.	+	.	ID=transcript:Q0250_mRNA;Parent=gene:Q0250;Name=COX2;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0250_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 73758, 74513, ., +, ., 'ID=transcript:Q0250_mRNA;Parent=gene:Q0250;Name=COX2;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0250_mRNA']"
+line-279,279,"Mito	sgd	exon	73758	74513	.	+	.	Parent=transcript:Q0250_mRNA;Name=Q0250_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0250_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 73758, 74513, ., +, ., 'Parent=transcript:Q0250_mRNA;Name=Q0250_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0250_mRNA-E1;rank=1']"
+line-280,280,"Mito	sgd	CDS	73758	74513	.	+	0	ID=CDS:Q0250;Parent=transcript:Q0250_mRNA;protein_id=Q0250
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 73758, 74513, ., +, 0, 'ID=CDS:Q0250;Parent=transcript:Q0250_mRNA;protein_id=Q0250']"
+line-282,282,"Mito	sgd	gene	74495	75984	.	+	.	ID=gene:Q0255;biotype=protein_coding;description=Maturase-like protein [Source:SGD%3BAcc:S000007282];gene_id=Q0255;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 74495, 75984, ., +, ., 'ID=gene:Q0255;biotype=protein_coding;description=Maturase-like protein [Source:SGD%3BAcc:S000007282];gene_id=Q0255;logic_name=sgd']"
+line-283,283,"Mito	sgd	mRNA	74495	75984	.	+	.	ID=transcript:Q0255_mRNA;Parent=gene:Q0255;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0255_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 74495, 75984, ., +, ., 'ID=transcript:Q0255_mRNA;Parent=gene:Q0255;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0255_mRNA']"
+line-284,284,"Mito	sgd	exon	74495	75622	.	+	.	Parent=transcript:Q0255_mRNA;Name=Q0255_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0255_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 74495, 75622, ., +, ., 'Parent=transcript:Q0255_mRNA;Name=Q0255_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0255_mRNA-E1;rank=1']"
+line-285,285,"Mito	sgd	CDS	74495	75622	.	+	0	ID=CDS:Q0255;Parent=transcript:Q0255_mRNA;protein_id=Q0255
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 74495, 75622, ., +, 0, 'ID=CDS:Q0255;Parent=transcript:Q0255_mRNA;protein_id=Q0255']"
+line-286,286,"Mito	sgd	exon	75663	75872	.	+	.	Parent=transcript:Q0255_mRNA;Name=Q0255_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0255_mRNA-E2;rank=2
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 75663, 75872, ., +, ., 'Parent=transcript:Q0255_mRNA;Name=Q0255_mRNA-E2;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0255_mRNA-E2;rank=2']"
+line-287,287,"Mito	sgd	CDS	75663	75872	.	+	0	ID=CDS:Q0255;Parent=transcript:Q0255_mRNA;protein_id=Q0255
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 75663, 75872, ., +, 0, 'ID=CDS:Q0255;Parent=transcript:Q0255_mRNA;protein_id=Q0255']"
+line-288,288,"Mito	sgd	exon	75904	75984	.	+	.	Parent=transcript:Q0255_mRNA;Name=Q0255_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0255_mRNA-E3;rank=3
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 75904, 75984, ., +, ., 'Parent=transcript:Q0255_mRNA;Name=Q0255_mRNA-E3;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0255_mRNA-E3;rank=3']"
+line-289,289,"Mito	sgd	CDS	75904	75984	.	+	0	ID=CDS:Q0255;Parent=transcript:Q0255_mRNA;protein_id=Q0255
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 75904, 75984, ., +, 0, 'ID=CDS:Q0255;Parent=transcript:Q0255_mRNA;protein_id=Q0255']"
+line-291,291,"Mito	sgd	ncRNA_gene	77431	77505	.	+	.	ID=gene:tF(GAA)Q;biotype=tRNA;description=Mitochondrial phenylalanine tRNA (tRNA-Phe)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007319];gene_id=tF(GAA)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 77431, 77505, ., +, ., 'ID=gene:tF(GAA)Q;biotype=tRNA;description=Mitochondrial phenylalanine tRNA (tRNA-Phe)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007319];gene_id=tF(GAA)Q;logic_name=sgd']"
+line-292,292,"Mito	sgd	tRNA	77431	77505	.	+	.	ID=transcript:tF(GAA)Q_tRNA;Parent=gene:tF(GAA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tF(GAA)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 77431, 77505, ., +, ., 'ID=transcript:tF(GAA)Q_tRNA;Parent=gene:tF(GAA)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tF(GAA)Q_tRNA']"
+line-293,293,"Mito	sgd	exon	77431	77505	.	+	.	Parent=transcript:tF(GAA)Q_tRNA;Name=tF(GAA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tF(GAA)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 77431, 77505, ., +, ., 'Parent=transcript:tF(GAA)Q_tRNA;Name=tF(GAA)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tF(GAA)Q_tRNA-E1;rank=1']"
+line-295,295,"Mito	sgd	ncRNA_gene	78089	78162	.	-	.	ID=gene:tT(UAG)Q2;biotype=tRNA;description=Mitochondrial threonine tRNA (tRNA-Thr)%3B decodes CUA codons as threonine rather than leucine%3B has an unusual enlarged 8-nt anticodon loop%3B may be evolutionarily derived from mitochondrial tRNA-His%3B conserved in some genera of budding yeasts [Source:SGD%3BAcc:S000007335];gene_id=tT(UAG)Q2;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 78089, 78162, ., -, ., 'ID=gene:tT(UAG)Q2;biotype=tRNA;description=Mitochondrial threonine tRNA (tRNA-Thr)%3B decodes CUA codons as threonine rather than leucine%3B has an unusual enlarged 8-nt anticodon loop%3B may be evolutionarily derived from mitochondrial tRNA-His%3B conserved in some genera of budding yeasts [Source:SGD%3BAcc:S000007335];gene_id=tT(UAG)Q2;logic_name=sgd']"
+line-296,296,"Mito	sgd	tRNA	78089	78162	.	-	.	ID=transcript:tT(UAG)Q2_tRNA;Parent=gene:tT(UAG)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tT(UAG)Q2_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 78089, 78162, ., -, ., 'ID=transcript:tT(UAG)Q2_tRNA;Parent=gene:tT(UAG)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tT(UAG)Q2_tRNA']"
+line-297,297,"Mito	sgd	exon	78089	78162	.	-	.	Parent=transcript:tT(UAG)Q2_tRNA;Name=tT(UAG)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tT(UAG)Q2_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 78089, 78162, ., -, ., 'Parent=transcript:tT(UAG)Q2_tRNA;Name=tT(UAG)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tT(UAG)Q2_tRNA-E1;rank=1']"
+line-299,299,"Mito	sgd	ncRNA_gene	78533	78608	.	+	.	ID=gene:tV(UAC)Q;biotype=tRNA;description=Mitochondrial valine tRNA (tRNA-Val)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007336];gene_id=tV(UAC)Q;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 78533, 78608, ., +, ., 'ID=gene:tV(UAC)Q;biotype=tRNA;description=Mitochondrial valine tRNA (tRNA-Val)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007336];gene_id=tV(UAC)Q;logic_name=sgd']"
+line-300,300,"Mito	sgd	tRNA	78533	78608	.	+	.	ID=transcript:tV(UAC)Q_tRNA;Parent=gene:tV(UAC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tV(UAC)Q_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 78533, 78608, ., +, ., 'ID=transcript:tV(UAC)Q_tRNA;Parent=gene:tV(UAC)Q;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tV(UAC)Q_tRNA']"
+line-301,301,"Mito	sgd	exon	78533	78608	.	+	.	Parent=transcript:tV(UAC)Q_tRNA;Name=tV(UAC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tV(UAC)Q_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 78533, 78608, ., +, ., 'Parent=transcript:tV(UAC)Q_tRNA;Name=tV(UAC)Q_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tV(UAC)Q_tRNA-E1;rank=1']"
+line-303,303,"Mito	sgd	gene	79213	80022	.	+	.	ID=gene:Q0275;Name=COX3;biotype=protein_coding;description=Subunit III of cytochrome c oxidase (Complex IV)%3B Complex IV is the terminal member of the mitochondrial inner membrane electron transport chain%3B one of three mitochondrially-encoded subunits [Source:SGD%3BAcc:S000007283];gene_id=Q0275;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 79213, 80022, ., +, ., 'ID=gene:Q0275;Name=COX3;biotype=protein_coding;description=Subunit III of cytochrome c oxidase (Complex IV)%3B Complex IV is the terminal member of the mitochondrial inner membrane electron transport chain%3B one of three mitochondrially-encoded subunits [Source:SGD%3BAcc:S000007283];gene_id=Q0275;logic_name=sgd']"
+line-304,304,"Mito	sgd	mRNA	79213	80022	.	+	.	ID=transcript:Q0275_mRNA;Parent=gene:Q0275;Name=COX3;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0275_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 79213, 80022, ., +, ., 'ID=transcript:Q0275_mRNA;Parent=gene:Q0275;Name=COX3;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0275_mRNA']"
+line-305,305,"Mito	sgd	exon	79213	80022	.	+	.	Parent=transcript:Q0275_mRNA;Name=Q0275_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0275_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 79213, 80022, ., +, ., 'Parent=transcript:Q0275_mRNA;Name=Q0275_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0275_mRNA-E1;rank=1']"
+line-306,306,"Mito	sgd	CDS	79213	80022	.	+	0	ID=CDS:Q0275;Parent=transcript:Q0275_mRNA;protein_id=Q0275
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 79213, 80022, ., +, 0, 'ID=CDS:Q0275;Parent=transcript:Q0275_mRNA;protein_id=Q0275']"
+line-308,308,"Mito	sgd	ncRNA_gene	85035	85112	.	+	.	ID=gene:tM(CAU)Q2;biotype=tRNA;description=Mitochondrial formylated methionine tRNA (tRNA-fMet)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007326];gene_id=tM(CAU)Q2;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 85035, 85112, ., +, ., 'ID=gene:tM(CAU)Q2;biotype=tRNA;description=Mitochondrial formylated methionine tRNA (tRNA-fMet)%3B predicted by tRNAscan-SE analysis [Source:SGD%3BAcc:S000007326];gene_id=tM(CAU)Q2;logic_name=sgd']"
+line-309,309,"Mito	sgd	tRNA	85035	85112	.	+	.	ID=transcript:tM(CAU)Q2_tRNA;Parent=gene:tM(CAU)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tM(CAU)Q2_tRNA
+",feature,sequence,Mito,,,"[Mito, sgd, tRNA, 85035, 85112, ., +, ., 'ID=transcript:tM(CAU)Q2_tRNA;Parent=gene:tM(CAU)Q2;biotype=tRNA;tag=Ensembl_canonical;transcript_id=tM(CAU)Q2_tRNA']"
+line-310,310,"Mito	sgd	exon	85035	85112	.	+	.	Parent=transcript:tM(CAU)Q2_tRNA;Name=tM(CAU)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tM(CAU)Q2_tRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 85035, 85112, ., +, ., 'Parent=transcript:tM(CAU)Q2_tRNA;Name=tM(CAU)Q2_tRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=tM(CAU)Q2_tRNA-E1;rank=1']"
+line-312,312,"Mito	sgd	ncRNA_gene	85295	85777	.	+	.	ID=gene:Q0285;Name=RPM1;biotype=ncRNA;description=RNA component of mitochondrial RNase P%3B mitochondrial RNase P also contains the protein subunit Rpm2p%3B RNase P removes 5' extensions from mitochondrial tRNA precursors%3B RPM1 is conserved in bacteria%2C fungi%2C and protozoa [Source:SGD%3BAcc:S000029023];gene_id=Q0285;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA_gene, 85295, 85777, ., +, ., 'ID=gene:Q0285;Name=RPM1;biotype=ncRNA;description=RNA component of mitochondrial RNase P%3B mitochondrial RNase P also contains the protein subunit Rpm2p%3B RNase P removes 5\' extensions from mitochondrial tRNA precursors%3B RPM1 is conserved in bacteria%2C fungi%2C and protozoa [Source:SGD%3BAcc:S000029023];gene_id=Q0285;logic_name=sgd']"
+line-313,313,"Mito	sgd	ncRNA	85295	85777	.	+	.	ID=transcript:Q0285_ncRNA;Parent=gene:Q0285;biotype=ncRNA;tag=Ensembl_canonical;transcript_id=Q0285_ncRNA
+",feature,sequence,Mito,,,"[Mito, sgd, ncRNA, 85295, 85777, ., +, ., 'ID=transcript:Q0285_ncRNA;Parent=gene:Q0285;biotype=ncRNA;tag=Ensembl_canonical;transcript_id=Q0285_ncRNA']"
+line-314,314,"Mito	sgd	exon	85295	85777	.	+	.	Parent=transcript:Q0285_ncRNA;Name=Q0285_ncRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0285_ncRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 85295, 85777, ., +, ., 'Parent=transcript:Q0285_ncRNA;Name=Q0285_ncRNA-E1;constitutive=1;ensembl_end_phase=-1;ensembl_phase=-1;exon_id=Q0285_ncRNA-E1;rank=1']"
+line-316,316,"Mito	sgd	gene	85554	85709	.	+	.	ID=gene:Q0297;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data%3B partially overlaps the verified gene RPM1 [Source:SGD%3BAcc:S000007284];gene_id=Q0297;logic_name=sgd
+",feature,sequence,Mito,,,"[Mito, sgd, gene, 85554, 85709, ., +, ., 'ID=gene:Q0297;biotype=protein_coding;description=Dubious open reading frame%3B unlikely to encode a functional protein%2C based on available experimental and comparative sequence data%3B partially overlaps the verified gene RPM1 [Source:SGD%3BAcc:S000007284];gene_id=Q0297;logic_name=sgd']"
+line-317,317,"Mito	sgd	mRNA	85554	85709	.	+	.	ID=transcript:Q0297_mRNA;Parent=gene:Q0297;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0297_mRNA
+",feature,sequence,Mito,,,"[Mito, sgd, mRNA, 85554, 85709, ., +, ., 'ID=transcript:Q0297_mRNA;Parent=gene:Q0297;biotype=protein_coding;tag=Ensembl_canonical;transcript_id=Q0297_mRNA']"
+line-318,318,"Mito	sgd	exon	85554	85709	.	+	.	Parent=transcript:Q0297_mRNA;Name=Q0297_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0297_mRNA-E1;rank=1
+",feature,sequence,Mito,,,"[Mito, sgd, exon, 85554, 85709, ., +, ., 'Parent=transcript:Q0297_mRNA;Name=Q0297_mRNA-E1;constitutive=1;ensembl_end_phase=0;ensembl_phase=0;exon_id=Q0297_mRNA-E1;rank=1']"
+line-319,319,"Mito	sgd	CDS	85554	85709	.	+	0	ID=CDS:Q0297;Parent=transcript:Q0297_mRNA;protein_id=Q0297
+",feature,sequence,Mito,,,"[Mito, sgd, CDS, 85554, 85709, ., +, 0, 'ID=CDS:Q0297;Parent=transcript:Q0297_mRNA;protein_id=Q0297']"
