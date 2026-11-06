@@ -31,7 +31,7 @@ MODEL = ROOT / "model/schema/ber_feature_model.yaml"
 TRANSFORM = ROOT / "model/transforms/img-assembled-gff.transform.yaml"
 ROW = dialect.ROW_CLASS
 LEXICAL = {"line", "attribute_order"}
-# Column 9 keys the transform also maps to a Feature slot; their attribute copy must agree.
+# Column 9 keys the transform also maps to a SequenceFeature slot; their attribute copy must agree.
 PROMOTED = {"ID": "feature_id", "product": "product"}
 
 
@@ -96,14 +96,14 @@ def reverse(dataset, source_file, transformers=None):
             raise ValueError(f"{name}: coordinate_system is {feature.get('coordinate_system')!r}; "
                              "this dialect has only contig")
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system")}
-        mapped = present(to_dialect.map_object(core, source_type="Feature"))
+        mapped = present(to_dialect.map_object(core, source_type="SequenceFeature"))
         try:
             row = dialect.parse_row(number, row_text(mapped, feature.get("attributes", []), name), slots)
         except (ValueError, dialect.DialectError) as error:
             raise ValueError(f"{name}: {error}") from None
         for key, slot in PROMOTED.items():
             if feature.get(slot) != row.get(key):
-                raise ValueError(f"{name}: {slot} is {feature.get(slot)!r} in the Feature but "
+                raise ValueError(f"{name}: {slot} is {feature.get(slot)!r} in the SequenceFeature but "
                                  f"{key} is {row.get(key)!r} in its attributes")
         rows.append(row)
     document = {"source_file": source_file, "rows": rows}

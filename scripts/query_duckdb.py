@@ -19,7 +19,7 @@ def multiple_pfams(con, accessions=()):
     return con.execute("""
         SELECT p.feature_id, p.product, count(DISTINCT c.type) AS n_pfams,
                list_sort(list(DISTINCT c.type)) AS pfams
-        FROM feature p JOIN feature c ON list_contains(c.parent, p.feature_id)
+        FROM sequence_feature p JOIN sequence_feature c ON list_contains(c.parent, p.feature_id)
         WHERE p.type = 'CDS' AND p.coordinate_system = 'contig'
           AND c.coordinate_system = 'protein'
           AND regexp_full_match(c.type, 'PF[0-9]{5}(\\.[0-9]+)?')
@@ -42,14 +42,14 @@ def interval_overlap(con, sequence_id, start, end, coordinate_system="contig"):
     if coordinate_system not in ("contig", "protein"):
         raise ValueError("coordinate_system must be contig or protein")
     if coordinate_system == "contig" and con.execute('''
-        SELECT count(*) FROM feature f, json_each(f.location, '$.parts') p
+        SELECT count(*) FROM sequence_feature f, json_each(f.location, '$.parts') p
         WHERE f.seqid = ? AND
           ((p.value->>'start_status') != 'exact' OR (p.value->>'end_status') != 'exact')
     ''', [sequence_id]).fetchone()[0]:
         raise ValueError("reference has uncertain endpoints; use the explicit location query's reported-bounds mode")
     return con.execute("""
         SELECT feature_id, type, start, "end", coordinate_system
-        FROM feature
+        FROM sequence_feature
         WHERE coordinate_system = ?
           AND ((location IS NULL AND start <= ? AND "end" >= ?)
             OR EXISTS (SELECT 1 FROM json_each(location, '$.parts') p
@@ -80,11 +80,11 @@ def neighbors(con, sequence_id, position, count=2, feature_type="gene"):
     length = con.execute("SELECT max(length_bp) FROM contig WHERE contig_id = ?", [sequence_id]).fetchone()[0]
     if length is not None and position > length:
         raise ValueError(f"position {position} is beyond the contig's {length} bases")
-    if con.execute("SELECT count(*) FROM feature WHERE seqid = ? AND coordinate_system = 'protein'",
+    if con.execute("SELECT count(*) FROM sequence_feature WHERE seqid = ? AND coordinate_system = 'protein'",
                    [sequence_id]).fetchone()[0]:
         raise ValueError("reference is a protein-coordinate sequence; neighbors needs a contig")
     if con.execute('''
-        SELECT count(*) FROM feature f, json_each(f.location, '$.parts') p
+        SELECT count(*) FROM sequence_feature f, json_each(f.location, '$.parts') p
         WHERE f.seqid = ? AND f.type = ? AND f.coordinate_system = 'contig' AND
           ((p.value->>'start_status') != 'exact' OR (p.value->>'end_status') != 'exact')
     ''', [sequence_id, feature_type]).fetchone()[0]:
@@ -94,7 +94,7 @@ def neighbors(con, sequence_id, position, count=2, feature_type="gene"):
             SELECT feature_id, start, "end", strand,
                    CASE WHEN "end" < ? THEN 'left' WHEN start > ? THEN 'right' ELSE 'contains' END AS side,
                    CASE WHEN "end" < ? THEN ? - "end" - 1 WHEN start > ? THEN start - ? - 1 ELSE 0 END AS gap
-            FROM feature
+            FROM sequence_feature
             WHERE seqid = ? AND type = ? AND coordinate_system = 'contig'),
         ranked AS (
             SELECT *, row_number() OVER (PARTITION BY side ORDER BY gap, start, feature_id) AS nearness
@@ -111,7 +111,7 @@ def neighbors(con, sequence_id, position, count=2, feature_type="gene"):
 def by_attribute(con, key, value):
     return con.execute("""
         SELECT DISTINCT f.feature_id
-        FROM feature f, unnest(f.attributes) AS a(item)
+        FROM sequence_feature f, unnest(f.attributes) AS a(item)
         WHERE a.item.key = ? AND a.item.value = ?
         ORDER BY f.feature_id
     """, [key, value]).fetchall()

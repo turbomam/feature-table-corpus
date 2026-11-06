@@ -102,7 +102,7 @@ class MappingTests(unittest.TestCase):
         dataset = copy.deepcopy(self.dataset)
         mrna = next(f for f in dataset["features"] if f["type"] == "mRNA")
         mrna["attributes"] = [a for a in mrna["attributes"] if a["key"] != "Parent"]
-        with self.assertRaisesRegex(ValueError, "Parent is 'Exa01g00010.EXv1' in the Feature but None"):
+        with self.assertRaisesRegex(ValueError, "Parent is 'Exa01g00010.EXv1' in the SequenceFeature but None"):
             self.back(dataset)
 
     def test_reverse_of_forward_is_the_document(self):

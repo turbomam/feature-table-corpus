@@ -2,7 +2,7 @@ id: https://w3id.org/ber-data/transforms/img-taxon-bundle-to-feature-model
 title: IMG taxon bundle GFF and tables to the feature model
 description: >-
   linkml-map specification from the img_taxon_bundle dialect (model/dialects/img-taxon-bundle.yaml)
-  to Feature in model/schema/ber_feature_model.yaml: one derivation for the GFF rows and one for each
+  to SequenceFeature in model/schema/ber_feature_model.yaml: one derivation for the GFF rows and one for each
   table whose rows have positions. The reverse specification is generated from this one with
   `linkml-map invert`, not written by hand.
 comments:
@@ -22,7 +22,7 @@ target_schema:
   name: ber-feature-model
   source_file: model/schema/ber_feature_model.yaml
 class_derivations:
-  - name: Feature
+  - name: SequenceFeature
     populated_from: ImgTaxonGffRow
     slot_derivations:
       feature_id:
@@ -43,7 +43,7 @@ class_derivations:
         populated_from: phase
       product:
         populated_from: product
-  - name: Feature
+  - name: SequenceFeature
     populated_from: CogHit
     slot_derivations:
       seqid:
@@ -56,7 +56,7 @@ class_derivations:
         populated_from: query_end
       score:
         populated_from: bit_score
-  - name: Feature
+  - name: SequenceFeature
     populated_from: PfamHit
     slot_derivations:
       seqid:
@@ -69,7 +69,7 @@ class_derivations:
         populated_from: query_end
       score:
         populated_from: bit_score
-  - name: Feature
+  - name: SequenceFeature
     populated_from: TigrfamHit
     slot_derivations:
       seqid:
@@ -82,7 +82,7 @@ class_derivations:
         populated_from: query_end
       score:
         populated_from: bit_score
-  - name: Feature
+  - name: SequenceFeature
     populated_from: KoHit
     slot_derivations:
       seqid:
@@ -95,7 +95,7 @@ class_derivations:
         populated_from: query_end
       score:
         populated_from: bit_score
-  - name: Feature
+  - name: SequenceFeature
     populated_from: IprHit
     slot_derivations:
       seqid:
@@ -106,7 +106,7 @@ class_derivations:
         populated_from: query_start
       end:
         populated_from: query_end
-  - name: Feature
+  - name: SequenceFeature
     populated_from: SignalpFeature
     slot_derivations:
       seqid:
@@ -118,7 +118,7 @@ class_derivations:
         populated_from: start_coord
       end:
         populated_from: end_coord
-  - name: Feature
+  - name: SequenceFeature
     populated_from: TmhmmFeature
     slot_derivations:
       seqid:

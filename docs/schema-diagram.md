@@ -42,7 +42,18 @@ ContigCollection {
 Dataset {
 
 }
-Feature {
+FeatureLocation {
+    boolean crosses_origin
+    LocationOperatorEnum location_operator
+}
+LocationPart {
+    integer end
+    EndpointStatusEnum end_status
+    integer start
+    EndpointStatusEnum start_status
+    StrandEnum strand
+}
+SequenceFeature {
     string name
     CoordinateSystemEnum coordinate_system
     stringList dbxref
@@ -67,41 +78,30 @@ Feature {
     string translated_sequence
     string type
 }
-FeatureLocation {
-    boolean crosses_origin
-    LocationOperatorEnum location_operator
-}
-LocationPart {
-    integer end
-    EndpointStatusEnum end_status
-    integer start
-    EndpointStatusEnum start_status
-    StrandEnum strand
-}
 
 Contig }o--o{ ContigCollection : "member_of"
 Dataset ||--o{ Contig : "contigs"
 Dataset ||--o{ ContigCollection : "contig_collections"
-Dataset ||--o{ Feature : "features"
-Feature ||--o| AlignmentTarget : "target"
-Feature ||--o| FeatureLocation : "location"
-Feature ||--o{ Attribute : "attributes"
-Feature }o--o{ Feature : "parent"
-Contig ||--o{ Feature : "seqid"
-Feature ||--o{ Feature : "seqid (protein coordinates)"
+Dataset ||--o{ SequenceFeature : "features"
 FeatureLocation ||--|{ LocationPart : "parts"
 Contig ||--o{ LocationPart : "seqid"
+SequenceFeature ||--o| AlignmentTarget : "target"
+SequenceFeature ||--o| FeatureLocation : "location"
+SequenceFeature ||--o{ Attribute : "attributes"
+SequenceFeature }o--o{ SequenceFeature : "parent"
+Contig ||--o{ SequenceFeature : "seqid"
+SequenceFeature ||--o{ SequenceFeature : "seqid (protein coordinates)"
 ```
 
 `Dataset` is the tree root, added 2026-09-18 so a whole harmonized data file validates as one
-instance of one class instead of a bag of loose Contig and Feature fragments. Its own box is
+instance of one class instead of a bag of loose Contig and SequenceFeature fragments. Its own box is
 empty because it has no scalar slots, only the two relationships shown.
 
 `erdiagramgen` lists every scalar and enum slot inside each entity box and draws an arrow only
-for slots whose range is another class (`Contig`, `Feature`, `Attribute`). `model/schema/ber_feature_model.yaml`
+for slots whose range is another class (`Contig`, `SequenceFeature`, `Attribute`). `model/schema/ber_feature_model.yaml`
 itself is the source of truth if this diagram and that file ever disagree.
 
-Each Feature references exactly one Contig, while a Contig may have zero or many
+Each SequenceFeature references exactly one Contig, while a Contig may have zero or many
 Features. Parent links are optional and many-to-many: a child can have multiple
 parents, and a parent can have multiple children. Each optional FeatureLocation
 contains one or more LocationParts; every part references one Contig, which may

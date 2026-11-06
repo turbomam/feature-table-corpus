@@ -75,7 +75,7 @@ Typed values, units, namespaces for keys, nested structures, and per-attribute p
 remain extension questions. Known biological fields can still have explicit typed slots
 in the consuming model. Generic attributes should not replace those slots.
 
-The feature model imports this module and attaches a list through `Feature.attributes`.
+The feature model imports this module and attaches a list through `SequenceFeature.attributes`.
 Its draft instances now use `key`, replacing the earlier GFF-oriented `tag` spelling.
 `just test` validates the module independently with metadata and evidence examples,
 checks repeated keys in a feature's attribute list, and imports it into a consumer

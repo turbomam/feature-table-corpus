@@ -18,7 +18,7 @@ The JSON conversion bundle is one document with these required fields:
 | `profile` | Explicit source contract ID including version; no filename or dialect guessing. |
 | `reference_context` | Caller-supplied assembly or source-scoped reference identity. Required; never inferred from `chr1` or an annotation name. |
 | `source` | A [SourceDocument](source-documents.md) retaining record order, lexical details, scoped metadata, content hash and provenance URI. |
-| `dataset` | An instance of the existing [Dataset/Contig/Feature model](../model/schema/README.md), validated with its closed shape and cross-record checks. |
+| `dataset` | An instance of the existing [Dataset/Contig/SequenceFeature model](../model/schema/README.md), validated with its closed shape and cross-record checks. |
 | `mappings` | Source-record-to-feature identities, ordered block identities, and attribute grouping/cardinality metadata needed by the reverse mapping. |
 
 The protein profile additionally requires `protein_context` in the bundle. Supply
@@ -117,19 +117,19 @@ rejects what it should.
 ### Mapping a dialect with linkml-map
 
 [`img-functional-gff.transform.yaml`](../model/transforms/img-functional-gff.transform.yaml)
-maps dialect rows to `Feature` with [linkml-map](https://github.com/linkml/linkml-map) 0.5.4,
+maps dialect rows to `SequenceFeature` with [linkml-map](https://github.com/linkml/linkml-map) 0.5.4,
 pinned in [`requirements-mapping.txt`](../requirements-mapping.txt). The reverse mapping is not written by hand: it is generated
 from the same file with linkml-map's inverter each time
 ([#55](https://github.com/turbomam/feature-table-corpus/issues/55)).
 
-linkml-map handles the nine columns, the typed keys with a `Feature` slot (`ID`, `Parent`,
+linkml-map handles the nine columns, the typed keys with a `SequenceFeature` slot (`ID`, `Parent`,
 `product`, `product_source`) and the strand enum. `scripts/img_functional_map.py` does four
 things it couldn't, found while building this on 2026-09-25:
 
 - MELT turns wide slots into key/value rows, but keeps a list as one value, keeps non-string
   types, and follows the spec's slot order. Column 9 needs one `Attribute` per value, as text,
   in file order, so the script builds `attributes` itself. Every key is kept, including those
-  that also fill a `Feature` slot, as `gff3-contig` does; the reverse step rejects a Feature
+  that also fill a `SequenceFeature` slot, as `gff3-contig` does; the reverse step rejects a SequenceFeature
   whose slot and attribute copies disagree.
 - A constant slot (`coordinate_system: contig`) makes inversion fail, so the script sets it.
 - linkml-map won't build records inside an expression, so the script makes one `Contig` per
@@ -156,7 +156,7 @@ Attribute text, which is a string. A score is a number in the model, so its spel
 separate map of `feature_id` to text, and only for scores the dialect would otherwise write
 differently. `roundtrip` holds both in memory; `forward --spelling FILE` writes the map and
 `reverse --spelling FILE` reads it. A kept spelling is used only while it still parses to the
-Feature's value, so an edited value is written as edited. `Ga0423362` now comes back byte for
+SequenceFeature's value, so an edited value is written as edited. `Ga0423362` now comes back byte for
 byte, its 430 lines included. `Ga0416744` is not in the repo and was not rerun.
 
 `just map-img-functional FILE OUT` and `just map-img-functional-back DATASET OUT` run each
@@ -200,7 +200,7 @@ tests edit single rows of [constructed fixtures](../tests/fixtures/img-per-metho
 one per method.
 
 [`img-per-method-gff.transform.yaml`](../model/transforms/img-per-method-gff.transform.yaml)
-maps hit rows to `Feature` with linkml-map, and `scripts/img_per_method_map.py` adds what
+maps hit rows to `SequenceFeature` with linkml-map, and `scripts/img_per_method_map.py` adds what
 linkml-map can't do, as for the functional annotation. A hit is on [protein
 coordinates](protein-coordinates.md): its `seqid` is the CDS whose translation its positions count
 along, and that CDS is its only `parent`. The hit files hold no CDS rows, so the mapping takes the
@@ -278,10 +278,10 @@ by parsed rows, as in the other IMG dialects. The tests edit single rows of
 [constructed fixtures](../tests/fixtures/img-tmhmm-signalp-gff/README.md).
 
 [`img-tmhmm-signalp-gff.transform.yaml`](../model/transforms/img-tmhmm-signalp-gff.transform.yaml)
-maps the rows to `Feature` with linkml-map, and `scripts/img_tmhmm_signalp_map.py` maps them with
+maps the rows to `SequenceFeature` with linkml-map, and `scripts/img_tmhmm_signalp_map.py` maps them with
 the genome's functional annotation GFF, which supplies the CDS, as for the per-method hits:
 
-- Each segment or site is a Feature on protein coordinates. Its seqid is its CDS, which is also
+- Each segment or site is a SequenceFeature on protein coordinates. Its seqid is its CDS, which is also
   its only parent.
 - `feature_id` is `<seqid>_<start>_<end>|<method>|<type>`, the form of
   https://github.com/turbomam/feature-table-corpus/issues/98, with `tmh` or `cleavage_sites` as
@@ -333,7 +333,7 @@ for byte. The tests edit single rows of a
 [constructed bundle](../tests/fixtures/img-taxon-bundle/README.md) to show each rule rejects.
 
 [`img-taxon-bundle.transform.yaml`](../model/transforms/img-taxon-bundle.transform.yaml) maps the GFF
-rows and every table with positions to `Feature`, one linkml-map derivation per source class, and
+rows and every table with positions to `SequenceFeature`, one linkml-map derivation per source class, and
 `scripts/img_taxon_bundle_map.py` adds the rest:
 
 - A table row is a hit on [protein coordinates](protein-coordinates.md), on the CDS its `gene_oid`
@@ -343,7 +343,7 @@ rows and every table with positions to `Feature`, one linkml-map derivation per 
   Every other column is an Attribute in column order, as the dialect writes it. A list cell,
   InterPro `go_info`, is one Attribute per `|`-separated member, in cell order.
 - A KO hit that lists several EC numbers is written as one row per number (126 extra rows in
-  Bacillus, 79 in Zymomonas). It becomes one Feature with one `EC` Attribute per row; the rows
+  Bacillus, 79 in Zymomonas). It becomes one SequenceFeature with one `EC` Attribute per row; the rows
   must be adjacent and agree in every other column, or the bundle is refused.
 - `.xref.tab.txt` has no positions, so each row becomes a `stable_identifiers` entry on its CDS
   (https://github.com/turbomam/feature-table-corpus/issues/102): `ncbigi:` for `GI`, `genbank:`
@@ -387,7 +387,7 @@ spellings, so the writer reproduces any valid file byte for byte. The tests edit
 single rows of a [constructed fixture](../tests/fixtures/img-assembled-gff/README.md).
 
 [`img-assembled-gff.transform.yaml`](../model/transforms/img-assembled-gff.transform.yaml) maps the
-rows to `Feature` with linkml-map, and `scripts/img_assembled_gff_map.py` adds the same pieces as
+rows to `SequenceFeature` with linkml-map, and `scripts/img_assembled_gff_map.py` adds the same pieces as
 the other IMG mappings. The strand derivation maps `1` and `-1` to `+` and `-`; `linkml-map
 invert` keeps those value derivations, so unlike `mirror_source` they need no repair. Each
 attribute value is the text the dialect's writer produces, so `conf=100.00` stays `100.00`.
@@ -417,7 +417,7 @@ the tests use a [constructed fixture](../tests/fixtures/phytozome/README.md).
 - Every mRNA row has `longest=0` or `longest=1`, and each gene has exactly one `longest=1`
   (27,416 genes, 7,970 other isoforms). The flag is Phytozome's choice: in 16 of the 5,804
   genes with more than one isoform, the flagged one does not have the longest CDS. The
-  feature model carries it as `Feature.is_representative`
+  feature model carries it as `SequenceFeature.is_representative`
   (https://github.com/turbomam/feature-table-corpus/issues/48).
 - Each mRNA's `pacid` appears once in the table, as `PAC:<pacid>`, with the mRNA's Name as
   `transcriptName` and its gene's Name as `locusName`. All 35,386 match in both directions.
@@ -460,11 +460,11 @@ two excerpts round-trip together byte for byte in CI, making annotation_info cle
 (https://github.com/turbomam/feature-table-corpus/issues/144).
 
 [`phytozome-gene-exons-gff3.transform.yaml`](../model/transforms/phytozome-gene-exons-gff3.transform.yaml)
-maps the GFF3 rows to `Feature` with linkml-map, the same way as the IMG functional annotation
+maps the GFF3 rows to `SequenceFeature` with linkml-map, the same way as the IMG functional annotation
 above, and `scripts/phytozome_gene_exons_map.py` adds the same four things linkml-map can't do.
-Gene, mRNA and part rows each become a `Feature`, joined by `parent`. `longest` sets
-`Feature.is_representative` (`1` true, `0` false) and, like `ID` and `Parent`, keeps its attribute
-copy, which the reverse step requires to agree; `Name` and `pacid` have no `Feature` slot and travel
+Gene, mRNA and part rows each become a `SequenceFeature`, joined by `parent`. `longest` sets
+`SequenceFeature.is_representative` (`1` true, `0` false) and, like `ID` and `Parent`, keeps its attribute
+copy, which the reverse step requires to agree; `Name` and `pacid` have no `SequenceFeature` slot and travel
 only as attributes. The two directives are not model
 data: the reverse step writes `##gff-version 3` and recovers the annot-version from the gene IDs,
 each of which is the gene's Name, a dot, and the annot-version (`.TAIR10` in the Arabidopsis file,
@@ -512,7 +512,7 @@ which keys are multivalued.
 | `gff3-contig/4.0.0` | every key | after splitting | `Note=x%2Cy` is one entry `x,y`; `Parent=a,b` is two |
 | `nmdc-pfam-protein/5.0.0` | every key, through the same GFF3 reader | after splitting | as for `gff3-contig` |
 | IMG functional dialect and its mapping | only keys the dialect types multivalued (`pfam`, `cog`, `ko`, `ec_number`, `tigrfam`, `smart`, `superfamily`, `cath_funfam`, `transmembrane_helix_parts`); `shortened` repeats as a key instead | none; IMG writes no escapes | `product=glutamate-1-semialdehyde 2,1-aminomutase` is one entry |
-| IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `Feature` |
+| IMG per-method dialect | only `subject_gene_ids` | none | not yet mapped to `SequenceFeature` |
 | IMG TMHMM and SignalP GFF and their mapping | none; it declares no list keys | none | `D-score=0.670` is one entry, kept as written |
 | IMG taxon bundle and its mapping | only the InterPro table's `go_info`, split on `\|`; GFF `ID`, `locus_tag` and `product` are single values | none | `GO:0006807\|GO:0016810` in the fixture is two entries |
 | Phytozome gene_exons GFF3 and its mapping | none; refuses any comma or `%` in column 9 | none | each key is one entry, for example `pacid=90000001` in the fixture |
@@ -553,7 +553,7 @@ Two model slots are filled from retained source values rather than read from a c
   rows, are refused with `translation-table-conflict`. A contig is left unset when any CDS on
   it lacks the attribute, or when all its CDS name the same unassigned or non-integer value.
   The Dataset validator rejects the same disagreements, whether or not the contig has a table.
-- `Feature.score_type` is `bit_score` on `nmdc-pfam-protein` rows that have a score, because
+- `SequenceFeature.score_type` is `bit_score` on `nmdc-pfam-protein` rows that have a score, because
   nmdc-lakehouse documents NMDC's HMMER column 6 as a bit score
   (https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/pfam_annotation_gff.md).
   No other profile sets it: nothing retained says what Prodigal, GeneMark, lastal, INFERNAL or

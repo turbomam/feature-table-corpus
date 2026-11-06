@@ -78,7 +78,7 @@ def query_order(con, *, reference_context, sequence_id, start, end,
             "query-interval", "query bounds must be one-based inclusive integers")
     rows = con.execute('''
         SELECT g.feature_id, a.item.value, c.feature_id, c.start, c."end", c.strand, c.product
-        FROM feature g, unnest(g.attributes) a(item), feature c
+        FROM sequence_feature g, unnest(g.attributes) a(item), sequence_feature c
         WHERE g.type = 'gene' AND g.coordinate_system = 'contig'
           AND c.type = 'CDS' AND c.coordinate_system = 'contig'
           AND g.seqid = ? AND c.seqid = g.seqid AND list_contains(c.parent, g.feature_id)

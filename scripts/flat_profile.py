@@ -11,15 +11,15 @@ The nested model is the canonical form (https://github.com/turbomam/feature-tabl
 This profile is derived from it with SchemaView, so it follows the model as it changes, for
 catalogs that take scalar columns only:
 
-- Each class the Dataset lists (ContigCollection, Contig, Feature) is a table, keyed by its
+- Each class the Dataset lists (ContigCollection, Contig, SequenceFeature) is a table, keyed by its
   identifier.
 - A single-valued scalar, enum or identified-class reference is a column; a reference holds the
   other row's identifier.
-- A single-valued value object without identity (Feature.location, Feature.target) expands into
+- A single-valued value object without identity (SequenceFeature.location, SequenceFeature.target) expands into
   its owner's row, as <slot>_<field> columns.
 - A multivalued slot is a child table named <table>_<slot>, keyed by the owner's identifier and
-  an ordinal that keeps the list's order: feature_attributes(feature_id, ordinal, key, value),
-  feature_parent(feature_id, ordinal, parent).
+  an ordinal that keeps the list's order: sequence_feature_attributes(feature_id, ordinal, key, value),
+  sequence_feature_parent(feature_id, ordinal, parent).
 
 `flatten` writes {table: [row, ...]} as JSON; `unflatten` rebuilds the Dataset. `roundtrip`
 requires every Dataset back unchanged. scripts/flat_profile_audit.py checks that the derived

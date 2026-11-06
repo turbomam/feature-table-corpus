@@ -15,7 +15,7 @@ reverses order and orientation. `order` does not assert that parts form a joined
 sequence. The [INSDC feature-table definition, sections 3.3–3.4](https://www.insdc.org/submitting-standards/feature-table/)
 defines the source operators, endpoint symbols and qualifier forms.
 
-When `location` is present, scalar Feature `start`/`end` are **only the envelope
+When `location` is present, scalar SequenceFeature `start`/`end` are **only the envelope
 of the reported part coordinates**. They are retained for indexing and existing
 table layouts. Occupancy queries must use the parts: a CDS spanning 104–579 with
 parts 104–160, 320–390 and 504–579 does not occupy 200–210. The semantic validator

@@ -15,7 +15,7 @@ and metadata layer requested in [issue #13](https://github.com/turbomam/feature-
 | `SourceDocument` | Parsed view of exactly one artifact, with the selected format and metadata profile. It is not an annotation release assembled from several files. |
 | `SourceRecord` | One physical line, including its original ending, line number, lexical kind, scope, and optional interpreted fields. A feature row is not necessarily a whole biological feature: discontinuous GFF3 features can occupy several rows. |
 | `Attribute` | The shared, format-independent string `key`/`value` module, reused for recognized comment and directive metadata. Repeated keys remain ordered entries. |
-| Harmonized `Dataset`, `Contig`, `Feature` | Separate biological model in `ber_feature_model.yaml`. This reader does not convert source rows into those entities. |
+| Harmonized `Dataset`, `Contig`, `SequenceFeature` | Separate biological model in `ber_feature_model.yaml`. This reader does not convert source rows into those entities. |
 | NMDC `DataObject` | External source catalogue used by one contributing project. This schema does not import it or require NMDC identifiers, slots, or categories. |
 
 Tabular feature fields remain lexical strings in `feature_columns`: nine for

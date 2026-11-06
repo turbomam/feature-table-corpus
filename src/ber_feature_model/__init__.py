@@ -18,7 +18,7 @@ import yaml
 
 from .validate_closed import _check_values, load_data, make_validator, validation_errors
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = ["__version__", "schema_path", "validate", "main"]
 
 

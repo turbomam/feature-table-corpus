@@ -16,7 +16,7 @@
 # Non-duplication rules applied, same principle as the smaller example this replaces, extended
 # with two new findings from this larger run:
 # - Individual gene-caller and per-database rows are represented once. Roll-ups support
-#   is_selected and product fields without being added as duplicate Feature rows.
+#   is_selected and product fields without being added as duplicate SequenceFeature rows.
 # - NEW: Annotation Enzyme Commission (ec.tsv), Annotation KEGG Orthology (ko.tsv), and KO_EC
 #   Annotation GFF are three views of the SAME underlying lastal hits, not independent evidence.
 #   ko_ec.gff is the richest (full evidence plus both labels combined, e.g. "KO:K00059__EC:1.1.1.100")
@@ -99,7 +99,7 @@ features:
     attributes:
       - {key: translation_table, value: "11"}
       - {key: start_type, value: ATG}
-      - {key: genemark_agreement, value: "GeneMark called the identical 104-853 boundary independently (score 66.84 vs Prodigal's 85.0); not instantiated as a separate Feature here since the coordinates are identical, not a competing claim"}
+      - {key: genemark_agreement, value: "GeneMark called the identical 104-853 boundary independently (score 66.84 vs Prodigal's 85.0); not instantiated as a separate SequenceFeature here since the coordinates are identical, not a competing claim"}
       - {key: phylogeny_subject_gene_ids, value: "2698062542;2695420919"}
       - {key: phylogeny_percent_identity, value: "93.98"}
       - {key: phylogeny_lineage, value: Bacteria;Pseudomonadota;Alphaproteobacteria;Hyphomicrobiales;Nitrobacteraceae;Bradyrhizobium;Bradyrhizobium erythrophlei;Bradyrhizobium erythrophlei GAS401}

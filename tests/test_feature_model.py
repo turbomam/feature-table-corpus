@@ -443,18 +443,18 @@ class ValidationTests(unittest.TestCase):
         # 64 pairs and 44 admissible: ContigCollection, member_of and stable_identifiers (issues
         # 41 and 44; the lists flatten as child tables) plus the scalar translation_table and
         # score_type (issue 46), the scalar is_representative (issue 48), and the GFF3 reserved tags
-        # name (scalar) and note, dbxref and ontology_term (lists) on Feature (issue 43).
-        # Feature.target is a value object with five scalar slots of its own (issue 94).
+        # name (scalar) and note, dbxref and ontology_term (lists) on SequenceFeature (issue 43).
+        # SequenceFeature.target is a value object with five scalar slots of its own (issue 94).
         # Attribute gains the scalars attribute_cv_id and numeric_value (issue 42).
-        # Feature gains the scalar enum method, so a table of hits can be filtered by method.
+        # SequenceFeature gains the scalar enum method, so a table of hits can be filtered by method.
         self.assertEqual(len(rows), 64)
         self.assertEqual(sum(r[5] == 'admissible' for r in rows.values()), 44)
         self.assertEqual(rows['Contig', 'member_of'][5], 'multivalued class reference')
-        self.assertEqual(rows['Feature', 'stable_identifiers'][5], 'multivalued scalar')
-        self.assertEqual(rows['Feature', 'attributes'][5], 'multivalued class reference')
-        self.assertEqual(rows['Feature', 'seqid'][5], 'identified class reference')
-        # Issue 40: a protein hit's seqid is its CDS, so Feature.seqid is a union; parts stay on contigs.
-        self.assertEqual(rows['Feature', 'seqid'][2:5], ('union', False, 'Contig | Feature'))
+        self.assertEqual(rows['SequenceFeature', 'stable_identifiers'][5], 'multivalued scalar')
+        self.assertEqual(rows['SequenceFeature', 'attributes'][5], 'multivalued class reference')
+        self.assertEqual(rows['SequenceFeature', 'seqid'][5], 'identified class reference')
+        # Issue 40: a protein hit's seqid is its CDS, so SequenceFeature.seqid is a union; parts stay on contigs.
+        self.assertEqual(rows['SequenceFeature', 'seqid'][2:5], ('union', False, 'Contig | SequenceFeature'))
         self.assertEqual(rows['LocationPart', 'seqid'][2:5], ('class', False, 'Contig'))
         self.assertIn(('Attribute', 'key'), rows)
         view = SchemaView('''
@@ -568,14 +568,14 @@ classes:
         }
         for slot, mappings in expected.items():
             with self.subTest(slot=slot):
-                self.assertEqual(list(view.induced_slot(slot, "Feature").exact_mappings), mappings)
+                self.assertEqual(list(view.induced_slot(slot, "SequenceFeature").exact_mappings), mappings)
         # One-based coordinates: Biolink's interbase slots would be off by one.
-        self.assertEqual(list(view.induced_slot("start", "Feature").close_mappings), ["faldo:begin"])
-        self.assertEqual(list(view.induced_slot("dbxref", "Feature").broad_mappings), ["biolink:xref"])
-        self.assertEqual(list(view.induced_slot("feature_id", "Feature").close_mappings), ["gff3:ID"])
-        self.assertEqual(list(view.induced_slot("attributes", "Feature").close_mappings), ["gff3:attributes"])
-        self.assertEqual(list(view.get_class("Feature").close_mappings), ["SO:0000110"])
-        # name is only the GFF3 Name on Feature.
+        self.assertEqual(list(view.induced_slot("start", "SequenceFeature").close_mappings), ["faldo:begin"])
+        self.assertEqual(list(view.induced_slot("dbxref", "SequenceFeature").broad_mappings), ["biolink:xref"])
+        self.assertEqual(list(view.induced_slot("feature_id", "SequenceFeature").close_mappings), ["gff3:ID"])
+        self.assertEqual(list(view.induced_slot("attributes", "SequenceFeature").close_mappings), ["gff3:attributes"])
+        self.assertEqual(list(view.get_class("SequenceFeature").close_mappings), ["SO:0000110"])
+        # name is only the GFF3 Name on SequenceFeature.
         self.assertEqual(list(view.induced_slot("name", "ContigCollection").exact_mappings), [])
         prefixes = {p for schema in view.all_schema() for p in schema.prefixes}
         used = {m.split(":")[0] for element in [*view.all_slots().values(), *view.all_classes().values()]
@@ -649,42 +649,52 @@ class DatabaseTests(unittest.TestCase):
         con = self.connect()
         rows = con.execute("""
             SELECT DISTINCT cc.collection_id, cc.collection_type
-            FROM feature f
+            FROM sequence_feature f
             JOIN contig c ON f.seqid = c.contig_id
             JOIN contig_collection cc ON list_contains(c.member_of, cc.collection_id)
         """).fetchall()
         self.assertEqual(rows, [("nmdc:wfmgas-11-19jh9v28.1", "metagenome")])
         # Every feature resolves to that one collection, a protein hit through its CDS (issue 40).
         unresolved = con.execute("""
-            SELECT count(*) FROM feature f
-            LEFT JOIN feature cds ON f.coordinate_system = 'protein' AND f.seqid = cds.feature_id
+            SELECT count(*) FROM sequence_feature f
+            LEFT JOIN sequence_feature cds ON f.coordinate_system = 'protein' AND f.seqid = cds.feature_id
             LEFT JOIN contig c ON c.contig_id = coalesce(cds.seqid, f.seqid)
             WHERE len(coalesce(c.member_of, [])) = 0
         """).fetchone()[0]
         self.assertEqual(unresolved, 0)
         self.assertGreater(con.execute(
-            "SELECT count(*) FROM feature WHERE coordinate_system = 'protein'").fetchone()[0], 0)
+            "SELECT count(*) FROM sequence_feature WHERE coordinate_system = 'protein'").fetchone()[0], 0)
 
     def test_score_type_and_translation_table_columns(self):
         con = self.connect()
         self.assertEqual(con.execute(
-            "SELECT count(*) FROM feature WHERE score_type = 'bit_score'").fetchone()[0], 4)
+            "SELECT count(*) FROM sequence_feature WHERE score_type = 'bit_score'").fetchone()[0], 4)
         self.assertEqual(con.execute(
             "SELECT DISTINCT translation_table FROM contig WHERE translation_table IS NOT NULL").fetchall(), [(11,)])
 
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])
 
+    def test_rebuild_drops_the_feature_table_from_before_the_rename(self):
+        # A database built before 0.2.0 has its features in a table named feature. Rebuilding
+        # it in place must not leave those rows behind for old queries to read.
+        con = duckdb.connect(str(self.db))
+        con.execute("CREATE TABLE feature AS SELECT * FROM sequence_feature")
+        con.close()
+        build_database(SCHEMA, PFAMS, self.db)
+        tables = {row[0] for row in self.connect().execute("SHOW TABLES").fetchall()}
+        self.assertEqual(tables, {"contig", "contig_collection", "sequence_feature"})
+
     def test_method_is_stored_and_filterable(self):
         # A table of every method's hits is only useful if it can be filtered by method.
         build_database(SCHEMA, PFAMS, self.db)
         con = self.connect()
-        self.assertEqual(con.execute("""SELECT type, method FROM feature
+        self.assertEqual(con.execute("""SELECT type, method FROM sequence_feature
                                         WHERE coordinate_system = 'protein' ORDER BY type""").fetchall(),
                          [("PF13358", "pfam"), ("PF13518", "pfam"), ("PF13592", "pfam")])
-        self.assertEqual(con.execute("SELECT count(*) FROM feature WHERE method = 'pfam'").fetchone()[0], 3)
+        self.assertEqual(con.execute("SELECT count(*) FROM sequence_feature WHERE method = 'pfam'").fetchone()[0], 3)
         # The CDS sets no method, and it stays null rather than empty.
-        self.assertEqual(con.execute("SELECT count(*) FROM feature WHERE method IS NULL").fetchone()[0], 1)
+        self.assertEqual(con.execute("SELECT count(*) FROM sequence_feature WHERE method IS NULL").fetchone()[0], 1)
 
     def test_real_multiple_pfams_and_distinctness(self):
         build_database(SCHEMA, PFAMS, self.db)
@@ -696,7 +706,7 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(multiple_pfams(con, ["PF13358", "PF13592"])[0][2], 2)
         self.assertEqual(multiple_pfams(con, ["PF04183", "PF06276"]), [])
         # Synthetic negative control: repeated copies of one domain are not distinct Pfams.
-        con.execute("UPDATE feature SET type = 'PF13358' WHERE coordinate_system = 'protein'")
+        con.execute("UPDATE sequence_feature SET type = 'PF13358' WHERE coordinate_system = 'protein'")
         self.assertEqual(multiple_pfams(con), [])
 
     def test_coordinate_spaces_and_inclusive_endpoints(self):
@@ -713,7 +723,7 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(interval_overlap(con, gene, 250, 250, "protein"), [])
         # Issue 40: protein overlap is found by seqid alone, so a hit whose parent list is empty
         # (unvalidated data) is still found under the CDS it names.
-        con.execute("""INSERT INTO feature (feature_id, seqid, type, start, "end", coordinate_system, parent)
+        con.execute("""INSERT INTO sequence_feature (feature_id, seqid, type, start, "end", coordinate_system, parent)
                        VALUES ('orphan_hit', ?, 'PF00001', 13, 13, 'protein', [])""", [gene])
         self.assertIn("orphan_hit", [r[0] for r in interval_overlap(con, gene, 13, 13, "protein")])
         for start, end in ((0, 1), (2, 1), (True, 2), (1, False), (1.5, 2),
@@ -727,7 +737,7 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(by_attribute(con, "Name", "adh_short_C2"), [(gene + "_pfam",)])
         self.assertEqual(by_attribute(con, "Name", "' OR true --"), [])
         data = yaml.safe_load(EXAMPLE.read_text())
-        row = con.execute("SELECT generated_by, source_files, attributes FROM feature WHERE feature_id = ?", [gene]).fetchone()
+        row = con.execute("SELECT generated_by, source_files, attributes FROM sequence_feature WHERE feature_id = ?", [gene]).fetchone()
         # The optional attribute_cv_id and numeric_value (issue 42) are stored as null when unset.
         stored = [{k: v for k, v in a.items() if v is not None} for a in row[2]]
         self.assertEqual((row[0], row[1], stored),
@@ -743,7 +753,7 @@ class DatabaseTests(unittest.TestCase):
         typed.write_text(yaml.safe_dump(data))
         build_database(SCHEMA, typed, self.db)
         rows = self.connect().execute("""
-            SELECT a.item.numeric_value FROM feature, unnest(attributes) AS a(item)
+            SELECT a.item.numeric_value FROM sequence_feature, unnest(attributes) AS a(item)
             WHERE a.item.attribute_cv_id = 'EDAM:data_1667'""").fetchall()
         self.assertEqual(rows, [(float(evalue["value"]),)])
         evalue["numeric_value"] = 1.0
@@ -772,7 +782,7 @@ class DatabaseTests(unittest.TestCase):
         marked = self.work / "representative.yaml"
         marked.write_text(yaml.safe_dump(data))
         build_database(SCHEMA, marked, self.db)
-        rows = dict(self.connect().execute("SELECT feature_id, is_representative FROM feature").fetchall())
+        rows = dict(self.connect().execute("SELECT feature_id, is_representative FROM sequence_feature").fetchall())
         self.assertEqual([rows[i["feature_id"]] for i in isoforms], [True, False, None])
 
     def test_failed_validation_preserves_existing_database(self):
@@ -811,7 +821,7 @@ class DatabaseTests(unittest.TestCase):
         with self.assertRaises(duckdb.Error):
             build_database(SCHEMA, oversized, self.db)
         con = self.connect()
-        self.assertEqual(con.execute("SELECT count(*) FROM feature").fetchone(), (15,))
+        self.assertEqual(con.execute("SELECT count(*) FROM sequence_feature").fetchone(), (15,))
         self.assertEqual(con.execute("SELECT length_bp FROM contig ORDER BY contig_id LIMIT 1").fetchone(), (1754,))
 
     def test_failed_fresh_database_build_leaves_no_output(self):

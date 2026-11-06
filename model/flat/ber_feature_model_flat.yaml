@@ -30,7 +30,7 @@ classes:
       generated_by:
         range: string
         description: The workflow execution (or tool run) that produced this ContigCollection, Contig
-          or Feature.
+          or SequenceFeature.
   ContigCollectionTaxonomicLineage:
     description: ContigCollection.taxonomic_lineage, one row per item.
     attributes:
@@ -90,7 +90,7 @@ classes:
       generated_by:
         range: string
         description: The workflow execution (or tool run) that produced this ContigCollection, Contig
-          or Feature.
+          or SequenceFeature.
   ContigMemberOf:
     description: Contig.member_of, one row per item.
     attributes:
@@ -139,8 +139,8 @@ classes:
         range: uri
         description: Source artifact URLs supporting this record, including any annotation sidecars used.
         required: true
-  Feature:
-    description: One Feature; derived from the nested model.
+  SequenceFeature:
+    description: One SequenceFeature; derived from the nested model.
     attributes:
       feature_id:
         range: string
@@ -197,7 +197,7 @@ classes:
       generated_by:
         range: string
         description: The workflow execution (or tool run) that produced this ContigCollection, Contig
-          or Feature.
+          or SequenceFeature.
       is_selected:
         range: boolean
         description: Whether the annotation pipeline chose this call as canonical for its locus.
@@ -330,51 +330,51 @@ classes:
             value_presence: PRESENT
           target_end:
             value_presence: PRESENT
-  FeatureStableIdentifiers:
-    description: Feature.stable_identifiers, one row per item.
+  SequenceFeatureStableIdentifiers:
+    description: SequenceFeature.stable_identifiers, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.stable_identifiers, from 0.
+        description: Position in SequenceFeature.stable_identifiers, from 0.
       stable_identifiers:
         range: string
         description: Identifiers an authority assigns to this feature and keeps across releases, as opposed
           to feature_id, which only needs to be unique within this Dataset.
         required: true
-  FeatureParent:
-    description: Feature.parent, one row per item.
+  SequenceFeatureParent:
+    description: SequenceFeature.parent, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.parent, from 0.
+        description: Position in SequenceFeature.parent, from 0.
       parent:
         range: string
-        description: The feature_id of a feature row.
+        description: The feature_id of a sequence_feature row.
         required: true
-  FeatureAttributes:
-    description: Feature.attributes, one row per item.
+  SequenceFeatureAttributes:
+    description: SequenceFeature.attributes, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.attributes, from 0.
+        description: Position in SequenceFeature.attributes, from 0.
       key:
         range: string
         description: Source-reported attribute name, unnormalized (for example a GFF tag or metadata key).
@@ -394,84 +394,84 @@ classes:
         description: value read as a number, set by a profile only for keys it knows are numeric. value
           keeps the source text, so 3.4e-28 and 3.40E-28 stay distinguishable. The validator requires
           the float that value reads as, and refuses an integer no float holds exactly.
-  FeatureSourceFiles:
-    description: Feature.source_files, one row per item.
+  SequenceFeatureSourceFiles:
+    description: SequenceFeature.source_files, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.source_files, from 0.
+        description: Position in SequenceFeature.source_files, from 0.
       source_files:
         range: uri
         description: Source artifact URLs supporting this record, including any annotation sidecars used.
         required: true
-  FeatureNote:
-    description: Feature.note, one row per item.
+  SequenceFeatureNote:
+    description: SequenceFeature.note, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.note, from 0.
+        description: Position in SequenceFeature.note, from 0.
       note:
         range: string
         description: GFF3 Note values, free-text remarks about the feature, in source order.
         required: true
-  FeatureDbxref:
-    description: Feature.dbxref, one row per item.
+  SequenceFeatureDbxref:
+    description: SequenceFeature.dbxref, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.dbxref, from 0.
+        description: Position in SequenceFeature.dbxref, from 0.
       dbxref:
         range: string
         description: GFF3 Dbxref values, db:id references to records in other databases, in source order.
           Unlike stable_identifiers, a cross-reference can point at a related record rather than at this
           feature itself, such as a GeneID on a CDS.
         required: true
-  FeatureOntologyTerm:
-    description: Feature.ontology_term, one row per item.
+  SequenceFeatureOntologyTerm:
+    description: SequenceFeature.ontology_term, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.ontology_term, from 0.
+        description: Position in SequenceFeature.ontology_term, from 0.
       ontology_term:
         range: string
         description: GFF3 Ontology_term values, ontology term CURIEs such as GO:0003677, in source order.
         required: true
-  FeatureLocationParts:
-    description: Feature.location.parts, one row per item.
+  SequenceFeatureLocationParts:
+    description: SequenceFeature.location.parts, one row per item.
     attributes:
       feature_id:
         range: string
         required: true
-        description: The feature_id of the feature row this belongs to.
+        description: The feature_id of the sequence_feature row this belongs to.
       ordinal:
         range: integer
         required: true
         minimum_value: 0
-        description: Position in Feature.location.parts, from 0.
+        description: Position in SequenceFeature.location.parts, from 0.
       seqid:
         range: string
         description: The contig_id of a contig row.
@@ -519,7 +519,7 @@ enums:
       marker:
         description: Sequences from targeted region of DNA.
   CoordinateSystemEnum:
-    description: Which coordinate space a Feature's start/end are measured in.
+    description: Which coordinate space a SequenceFeature's start/end are measured in.
     permissible_values:
       contig:
         description: start/end are nucleotide positions on the referenced Contig.

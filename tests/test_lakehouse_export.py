@@ -73,7 +73,7 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual(pq.read_schema(out / "contigs.parquet").field("member_of").type, strings)
         self.assertEqual(pq.read_schema(out / "features.parquet").field("stable_identifiers").type, strings)
         features = pq.read_table(out / "features.parquet")
-        self.assertEqual(features.column_names, list(self.view.class_slots("Feature")))
+        self.assertEqual(features.column_names, list(self.view.class_slots("SequenceFeature")))
         schema = features.schema
         self.assertEqual(schema.field("score").type, pa.float64())
         self.assertEqual(schema.field("start").type, pa.int64())
@@ -109,7 +109,7 @@ class LakehouseExportTests(unittest.TestCase):
         _, empty = self.exported(self.write_json("contigs-only.json", {"contigs": dataset["contigs"]}), "empty")
         table = pq.read_table(empty / "features.parquet")
         self.assertEqual(table.num_rows, 0)
-        self.assertEqual(table.column_names, list(self.view.class_slots("Feature")))
+        self.assertEqual(table.column_names, list(self.view.class_slots("SequenceFeature")))
 
     def test_checks_fail_on_changed_or_missing_rows(self):
         data = load_validated(SCHEMA, EXAMPLE)
@@ -124,7 +124,7 @@ class LakehouseExportTests(unittest.TestCase):
         self.assertEqual(lakehouse.value_mismatches(self.view, data, written), ["features[0]: differs in ['attributes']"])
         # Negative control 2: drop a row; both checks report it.
         pq.write_table(pa.Table.from_pylist(rows[1:], schema=pq.read_schema(written["features"])), written["features"])
-        self.assertIn("features: 14 Parquet rows, build_duckdb.py feature has 15",
+        self.assertIn("features: 14 Parquet rows, build_duckdb.py sequence_feature has 15",
                       lakehouse.count_mismatches(self.view, SCHEMA, EXAMPLE, written, self.work))
         self.assertEqual(lakehouse.value_mismatches(self.view, data, written),
                          ["features: 14 rows read back, 15 expected"])
@@ -148,7 +148,7 @@ class LakehouseExportTests(unittest.TestCase):
     def test_export_refuses_a_row_count_that_differs_from_build_duckdb(self):
         # The value check is switched off, so only the build_duckdb.py count can fail.
         with patch.object(lakehouse, "value_mismatches", return_value=[]):
-            with self.assertRaisesRegex(ValueError, "features: 14 Parquet rows, build_duckdb.py feature has 15"):
+            with self.assertRaisesRegex(ValueError, "features: 14 Parquet rows, build_duckdb.py sequence_feature has 15"):
                 self.export_with(lambda rows, schema: pa.Table.from_pylist(rows[1:], schema=schema))
         self.assertFalse((self.work / "changed").exists())
 

@@ -93,7 +93,7 @@ def dataset_errors(data):
             index[identifier] = row
         indexes[collection] = index
     contigs, features = indexes["contigs"], indexes["features"]
-    # Feature.seqid names a contig or, for protein coordinates, a CDS (issue 40). One ID naming
+    # SequenceFeature.seqid names a contig or, for protein coordinates, a CDS (issue 40). One ID naming
     # both would let a join on seqid alone mix residues with bases, so the two sets are disjoint.
     for shared in sorted(contigs.keys() & features.keys()):
         errors.append(f"{shared!r} is both a contig_id and a feature_id")

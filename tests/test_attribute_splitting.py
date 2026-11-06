@@ -111,7 +111,7 @@ class ImgFunctionalTests(unittest.TestCase):
 
 
 class OtherDialectTests(unittest.TestCase):
-    """Dialects with no mapping to Feature yet, checked at the row level."""
+    """Dialects with no mapping to SequenceFeature yet, checked at the row level."""
 
     def test_img_per_method_splits_its_declared_list(self):
         document = per_method.parse(ROOT / "tests/fixtures/img-per-method-gff/constructed_ko_ec.gff")

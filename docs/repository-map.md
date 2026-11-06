@@ -138,7 +138,7 @@ comparisons and remain under `corpus/fixtures/`.
 - A **source artifact** identifies bytes and provenance. A **source document** represents
   the ordered contents of one physical text artifact.
 - A **harmonized Dataset** can combine several artifacts and workflow executions.
-  Contig and Feature instances are biological/model records.
+  Contig and SequenceFeature instances are biological/model records.
 - An **Attribute** is an attached key/value entry. The containing object supplies its
   scope; GFF column 9 is one use case.
 

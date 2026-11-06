@@ -37,7 +37,7 @@ class NeighborQueryTests(unittest.TestCase):
         with duckdb.connect(str(cls.db), read_only=True) as con:
             cls.tags = dict(con.execute("""
                 SELECT feature_id, list_filter(attributes, a -> a.key = 'old_locus_tag')[1].value
-                FROM feature WHERE type = 'gene'""").fetchall())
+                FROM sequence_feature WHERE type = 'gene'""").fetchall())
 
     @classmethod
     def tearDownClass(cls):
@@ -106,7 +106,7 @@ class NeighborQueryTests(unittest.TestCase):
         # A CDS is the seqid of its protein-coordinate hits; this excerpt has none, so add one.
         cds = "cds-WP_011030038.1"
         with tempfile.TemporaryDirectory() as work:
-            with self.changed_copy(work, ("""INSERT INTO feature (feature_id, seqid, type, start, "end", coordinate_system, parent)
+            with self.changed_copy(work, ("""INSERT INTO sequence_feature (feature_id, seqid, type, start, "end", coordinate_system, parent)
                                               VALUES ('hit', ?, 'PF00001', 10, 20, 'protein', [?])""", [cds, cds])) as con:
                 with self.assertRaisesRegex(ValueError, "protein"):
                     neighbors(con, cds, 15)
@@ -116,7 +116,7 @@ class NeighborQueryTests(unittest.TestCase):
         location = {"operator": "single", "parts": [{"seqid": SEQID, "start": 5532449, "end": 5532709, "strand": "+",
                                                        "start_status": "before", "end_status": "exact"}]}
         with tempfile.TemporaryDirectory() as work:
-            with self.changed_copy(work, ("""UPDATE feature SET location = ?::JSON
+            with self.changed_copy(work, ("""UPDATE sequence_feature SET location = ?::JSON
                                               WHERE type = 'gene' AND start = 5532449""", [json.dumps(location)])) as con:
                 with self.assertRaisesRegex(ValueError, "uncertain"):
                     neighbors(con, SEQID, 5531500)

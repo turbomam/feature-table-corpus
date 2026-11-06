@@ -62,7 +62,7 @@ class ImgCoreCrosswalkTests(unittest.TestCase):
         by_table = {}
         for r in rows():
             owner = r["subject_label"].split(".")[0]
-            if owner not in ("Feature", "Contig", "ContigCollection"):
+            if owner not in ("SequenceFeature", "Contig", "ContigCollection"):
                 table = r["object_id"].split(":")[1].split(".")[0]
                 by_table.setdefault((owner, table), set()).add(r["subject_label"].split(".")[1])
         self.assertIn(("AlignmentTarget", "gene_pfam_families"), by_table)

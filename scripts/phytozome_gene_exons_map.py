@@ -8,7 +8,7 @@ The core columns go through model/transforms/phytozome-gene-exons-gff3.transform
 forward, and through `linkml-map invert` of that same file in reverse. As in
 scripts/img_functional_map.py, this module adds only what linkml-map 0.5.4 can't
 do here (see the transform file's comments). longest also sets
-Feature.is_representative (1 true, 0 false); Name, pacid and longest travel as
+SequenceFeature.is_representative (1 true, 0 false); Name, pacid and longest travel as
 attributes, as every column 9 key does.
 
 The reverse direction rebuilds each row's text and parses it with the dialect's
@@ -32,7 +32,7 @@ MODEL = ROOT / "model/schema/ber_feature_model.yaml"
 TRANSFORM = ROOT / "model/transforms/phytozome-gene-exons-gff3.transform.yaml"
 ROW = dialect.ROW_CLASS
 LEXICAL = {"line", "attribute_order"}
-# Columns the reverse direction takes from the Feature, in GFF order; score is always ".".
+# Columns the reverse direction takes from the SequenceFeature, in GFF order; score is always ".".
 COLUMN_SLOTS = ("seqid", "source", "type", "start", "end", "strand", "phase")
 
 
@@ -139,7 +139,7 @@ def reverse(dataset, source_file, transformers=None, species=None, provenance=No
         core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system")}
         # linkml-map reduces a one-item parent list to the dialect's single Parent,
         # and raises TransformationError for two or more.
-        mapped = present(to_dialect.map_object(core, source_type="Feature"))
+        mapped = present(to_dialect.map_object(core, source_type="SequenceFeature"))
         columns = [str(mapped.get(slot, ".")) for slot in COLUMN_SLOTS]
         columns.insert(5, ".")  # score
         try:
@@ -150,10 +150,10 @@ def reverse(dataset, source_file, transformers=None, species=None, provenance=No
             row = dialect.parse_row(number, "\t".join(columns + [column9]), slots)
         except dialect.DialectError as error:
             raise ValueError(f"{name}: {error}") from None
-        # ID and Parent are both Feature slots and attributes; the copies must agree.
+        # ID and Parent are both SequenceFeature slots and attributes; the copies must agree.
         for key in ("ID", "Parent"):
             if mapped.get(key) != row.get(key):
-                raise ValueError(f"{name}: {key} is {mapped.get(key)!r} in the Feature but "
+                raise ValueError(f"{name}: {key} is {mapped.get(key)!r} in the SequenceFeature but "
                                  f"{row.get(key)!r} in its attributes")
         # So must is_representative and the longest attribute it comes from.
         expected = row["longest"] == 1 if "longest" in row else None

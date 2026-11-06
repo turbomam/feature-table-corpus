@@ -9,13 +9,13 @@ where they only overlap. No row is `skos:exactMatch`, because the source doesn't
 bases or value spellings.
 
 Each subject is a slot, typed `rdf property`, with its SSSOM `subject_label` naming the class it
-is used on, such as `Feature.start` or `AlignmentTarget.target_start`; a slot keeps its URI whichever
-table it maps. A list of structs, such as `Feature.attributes`, maps through its items' slots (`Attribute.key`,
+is used on, such as `SequenceFeature.start` or `AlignmentTarget.target_start`; a slot keeps its URI whichever
+table it maps. A list of structs, such as `SequenceFeature.attributes`, maps through its items' slots (`Attribute.key`,
 `Attribute.value`), not as one column, and a table that maps any slot of a struct maps all of
 that struct's required slots. A hit table's `gene_oid` maps to both `seqid` and `parent`, because the model
-requires both on a protein-coordinate Feature.
+requires both on a protein-coordinate SequenceFeature.
 SSSOM maps one column to one slot, so a value built from two columns is two `relatedMatch`
-rows: `Feature.dbxref` is `gene_ext_links.db_name`, a colon, then `gene_ext_links.id`. A table
+rows: `SequenceFeature.dbxref` is `gene_ext_links.db_name`, a colon, then `gene_ext_links.id`. A table
 with target positions also maps `AlignmentTarget.target_id`, which the model requires.
 
 ## Source
@@ -30,7 +30,7 @@ from the same database: `2708743150.gff` and its tables are a `img_core_v400` ta
 
 ## How the model lines up
 
-- `gene` is a Feature on contig coordinates: `start_coord`, `end_coord`, `strand`, `locus_type`,
+- `gene` is a SequenceFeature on contig coordinates: `start_coord`, `end_coord`, `strand`, `locus_type`,
   `product_name`, and `scaffold` and `taxon` as integer keys to contig and genome tables.
 - `gene_feature_tags` is `Attribute`: an open tag/value table.
 - The per-method hit tables (`gene_pfam_families`, `gene_cog_groups`, `gene_ko_terms` and others)

@@ -12,7 +12,7 @@ feature_id follows issue 98: <gene_oid>_<start>_<end>|<table>|<type>. The table'
 other columns become Attributes in column order, as the dialect writes them.
 
 Two tables need more. A KO hit that lists several EC numbers is written as one
-row per number; it becomes one Feature with one EC Attribute per row, and the
+row per number; it becomes one SequenceFeature with one EC Attribute per row, and the
 rows must be adjacent and agree in every other column. The xref table has no
 positions: each row becomes a stable_identifier on its CDS, as a CURIE
 (ncbigi: for GI, genbank: for GenBank/EMBL).
@@ -74,7 +74,7 @@ def _transformers():
             inverted.enum_derivations[derivation.populated_from].mirror_source = True
     derivations = inverted.class_derivations
     derivations = list(derivations.values()) if isinstance(derivations, dict) else list(derivations)
-    # One reverse transformer per dialect class, since every derivation starts from Feature.
+    # One reverse transformer per dialect class, since every derivation starts from SequenceFeature.
     reverse = {}
     for derivation in derivations:
         spec = TransformationSpecification(**{**inverted.model_dump(), "class_derivations": [derivation]})
@@ -209,7 +209,7 @@ def reverse(dataset, gff_path, transformers=None):
         name = feature.get("feature_id")
         if feature.get("coordinate_system") == "contig":
             core = {k: v for k, v in feature.items() if k not in ("attributes", "coordinate_system", "stable_identifiers")}
-            mapped = present(to_dialect[GFF_CLASS].map_object(core, source_type="Feature"))
+            mapped = present(to_dialect[GFF_CLASS].map_object(core, source_type="SequenceFeature"))
             column9 = ";".join(f"{a['key']}={a['value']}" for a in feature.get("attributes", [])) or "."
             line = "\t".join([str(mapped.get("seqid", "")), str(mapped.get("source", "")), str(mapped.get("type", "")),
                               str(mapped.get("start", "")), str(mapped.get("end", "")), ".",
@@ -236,7 +236,7 @@ def reverse(dataset, gff_path, transformers=None):
         accession, start, end, score = HITS[kind]
         core = {k: v for k, v in feature.items()
                 if k not in ("attributes", "coordinate_system", "parent", "feature_id", "score_type")}
-        mapped = present(to_dialect[dialect.TABLES[kind]].map_object(core, source_type="Feature"))
+        mapped = present(to_dialect[dialect.TABLES[kind]].map_object(core, source_type="SequenceFeature"))
         if feature.get("score_type") != ("bit_score" if score else None):
             raise ValueError(f"{name}: score_type should be {'bit_score' if score else 'unset'}")
         values = {n: dialect.value_text(v) for n, v in mapped.items()}
@@ -245,7 +245,7 @@ def reverse(dataset, gff_path, transformers=None):
             if kind == "ko" and attribute["key"] == "EC":
                 ec.append(attribute["value"])
             elif attribute["key"] in values or attribute["key"] not in columns(kind):
-                raise ValueError(f"{name}: attribute {attribute['key']!r} is not a {kind} column the Feature leaves out")
+                raise ValueError(f"{name}: attribute {attribute['key']!r} is not a {kind} column the SequenceFeature leaves out")
             else:
                 kept.setdefault(attribute["key"], []).append(attribute["value"])
         # Repeats of one column rejoin into its list cell; the forward check below refuses

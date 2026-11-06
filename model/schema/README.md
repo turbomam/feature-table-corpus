@@ -1,10 +1,16 @@
 # Draft feature schema
 
 [`ber_feature_model.yaml`](ber_feature_model.yaml) defines `Dataset`, `ContigCollection`,
-`Contig`, and `Feature`. It imports the standalone [attribute module](attributes.yaml), which defines
+`Contig`, and `SequenceFeature`. It imports the standalone [attribute module](attributes.yaml), which defines
 generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
 [the attribute contract](../../docs/attributes.md). The schema remains a draft, not a
 complete GFF3 interchange standard.
+
+`SequenceFeature` was called `Feature` before version 0.2.0. It was renamed because "feature" also means
+an earth-science sampling feature in BRIDGE (https://github.com/ber-data/bridge-central-schema/pull/5).
+Data files don't change: they use the slots `features` and `feature_id`, and the Parquet export still
+writes `features.parquet`. Table names derived from the class name do change: the DuckDB table and the
+flat profile's tables are now `sequence_feature` and `sequence_feature_*`.
 
 Optional `FeatureLocation` and `LocationPart` objects retain ordered, uncertain or
 circular locations. See the [location contract and migration guide](../../docs/feature-locations.md).
@@ -13,7 +19,7 @@ parts are authoritative for occupancy.
 
 [`source_document.yaml`](source_document.yaml) separately defines a physical source
 document and its ordered records. It imports the same generic attribute module for
-scoped comment metadata, without depending on Feature or NMDC DataObject. See the
+scoped comment metadata, without depending on SequenceFeature or NMDC DataObject. See the
 [source-document parser contract](../../docs/source-documents.md) and
 [reproducible example](../examples/source-documents/README.md).
 
@@ -40,7 +46,7 @@ Features reach their genome or bin through their contig
 exactly to KBase CDM `ContigCollection`, and `collection_type` uses CDM's `ContigCollectionType`
 values, read from kbase/cdm-schema at commit c1a59b9 on 2026-09-25.
 
-`Feature.stable_identifiers` holds identifiers an authority keeps across releases, such as an
+`SequenceFeature.stable_identifiers` holds identifiers an authority keeps across releases, such as an
 NCBI `GeneID`. `feature_id` stays the key within one Dataset, because GFF3 `ID` values are not
 meant to be persistent ([issue 44](https://github.com/turbomam/feature-table-corpus/issues/44)).
 NMDC annotation files have no such identifier for their own genes: the IMG gene oid in their KO
@@ -73,14 +79,14 @@ is a valid empty Dataset because both collections are optional;
 absent or null collections are treated as empty. These cases have regression coverage.
 
 The harmonized Dataset profile requires a contig reference, coordinate system, and positive
-1-based inclusive endpoints on every Feature; phase, when supplied, is 0, 1, or 2.
+1-based inclusive endpoints on every SequenceFeature; phase, when supplied, is 0, 1, or 2.
 `scripts/validate_closed.py` additionally enforces start ≤ end, unique IDs within each entity
 collection, resolved references (including each `member_of` collection), no parent cycles, and compatible parent coordinate spaces.
 Contig intervals cannot exceed a known contig length. Protein intervals need a contig-relative
 CDS parent and cannot exceed a supplied translation. Missing translations are allowed; their
 upper bounds cannot be checked. Multiple parents must each be compatible with the child.
 
-These cross-record checks run for `Dataset`, not when validating an isolated Feature.
+These cross-record checks run for `Dataset`, not when validating an isolated SequenceFeature.
 Plain `linkml-validate` and exported JSON Schema alone do not enforce them. The profile
 supports explicit parts and known-length circular references; the original GFF
 conversion profile still refuses circular input. It does not validate biological CDS phase correctness, ontology terms,
@@ -91,9 +97,9 @@ CI also downloads the pinned, unvendored prior-art GFF schema and asserts its pu
 schema's path to include this test; otherwise it is explicitly skipped. The current draft
 model's separate totals, 35 admissible of 51 class and slot pairs, are tested without network access.
 
-ContigCollection, Contig and Feature all expose `generated_by` and `source_files`. These remain optional
+ContigCollection, Contig and SequenceFeature all expose `generated_by` and `source_files`. These remain optional
 for sources lacking workflow metadata, but every supplied example populates them.
-`generated_by` replaces the earlier Feature-only `predicted_by` field. The
+`generated_by` replaces the earlier SequenceFeature-only `predicted_by` field. The
 [source manifest](../examples/source-artifacts.yaml) records IDs and checksums for cited
 artifacts. Record-level source lists may include sidecars from a different workflow than
 the record's producer; they are not field-level provenance.
@@ -103,7 +109,7 @@ the record's producer; they are not field-level provenance.
 BRIDGE's scalar-only prototype profile is not a requirement of this model. The loader uses
 native LIST columns for parents, lineages, and source files, and LIST of STRUCT for attributes.
 Structured locations use a JSON column, and references retain optional topology.
-`Feature.seqid` has no foreign key: it names a Contig, or for protein coordinates the CDS they
+`SequenceFeature.seqid` has no foreign key: it names a Contig, or for protein coordinates the CDS they
 are measured along ([protein coordinates](../../docs/protein-coordinates.md)), and one column
 cannot reference two tables, so the Dataset validator checks it. `Contig.member_of` is a LIST of collection IDs.
 The Dataset validator checks each one against the Dataset's `contig_collections` before loading;
@@ -136,7 +142,7 @@ binary is committed: the YAML examples and scripts are the reviewable, reproduci
 ## Translation tables and score types
 
 `Contig.translation_table` records the assigned NCBI genetic code a contig's coding features were
-translated with, and `Feature.score_type` says what kind of number `score` is: `bit_score`,
+translated with, and `SequenceFeature.score_type` says what kind of number `score` is: `bit_score`,
 `e_value`, `p_value` or `score`, each mapped to an EDAM data term
 ([issue 46](https://github.com/turbomam/feature-table-corpus/issues/46)). Unset `score_type` means
 no source states the meaning, and a schema rule rejects a `score_type` on a feature with no
@@ -163,7 +169,7 @@ producer it infers no length from a declared region.
 
 ## Representative isoforms
 
-`Feature.is_representative` says whether the source names a transcript as its gene's representative
+`SequenceFeature.is_representative` says whether the source names a transcript as its gene's representative
 isoform ([issue 48](https://github.com/turbomam/feature-table-corpus/issues/48)). Phytozome marks it
 with `longest=1` on one mRNA per gene. It is not `is_selected`, which records which competing call a
 pipeline kept for a locus. Unset means the source does not say, and false only means what the
@@ -173,7 +179,7 @@ its own, such as an exon under an mRNA.
 
 ## GFF3 reserved tags
 
-`Feature.name`, `note`, `dbxref` and `ontology_term` hold the GFF3 reserved tags `Name`, `Note`,
+`SequenceFeature.name`, `note`, `dbxref` and `ontology_term` hold the GFF3 reserved tags `Name`, `Note`,
 `Dbxref` and `Ontology_term` ([issue 43](https://github.com/turbomam/feature-table-corpus/issues/43)).
 `gff3-contig` fills them and keeps every occurrence in `attributes` too, as it already did for `ID`,
 `Parent` and `product`, so a query can use either. `Alias` and `Derives_from` occur in no corpus
@@ -189,12 +195,12 @@ interbase slots, and only closely to faldo's `begin` and `end`, which link a reg
 object rather than to an integer. Biolink lists GFF3's `Dbxref` as narrower than its own `xref`, so `dbxref`
 maps broadly to `biolink:xref`. `attributes` is only close to GFF3's column 9, because it holds that column's ordered key/value pairs
 rather than its text. `feature_id` is only close to `gff3:ID`, because it can be
-synthetic or method-qualified, and `Feature` is only close to SO:0000110, sequence_feature, because
-a Feature can also be a joined location or a protein-coordinate hit.
+synthetic or method-qualified, and `SequenceFeature` is only close to SO:0000110, sequence_feature, because
+a SequenceFeature can also be a joined location or a protein-coordinate hit.
 
 ## Alignment targets
 
-`Feature.target` says where a hit aligns on the thing it matched, in that thing's own positions:
+`SequenceFeature.target` says where a hit aligns on the thing it matched, in that thing's own positions:
 `target_id`, `target_start`, `target_end`, and optionally `target_strand` and a GFF3-style `gap`
 ([issue 94](https://github.com/turbomam/feature-table-corpus/issues/94)). The hit's own `seqid`,
 `start` and `end` stay the query side. `nmdc-pfam-protein` fills it from HMMER's `model_start` and
