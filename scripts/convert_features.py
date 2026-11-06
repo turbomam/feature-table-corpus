@@ -288,7 +288,7 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
     """Import a source as a conversion bundle; ConversionError when the profile refuses it.
 
     check_dataset=False skips only the final closed Dataset check, so a caller such as
-    scripts/gff3_linkml_loader.py can hand the unvalidated Dataset to LinkML's Validator.
+    scripts/linkml_gff3_loader.py can hand the unvalidated Dataset to LinkML's Validator.
     Every row-level and source-level refusal still applies.
     """
     require(profile in PROFILES, "unsupported-profile", f"no executable conversion profile {profile!r}")
