@@ -14,7 +14,7 @@ The BER feature model, the code that converts real annotation files into it, the
 | Flat profile | [`model/flat/`](../model/flat/) | A scalar-only version of the model, generated from it, for catalogs that take only flat tables. |
 | NMDC feature tables | [microbiomedata/nmdc-lakehouse](https://github.com/microbiomedata/nmdc-lakehouse), `src/nmdc_lakehouse/feature_convert.py`, documented in its [`docs/nmdc_feature_tables.md`](https://github.com/microbiomedata/nmdc-lakehouse/blob/main/docs/nmdc_feature_tables.md) | Picks which of an NMDC run's annotation files to use, drops observations repeated across files, and writes `features.parquet` and `contigs.parquet` in the model's shape. Run as `just feature-plan`, `feature-sample`, `feature-download`, `feature-check` and `feature-convert`. |
 | BERDL | the KBase lakehouse | Where the NMDC Parquet is meant to be loaded (https://github.com/microbiomedata/nmdc-lakehouse/issues/388). No NMDC feature tables are loaded as of 2026-10-02; the [actinorhodin example](actinorhodin-walkthrough.md) is loaded in a personal namespace. |
-| Central schema | [ber-data/bridge-central-schema](https://github.com/ber-data/bridge-central-schema) | Where the model's elements are copied, keeping the code here ([issue 9](https://github.com/turbomam/feature-table-corpus/issues/9)). The copy of v0.1.0 is in draft https://github.com/ber-data/bridge-central-schema/pull/5; [downstream copies](downstream-copies.md) lists how it differs. |
+| Central schema | [doe-bridge/bridge-central-schema](https://github.com/doe-bridge/bridge-central-schema) | Where the model's elements are copied, keeping the code here ([issue 9](https://github.com/turbomam/feature-table-corpus/issues/9)). The copy of v0.1.0 is in draft https://github.com/doe-bridge/bridge-central-schema/pull/5; [downstream copies](downstream-copies.md) lists how it differs. |
 
 ## How they depend on each other
 
@@ -32,7 +32,7 @@ The BER feature model, the code that converts real annotation files into it, the
 
 The BER GFF modeling group's notes (https://docs.google.com/document/d/17Z1o7KNNqlMFq4WArIlvVlBvNeaW9ADBwZPG8R6u52o) record these as open after the 2026-10-02 meeting. Each is tracked here:
 
-- Whether only the schema moves to bridge-central-schema as a module, and how much of the scripting moves to the `ber-data` organization: https://github.com/turbomam/feature-table-corpus/issues/9.
+- Whether only the schema moves to bridge-central-schema as a module, and how much of the scripting moves to the `doe-bridge` organization: https://github.com/turbomam/feature-table-corpus/issues/9.
 - How JGI's Secondary Metabolite Clusters (SMC) database maps to the model, whether SMC gets a LinkML schema for its current tables, and whether its SQL DDL is available: https://github.com/turbomam/feature-table-corpus/issues/166.
 - Whether one feature representation covers eukaryotic and prokaryotic genomes well: https://github.com/turbomam/feature-table-corpus/issues/48.
 
@@ -79,15 +79,15 @@ Colleagues call this work the "GenomeFeatures schema module" or the "unified BER
 
 ### Inside bridge-central-schema
 
-https://github.com/ber-data/bridge-central-schema/pull/5 (draft) imports this model next to the measurements module. These rows are about that combination; see [downstream copies](downstream-copies.md) for how the copy differs from v0.1.0.
+https://github.com/doe-bridge/bridge-central-schema/pull/5 imports this model next to the measurements module. These rows are about that combination; see [downstream copies](downstream-copies.md) for how the copy differs from v0.1.0.
 
 | other work | what overlaps or conflicts | how known | tracked in |
 |---|---|---|---|
 | The root schema's `name` slot | The root and this model both define a slot named `name`, and `gen-project` stops with "Conflicting URIs ... for item: name". PR 5 renames ours to `display_name` with `alias: name`. Generated JSON Schema still keys on `name`, and the actinorhodin Dataset validates against it with 0 errors. Tools that read slot names instead of aliases see `display_name`, including SchemaView, which `scripts/lakehouse_export.py` uses to name Parquet columns. | measured 2026-10-02 (conflict, validation); read 2026-10-02, not run (SchemaView effect) | PR 5 body |
 | LinkML Python generator | `gen-python` writes `EDAM.DATA[...]` but declares only `EDAM_DATA`, so the dotted prefix in v0.1.0 breaks the generated Python. It also leaves out `MIXS` and `EDAM` unless the root declares them. PR 5 changes the prefix to `EDAM` with `EDAM:data_NNNN` meanings; https://github.com/turbomam/feature-table-corpus/pull/163 changes it here to `EDAM_DATA` (same IRIs either way). | measured 2026-10-02 | https://github.com/linkml/linkml/issues/3458, https://github.com/linkml/linkml/issues/2632, PR 5 body |
-| measurements module (`measurements.yaml`, from https://github.com/ber-data/bridge-central-schema/pull/2 by @sierra-moxon) | `numeric_value` is defined twice: a top-level `double` in measurements and a `float` attribute of our `Attribute`. After `gen-linkml --mergeimports` the global slot lists both classes in `domain_of` with range `double`, while `Attribute` keeps its own definition. | observed 2026-10-02 in the merged output; ranges read 2026-10-02 | not tracked |
+| measurements module (`measurements.yaml`, from https://github.com/doe-bridge/bridge-central-schema/pull/2 by @sierra-moxon) | `numeric_value` is defined twice: a top-level `double` in measurements and a `float` attribute of our `Attribute`. After `gen-linkml --mergeimports` the global slot lists both classes in `domain_of` with range `double`, while `Attribute` keeps its own definition. | observed 2026-10-02 in the merged output; ranges read 2026-10-02 | not tracked |
 | measurements module | The source text is `raw_value` on `MeasurementValue` and `value` on our `Attribute`, and both descriptions say they follow NMDC's AttributeValue pattern. | read 2026-10-02 | not tracked |
-| measurements module | This model owns the top-level slots `type`, `source`, `start`, `end` and `note` with their GFF meanings. https://github.com/ber-data/bridge-central-schema/issues/4 proposes source-tracking slots for measurements; a slot there named `source` or `type` would collide. Names such as `source_system` or `source_field` would not. No class, enum or type names collide today. | read 2026-10-02 | not tracked |
+| measurements module | This model owns the top-level slots `type`, `source`, `start`, `end` and `note` with their GFF meanings. https://github.com/doe-bridge/bridge-central-schema/issues/4 proposes source-tracking slots for measurements; a slot there named `source` or `type` would collide. Names such as `source_system` or `source_field` would not. No class, enum or type names collide today. | read 2026-10-02 | not tracked |
 | NMDC schema | `Attribute.numeric_value` has `exact_mappings: nmdc:numeric_value`, but NMDC's slot is `has_numeric_value`. | read 2026-10-02 (nmdc-schema main) | not tracked |
 | Licenses and prefixes | Four prefixes under three licenses: `bridge:` (measurements, BSD-3), `bfm:` and `battr:` (this model, CC0 since https://github.com/turbomam/feature-table-corpus/pull/128), and `bridge_central_schema:` (root, Apache-2.0). `bridge:` names only the measurements module, so it reads like the root's prefix. | read 2026-10-02 | not tracked |
 

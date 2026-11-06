@@ -7,7 +7,7 @@ generic `key`/`value` pairs for metadata and evidence as well as GFF tags. See
 complete GFF3 interchange standard.
 
 `SequenceFeature` was called `Feature` before version 0.2.0. It was renamed because "feature" also means
-an earth-science sampling feature in BRIDGE (https://github.com/ber-data/bridge-central-schema/pull/5).
+an earth-science sampling feature in BRIDGE (https://github.com/doe-bridge/bridge-central-schema/pull/5).
 Data files don't change: they use the slots `features` and `feature_id`, and the Parquet export still
 writes `features.parquet`. Table names derived from the class name do change: the DuckDB table and the
 flat profile's tables are now `sequence_feature` and `sequence_feature_*`.

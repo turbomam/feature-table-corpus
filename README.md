@@ -6,6 +6,8 @@ Real, traceable examples of GFF and other genome feature table content, and a dr
 
 The model and conversion profiles are drafts; source-specific observations are evidence for modeling, not universal requirements.
 
+This repository is a staging ground for content that will move into https://github.com/doe-bridge/bridge-central-schema, the BRIDGE central LinkML schema. The feature model in `model/schema/ber_feature_model.yaml` and the Attribute module in `model/schema/attributes.yaml` are copied there through pull requests, and [downstream copies](docs/downstream-copies.md) records how those copies differ from the ones here. The corpus, converters and checks stay here to test the model against real files.
+
 ## Start here
 
 1. [GFF validation and splitting: start here](docs/gff-validation-start-here.md) is for anyone picking up the GFF validator or the fast first-pass splitter. It lists the file kinds in this repository and the specification each one follows, and which lines of a file reach DuckDB today.

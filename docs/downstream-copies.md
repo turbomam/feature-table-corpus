@@ -8,7 +8,7 @@ follows, how it differs, and how to bring it back in line. Checked 2026-10-02.
 
 | | |
 |---|---|
-| Where | https://github.com/ber-data/bridge-central-schema/pull/5, Add the BER feature model as an imported module (draft), files `src/ber_central_schema/schema/ber_feature_model.yaml` and `attributes.yaml` |
+| Where | https://github.com/doe-bridge/bridge-central-schema/pull/5, Add the BER feature model as an imported module (draft), files `src/ber_central_schema/schema/ber_feature_model.yaml` and `attributes.yaml` |
 | Follows | This repository's [v0.1.0 release](https://github.com/turbomam/feature-table-corpus/releases/tag/v0.1.0) (commit 4aaca94), as stated in the copy's own `notes`. PR 5 head checked: 5e2a4b2. |
 | Who updates it | Whoever opens the pull request that changes the model here also opens or updates the matching bridge-central-schema pull request, and each links the other (see the pull request template). |
 
