@@ -15,7 +15,8 @@ whole file in memory. It writes these tables:
   refuses still land.
 - biosequence: one row per embedded FASTA sequence, after the BioSQL biosequence table and Chado's
   feature.residues: the residues in one string, plus the header line and line layout needed to
-  write the FASTA back exactly.
+  write the FASTA back exactly. The layout uses the samtools faidx .fai column meanings (offset,
+  bases per line, bytes per line) and falls back to one entry per line for layouts faidx refuses.
 - contig, contig_collection and sequence_feature: the feature model's tables, written only when
   gff3-contig/4.0.0 accepts the file; otherwise the refusal code is reported.
 
@@ -41,47 +42,71 @@ SEQUENCE_KINDS = {"fasta_header", "fasta_sequence"}
 
 
 def sequences(records):
-    """Group FASTA records into one row per sequence, keeping what an exact rewrite needs."""
-    rows, current = [], None
+    """Group FASTA records into one row per sequence, keeping what an exact rewrite needs.
+
+    Residues come from the reader's sequence_text, which has no whitespace. A sequence laid out the
+    way samtools faidx expects (consecutive lines, each line but the last holding line_bases residues
+    in line_bytes bytes, the last no longer) is stored as the faidx columns plus its line endings.
+    Any other layout keeps one entry per line with its line number, residue count and ending, plus
+    the raw text when the line holds more than residues and ending.
+    """
+    rows, current, position = [], None, 0
     for record in records:
+        size = len(record["raw_text"].encode("utf-8"))
         if record["kind"] == "fasta_header":
             current = {"header_line_number": record["line_number"], "header_text": record["raw_text"],
-                       "lines": []}
+                       "offset": position + size, "lines": []}
             rows.append(current)
         elif record["kind"] == "fasta_sequence":
-            current["lines"].append(record["raw_text"])
+            if not current["lines"]:
+                current["offset"] = position
+            current["lines"].append(record)
+        position += size
     out = []
     for row in rows:
-        bodies = [line.rstrip("\r\n") for line in row["lines"]]
-        endings = {line[len(body):] for line, body in zip(row["lines"], bodies)}
-        width = len(bodies[0]) if bodies else 0
-        regular = all(len(b) == width for b in bodies[:-1]) and (not bodies or 0 < len(bodies[-1]) <= width)
+        lines = row["lines"]
+        bases = [r["sequence_text"] for r in lines]
+        endings = [r["raw_text"][len(r["raw_text"].rstrip("\r\n")):] for r in lines]
+        line_bases = len(bases[0]) if lines else 0
+        ending = endings[0] if lines else ""
+        regular = (all(r["raw_text"] == b + e for r, b, e in zip(lines, bases, endings))
+                   and all(r["line_number"] == row["header_line_number"] + n for n, r in enumerate(lines, start=1))
+                   and all(len(b) == line_bases and e == ending for b, e in zip(bases[:-1], endings[:-1]))
+                   and (not lines or len(bases[-1]) <= line_bases))
+        residues = "".join(bases)
         out.append({
             "sequence_id": row["header_text"][1:].split()[0] if row["header_text"][1:].split() else "",
             "header_line_number": row["header_line_number"],
             "header_text": row["header_text"],
-            "residues": "".join(bodies),
-            "length": sum(map(len, bodies)),
-            "line_width": width if regular else None,
-            "line_lengths": None if regular else [len(b) for b in bodies],
-            "line_ending": endings.pop() if len(endings) == 1 else None,
-            "last_line_ending": row["lines"][-1][len(bodies[-1]):] if bodies else "",
+            "residues": residues,
+            "length": len(residues),
+            "offset": row["offset"],
+            "line_bases": line_bases if regular else None,
+            "line_bytes": line_bases + len(ending.encode("utf-8")) if regular else None,
+            "line_ending": ending if regular else None,
+            "last_line_ending": (endings[-1] if lines else "") if regular else None,
+            "lines": None if regular else [
+                {"line_number": r["line_number"], "bases": len(b), "line_ending": e,
+                 "raw_text": None if r["raw_text"] == b + e else r["raw_text"]}
+                for r, b, e in zip(lines, bases, endings)],
         })
     return out
 
 
 def sequence_lines(row):
-    residues, ending = row["residues"], row["line_ending"]
-    lengths = row["line_lengths"]
-    if lengths is None:
-        width = row["line_width"]
-        lengths = [width] * (len(residues) // width) + ([len(residues) % width] if len(residues) % width else [])
-    lines, start = [], 0
-    for index, size in enumerate(lengths):
-        last = index == len(lengths) - 1
-        lines.append(residues[start:start + size] + (row["last_line_ending"] if last else ending))
-        start += size
-    return lines
+    """Return (line_number, raw_text) for each sequence line of one biosequence row."""
+    residues = row["residues"]
+    if row["lines"] is not None:
+        out, start = [], 0
+        for line in row["lines"]:
+            text = residues[start:start + line["bases"]] + line["line_ending"]
+            out.append((line["line_number"], line["raw_text"] if line["raw_text"] is not None else text))
+            start += line["bases"]
+        return out
+    width = row["line_bases"]
+    count = -(-row["length"] // width) if width else 0
+    return [(row["header_line_number"] + n + 1, residues[n * width:(n + 1) * width]
+             + (row["last_line_ending"] if n == count - 1 else row["line_ending"])) for n in range(count)]
 
 
 def main():
@@ -140,10 +165,11 @@ def main():
         if values:
             con.executemany(f"INSERT INTO {table} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values)
     con.execute("""CREATE TABLE biosequence (sequence_id VARCHAR, header_line_number BIGINT, header_text VARCHAR,
-                   residues VARCHAR, length BIGINT, line_width INTEGER, line_lengths INTEGER[],
-                   line_ending VARCHAR, last_line_ending VARCHAR)""")
+                   residues VARCHAR, length BIGINT, "offset" BIGINT, line_bases INTEGER, line_bytes INTEGER,
+                   line_ending VARCHAR, last_line_ending VARCHAR,
+                   lines STRUCT(line_number BIGINT, bases INTEGER, line_ending VARCHAR, raw_text VARCHAR)[])""")
     for row in sequences(document["records"]):
-        con.execute("INSERT INTO biosequence VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", list(row.values()))
+        con.execute("INSERT INTO biosequence VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", list(row.values()))
     con.close()
     times["write_duckdb_s"] = time.perf_counter() - start
 
@@ -155,8 +181,7 @@ def main():
     for values in con.execute("SELECT * FROM biosequence ORDER BY header_line_number").fetchall():
         row = dict(zip(columns, values))
         lines.append((row["header_line_number"], row["header_text"]))
-        for offset, line in enumerate(sequence_lines(row), start=1):
-            lines.append((row["header_line_number"] + offset, line))
+        lines.extend(sequence_lines(row))
     tables = {name: con.execute(f'SELECT count(*) FROM "{name}"').fetchone()[0]
               for (name,) in con.execute("SHOW TABLES").fetchall()}
     header_kinds = dict(con.execute("SELECT kind, count(*) FROM header_record GROUP BY kind ORDER BY kind").fetchall())
