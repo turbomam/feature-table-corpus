@@ -51,18 +51,18 @@
   },
   "summary": {
     "genometools": {
-      "accepted": 19,
-      "not_checked": 19,
+      "accepted": 22,
+      "not_checked": 24,
       "rejected": 40
     },
     "gff3toolkit": {
       "accepted": 12,
-      "not_checked": 19,
-      "rejected": 47
+      "not_checked": 24,
+      "rejected": 50
     },
     "agat": {
-      "blocked": 59,
-      "not_checked": 19
+      "blocked": 62,
+      "not_checked": 24
     }
   },
   "records": [
@@ -3582,6 +3582,238 @@
         "agat": {
           "verdict": "blocked",
           "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "ensembl-scer-r64-mito-gff3",
+      "path": "corpus/sources/ensembl/Saccharomyces_cerevisiae.R64-1-1.63.chromosome.Mito.gff3",
+      "format": "GFF3",
+      "sha256": "7f12e307e0ec895731b953e46638d6ef516e50fe5c714f36a0650a3a04f08b15",
+      "profile": "gff3-contig/4.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "accepted",
+          "rules": [],
+          "exit_code": 0,
+          "stdout": "input is valid GFF3",
+          "stderr": "",
+          "expected_rules": []
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 8']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \".\", found at the strand field]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "e29dd3cb47ca7f52d10e5ec73d80218c3c5bd33177c63283808ae515b22c13ef",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "refseq-scer-mito-nc-001224-1-genbank",
+      "path": "corpus/sources/ncbi-refseq/NC_001224.1_2026-11-06.gb",
+      "format": "GenBank",
+      "sha256": "7c3ae57d2b3fe253b3f135c6ca3a9dbe69676a31f21135a17eb1866488e0bde0",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "bakta-mgenitalium-g37-gff3",
+      "path": "corpus/sources/bakta/Mycoplasma_genitalium_G37_NC_000908.2_bakta-1.12.2.gff3",
+      "format": "GFF3",
+      "sha256": "5128f627c23afed24319049a1e59c26bd1564c6c7af35fbc5af35eadcfa9242f",
+      "profile": "gff3-contig/4.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "accepted",
+          "rules": [],
+          "exit_code": 0,
+          "stdout": "input is valid GFF3",
+          "stderr": "",
+          "expected_rules": []
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0003"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0003",
+              "count": 1,
+              "example": {
+                "Line_num": "['Line 573']",
+                "Error_code": "Esf0003",
+                "Error_level": "Error",
+                "Error_tag": "[Strand information missing: legal chacracter, \"?\", found at the strand field]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "f893eba4a99ec3419558c727409eab2d4c3a3211bf34c2e8864f9393b9f887c9",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0003"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "bakta-mgenitalium-g37-genbank",
+      "path": "corpus/sources/bakta/Mycoplasma_genitalium_G37_NC_000908.2_bakta-1.12.2.gbff",
+      "format": "GenBank",
+      "sha256": "5bf8027f00f574c67632b73cd5600fd657e203ceffbe2b78bbd6fa53beb1d3be",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "bakta-mgenitalium-g37-tsv",
+      "path": "corpus/sources/bakta/Mycoplasma_genitalium_G37_NC_000908.2_bakta-1.12.2.tsv",
+      "format": "TSV",
+      "sha256": "8b17e4bba562135d1faa6357fbda94a9889044c9671117655677b1788c5b63ac",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "prokka-mgenitalium-g37-gff3",
+      "path": "corpus/sources/prokka/Mycoplasma_genitalium_G37_NC_000908.2_prokka-1.15.6.gff",
+      "format": "GFF3",
+      "sha256": "300ede270f5cae0750bcb05e79a8667dd5d8b40d969d38f36418fdbddb970122",
+      "profile": "gff3-contig/4.0.0",
+      "validators": {
+        "genometools": {
+          "verdict": "accepted",
+          "rules": [],
+          "exit_code": 0,
+          "stdout": "input is valid GFF3",
+          "stderr": "",
+          "expected_rules": []
+        },
+        "gff3toolkit": {
+          "verdict": "rejected",
+          "rules": [
+            "Esf0036"
+          ],
+          "diagnostics": [
+            {
+              "rule": "Esf0036",
+              "count": 366,
+              "example": {
+                "Line_num": "['Line 10']",
+                "Error_code": "Esf0036",
+                "Error_level": "Error",
+                "Error_tag": "[Value of inference attribute contains unescaped \",\": \"ab initio prediction:Prodigal:v2.6,similar to AA sequence:UniProtKB:P75104\"]"
+              }
+            }
+          ],
+          "diagnostics_sha256": "954dd0bfe70b6afc072c9a595e3d23d6026069e66d36d3a2a48ab9433aee166d",
+          "exit_code": 0,
+          "expected_rules": [
+            "Esf0036"
+          ]
+        },
+        "agat": {
+          "verdict": "blocked",
+          "reason": "AGAT 1.7.0 requires perl-lwp-protocol-https, then perl-test-requiresinternet, then perl-socket, which is unavailable in the osx-arm64 solve with conda-forge and bioconda. Installation stopped under the issue's macOS arm64 exception; AGAT is not run on any platform in this report. No rule expectations have been measured."
+        }
+      }
+    },
+    {
+      "id": "prokka-mgenitalium-g37-genbank",
+      "path": "corpus/sources/prokka/Mycoplasma_genitalium_G37_NC_000908.2_prokka-1.15.6.gbk",
+      "format": "GenBank",
+      "sha256": "1b3563c82cc30bf985242abd172adec4533add316fe6927dd0d6418356e67cbb",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        }
+      }
+    },
+    {
+      "id": "prokka-mgenitalium-g37-tbl",
+      "path": "corpus/sources/prokka/Mycoplasma_genitalium_G37_NC_000908.2_prokka-1.15.6.tbl",
+      "format": "NCBI feature table",
+      "sha256": "a223c20fd938d4ef65f125feff96e3f8720024a97175c9f43a28819def9e107f",
+      "validators": {
+        "genometools": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "gff3toolkit": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
+        },
+        "agat": {
+          "verdict": "not_checked",
+          "reason": "No independent validator configured for this format"
         }
       }
     }

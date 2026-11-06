@@ -331,3 +331,15 @@ validation:
     refseq-viral-nc-001890-1:
       genometools: []
       gff3toolkit: []
+    ensembl-scer-r64-mito-gff3:
+      genometools: []
+      gff3toolkit:
+      - Esf0003
+    bakta-mgenitalium-g37-gff3:
+      genometools: []
+      gff3toolkit:
+      - Esf0003
+    prokka-mgenitalium-g37-gff3:
+      genometools: []
+      gff3toolkit:
+      - Esf0036

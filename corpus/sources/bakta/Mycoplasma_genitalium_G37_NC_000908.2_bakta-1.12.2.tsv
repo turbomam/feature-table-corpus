@@ -1,0 +1,571 @@
+# Annotated with Bakta
+# Software: v1.12.2
+# Database: v6.0, light
+# DOI: 10.1099/mgen.0.000685
+# URL: github.com/oschwengers/bakta
+#Sequence Id	Type	Start	Stop	Strand	Locus Tag	Gene	Product	DbXrefs
+NC_000908.2	cds	686	1828	+	MG_0001		hypothetical protein	PFAM:PF00712.24, PFAM:PF02768.20
+NC_000908.2	cds	1828	2760	+	MG_0002		hypothetical protein	PFAM:PF00226.36
+NC_000908.2	cds	2845	4797	+	MG_0003		DNA gyrase subunit B	SO:0001217, UniRef:UniRef50_P22447
+NC_000908.2	cds	4812	7322	+	MG_0004		DNA gyrase subunit A	SO:0001217, UniRef:UniRef50_P47719
+NC_000908.2	cds	7294	8547	+	MG_0005		hypothetical protein	PFAM:PF00587.30, PFAM:PF02403.27
+NC_000908.2	cds	8551	9183	+	MG_0006		Thymidylate kinase	SO:0001217, UniRef:UniRef50_P47252
+NC_000908.2	cds	9156	9920	+	MG_0007		hypothetical protein	PFAM:PF13177.12
+NC_000908.2	cds	9923	11251	+	MG_0008	mnmE	tRNA modification GTPase MnmE	SO:0001217, UniRef:UniRef50_P47254
+NC_000908.2	cds	11251	12039	+	MG_0009		hypothetical protein	PFAM:PF01026.27
+NC_000908.2	cds	12068	12724	+	MG_0010		Uncharacterized MG010-like protein	SO:0001217, UniRef:UniRef50_P75099
+NC_000908.2	cds	12701	13564	-	MG_0011		hypothetical protein	PFAM:PF02955.21, PFAM:PF08443.16
+NC_000908.2	cds	13569	14432	-	MG_0012		hypothetical protein	PFAM:PF02786.22, PFAM:PF02955.21, PFAM:PF08443.16
+NC_000908.2	cds	14395	15216	-	MG_0013	folD	Bifunctional protein FolD	SO:0001217, UniRef:UniRef50_P47259
+NC_000908.2	tRNA	15294	15369	-	MG_0014	trnA	tRNA-Ala(tgc)	SO:0000254
+NC_000908.2	tRNA	15375	15451	-	MG_0015	trnI	tRNA-Ile(gat)	SO:0000263
+NC_000908.2	cds	15555	17426	+	MG_0016		Putative ABC transporter ATP-binding protein MG014	SO:0001217, UniRef:UniRef50_P47260
+NC_000908.2	cds	17413	19242	+	MG_0017		Putative ABC transporter ATP-binding protein MG015	SO:0001217, UniRef:UniRef50_P47261
+NC_000908.2	cds	19252	22347	+	MG_0018		Uncharacterized ATP-dependent helicase MG018	SO:0001217, UniRef:UniRef50_P47264
+NC_000908.2	cds	22389	23558	+	MG_0019		hypothetical protein	PFAM:PF00226.36, PFAM:PF00684.24, PFAM:PF01556.23
+NC_000908.2	cds	23542	24468	+	MG_0020		Putative proline iminopeptidase	SO:0001217, UniRef:UniRef50_P75092
+NC_000908.2	cds	24468	26006	+	MG_0021		Methionine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47267
+NC_000908.2	cds	26036	26473	+	MG_0022		hypothetical protein	
+NC_000908.2	cds	26479	27345	+	MG_0023		putative fructose-bisphosphate aldolase	SO:0001217, UniRef:UniRef50_P13243
+NC_000908.2	cds	27346	28449	+	MG_0024	ychF	Ribosome-binding ATPase YchF	SO:0001217, UniRef:UniRef50_P37518
+NC_000908.2	cds	28652	29548	+	MG_0025		Uncharacterized glycosyltransferase MG025-like protein	SO:0001217, UniRef:UniRef50_P75086
+NC_000908.2	cds	29561	30124	+	MG_0026		Elongation factor P	SO:0001217, UniRef:UniRef50_P75085
+NC_000908.2	cds	30093	30548	+	MG_0027		hypothetical protein	PFAM:PF09185.15
+NC_000908.2	cds	30548	31153	+	MG_0028		hypothetical protein	
+NC_000908.2	cds	31143	31736	-	MG_0029		hypothetical protein	PFAM:PF01965.30
+NC_000908.2	cds	31705	32325	-	MG_0030		hypothetical protein	PFAM:PF00156.33, PFAM:PF14681.12, PFAM:PF24390.1
+NC_000908.2	cds	32359	36714	-	MG_0031		DNA polymerase III PolC-type	SO:0001217, UniRef:UniRef50_P75080
+NC_000908.2	cds	36977	38977	+	MG_0032		Uncharacterized protein MPN_036	SO:0001217, UniRef:UniRef50_P75078
+NC_000908.2	cds	39127	39903	+	MG_0033		hypothetical protein	
+NC_000908.2	cds	39872	40513	-	MG_0034		Thymidine kinase	SO:0001217, UniRef:UniRef50_P47280
+NC_000908.2	cds	40542	41786	+	MG_0035		Histidine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47281
+NC_000908.2	cds	41758	43428	+	MG_0036		Aspartate--tRNA ligase	SO:0001217, UniRef:UniRef50_P75068
+NC_000908.2	cds	43404	44753	+	MG_0037		Nicotinamide phosphoribosyltransferase	SO:0001217, UniRef:UniRef50_P75067
+NC_000908.2	cds	44750	46276	-	MG_0038		Glycerol kinase	SO:0001217, UniRef:UniRef50_P75064
+NC_000908.2	cds	46267	47421	-	MG_0039		hypothetical protein	PFAM:PF00070.33, PFAM:PF01266.30, PFAM:PF07992.20, PFAM:PF13450.12
+NC_000908.2	cds	47580	49355	+	MG_0040		hypothetical protein	
+NC_000908.2	cds	49376	49642	+	MG_0041		Phosphocarrier protein HPr	SO:0001217, UniRef:UniRef50_P75061
+NC_000908.2	cds	49840	51519	+	MG_0042	potA	Spermidine/putrescine import ATP-binding protein PotA	SO:0001217, UniRef:UniRef50_P75059
+NC_000908.2	cds	51524	52381	+	MG_0043		hypothetical protein	
+NC_000908.2	cds	52365	53219	+	MG_0044		ABC transmembrane type-1 domain-containing protein	SO:0001217, UniRef:UniRef50_A0A292II09
+NC_000908.2	cds	53204	54655	+	MG_0045		Uncharacterized lipo MG045-like protein	SO:0001217, UniRef:UniRef50_P75056
+NC_000908.2	cds	54657	55604	+	MG_0046		hypothetical protein	
+NC_000908.2	cds	55588	56739	+	MG_0047		hypothetical protein	PFAM:PF00438.25, PFAM:PF02772.21, PFAM:PF02773.21
+NC_000908.2	cds	56715	56972	+	MG_0048		hypothetical protein	
+NC_000908.2	cds	56969	58279	-	MG_0049		Signal recognition particle protein	SO:0001217, UniRef:UniRef50_P75054
+NC_000908.2	cds	58284	59078	+	MG_0050		Purine nucleoside phosphorylase DeoD-type	SO:0001217, UniRef:UniRef50_P47295
+NC_000908.2	cds	59082	59753	+	MG_0051		Deoxyribose-phosphate aldolase	SO:0001217, UniRef:UniRef50_P09924
+NC_000908.2	cds	59740	61005	+	MG_0052		Thymidine phosphorylase	SO:0001217, UniRef:UniRef50_P75052
+NC_000908.2	cds	61014	61406	+	MG_0053		hypothetical protein	PFAM:PF00383.29
+NC_000908.2	cds	61406	63058	+	MG_0054		Phosphomannomutase	SO:0001217, UniRef:UniRef50_P47299
+NC_000908.2	cds	63035	63985	-	MG_0055		hypothetical protein	PFAM:PF02357.24
+NC_000908.2	cds	63989	64360	-	MG_0056		hypothetical protein	
+NC_000908.2	cds	64527	64910	-	MG_0057		hypothetical protein	
+NC_000908.2	cds	64897	65730	-	MG_0058		hypothetical protein	PFAM:PF00590.25
+NC_000908.2	cds	65712	66248	-	MG_0059		hypothetical protein	PFAM:PF13662.12
+NC_000908.2	cds	66227	67120	-	MG_0060		Ribose-phosphate pyrophosphokinase	SO:0001217, UniRef:UniRef50_A0A0G2Z9W7
+NC_000908.2	cds	67206	67643	-	MG_0061		SsrA-binding protein	SO:0001217, UniRef:UniRef50_F2NF77
+NC_000908.2	cds	67650	68543	+	MG_0062		hypothetical protein	PFAM:PF00535.33, PFAM:PF13641.12
+NC_000908.2	cds	68522	70225	-	MG_0063		Major facilitator superfamily transporter MG061	SO:0001217, UniRef:UniRef50_P47307
+NC_000908.2	tRNA	70393	70481	-	MG_0064	trnS	tRNA-Ser(gct)	SO:0000269
+NC_000908.2	cds	70530	72572	+	MG_0065		hypothetical protein	PFAM:PF00359.27, PFAM:PF02302.22
+NC_000908.2	cds	72523	73434	+	MG_0066		hypothetical protein	PFAM:PF00294.29
+NC_000908.2	cds	73445	73648	+	MG_0067		hypothetical protein	
+NC_000908.2	cds	73690	77685	+	MG_0068		Uncharacterized ABC transporter permease MG064	SO:0001217, UniRef:UniRef50_P47310
+NC_000908.2	cds	77685	79085	+	MG_0069		Putative ABC transporter ATP-binding MG065-like protein	SO:0001217, UniRef:UniRef50_P75612
+NC_000908.2	cds	79089	81035	+	MG_0070		Transketolase	SO:0001217, UniRef:UniRef50_P75611
+NC_000908.2	cds	81046	82596	+	MG_0071		Uncharacterized lipoprotein MPN_083	SO:0001217, UniRef:UniRef50_P75610
+NC_000908.2	cds	82620	84044	+	MG_0072		hypothetical protein	PFAM:PF01732.22
+NC_000908.2	cds	84082	84408	+	MG_0073		hypothetical protein	
+NC_000908.2	cds	84551	85555	+	MG_0074		hypothetical protein	
+NC_000908.2	cds	85589	85999	+	MG_0075		hypothetical protein	
+NC_000908.2	cds	86025	86114	-	MG_0076		hypothetical protein	
+NC_000908.2	cds	86134	86616	+	MG_0077		hypothetical protein	
+NC_000908.2	cds	87338	87757	+	MG_0078		hypothetical protein	
+NC_000908.2	cds	87935	88207	+	MG_0079		hypothetical protein	
+NC_000908.2	cds	88228	90954	+	MG_0080		PTS system glucose-specific EIICBA component	SO:0001217, UniRef:UniRef50_P47315
+NC_000908.2	cds	91065	91919	+	MG_0081		Small ribosomal subunit protein uS2	SO:0001217, UniRef:UniRef50_P47316
+NC_000908.2	cds	91924	94548	+	MG_0082		putative cation-transporting P-type ATPase	SO:0001217, UniRef:UniRef50_P47317
+NC_000908.2	cds	94535	96955	+	MG_0083	secA	Protein translocase subunit SecA	SO:0001217, UniRef:UniRef50_P47318
+NC_000908.2	cds	96933	98903	+	MG_0084		UvrABC system protein B	SO:0001217, UniRef:UniRef50_Q6MS38
+NC_000908.2	cds	98906	99319	+	MG_0085		hypothetical protein	
+NC_000908.2	cds	99383	102457	+	MG_0086		Uncharacterized protein MG075	SO:0001217, UniRef:UniRef50_P47321
+NC_000908.2	cds	102454	102870	-	MG_0087		hypothetical protein	
+NC_000908.2	cds	103104	104327	+	MG_0088		hypothetical protein	
+NC_000908.2	cds	104320	105450	+	MG_0089	oppC	Oligopeptide transport system permease protein OppC	SO:0001217, UniRef:UniRef50_P75553
+NC_000908.2	cds	105452	106660	+	MG_0090	oppD	Oligopeptide transport ATP-binding protein OppD	SO:0001217, UniRef:UniRef50_P75552
+NC_000908.2	cds	106660	109206	+	MG_0091	oppF	Oligopeptide transport ATP-binding protein OppF	SO:0001217, UniRef:UniRef50_P75551
+NC_000908.2	cds	109262	109675	+	MG_0092		Large ribosomal subunit protein uL11	SO:0001217, UniRef:UniRef50_B3PM28
+NC_000908.2	cds	109675	110355	+	MG_0093		Large ribosomal subunit protein uL1	SO:0001217, UniRef:UniRef50_P47328
+NC_000908.2	cds	110355	110924	+	MG_0094		hypothetical protein	PFAM:PF01195.25
+NC_000908.2	cds	110917	111789	+	MG_0095		hypothetical protein	PFAM:PF06508.19
+NC_000908.2	cds	111790	112725	+	MG_0096		HPr kinase/phosphorylase	SO:0001217, UniRef:UniRef50_P75548
+NC_000908.2	cds	112718	113866	+	MG_0097		hypothetical protein	
+NC_000908.2	cds	113895	114314	+	MG_0098		Small ribosomal subunit protein uS12	SO:0001217, UniRef:UniRef50_A0A399FAE6
+NC_000908.2	cds	114331	114798	+	MG_0099		Small ribosomal subunit protein uS7	SO:0001217, UniRef:UniRef50_P21469
+NC_000908.2	cds	114808	116874	+	MG_0100		Elongation factor G	SO:0001217, UniRef:UniRef50_Q5SHN5
+NC_000908.2	cds	116926	117552	+	MG_0101		hypothetical protein	PFAM:PF01250.22
+NC_000908.2	cds	117553	118035	+	MG_0102		hypothetical protein	PFAM:PF00436.31
+NC_000908.2	cds	118028	118342	+	MG_0103		hypothetical protein	
+NC_000908.2	cds	118345	118797	+	MG_0104		hypothetical protein	PFAM:PF01281.25, PFAM:PF03948.19
+NC_000908.2	cds	118781	120187	+	MG_0105	dnaB	Replicative DNA helicase DnaB	SO:0001217, UniRef:UniRef50_P47340
+NC_000908.2	cds	120191	121387	+	MG_0106		hypothetical protein	
+NC_000908.2	cds	121571	123523	+	MG_0107		Uncharacterized protein MG096	SO:0001217, UniRef:UniRef50_P47342
+NC_000908.2	cds	123586	124317	+	MG_0108		hypothetical protein	PFAM:PF03167.24
+NC_000908.2	cds	124417	125850	+	MG_0109		Uncharacterized protein MG098	SO:0001217, UniRef:UniRef50_P47344
+NC_000908.2	cds	125853	127286	+	MG_0110		Glutamyl-tRNA(Gln) amidotransferase subunit A	SO:0001217, UniRef:UniRef50_P47345
+NC_000908.2	cds	127279	128712	+	MG_0111		hypothetical protein	PFAM:PF02637.23, PFAM:PF02934.20
+NC_000908.2	cds	128687	129355	+	MG_0112		hypothetical protein	
+NC_000908.2	cds	129348	130295	+	MG_0113		hypothetical protein	PFAM:PF00070.33, PFAM:PF07992.20
+NC_000908.2	cds	130285	131127	+	MG_0114		hypothetical protein	PFAM:PF02650.20, PFAM:PF14527.11
+NC_000908.2	cds	131149	131382	+	MG_0115		hypothetical protein	
+NC_000908.2	cds	131385	133562	+	MG_0116		Ribonuclease R	SO:0001217, UniRef:UniRef50_P47350
+NC_000908.2	cds	133570	134172	+	MG_0117		hypothetical protein	
+NC_000908.2	cds	134147	134728	-	MG_0118		Peptide deformylase	SO:0001217, UniRef:UniRef50_P47352
+NC_000908.2	cds	134769	135338	+	MG_0119		hypothetical protein	PFAM:PF00005.33, PFAM:PF00625.27, PFAM:PF01712.25, PFAM:PF13401.12
+NC_000908.2	cds	135338	136120	+	MG_0120		hypothetical protein	
+NC_000908.2	cds	136105	137268	+	MG_0121		hypothetical protein	PFAM:PF00069.31, PFAM:PF03109.22, PFAM:PF07714.23
+NC_000908.2	cds	137255	138091	+	MG_0122		hypothetical protein	PFAM:PF03193.22
+NC_000908.2	cds	138112	139407	+	MG_0123		hypothetical protein	PFAM:PF00342.24
+NC_000908.2	cds	139397	140026	+	MG_0124		hypothetical protein	PFAM:PF00834.25
+NC_000908.2	cds	140040	141410	+	MG_0125		Asparagine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47359
+NC_000908.2	cds	141391	142056	+	MG_0126		hypothetical protein	
+NC_000908.2	cds	142081	142554	+	MG_0127		hypothetical protein	
+NC_000908.2	cds	142563	143318	+	MG_0128		hypothetical protein	
+NC_000908.2	cds	143311	143955	+	MG_0129		hypothetical protein	
+NC_000908.2	cds	143936	144958	+	MG_0130		UDP-glucose 4-epimerase	SO:0001217, UniRef:UniRef50_P47364
+NC_000908.2	cds	144973	146667	+	MG_0131		Putative carbohydrate transport ATP-binding protein MPN_258	SO:0001217, UniRef:UniRef50_P75516
+NC_000908.2	cds	146674	148236	+	MG_0132		Uncharacterized MG120-like protein	SO:0001217, UniRef:UniRef50_P75515
+NC_000908.2	cds	148239	149159	+	MG_0133		Uncharacterized protein MG121	SO:0001217, UniRef:UniRef50_P47367
+NC_000908.2	cds	149199	151328	+	MG_0134		DNA topoisomerase 1	SO:0001217, UniRef:UniRef50_P47368
+NC_000908.2	cds	151306	152721	+	MG_0135		hypothetical protein	
+NC_000908.2	cds	152768	153076	+	MG_0136		hypothetical protein	PFAM:PF00085.26, PFAM:PF00578.27, PFAM:PF08534.16, PFAM:PF13098.12, PFAM:PF13905.12
+NC_000908.2	cds	153082	153939	+	MG_0137		Putative phosphatase MG125	SO:0001217, UniRef:UniRef50_P47371
+NC_000908.2	cds	153920	154963	-	MG_0138		Tryptophan--tRNA ligase	SO:0001217, UniRef:UniRef50_P75510
+NC_000908.2	cds	154999	155436	+	MG_0139		hypothetical protein	
+NC_000908.2	cds	155444	156223	+	MG_0140		NAD kinase	SO:0001217, UniRef:UniRef50_P75508
+NC_000908.2	cds	156223	156576	+	MG_0141		hypothetical protein	
+NC_000908.2	cds	156566	158020	+	MG_0142		Ribonuclease Y	SO:0001217, UniRef:UniRef50_P47376
+NC_000908.2	cds	158023	158247	+	MG_0143		hypothetical protein	
+NC_000908.2	cds	158323	158604	+	MG_0144		hypothetical protein	
+NC_000908.2	cds	158581	159006	-	MG_0145		Histidine triad (HIT) hydrolase-like protein	SO:0001217, UniRef:UniRef50_Q7NAX8
+NC_000908.2	cds	158984	159778	-	MG_0146		hypothetical protein	
+NC_000908.2	cds	159798	160100	+	MG_0147		hypothetical protein	
+NC_000908.2	cds	160072	160914	-	MG_0148		Uncharacterized protein MG135	SO:0001217, UniRef:UniRef50_P47381
+NC_000908.2	cds	160963	162435	+	MG_0149		hypothetical protein	PFAM:PF00152.25, PFAM:PF01336.31, PFAM:PF01409.25
+NC_000908.2	cds	162398	163591	+	MG_0150		UDP-galactopyranose mutase	SO:0001217, UniRef:UniRef50_P75499
+NC_000908.2	cds	163591	165387	+	MG_0151		Elongation factor 4	SO:0001217, UniRef:UniRef50_A0A139JQX5
+NC_000908.2	cds	165471	167180	+	MG_0152		Ribonuclease J	SO:0001217, UniRef:UniRef50_P75497
+NC_000908.2	cds	167218	167613	+	MG_0153		hypothetical protein	
+NC_000908.2	cds	167730	168230	+	MG_0154		hypothetical protein	
+NC_000908.2	cds	168505	169815	+	MG_0155		hypothetical protein	PFAM:PF05220.18
+NC_000908.2	rRNA	170012	171529	+	MG_0156	rrs	16S ribosomal RNA	GO:0003735, GO:0005840, KEGG:K01977, RFAM:RF00177, SO:0001000
+NC_000908.2	rRNA	171729	174644	+	MG_0157	rrl	23S ribosomal RNA	GO:0003735, GO:0005840, KEGG:K01980, RFAM:RF02541, SO:0001001
+NC_000908.2	rRNA	174685	174793	+	MG_0158	rrf	5S ribosomal RNA	GO:0003735, GO:0005840, KEGG:K01985, RFAM:RF00001, SO:0000652
+NC_000908.2	cds	175076	175360	+	MG_0159		hypothetical protein	
+NC_000908.2	cds	175299	175667	+	MG_0160		hypothetical protein	PFAM:PF05220.18
+NC_000908.2	cds	175805	179146	+	MG_0161		Uncharacterized ATP-dependent helicase MG140-like protein	SO:0001217, UniRef:UniRef50_P75033
+NC_000908.2	cds	179151	180746	+	MG_0162		hypothetical protein	PFAM:PF00013.35, PFAM:PF08529.16, PFAM:PF13184.12
+NC_000908.2	cds	180746	181018	+	MG_0163		hypothetical protein	
+NC_000908.2	cds	181005	182864	+	MG_0164		Translation initiation factor IF-2	SO:0001217, UniRef:UniRef50_P47388
+NC_000908.2	cds	182851	183189	+	MG_0165		hypothetical protein	
+NC_000908.2	cds	183214	184053	+	MG_0166		hypothetical protein	
+NC_000908.2	cds	184053	184862	+	MG_0167		hypothetical protein	PFAM:PF01467.32, PFAM:PF01687.23
+NC_000908.2	cds	184875	186149	+	MG_0168		UPF0053 protein MG146	SO:0001217, UniRef:UniRef50_Q49399
+NC_000908.2	cds	186136	187263	+	MG_0169		hypothetical protein	
+NC_000908.2	cds	187302	188531	+	MG_0170		hypothetical protein	
+NC_000908.2	cds	188607	189452	+	MG_0171		hypothetical protein	
+NC_000908.2	cds	189492	189956	+	MG_0172		Uncharacterized protein MG149-1	SO:0001217, UniRef:UniRef50_Q9ZB80
+NC_000908.2	cds	190046	190366	+	MG_0173		Small ribosomal subunit protein uS10	SO:0001217, UniRef:UniRef50_Q98PX9
+NC_000908.2	cds	190370	191143	+	MG_0174		Large ribosomal subunit protein uL3	SO:0001217, UniRef:UniRef50_P75580
+NC_000908.2	cds	191143	191778	+	MG_0175		hypothetical protein	
+NC_000908.2	cds	191782	192102	+	MG_0176		hypothetical protein	
+NC_000908.2	cds	192102	192959	+	MG_0177		Large ribosomal subunit protein uL2	SO:0001217, UniRef:UniRef50_Q9AMK8
+NC_000908.2	cds	192959	193222	+	MG_0178		Small ribosomal subunit protein uS19	SO:0001217, UniRef:UniRef50_B1VAE4
+NC_000908.2	cds	193225	193659	+	MG_0179		Large ribosomal subunit protein uL22	SO:0001217, UniRef:UniRef50_P47402
+NC_000908.2	cds	193662	194468	+	MG_0180		Small ribosomal subunit protein uS3	SO:0001217, UniRef:UniRef50_O52338
+NC_000908.2	cds	194474	194890	+	MG_0181		Large ribosomal subunit protein uL16	SO:0001217, UniRef:UniRef50_P02415
+NC_000908.2	cds	194890	195492	+	MG_0182		hypothetical protein	
+NC_000908.2	cds	195492	195749	+	MG_0183		Small ribosomal subunit protein uS17	SO:0001217, UniRef:UniRef50_Q9PQQ1
+NC_000908.2	cds	195753	196121	+	MG_0184		Large ribosomal subunit protein uL14	SO:0001217, UniRef:UniRef50_O52342
+NC_000908.2	cds	196121	196447	+	MG_0185		Large ribosomal subunit protein uL24	SO:0001217, UniRef:UniRef50_O52343
+NC_000908.2	cds	196453	196995	+	MG_0186		Large ribosomal subunit protein uL5	SO:0001217, UniRef:UniRef50_A0A9E1ZZ63
+NC_000908.2	cds	196998	197183	+	MG_0187		hypothetical protein	
+NC_000908.2	cds	197177	197602	+	MG_0188		Small ribosomal subunit protein uS8	SO:0001217, UniRef:UniRef50_Q9PQP6
+NC_000908.2	cds	197609	198163	+	MG_0189		Large ribosomal subunit protein uL6	SO:0001217, UniRef:UniRef50_P47412
+NC_000908.2	cds	198165	198512	+	MG_0190		Large ribosomal subunit protein uL18	SO:0001217, UniRef:UniRef50_Q9PQP4
+NC_000908.2	cds	198517	199152	+	MG_0191		hypothetical protein	PFAM:PF00333.26, PFAM:PF03719.21
+NC_000908.2	cds	199158	199610	+	MG_0192		Large ribosomal subunit protein uL15	SO:0001217, UniRef:UniRef50_P47415
+NC_000908.2	cds	199610	201037	+	MG_0193	secY	Protein translocase subunit SecY	SO:0001217, UniRef:UniRef50_O52351
+NC_000908.2	cds	201031	201675	+	MG_0194		hypothetical protein	PFAM:PF00406.28, PFAM:PF05191.20, PFAM:PF13207.12
+NC_000908.2	cds	201678	202424	+	MG_0195		hypothetical protein	PFAM:PF00557.29
+NC_000908.2	cds	202424	202636	+	MG_0196		hypothetical protein	PFAM:PF01176.25
+NC_000908.2	cds	202760	203134	+	MG_0197		Small ribosomal subunit protein uS13	SO:0001217, UniRef:UniRef50_Q0K642
+NC_000908.2	cds	203134	203499	+	MG_0198		Small ribosomal subunit protein uS11	SO:0001217, UniRef:UniRef50_Q46451
+NC_000908.2	cds	203515	204501	+	MG_0199		DNA-directed RNA polymerase subunit alpha	SO:0001217, UniRef:UniRef50_P47423
+NC_000908.2	cds	204514	204885	+	MG_0200		Large ribosomal subunit protein bL17	SO:0001217, UniRef:UniRef50_P47424
+NC_000908.2	cds	204872	205696	+	MG_0201	ecfA1	Energy-coupling factor transporter ATP-binding protein EcfA1	SO:0001217, UniRef:UniRef50_P47425
+NC_000908.2	cds	205681	206595	+	MG_0202	ecfA2	Energy-coupling factor transporter ATP-binding protein EcfA2	SO:0001217, UniRef:UniRef50_Q50293
+NC_000908.2	cds	206588	207850	+	MG_0203		Uncharacterized protein MG181	SO:0001217, UniRef:UniRef50_P47427
+NC_000908.2	cds	207843	208577	+	MG_0204		tRNA pseudouridine synthase A	SO:0001217, UniRef:UniRef50_P47428
+NC_000908.2	cds	208567	210390	+	MG_0205		Oligoendopeptidase F-like protein	SO:0001217, UniRef:UniRef50_P47429
+NC_000908.2	cds	210391	211344	+	MG_0206		hypothetical protein	
+NC_000908.2	cds	211444	213549	+	MG_0207		hypothetical protein	
+NC_000908.2	cds	213585	214571	+	MG_0208		hypothetical protein	
+NC_000908.2	cds	214828	215529	+	MG_0209		Adhesin-like protein	SO:0001217, UniRef:UniRef50_Q49383
+NC_000908.2	cds	216016	216768	+	MG_0210		hypothetical protein	
+NC_000908.2	cds	216761	218518	+	MG_0211		Putative ABC transporter ATP-binding protein MG187	SO:0001217, UniRef:UniRef50_P47433
+NC_000908.2	cds	218521	219510	+	MG_0212		putative ABC transporter permease MG188-like protein	SO:0001217, UniRef:UniRef50_P75263
+NC_000908.2	cds	219482	220438	+	MG_0213		putative ABC transporter permease protein MG189	SO:0001217, UniRef:UniRef50_P47435
+NC_000908.2	cds	220401	220598	+	MG_0214		hypothetical protein	
+NC_000908.2	cds	220607	221563	+	MG_0215	nrnA	Bifunctional oligoribonuclease and PAP phosphatase NrnA	SO:0001217, UniRef:UniRef50_P75144
+NC_000908.2	cds	221570	225904	+	MG_0216		hypothetical protein	PFAM:PF03257.18, PFAM:PF12378.14
+NC_000908.2	cds	225915	229067	+	MG_0217		hypothetical protein	PFAM:PF05220.18, PFAM:PF19342.4
+NC_000908.2	cds	229168	229335	+	MG_0218		hypothetical protein	
+NC_000908.2	cds	229338	229439	+	MG_0219		hypothetical protein	
+NC_000908.2	cds	229461	229868	+	MG_0220		hypothetical protein	
+NC_000908.2	cds	229988	230482	+	MG_0221		hypothetical protein	
+NC_000908.2	cds	230651	231370	+	MG_0222		Adhesin-like protein	SO:0001217, UniRef:UniRef50_Q49383
+NC_000908.2	cds	232009	233034	+	MG_0223		hypothetical protein	PFAM:PF01409.25
+NC_000908.2	cds	233038	235458	+	MG_0224		Phenylalanine--tRNA ligase beta subunit	SO:0001217, UniRef:UniRef50_P47437
+NC_000908.2	cds	235517	236062	+	MG_0225		Translation initiation factor IF-3	SO:0001217, UniRef:UniRef50_P47438
+NC_000908.2	cds	236065	236244	+	MG_0226		Large ribosomal subunit protein bL35	SO:0001217, UniRef:UniRef50_Q9PQR3
+NC_000908.2	cds	236247	236621	+	MG_0227		Large ribosomal subunit protein bL20	SO:0001217, UniRef:UniRef50_Q7NBC0
+NC_000908.2	cds	236593	237300	-	MG_0228		hypothetical protein	
+NC_000908.2	cds	237347	239152	+	MG_0229		hypothetical protein	PFAM:PF00226.36, PFAM:PF01556.23, PFAM:PF16713.10
+NC_000908.2	cds	239164	239817	+	MG_0230		hypothetical protein	
+NC_000908.2	cds	239827	240195	+	MG_0231		hypothetical protein	
+NC_000908.2	tRNA	240213	240286	-	MG_0232	trnT	tRNA-Thr(ggt)	SO:0000270
+NC_000908.2	cds	240323	242224	+	MG_0233		hypothetical protein	PFAM:PF00204.31, PFAM:PF02518.31
+NC_000908.2	cds	242224	244569	+	MG_0234		DNA topoisomerase 4 subunit A	SO:0001217, UniRef:UniRef50_P47446
+NC_000908.2	cds	244566	245597	-	MG_0235	hrcA	Heat-inducible transcription repressor HrcA	SO:0001217, UniRef:UniRef50_P75351
+NC_000908.2	cds	245633	247426	+	MG_0236		UvrABC system protein C	SO:0001217, UniRef:UniRef50_P47448
+NC_000908.2	cds	247407	247910	+	MG_0237		putative metallophosphoesterase MG207	SO:0001217, UniRef:UniRef50_P47449
+NC_000908.2	cds	247903	248493	-	MG_0238		hypothetical protein	
+NC_000908.2	cds	248477	249403	-	MG_0239		Uncharacterized RNA pseudouridine synthase MG209	SO:0001217, UniRef:UniRef50_P47451
+NC_000908.2	cds	249403	249948	-	MG_0240		hypothetical protein	
+NC_000908.2	cds	250149	250808	+	MG_0241		hypothetical protein	
+NC_000908.2	cds	250808	250996	+	MG_0242		hypothetical protein	
+NC_000908.2	cds	250998	251441	+	MG_0243		hypothetical protein	
+NC_000908.2	cds	251444	251788	+	MG_0244		hypothetical protein	PFAM:PF01648.25
+NC_000908.2	cds	251781	252587	+	MG_0245		hypothetical protein	
+NC_000908.2	cds	252553	253995	+	MG_0246		hypothetical protein	
+NC_000908.2	cds	253979	254602	+	MG_0247		Segregation and condensation protein B	SO:0001217, UniRef:UniRef50_P75477
+NC_000908.2	cds	254621	255592	+	MG_0248		hypothetical protein	PFAM:PF00365.25
+NC_000908.2	cds	255595	257121	+	MG_0249		Pyruvate kinase	SO:0001217, UniRef:UniRef50_P78031
+NC_000908.2	tRNA	257158	257234	+	MG_0250	trnC	tRNA-Cys(gca)	SO:0000258
+NC_000908.2	tRNA	257269	257345	+	MG_0251	trnP	tRNA-Pro(tgg)	SO:0000268
+NC_000908.2	tRNA	257349	257425	+	MG_0252	trnM	tRNA-Met(cat)	SO:0000266
+NC_000908.2	tRNA	257445	257521	+	MG_0253	trnI	tRNA-Ile2(cat)	SO:0000263
+NC_000908.2	tRNA	257559	257650	+	MG_0254	trnS	tRNA-Ser(tga)	SO:0000269
+NC_000908.2	tRNA	257664	257740	+	MG_0255	trnfM	tRNA-fMet(cat)	SO:0000266
+NC_000908.2	tRNA	257742	257815	+	MG_0256	trnD	tRNA-Asp(gtc)	SO:0000256
+NC_000908.2	tRNA	257818	257893	+	MG_0257	trnF	tRNA-Phe(gaa)	SO:0000267
+NC_000908.2	cds	258041	259159	+	MG_0258		cytadherence-associated protein P65	BlastRules:WP_010869376, BlastRules:WP_010874665
+NC_000908.2	cds	259177	264594	+	MG_0259	hmw2	terminal organelle tip protein HMW2	BlastRules:WP_010869377, BlastRules:WP_010874666, BlastRules:WP_023893656, SO:0001217, UniRef:UniRef50_P75471
+NC_000908.2	cds	264597	265637	+	MG_0260		hypothetical protein	PFAM:PF22373.2
+NC_000908.2	cds	265630	266043	+	MG_0261		hypothetical protein	
+NC_000908.2	cds	266075	266356	-	MG_0262		hypothetical protein	
+NC_000908.2	tRNA	266423	266499	+	MG_0263	trnR	tRNA-Arg(gcg)	SO:0001036
+NC_000908.2	cds	266627	267091	+	MG_0264		hypothetical protein	
+NC_000908.2	cds	267081	268010	+	MG_0265		hypothetical protein	
+NC_000908.2	cds	268012	269247	+	MG_0266		hypothetical protein	
+NC_000908.2	cds	269250	270359	+	MG_0267		hypothetical protein	PFAM:PF00091.31
+NC_000908.2	cds	270405	271874	+	MG_0268		Uncharacterized protein MG225	SO:0001217, UniRef:UniRef50_P47467
+NC_000908.2	cds	271840	273318	+	MG_0269		Uncharacterized protein MG226	SO:0001217, UniRef:UniRef50_P47468
+NC_000908.2	cds	273455	273745	+	MG_0270		hypothetical protein	
+NC_000908.2	cds	273790	274653	+	MG_0271		Thymidylate synthase	SO:0001217, UniRef:UniRef50_P78029
+NC_000908.2	cds	274653	275135	+	MG_0272		Dihydrofolate reductase	SO:0001217, UniRef:UniRef50_P78028
+NC_000908.2	cds	275141	276163	+	MG_0273		Ribonucleoside-diphosphate reductase subunit beta	SO:0001217, UniRef:UniRef50_P75461
+NC_000908.2	cds	276167	276628	+	MG_0274	nrdI	Protein NrdI	SO:0001217, UniRef:UniRef50_Q98Q29
+NC_000908.2	cds	276647	278812	+	MG_0275		Ribonucleoside-diphosphate reductase subunit alpha	SO:0001217, UniRef:UniRef50_P47473
+NC_000908.2	cds	278905	279207	+	MG_0276		Large ribosomal subunit protein bL21	SO:0001217, UniRef:UniRef50_P47474
+NC_000908.2	cds	279200	279499	+	MG_0277		hypothetical protein	
+NC_000908.2	cds	279492	279806	+	MG_0278		Large ribosomal subunit protein bL27	SO:0001217, UniRef:UniRef50_P60493
+NC_000908.2	cds	279799	280674	+	MG_0279		hypothetical protein	PFAM:PF01261.30
+NC_000908.2	cds	280664	281086	+	MG_0280		Uncharacterized MG236-like protein	SO:0001217, UniRef:UniRef50_P75456
+NC_000908.2	cds	281079	281963	+	MG_0281		Uncharacterized MG237-like protein	SO:0001217, UniRef:UniRef50_P75455
+NC_000908.2	cds	281993	283327	+	MG_0282		Trigger factor	SO:0001217, UniRef:UniRef50_P47480
+NC_000908.2	cds	283396	285783	+	MG_0283		Lon protease	SO:0001217, UniRef:UniRef50_P47481
+NC_000908.2	cds	285780	286832	-	MG_0284		putative nicotinate-nucleotide adenylyltransferase/Ap4A hydrolase	SO:0001217, UniRef:UniRef50_P47482
+NC_000908.2	cds	286885	288747	+	MG_0285		hypothetical protein	
+NC_000908.2	cds	288753	290645	+	MG_0286		hypothetical protein	
+NC_000908.2	cds	290648	291328	+	MG_0287		hypothetical protein	PFAM:PF06271.18
+NC_000908.2	cds	291334	293445	+	MG_0288		hypothetical protein	PFAM:PF00580.27, PFAM:PF13245.12, PFAM:PF13361.12, PFAM:PF13538.12, PFAM:PF13604.12
+NC_000908.2	cds	293448	293945	+	MG_0289		hypothetical protein	
+NC_000908.2	cds	293938	294783	+	MG_0290		Putative phosphatase/phosphodiesterase MPN_349	SO:0001217, UniRef:UniRef50_P75429
+NC_000908.2	cds	294767	295486	-	MG_0291		Glycerol-3-phosphate acyltransferase	SO:0001217, UniRef:UniRef50_P75428
+NC_000908.2	cds	295473	296129	-	MG_0292		hypothetical protein	PFAM:PF05175.20, PFAM:PF12847.13
+NC_000908.2	cds	296113	297606	-	MG_0293		hypothetical protein	PFAM:PF04542.20, PFAM:PF04545.22
+NC_000908.2	cds	297651	299474	-	MG_0294		hypothetical protein	PFAM:PF01807.25, PFAM:PF08275.17, PFAM:PF13362.12, PFAM:PF13662.12
+NC_000908.2	cds	299464	300804	-	MG_0295		hypothetical protein	PFAM:PF00587.30, PFAM:PF03129.25
+NC_000908.2	cds	300824	301552	-	MG_0296		hypothetical protein	PFAM:PF08032.17
+NC_000908.2	cds	301555	302841	-	MG_0297		Cysteine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47495
+NC_000908.2	cds	302846	304822	-	MG_0298		DNA ligase	SO:0001217, UniRef:UniRef50_P47496
+NC_000908.2	tRNA	304892	304965	-	MG_0299	trnG	tRNA-Gly(gcc)	SO:0000260
+NC_000908.2	cds	305001	306098	+	MG_0300		hypothetical protein	
+NC_000908.2	tRNA	306617	306691	+	MG_0301	trnR	tRNA-Arg(cct)	SO:0001036
+NC_000908.2	tRNA	306740	306813	+	MG_0302	trnW	tRNA-Trp(cca)	SO:0000271
+NC_000908.2	cds	306821	307591	+	MG_0303		Uncharacterized protein MG256	SO:0001217, UniRef:UniRef50_P47498
+NC_000908.2	cds	307637	307930	+	MG_0304		hypothetical protein	
+NC_000908.2	cds	307930	309009	+	MG_0305		Peptide chain release factor 1	SO:0001217, UniRef:UniRef50_P47500
+NC_000908.2	cds	309010	310380	+	MG_0306		Uncharacterized MG259-like protein	SO:0001217, UniRef:UniRef50_P75419
+NC_000908.2	cds	310511	312808	+	MG_0307		hypothetical protein	
+NC_000908.2	cds	312846	313250	+	MG_0308		hypothetical protein	
+NC_000908.2	cds	313367	313879	+	MG_0309		hypothetical protein	
+NC_000908.2	cds	314225	315232	+	MG_0310		hypothetical protein	PFAM:PF05220.18
+NC_000908.2	tRNA	315301	315377	-	MG_0311	trnR	tRNA-Arg(tcg)	SO:0001036
+NC_000908.2	cds	315467	315697	+	MG_0312		hypothetical protein	
+NC_000908.2	cds	315701	318325	+	MG_0313		DNA polymerase III subunit alpha	SO:0001217, UniRef:UniRef50_Q49405
+NC_000908.2	cds	318332	319207	+	MG_0314		hypothetical protein	PFAM:PF01367.25, PFAM:PF02739.22
+NC_000908.2	cds	319207	320061	+	MG_0315		Formamidopyrimidine-DNA glycosylase	SO:0001217, UniRef:UniRef50_P55825
+NC_000908.2	cds	320177	321052	+	MG_0316		hypothetical protein	PFAM:PF08282.18
+NC_000908.2	cds	321046	321642	+	MG_0317		hypothetical protein	PFAM:PF01121.26
+NC_000908.2	cds	321578	322414	-	MG_0318		hypothetical protein	PFAM:PF00702.32, PFAM:PF08282.18
+NC_000908.2	cds	322433	324811	-	MG_0319		Leucine--tRNA ligase	SO:0001217, UniRef:UniRef50_P75398
+NC_000908.2	cds	324812	325159	-	MG_0320		hypothetical protein	
+NC_000908.2	cds	325193	325879	-	MG_0321		Uncharacterized MG268-like protein	SO:0001217, UniRef:UniRef50_P75396
+NC_000908.2	ncRNA	325915	326010	-	MG_0322	Bacteria_small_SRP	Bacterial small signal recognition particle RNA	RFAM:RF00169, SO:0000655
+NC_000908.2	cds	326030	327052	-	MG_0323		hypothetical protein	
+NC_000908.2	cds	327045	327431	-	MG_0324		hypothetical protein	
+NC_000908.2	cds	327433	328443	-	MG_0325		putative lipoate-protein ligase A	SO:0001217, UniRef:UniRef50_P47512
+NC_000908.2	cds	328454	329827	-	MG_0326		Dihydrolipoyl dehydrogenase	SO:0001217, UniRef:UniRef50_P75393
+NC_000908.2	cds	329831	330985	-	MG_0327		hypothetical protein	PFAM:PF00198.28, PFAM:PF00364.28, PFAM:PF01597.25, PFAM:PF13533.12
+NC_000908.2	cds	331235	332215	-	MG_0328		Pyruvate dehydrogenase E1 component beta subunit	SO:0001217, UniRef:UniRef50_Q7NAZ9
+NC_000908.2	cds	332233	333309	-	MG_0329		Pyruvate dehydrogenase E1 component subunit alpha	SO:0001217, UniRef:UniRef50_P75390
+NC_000908.2	cds	333337	334773	-	MG_0330		NADH oxidase	SO:0001217, UniRef:UniRef50_Q49408
+NC_000908.2	cds	334856	335398	-	MG_0331		Adenine phosphoribosyltransferase	SO:0001217, UniRef:UniRef50_P75388
+NC_000908.2	cds	335412	338324	-	MG_0332		Uncharacterized protein MG277	SO:0001217, UniRef:UniRef50_Q49409
+NC_000908.2	cds	338367	340529	+	MG_0333		putative guanosine-3',5'-bis(diphosphate) 3'-pyrophosphohydrolase	SO:0001217, UniRef:UniRef50_P75386
+NC_000908.2	cds	340526	341182	-	MG_0334		hypothetical protein	
+NC_000908.2	cds	341175	341972	-	MG_0335		hypothetical protein	
+NC_000908.2	cds	342033	343703	-	MG_0336		Uncharacterized protein MG281	SO:0001217, UniRef:UniRef50_P47523
+NC_000908.2	tRNA	343884	343957	-	MG_0337	trnG	tRNA-Gly(tcc)	SO:0000260
+NC_000908.2	tRNA	343965	344050	-	MG_0338	trnL	tRNA-Leu(taa)	SO:0000264
+NC_000908.2	tRNA	344051	344125	-	MG_0339	trnK	tRNA-Lys(ttt)	SO:0000265
+NC_000908.2	tRNA	344172	344246	-	MG_0340	trnQ	tRNA-Gln(ttg)	SO:0000261
+NC_000908.2	tRNA	344251	344337	-	MG_0341	trnY	tRNA-Tyr(gta)	SO:0000272
+NC_000908.2	cds	344365	344850	-	MG_0342	greA	Transcription elongation factor GreA	SO:0001217, UniRef:UniRef50_P47524
+NC_000908.2	cds	345031	345165	+	MG_0343		hypothetical protein	
+NC_000908.2	cds	345182	346633	+	MG_0344		hypothetical protein	PFAM:PF00587.30
+NC_000908.2	cds	346911	347252	+	MG_0345		hypothetical protein	
+NC_000908.2	cds	347215	348258	+	MG_0346		hypothetical protein	
+NC_000908.2	cds	348261	348851	+	MG_0347		hypothetical protein	
+NC_000908.2	tRNA	349128	349202	+	MG_0348		tRNA-Xxx	
+NC_000908.2	cds	349282	349677	+	MG_0349		hypothetical protein	
+NC_000908.2	cds	349797	350327	+	MG_0350		hypothetical protein	
+NC_000908.2	cds	350452	351825	+	MG_0351		hypothetical protein	PFAM:PF05220.18
+NC_000908.2	cds	351791	353035	-	MG_0352		hypothetical protein	PFAM:PF03072.19, PFAM:PF03086.20
+NC_000908.2	cds	353299	353682	-	MG_0353		hypothetical protein	PFAM:PF03086.20
+NC_000908.2	cds	354024	355130	+	MG_0354		High affinity transport system protein p37	SO:0001217, UniRef:UniRef50_P75371
+NC_000908.2	cds	355120	355857	+	MG_0355		hypothetical protein	PFAM:PF00005.33, PFAM:PF13304.12
+NC_000908.2	cds	355847	357478	+	MG_0356		ABC transport system permease protein p69	SO:0001217, UniRef:UniRef50_P47533
+NC_000908.2	cds	357475	357891	-	MG_0357		Putative pre-16S rRNA nuclease	SO:0001217, UniRef:UniRef50_Q9ZB76
+NC_000908.2	cds	357891	360593	-	MG_0358		Alanine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47534
+NC_000908.2	cds	360651	361385	-	MG_0359		Uncharacterized MG293-like protein	SO:0001217, UniRef:UniRef50_P75367
+NC_000908.2	cds	361378	362796	-	MG_0360		Uncharacterized MG294-like protein	SO:0001217, UniRef:UniRef50_P75366
+NC_000908.2	cds	362920	364023	-	MG_0361		hypothetical protein	PFAM:PF02540.23, PFAM:PF03054.22, PFAM:PF20258.4, PFAM:PF20259.3
+NC_000908.2	cds	364026	364415	-	MG_0362		hypothetical protein	PFAM:PF09644.15
+NC_000908.2	cds	364535	365575	-	MG_0363	ftsY	Signal recognition particle receptor FtsY	SO:0001217, UniRef:UniRef50_P47539
+NC_000908.2	cds	365582	368530	-	MG_0364		Chromosome partition protein Smc	SO:0001217, UniRef:UniRef50_P75361
+NC_000908.2	cds	368733	369695	-	MG_0365		Phosphate acetyltransferase	SO:0001217, UniRef:UniRef50_P47541
+NC_000908.2	cds	369713	370948	-	MG_0366		Phosphoglycerate kinase	SO:0001217, UniRef:UniRef50_Q7WTU1
+NC_000908.2	cds	370950	371963	-	MG_0367		Glyceraldehyde-3-phosphate dehydrogenase	SO:0001217, UniRef:UniRef50_A0A449BL85
+NC_000908.2	cds	371994	372947	-	MG_0368		Uncharacterized protein MG302	SO:0001217, UniRef:UniRef50_P47544
+NC_000908.2	cds	372926	373999	-	MG_0369		hypothetical protein	PFAM:PF00005.33, PFAM:PF13304.12, PFAM:PF13401.12
+NC_000908.2	cds	373981	374742	-	MG_0370		hypothetical protein	PFAM:PF00005.33
+NC_000908.2	cds	374919	376706	-	MG_0371	dnaK	Chaperone protein DnaK	SO:0001217, UniRef:UniRef50_O87777
+NC_000908.2	cds	376794	377975	-	MG_0372		hypothetical protein	
+NC_000908.2	cds	377975	381508	-	MG_0373		Uncharacterized lipoprotein MG307	SO:0001217, UniRef:UniRef50_P47549
+NC_000908.2	cds	381493	382725	-	MG_0374		hypothetical protein	PFAM:PF00270.35, PFAM:PF00271.37
+NC_000908.2	cds	382732	386409	-	MG_0375		Uncharacterized lipoprotein MG309	SO:0001217, UniRef:UniRef50_P47551
+NC_000908.2	cds	386463	387269	+	MG_0376		hypothetical protein	PFAM:PF00561.26, PFAM:PF12146.15, PFAM:PF12697.13
+NC_000908.2	cds	387276	387893	-	MG_0377		Small ribosomal subunit protein uS4	SO:0001217, UniRef:UniRef50_P46775
+NC_000908.2	cds	387916	391335	-	MG_0378	hmw1	terminal organelle protein HMW1	BlastRules:WP_010869424, BlastRules:WP_010874803
+NC_000908.2	cds	391395	392258	-	MG_0379		hypothetical protein	
+NC_000908.2	cds	392303	393634	-	MG_0380		Uncharacterized MG314-like protein	SO:0001217, UniRef:UniRef50_Q50363
+NC_000908.2	cds	393658	394374	-	MG_0381		hypothetical protein	
+NC_000908.2	cds	394475	395584	-	MG_0382		Uncharacterized protein MG316	SO:0001217, UniRef:UniRef50_P47558
+NC_000908.2	cds	395625	397424	-	MG_0383	hmw3	terminal organelle protein HMW3	BlastRules:WP_010874808, BlastRules:WP_014894031
+NC_000908.2	cds	397439	398281	-	MG_0384		adhesin P32	BlastRules:WP_010869427
+NC_000908.2	cds	398298	398834	-	MG_0385		Uncharacterized protein MG319	SO:0001217, UniRef:UniRef50_P47561
+NC_000908.2	cds	398938	399798	-	MG_0386		hypothetical protein	
+NC_000908.2	tRNA	399868	399958	+	MG_0387	trnS	tRNA-Ser(gga)	SO:0000269
+NC_000908.2	tRNA	399960	400048	+	MG_0388	trnS	tRNA-Ser(cga)	SO:0000269
+NC_000908.2	cds	400119	402923	-	MG_0389		Uncharacterized lipo MG321-like protein	SO:0001217, UniRef:UniRef50_P75327
+NC_000908.2	tRNA	403134	403218	-	MG_0390	trnL	tRNA-Leu(tag)	SO:0000264
+NC_000908.2	tRNA	403224	403299	-	MG_0391	trnK	tRNA-Lys(ctt)	SO:0000265
+NC_000908.2	tRNA	403306	403381	-	MG_0392	trnT	tRNA-Thr(tgt)	SO:0000270
+NC_000908.2	tRNA	403383	403458	-	MG_0393	trnV	tRNA-Val(tac)	SO:0000273
+NC_000908.2	tRNA	403467	403541	-	MG_0394	trnT	tRNA-Thr(cgt)	SO:0000270
+NC_000908.2	tRNA	403544	403620	-	MG_0395	trnE	tRNA-Glu(ttc)	SO:0000259
+NC_000908.2	tRNA	403627	403701	-	MG_0396	trnN	tRNA-Asn(gtt)	SO:0000257
+NC_000908.2	cds	403723	405420	-	MG_0397		Uncharacterized cation transporter MG322-like protein	SO:0001217, UniRef:UniRef50_P75323
+NC_000908.2	cds	405456	406139	+	MG_0398		hypothetical protein	PFAM:PF02080.26, PFAM:PF02254.24
+NC_000908.2	ncRNA	406179	406519	-	MG_0399	RNaseP_bact_b	Bacterial RNase P class B	RFAM:RF00011, SO:0000386
+NC_000908.2	tmRNA	406542	406929	+	MG_0400	ssrA	transfer-messenger RNA, SsrA	SO:0000584
+NC_000908.2	cds	406975	407739	-	MG_0401		hypothetical protein	
+NC_000908.2	cds	407729	408793	-	MG_0402		Putative Xaa-Pro aminopeptidase	SO:0001217, UniRef:UniRef50_P47566
+NC_000908.2	cds	408793	408954	-	MG_0403		hypothetical protein	
+NC_000908.2	cds	408971	409858	-	MG_0404		hypothetical protein	
+NC_000908.2	cds	409871	410677	-	MG_0405		hypothetical protein	PFAM:PF00561.26, PFAM:PF02230.22, PFAM:PF07819.20, PFAM:PF12146.15, PFAM:PF12697.13
+NC_000908.2	cds	410664	412934	-	MG_0406		hypothetical protein	
+NC_000908.2	cds	412973	414319	-	MG_0407		GTPase Der	SO:0001217, UniRef:UniRef50_P75309
+NC_000908.2	cds	414323	414976	-	MG_0408		hypothetical protein	PFAM:PF02224.24, PFAM:PF13189.12
+NC_000908.2	cds	414985	415623	-	MG_0409		hypothetical protein	
+NC_000908.2	cds	415611	416330	-	MG_0410		hypothetical protein	PFAM:PF20772.2
+NC_000908.2	cds	416337	416930	-	MG_0411		hypothetical protein	PFAM:PF02525.22, PFAM:PF03358.20
+NC_000908.2	cds	416967	419480	-	MG_0412		Valine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47576
+NC_000908.2	cds	419470	420045	-	MG_0413		hypothetical protein	PFAM:PF00009.33, PFAM:PF02421.24
+NC_000908.2	cds	420053	420274	-	MG_0414		UPF0154 MG335-1-like protein	SO:0001217, UniRef:UniRef50_Q9EXD7
+NC_000908.2	cds	420333	421358	+	MG_0415		Processive diacylglycerol beta-glycosyltransferase	SO:0001217, UniRef:UniRef50_Q9ZB73
+NC_000908.2	cds	421467	422693	+	MG_0416		hypothetical protein	PFAM:PF00266.25
+NC_000908.2	cds	422697	423113	+	MG_0417		hypothetical protein	
+NC_000908.2	cds	423100	426912	-	MG_0418		Uncharacterized lipo MG338-like protein	SO:0001217, UniRef:UniRef50_P75296
+NC_000908.2	cds	427090	428112	-	MG_0419	recA	Protein RecA	SO:0001217, UniRef:UniRef50_P78014
+NC_000908.2	cds	428325	429662	+	MG_0420		hypothetical protein	PFAM:PF05220.18
+NC_000908.2	cds	429914	430078	-	MG_0421		hypothetical protein	
+NC_000908.2	cds	430098	430583	+	MG_0422		hypothetical protein	
+NC_000908.2	cds	430580	434458	-	MG_0423		DNA-directed RNA polymerase subunit beta'	SO:0001217, UniRef:UniRef50_Q9PQV5
+NC_000908.2	cds	434468	438640	-	MG_0424		DNA-directed RNA polymerase subunit beta	SO:0001217, UniRef:UniRef50_P47715
+NC_000908.2	cds	438730	439236	-	MG_0425		hypothetical protein	PFAM:PF02525.22, PFAM:PF03358.20
+NC_000908.2	cds	439315	440355	-	MG_0426		Uncharacterized MG343-like protein	SO:0001217, UniRef:UniRef50_P75269
+NC_000908.2	cds	440359	441180	-	MG_0427		hypothetical protein	PFAM:PF00561.26, PFAM:PF06821.19, PFAM:PF12146.15, PFAM:PF12697.13
+NC_000908.2	cds	441191	443878	-	MG_0428		hypothetical protein	PFAM:PF00133.28, PFAM:PF01406.26, PFAM:PF08264.19
+NC_000908.2	cds	443922	444422	+	MG_0429		hypothetical protein	
+NC_000908.2	cds	444413	445045	+	MG_0430		hypothetical protein	PFAM:PF13847.12
+NC_000908.2	tRNA	445078	445153	+	MG_0431	trnH	tRNA-His(gtg)	SO:0000262
+NC_000908.2	cds	445197	446165	-	MG_0432		hypothetical protein	
+NC_000908.2	tRNA	446178	446265	-	MG_0433	trnL	tRNA-Leu(gag)	SO:0000264
+NC_000908.2	cds	446618	447790	+	MG_0434		Uncharacterized MG349-like protein	SO:0001217, UniRef:UniRef50_P75253
+NC_000908.2	cds	447790	448725	+	MG_0435		hypothetical protein	
+NC_000908.2	tRNA	448783	448864	+	MG_0436	trnL	tRNA-Leu(caa)	SO:0000264
+NC_000908.2	cds	448943	449617	-	MG_0437		hypothetical protein	
+NC_000908.2	cds	449665	450219	+	MG_0438		Inorganic pyrophosphatase	SO:0001217, UniRef:UniRef50_P47593
+NC_000908.2	cds	450222	450722	+	MG_0439		hypothetical protein	PFAM:PF03838.20
+NC_000908.2	cds	450719	451048	-	MG_0440		hypothetical protein	PFAM:PF00216.26
+NC_000908.2	cds	451197	451610	+	MG_0441		hypothetical protein	PFAM:PF09188.15
+NC_000908.2	cds	451613	453757	-	MG_0442	clpB	Chaperone protein ClpB	SO:0001217, UniRef:UniRef50_P47597
+NC_000908.2	cds	453911	454753	-	MG_0443		hypothetical protein	PFAM:PF01633.27
+NC_000908.2	cds	454766	455947	-	MG_0444		Acetate kinase	SO:0001217, UniRef:UniRef50_P75245
+NC_000908.2	cds	456055	456264	+	MG_0445		hypothetical protein	
+NC_000908.2	cds	456327	456752	+	MG_0446		hypothetical protein	
+NC_000908.2	cds	456755	457372	+	MG_0447		hypothetical protein	PFAM:PF01330.27, PFAM:PF07499.19, PFAM:PF14520.12
+NC_000908.2	cds	457347	458270	+	MG_0448	ruvB	Holliday junction branch migration complex subunit RuvB	SO:0001217, UniRef:UniRef50_Q49425
+NC_000908.2	cds	458260	459495	-	MG_0449		Uncharacterized MG360-like protein	SO:0001217, UniRef:UniRef50_P75241
+NC_000908.2	cds	459615	460103	+	MG_0450		hypothetical protein	
+NC_000908.2	cds	460126	460494	+	MG_0451		Large ribosomal subunit protein bL12	SO:0001217, UniRef:UniRef50_P36255
+NC_000908.2	cds	460497	460670	+	MG_0452		Large ribosomal subunit protein bL32	SO:0001217, UniRef:UniRef50_P47603
+NC_000908.2	cds	460685	460951	-	MG_0453		hypothetical protein	
+NC_000908.2	cds	461015	461689	+	MG_0454		hypothetical protein	
+NC_000908.2	cds	461682	462617	+	MG_0455		hypothetical protein	PFAM:PF00551.24, PFAM:PF02911.23
+NC_000908.2	cds	462619	464622	+	MG_0456		hypothetical protein	PFAM:PF11074.14
+NC_000908.2	cds	464646	465461	-	MG_0457		hypothetical protein	
+NC_000908.2	cds	465424	466410	-	MG_0458		Phosphate acyltransferase	SO:0001217, UniRef:UniRef50_Q49427
+NC_000908.2	cds	466410	468050	-	MG_0459		hypothetical protein	PFAM:PF13684.11, PFAM:PF21645.3
+NC_000908.2	cds	468152	469123	-	MG_0460		Uncharacterized RNA pseudouridine synthase MG370	SO:0001217, UniRef:UniRef50_P47610
+NC_000908.2	cds	469110	470084	-	MG_0461		Uncharacterized MG371-like protein	SO:0001217, UniRef:UniRef50_P75229
+NC_000908.2	cds	470077	471234	-	MG_0462		hypothetical protein	PFAM:PF02926.22, PFAM:PF03054.22, PFAM:PF06508.19, PFAM:PF22025.1
+NC_000908.2	cds	471221	472066	-	MG_0463		Uncharacterized MG373-like protein	SO:0001217, UniRef:UniRef50_P75227
+NC_000908.2	cds	472067	472945	-	MG_0464		Uncharacterized MG374-like protein	SO:0001217, UniRef:UniRef50_P75226
+NC_000908.2	cds	472884	474578	-	MG_0465		Threonine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47615
+NC_000908.2	cds	474578	474874	-	MG_0466		hypothetical protein	
+NC_000908.2	cds	474898	475479	-	MG_0467		hypothetical protein	
+NC_000908.2	cds	475526	477139	-	MG_0468		Arginine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47618
+NC_000908.2	cds	477168	479006	+	MG_0469	mnmG	tRNA uridine 5-carboxymethylaminomethyl modification enzyme MnmG	SO:0001217, UniRef:UniRef50_P75221
+NC_000908.2	cds	478999	479577	+	MG_0470		hypothetical protein	
+NC_000908.2	cds	479570	480226	+	MG_0471		hypothetical protein	
+NC_000908.2	tRNA	480240	480315	-	MG_0472	trnR	tRNA-Arg(tct)	SO:0001036
+NC_000908.2	cds	480691	481332	+	MG_0473		hypothetical protein	PFAM:PF00485.24
+NC_000908.2	cds	481329	482075	-	MG_0474		hypothetical protein	PFAM:PF02540.23, PFAM:PF06508.19
+NC_000908.2	cds	482068	483369	-	MG_0475		GTPase Obg	SO:0001217, UniRef:UniRef50_P75215
+NC_000908.2	cds	483369	483986	-	MG_0476		hypothetical protein	
+NC_000908.2	cds	483989	484699	-	MG_0477		hypothetical protein	
+NC_000908.2	cds	484702	489552	-	MG_0478		terminal organelle protein P200	BlastRules:WP_010874924, BlastRules:WP_014894313
+NC_000908.2	cds	489839	490711	-	MG_0479		hypothetical protein	PFAM:PF00009.33, PFAM:PF00350.29, PFAM:PF07650.23
+NC_000908.2	cds	490699	491004	-	MG_0480		hypothetical protein	
+NC_000908.2	cds	491147	491530	-	MG_0481		hypothetical protein	
+NC_000908.2	cds	491534	493516	-	MG_0482		Putative ABC transporter ATP-binding MG390-like protein	SO:0001217, UniRef:UniRef50_P75207
+NC_000908.2	cds	493624	494967	-	MG_0483		putative cytosol aminopeptidase	SO:0001217, UniRef:UniRef50_P47631
+NC_000908.2	cds	494984	496615	-	MG_0484		Chaperonin GroEL	SO:0001217, UniRef:UniRef50_P47632
+NC_000908.2	cds	496628	496960	-	MG_0485		hypothetical protein	PFAM:PF00166.26
+NC_000908.2	cds	497086	498306	-	MG_0486		Serine hydroxymethyltransferase	SO:0001217, UniRef:UniRef50_U2ASI2
+NC_000908.2	cds	498316	499890	-	MG_0487		hypothetical protein	PFAM:PF01732.22
+NC_000908.2	cds	499999	500280	-	MG_0488		hypothetical protein	
+NC_000908.2	cds	500261	500719	-	MG_0489		putative ribose-5-phosphate isomerase B	SO:0001217, UniRef:UniRef50_P47636
+NC_000908.2	cds	500720	502420	-	MG_0490		Uncharacterized protein MG397	SO:0001217, UniRef:UniRef50_P47637
+NC_000908.2	cds	502422	502823	-	MG_0491		hypothetical protein	PFAM:PF02823.21
+NC_000908.2	cds	502828	504258	-	MG_0492		ATP synthase subunit beta	SO:0001217, UniRef:UniRef50_Q8RGE2
+NC_000908.2	cds	504260	505099	-	MG_0493		hypothetical protein	PFAM:PF00231.24
+NC_000908.2	cds	505099	506655	-	MG_0494		ATP synthase subunit alpha, sodium ion specific	SO:0001217, UniRef:UniRef50_P50000
+NC_000908.2	cds	506671	507201	-	MG_0495		hypothetical protein	
+NC_000908.2	cds	507194	507820	-	MG_0496		hypothetical protein	PFAM:PF00430.23
+NC_000908.2	cds	507823	508131	-	MG_0497		ATP synthase subunit c	SO:0001217, UniRef:UniRef50_Q4AAW2
+NC_000908.2	cds	508134	509012	-	MG_0498		hypothetical protein	PFAM:PF00119.25
+NC_000908.2	cds	509198	509470	+	MG_0499		hypothetical protein	
+NC_000908.2	cds	509460	510836	-	MG_0500		Enolase	SO:0001217, UniRef:UniRef50_Q7NAY0
+NC_000908.2	cds	510903	511376	+	MG_0501	msrA	Peptide methionine sulfoxide reductase MsrA	SO:0001217, UniRef:UniRef50_Q8EVK2
+NC_000908.2	cds	511373	512050	-	MG_0502		hypothetical protein	PFAM:PF01895.24
+NC_000908.2	cds	512053	513042	-	MG_0503		hypothetical protein	PFAM:PF00005.33, PFAM:PF13304.12
+NC_000908.2	cds	513027	514991	-	MG_0504		Phosphate transport system permease PstA-like protein	SO:0001217, UniRef:UniRef50_P75185
+NC_000908.2	cds	514991	516124	-	MG_0505		Uncharacterized lipoprotein MG412	SO:0001217, UniRef:UniRef50_P47652
+NC_000908.2	cds	516245	519355	-	MG_0506		hypothetical protein	
+NC_000908.2	cds	519420	521414	-	MG_0507		hypothetical protein	
+NC_000908.2	cds	521470	521868	-	MG_0508		Small ribosomal subunit protein uS9	SO:0001217, UniRef:UniRef50_A0A0P6X433
+NC_000908.2	cds	521874	522365	-	MG_0509		Large ribosomal subunit protein uL13	SO:0001217, UniRef:UniRef50_P47657
+NC_000908.2	cds	522352	524145	-	MG_0510		hypothetical protein	PFAM:PF00004.35, PFAM:PF13177.12, PFAM:PF21960.2, PFAM:PF22608.2
+NC_000908.2	cds	524151	527015	-	MG_0511		UvrABC system protein A	SO:0001217, UniRef:UniRef50_A0A7G9LYC3
+NC_000908.2	cds	526987	529494	-	MG_0512		hypothetical protein	
+NC_000908.2	cds	529532	531217	-	MG_0513		Uncharacterized protein MG423	SO:0001217, UniRef:UniRef50_P47662
+NC_000908.2	cds	531220	531480	-	MG_0514		Small ribosomal subunit protein uS15	SO:0001217, UniRef:UniRef50_P47663
+NC_000908.2	cds	531669	533018	+	MG_0515		putative ATP-dependent RNA helicase MG425	SO:0001217, UniRef:UniRef50_P47664
+NC_000908.2	cds	533041	533235	+	MG_0516		hypothetical protein	
+NC_000908.2	cds	533271	533696	+	MG_0517		hypothetical protein	
+NC_000908.2	cds	533807	534322	+	MG_0518		hypothetical protein	PFAM:PF00196.25, PFAM:PF08281.18
+NC_000908.2	cds	534319	536037	-	MG_0519		Phosphoenolpyruvate-protein phosphotransferase	SO:0001217, UniRef:UniRef50_P47668
+NC_000908.2	cds	536041	537564	-	MG_0520		2,3-bisphosphoglycerate-independent phosphoglycerate mutase	SO:0001217, UniRef:UniRef50_P75167
+NC_000908.2	cds	537557	538291	-	MG_0521		Triosephosphate isomerase	SO:0001217, UniRef:UniRef50_P78010
+NC_000908.2	cds	538351	539547	-	MG_0522		Uncharacterized protein MG432	SO:0001217, UniRef:UniRef50_Q49432
+NC_000908.2	cds	539633	540529	+	MG_0523		Elongation factor Ts	SO:0001217, UniRef:UniRef50_P47246
+NC_000908.2	cds	540510	541241	+	MG_0524		Uridylate kinase	SO:0001217, UniRef:UniRef50_P47672
+NC_000908.2	cds	541241	541792	+	MG_0525		hypothetical protein	PFAM:PF01765.24
+NC_000908.2	cds	541793	542986	+	MG_0526		Putative phosphatidate cytidylyltransferase	SO:0001217, UniRef:UniRef50_Q49433
+NC_000908.2	cds	543006	544157	+	MG_0527		hypothetical protein	PFAM:PF01420.25
+NC_000908.2	cds	544562	545380	-	MG_0528		hypothetical protein	PFAM:PF00938.23
+NC_000908.2	cds	545380	546156	-	MG_0529		Uncharacterized protein MG440	SO:0001217, UniRef:UniRef50_P47678
+NC_000908.2	cds	546299	546709	-	MG_0530		hypothetical protein	
+NC_000908.2	cds	546880	547692	-	MG_0531		putative ribosome biogenesis GTPase A	SO:0001217, UniRef:UniRef50_P75135
+NC_000908.2	cds	547664	548851	-	MG_0532		Uncharacterized protein MG443	SO:0001217, UniRef:UniRef50_P47681
+NC_000908.2	cds	548867	549226	-	MG_0533		Large ribosomal subunit protein bL19	SO:0001217, UniRef:UniRef50_Q8EWU9
+NC_000908.2	cds	549210	549905	-	MG_0534		hypothetical protein	
+NC_000908.2	cds	549905	550174	-	MG_0535		Small ribosomal subunit protein bS16	SO:0001217, UniRef:UniRef50_P47684
+NC_000908.2	cds	550803	552446	-	MG_0536		Uncharacterized protein MG447	SO:0001217, UniRef:UniRef50_P47685
+NC_000908.2	cds	552447	552899	-	MG_0537	msrB	Peptide methionine sulfoxide reductase MsrB	SO:0001217, UniRef:UniRef50_A0A0R2MZ89
+NC_000908.2	cds	552863	553297	-	MG_0538		hypothetical protein	PFAM:PF01588.26
+NC_000908.2	cds	553318	553548	-	MG_0539		hypothetical protein	
+NC_000908.2	cds	553558	554430	-	MG_0540	degV	DegV domain-containing protein MG450	SO:0001217, UniRef:UniRef50_P47688
+NC_000908.2	cds	554430	555614	-	MG_0541		Elongation factor Tu	SO:0001217, UniRef:UniRef50_P43926
+NC_000908.2	cds	555667	556452	+	MG_0542		Uncharacterized MG452-like protein	SO:0001217, UniRef:UniRef50_P75125
+NC_000908.2	cds	556437	557315	+	MG_0543		UTP--glucose-1-phosphate uridylyltransferase	SO:0001217, UniRef:UniRef50_A0A6P1LC46
+NC_000908.2	cds	557305	557727	-	MG_0544		hypothetical protein	
+NC_000908.2	cds	557759	558949	+	MG_0545		Tyrosine--tRNA ligase	SO:0001217, UniRef:UniRef50_P47693
+NC_000908.2	cds	558939	559943	-	MG_0546		hypothetical protein	
+NC_000908.2	cds	559931	560512	-	MG_0547		hypothetical protein	
+NC_000908.2	cds	560496	562604	-	MG_0548	ftsH	ATP-dependent zinc metalloprotease FtsH	SO:0001217, UniRef:UniRef50_P75120
+NC_000908.2	cds	562605	562763	-	MG_0549		hypothetical protein	
+NC_000908.2	cds	562782	563309	-	MG_0550		hypothetical protein	PFAM:PF00156.33
+NC_000908.2	cds	563311	563820	-	MG_0551		hypothetical protein	
+NC_000908.2	cds	563993	564931	+	MG_0552		L-lactate dehydrogenase	SO:0001217, UniRef:UniRef50_P78007
+NC_000908.2	cds	564928	566205	-	MG_0553		hypothetical protein	
+NC_000908.2	cds	566186	567640	-	MG_0554		hypothetical protein	PFAM:PF00749.27, PFAM:PF19269.4
+NC_000908.2	cds	567627	568406	-	MG_0555		hypothetical protein	PFAM:PF00398.26
+NC_000908.2	cds	568399	569556	-	MG_0556	yidC	Membrane protein insertase YidC	SO:0001217, UniRef:UniRef50_P47702
+NC_000908.2	cds	569528	569893	-	MG_0557		hypothetical protein	
+NC_000908.2	cds	569883	570029	-	MG_0558		Large ribosomal subunit protein bL34	SO:0001217, UniRef:UniRef50_A0A1H4AJR6
+NC_000908.2	cds	570055	570990	-	MG_0559		Putative ABC transporter ATP-binding MG467-like protein	SO:0001217, UniRef:UniRef50_P75110
+NC_000908.2	cds	570994	576345	-	MG_0560		Uncharacterized ABC transporter permease MG468-like protein	SO:0001217, UniRef:UniRef50_P75109
+NC_000908.2	cds	576351	577205	-	MG_0561		hypothetical protein	PFAM:PF00005.33, PFAM:PF13304.12
+NC_000908.2	cds	577268	578581	-	MG_0562	dnaA	Chromosomal replication initiator protein DnaA	SO:0001217, UniRef:UniRef50_P35888
+NC_000908.2	cds	578581	579234	-	MG_0563		hypothetical protein	
+NC_000908.2	oriC	578582	579223	?			origin of replication	
+NC_000908.2	cds	579224	580033	-	MG_0564	parA	ParA family protein MG470	SO:0001217, UniRef:UniRef50_P47706
