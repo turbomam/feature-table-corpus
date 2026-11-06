@@ -49,7 +49,7 @@ Dependency versions and profile-file checksums are recorded in the report. Sourc
 versions, attribution, licenses and checksums live in the [corpus index](../../corpus/index.yaml).
 Query timing is deliberately not part of this preservation report.
 
-The [protein-relative example](../../docs/protein-relative-profile.md) retains the
+The [protein-relative example](../../docs/protein-coordinates.md#the-nmdc-pfam-profile) retains the
 structural GFF and FASTA used to generate its context. The report records that
 context's SHA-256 as a conversion input; tests regenerate it from both companion
 sources. Its amino-acid coordinates remain separate from genomic CDS coordinates.

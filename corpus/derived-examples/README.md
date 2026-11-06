@@ -16,7 +16,7 @@ from `Ptrichocarpa_533_v4.1.gene_exons.gff3.gz` (JGI file 5d94dc9fc0d65a87debccf
 that md5 first. Phytozome lists this genome as public with citation required. Cite Tuskan et al.
 2006, Science 313:1596 (doi:10.1126/science.1128691), and Goodstein et al. 2012, Nucleic Acids Res
 40:D1178. JGI's legacy data policy asks for this acknowledgment (whether that policy governs this
-genome is undetermined, see `docs/jgi-inputs.md`): "These sequence data were
+genome is undetermined, see `docs/restricted-sources.md`): "These sequence data were
 produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in
 collaboration with the user community."
 

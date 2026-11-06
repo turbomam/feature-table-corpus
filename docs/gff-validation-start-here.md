@@ -18,12 +18,12 @@ Counts are entries in `corpus/index.yaml` on main; some entries are links to fil
 | file kind | where in the corpus | specification or dialect | path into the model |
 |---|---|---|---|
 | NCBI RefSeq GFF3 | `corpus/sources/ncbi-refseq/` | SO GFF3 1.26 plus NCBI's dialect, including `#!` header lines | `gff3-contig` profile, `--metadata-profile ncbi` |
-| NCBI RefSeq viral GFF3, chosen by @simroux | `corpus/sources/ncbi-refseq/`, listed in the README section "The vendored files" | as above | `gff3-contig`; circular genomes and one CDS ID on several rows are refused (https://github.com/turbomam/feature-table-corpus/issues/181, https://github.com/turbomam/feature-table-corpus/issues/175, https://github.com/turbomam/feature-table-corpus/issues/179) |
+| NCBI RefSeq viral GFF3, chosen by @simroux | `corpus/sources/ncbi-refseq/`, listed in the [corpus inventory](../corpus/README.md#the-vendored-files) | as above | `gff3-contig`; circular genomes and one CDS ID on several rows are refused (https://github.com/turbomam/feature-table-corpus/issues/181, https://github.com/turbomam/feature-table-corpus/issues/175, https://github.com/turbomam/feature-table-corpus/issues/179) |
 | NCBI RefSeq GTF | `corpus/sources/ncbi-refseq/` | GTF 2.2 | read by `scripts/source_document.py` only; no conversion profile |
 | NMDC GFF3 in contig coordinates (JGI IMG annotation pipeline output, such as `_structural_annotation`, `_functional_annotation` and `_prodigal`) | `corpus/sources/nmdc/` | GFF3 as written by the IMG pipeline; 33 of the 37 IMG and NMDC GFF files have no `##gff-version` line | `gff3-contig`; `--metadata-profile prodigal` for the Prodigal file |
 | NMDC and IMG per-method hit files (`_pfam`, `_cog`, `_ko_ec`, `_tigrfam`, `_smart`, `_supfam`, `_cath_funfam`) | `corpus/sources/nmdc/`, `corpus/sources/jgi-img/` | the IMG per-method dialect: column 1 is a gene ID and columns 4 and 5 are amino-acid positions in that gene's protein | not `gff3-contig`, which would read the protein positions as contig positions; `just map-img-per-method` with the matching functional-annotation file, and Pfam also through `nmdc-pfam-protein` ([protein-coordinates.md](protein-coordinates.md)) |
-| JGI IMG per-method, functional, assembled, TMHMM/SignalP and taxon-bundle GFF and TSV | `corpus/sources/jgi-img/` | the IMG dialects in `model/dialects/` | dialect mapping scripts (`just map-img-*`), described in [conversion-profiles.md](conversion-profiles.md) |
-| Phytozome `gene_exons` GFF3 and `annotation_info` TSV | restricted; derived excerpts in `corpus/derived-examples/` and a constructed fixture in `tests/fixtures/phytozome/` | the Phytozome dialects in `model/dialects/` | `just` Phytozome mapping recipes; TAIR10 is never vendored ([restricted-sources.md](restricted-sources.md)) |
+| JGI IMG per-method, functional, assembled, TMHMM/SignalP and taxon-bundle GFF and TSV | `corpus/sources/jgi-img/` | the IMG dialects in `model/dialects/` | dialect mapping scripts (`just map-img-*`), described in [IMG dialects](img-dialects.md) |
+| Phytozome `gene_exons` GFF3 and `annotation_info` TSV | restricted; derived excerpts in `corpus/derived-examples/` and a constructed fixture in `tests/fixtures/phytozome/` | the [Phytozome dialects](phytozome-dialects.md) in `model/dialects/` | `just` Phytozome mapping recipes; TAIR10 is never vendored ([restricted-sources.md](restricted-sources.md)) |
 | BED12 | `corpus/sources/biopython/` | BED version 1 | `bed12-blocks` profile |
 | GenBank flat file | `corpus/sources/biopython/`, `corpus/sources/ncbi-refseq/` | INSDC Feature Table Definition | `insdc-locations` profile, which handles joins and origin-crossing locations |
 | Malformed and edge-case GFF3, each one documented change from a real file | `corpus/fixtures/malformed/`, `corpus/fixtures/edge-cases/` | the `validity` field in `corpus/index.yaml` says whether each is invalid GFF3 or valid but refused | negative tests |
@@ -35,14 +35,34 @@ Counts are entries in `corpus/index.yaml` on main; some entries are links to fil
 | resource | what it is | how this repository uses it |
 |---|---|---|
 | https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md | SO GFF3 specification | the rules the `gff3-contig` profile enforces |
-| GTF 2.2, GFF2, BED, INSDC Feature Table, NCBI GFF3 documentation | the other format specifications | linked from the README section "Specifications" and from [feature-format-reading.md](feature-format-reading.md) |
+| GTF 2.2, GFF2, BED, INSDC Feature Table, NCBI GFF3 documentation | the other format specifications | linked from the [corpus inventory](../corpus/README.md#specifications) and from [background.md](background.md#reading-across-feature-table-formats) |
 | GenomeTools 1.6.6 and GFF3toolkit 2.1.0 | existing GFF3 validators | their verdicts on every retained GFF3 file are recorded in `model/validation/`, and CI fails if one changes |
 | https://github.com/enasequence/gff3tools | ENA's validator and converter for the INSDC GFF3 draft specification | not run yet; a comparison point in https://github.com/turbomam/feature-table-corpus/issues/185 |
 | https://github.com/daler/gffutils | loads GFF and GTF into SQLite tables that mirror the format; not a validator | its line iterator was inspected when `scripts/source_document.py` was designed ([source-documents.md](source-documents.md)); its SQLite layout is a comparison for the DuckDB layout and a candidate in https://github.com/turbomam/feature-table-corpus/issues/185 |
 | https://github.com/zaeleus/noodles | Rust readers and writers for GFF, GTF, BED and FASTA | the Rust option in https://github.com/turbomam/feature-table-corpus/issues/185 |
 | SMC backend scripts on JGI GitLab | GFF validation, fixing and parsing code for SMC | not readable from here; the problems the SMC team has met in GFF files are listed in the 2026-10-09 SequenceFeature Modeling notes, https://docs.google.com/document/d/17Z1o7KNNqlMFq4WArIlvVlBvNeaW9ADBwZPG8R6u52o |
 | https://github.com/cmdcolin/oddgenes | curated gene annotations that break common assumptions | cases mapped to model tests in [acceptance-tests.md](acceptance-tests.md) |
-| Chado, KBase CDM, https://github.com/biodatamodels/gff-schema | earlier models of a sequence feature | compared in [model-comparison.md](model-comparison.md) and [prior-art.md](prior-art.md) |
+| Chado, KBase CDM, https://github.com/biodatamodels/gff-schema | earlier models of a sequence feature | compared in [model-comparison.md](model-comparison.md) and [background.md](background.md#prior-art) |
+
+## GFF is neither long nor wide
+
+Even with the `#` lines and the embedded FASTA section taken out, a GFF3 file isn't tidy data in the R sense (one variable per column, one observation per row). It mixes four shapes:
+
+1. Columns 1 to 8 are wide: one fixed set of variables per row.
+2. Column 9 is a packed long table: each row carries its own set of `key=value` pairs, and a value can be a comma-separated list.
+3. A row isn't always one observation. A feature can span several rows that share one `ID`, such as a CDS split by introns, so the observation is the feature and each row is one of its location parts (https://github.com/turbomam/feature-table-corpus/issues/175).
+4. Rows refer to other rows. `Parent` links make a graph across rows.
+
+How this repository holds each shape:
+
+| GFF shape | in the model (`model/schema/ber_feature_model.yaml`) | tidy table in the flat profile (`model/flat/ber_feature_model_flat.yaml`, see [flat-profile.md](flat-profile.md)) | the same idea in Chado (`corpus/specifications/chado_1.4_feature_tables.sql`) |
+|---|---|---|---|
+| columns 1 to 8 | one `SequenceFeature` per feature, with typed slots | `sequence_feature`, one row per feature | `feature` |
+| column 9 pairs | the ordered list `SequenceFeature.attributes`, one entry per value, so a comma-separated value becomes several entries with the same key | `sequence_feature_attributes(feature_id, ordinal, key, value)` | `featureprop` |
+| one feature over several rows | the list `location.parts` inside one `SequenceFeature` | `sequence_feature_location_parts(feature_id, ordinal, ...)` | `featureloc` |
+| `Parent` links | the list `SequenceFeature.parent` | `sequence_feature_parent(feature_id, ordinal, parent)` | `feature_relationship` |
+
+The model nests these lists on purpose, and the flat profile derives the tidy tables from it, so the two can't drift apart. The DuckDB output of the split prototype in `analyses/splitter-prototype/` still keeps attributes as a nested list column and keeps raw feature rows as their nine text columns; loading the flat profile's tables instead is a next step for the splitter work in https://github.com/turbomam/feature-table-corpus/issues/185.
 
 ## What reaches DuckDB
 

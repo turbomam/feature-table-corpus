@@ -27,7 +27,7 @@ TABLE_NAME = "Ptrichocarpa_533_v4.1.annotation_info.txt"
 GENES = 200
 # The citations corpus/derived-examples/README.md gives: the two publications Phytozome asks users
 # to cite, and JGI's legacy-policy acknowledgment, kept although whether that policy governs this
-# genome is undetermined (docs/jgi-inputs.md).
+# genome is undetermined (docs/restricted-sources.md).
 CITE = ("# cite: Tuskan et al. 2006, Science 313:1596, doi:10.1126/science.1128691; Goodstein et al. 2012, Nucleic Acids Res 40:D1178; JGI acknowledgment: These sequence data were produced by the US Department of Energy Joint Genome Institute http://www.jgi.doe.gov/ in collaboration with the user community.\n")
 SOURCE_NAME = "Ptrichocarpa_533_v4.1.gene_exons.gff3.gz"
 

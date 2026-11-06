@@ -37,7 +37,7 @@ This is source-code inspection, not a runtime benchmark or a claim about every
 release. The new standard-library reader preserves the document around feature rows;
 it does not replace those projects' biological parsers. Future harmonization can
 consume these records or use an existing feature parser alongside them. The wider
-[reading list](feature-format-reading.md) separates comparative evidence from
+[reading list](background.md#reading-across-feature-table-formats) separates comparative evidence from
 specifications and tool authors' evaluations.
 
 ## Scope and producer profiles

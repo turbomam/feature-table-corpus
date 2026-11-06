@@ -41,7 +41,7 @@ feature type at all, which is what most real files amount to.
 
 Lineage, for reading old files: GFF1 and GFF2 come from the Sanger Institute, GTF originated at
 Ensembl and was adapted into GTF2 for the Mouse and Human Annotation Collaboration, and GFF3 is
-specified by the Sequence Ontology group. Fuller version in [prior-art.md](prior-art.md).
+specified by the Sequence Ontology group. Fuller version in [background.md](background.md#prior-art).
 
 ## 2. Discretion, column by column
 

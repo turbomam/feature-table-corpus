@@ -1,6 +1,6 @@
 """The feature model must build when another schema imports it, as bridge-central-schema does.
 
-https://github.com/ber-data/bridge-central-schema/pull/5 found two failures only once the model
+https://github.com/doe-bridge/bridge-central-schema/pull/5 found two failures only once the model
 was imported: a dotted prefix the generated Python can't name, and prefixes the importing schema
 has to declare again. These tests run LinkML's Python generator, which bridge-central-schema's
 `just test` runs, so the next such failure shows up here first.

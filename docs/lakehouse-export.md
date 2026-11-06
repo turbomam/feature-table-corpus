@@ -98,7 +98,7 @@ FROM 'local/lakehouse/ga0423362/features.parquet';
 ```
 
 On 2026-09-25 this returned 53,609 rows for `Ga0423362` and 24,507 for `Ga0416744`, the
-attribute counts the [linkml-map round trip](conversion-profiles.md#mapping-a-dialect-with-linkml-map)
+attribute counts the [linkml-map round trip](img-dialects.md#mapping-a-dialect-with-linkml-map)
 reports for those files. `location` is a struct with a `parts` list of structs.
 
 That works for engines that read nested Parquet. A catalog limited to scalar columns, as

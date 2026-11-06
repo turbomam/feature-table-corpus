@@ -15,7 +15,7 @@ comments:
     the clamy and rice slot descriptions are TAIR10's; the arabi ones are Populus's. Other
     Phytozome genomes may differ.
   - >-
-    TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
+    TAIR restricts redistributing substantial subsets of TAIR10 (docs/restricted-sources.md), so no row
     of that file is kept in this repository. The test fixture is constructed.
   - >-
     The file is tab separated, with LF line endings and a final newline, and a header line

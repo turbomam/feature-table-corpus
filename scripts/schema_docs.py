@@ -28,11 +28,9 @@ SUPPLEMENTARY = [
         ("Schema guide", "model/schema/README.md"),
     ]),
     ("Evidence and formats", [
-        ("Reading guide", "docs/feature-format-reading.md"),
-        ("Prior art", "docs/prior-art.md"),
+        ("Prior art, reading and scope", "docs/background.md"),
         ("Model comparison", "docs/model-comparison.md"),
         ("Columns and producer conventions", "docs/columns-and-discretion.md"),
-        ("Chado and scope", "docs/chado-and-scope.md"),
         ("Corpus sources and downloads", "corpus/README.md"),
         ("Acquisition history", "corpus/PROVENANCE.md"),
         ("Independent validation", "analyses/format-validation/README.md"),
@@ -45,7 +43,8 @@ SUPPLEMENTARY = [
     ]),
     ("Conversion and query examples", [
         ("Versioned profiles", "docs/conversion-profiles.md"),
-        ("Protein-relative Pfam profile", "docs/protein-relative-profile.md"),
+        ("IMG dialects", "docs/img-dialects.md"),
+        ("Phytozome dialects", "docs/phytozome-dialects.md"),
         ("Protein coordinates", "docs/protein-coordinates.md"),
         ("Real BGC query exercise", "analyses/bgc-query/README.md"),
         ("Round-trip evidence", "analyses/conversion-roundtrips/README.md"),

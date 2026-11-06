@@ -1,7 +1,7 @@
 # A converted BED12 document
 
 For the NMDC protein example and generated `nmdc-pfam-context.json`, see the
-[protein-relative profile guide](../../../docs/protein-relative-profile.md).
+[protein-relative profile guide](../../../docs/protein-coordinates.md#the-nmdc-pfam-profile).
 
 [`blat-bed12.json`](blat-bed12.json) is a generated conversion bundle for the
 [pinned BLAT BED12 source](../../../corpus/sources/biopython/README.md), using
