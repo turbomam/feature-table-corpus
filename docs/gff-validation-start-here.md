@@ -44,6 +44,26 @@ Counts are entries in `corpus/index.yaml` on main; some entries are links to fil
 | https://github.com/cmdcolin/oddgenes | curated gene annotations that break common assumptions | cases mapped to model tests in [acceptance-tests.md](acceptance-tests.md) |
 | Chado, KBase CDM, https://github.com/biodatamodels/gff-schema | earlier models of a sequence feature | compared in [model-comparison.md](model-comparison.md) and [background.md](background.md#prior-art) |
 
+## GFF is neither long nor wide
+
+Even with the `#` lines and the embedded FASTA section taken out, a GFF3 file isn't tidy data in the R sense (one variable per column, one observation per row). It mixes four shapes:
+
+1. Columns 1 to 8 are wide: one fixed set of variables per row.
+2. Column 9 is a packed long table: each row carries its own set of `key=value` pairs, and a value can be a comma-separated list.
+3. A row isn't always one observation. A feature can span several rows that share one `ID`, such as a CDS split by introns, so the observation is the feature and each row is one of its location parts (https://github.com/turbomam/feature-table-corpus/issues/175).
+4. Rows refer to other rows. `Parent` links make a graph across rows.
+
+How this repository holds each shape:
+
+| GFF shape | in the model (`model/schema/ber_feature_model.yaml`) | tidy table in the flat profile (`model/flat/ber_feature_model_flat.yaml`, see [flat-profile.md](flat-profile.md)) | the same idea in Chado (`corpus/specifications/chado_1.4_feature_tables.sql`) |
+|---|---|---|---|
+| columns 1 to 8 | one `SequenceFeature` per feature, with typed slots | `sequence_feature`, one row per feature | `feature` |
+| column 9 pairs | the ordered list `SequenceFeature.attributes`, one entry per value, so a comma-separated value becomes several entries with the same key | `sequence_feature_attributes(feature_id, ordinal, key, value)` | `featureprop` |
+| one feature over several rows | the list `location.parts` inside one `SequenceFeature` | `sequence_feature_location_parts(feature_id, ordinal, ...)` | `featureloc` |
+| `Parent` links | the list `SequenceFeature.parent` | `sequence_feature_parent(feature_id, ordinal, parent)` | `feature_relationship` |
+
+The model nests these lists on purpose, and the flat profile derives the tidy tables from it, so the two can't drift apart. The DuckDB output of the split prototype in `analyses/splitter-prototype/` still keeps attributes as a nested list column and keeps raw feature rows as their nine text columns; loading the flat profile's tables instead is a next step for the splitter work in https://github.com/turbomam/feature-table-corpus/issues/185.
+
 ## What reaches DuckDB
 
 For files that go through `gff3-contig`, each line kind ends up in one of three places: the DuckDB tables, a check that stores nothing, or only the JSON bundle that exact export replays. Nothing below is lost from the bundle; all of it except feature rows and the one `##sequence-region` case is missing from DuckDB.
