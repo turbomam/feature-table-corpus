@@ -72,7 +72,7 @@ The companion analysis, which surveys the four existing models, the eleven named
 
 https://claude.ai/code/artifact/d8ee05e5-c7b1-49f7-a700-3ae4e9adad1c
 
-That page is private to its owner, so it will ask you to sign in. Everything in it that this repository can support is reproduced here, in [docs/prior-art.md](../docs/prior-art.md) and [docs/columns-and-discretion.md](../docs/columns-and-discretion.md), so nothing load-bearing depends on access to it.
+That page is private to its owner, so it will ask you to sign in. Everything in it that this repository can support is reproduced here, in [docs/background.md](../docs/background.md#prior-art) and [docs/columns-and-discretion.md](../docs/columns-and-discretion.md), so nothing load-bearing depends on access to it.
 
 ## Specifications
 

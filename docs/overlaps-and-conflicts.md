@@ -3,7 +3,7 @@
 Every known place where other people's schemas, tables or tools duplicate the BER feature model,
 contradict it, or can't hold its data as it is. Collected 2026-10-02 from the sessions working on
 this repository, nmdc-lakehouse and bridge-central-schema, then spot-checked against the sources
-named in each row. [Prior art](prior-art.md) and the [model comparison](model-comparison.md) cover
+named in each row. [Prior art](background.md#prior-art) and the [model comparison](model-comparison.md) cover
 the older, GFF-focused survey; this page is the running list, and it is meant to be kept current.
 
 Each row says how the fact is known:

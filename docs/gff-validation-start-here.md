@@ -35,14 +35,14 @@ Counts are entries in `corpus/index.yaml` on main; some entries are links to fil
 | resource | what it is | how this repository uses it |
 |---|---|---|
 | https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md | SO GFF3 specification | the rules the `gff3-contig` profile enforces |
-| GTF 2.2, GFF2, BED, INSDC Feature Table, NCBI GFF3 documentation | the other format specifications | linked from the [corpus inventory](../corpus/README.md#specifications) and from [feature-format-reading.md](feature-format-reading.md) |
+| GTF 2.2, GFF2, BED, INSDC Feature Table, NCBI GFF3 documentation | the other format specifications | linked from the [corpus inventory](../corpus/README.md#specifications) and from [background.md](background.md#reading-across-feature-table-formats) |
 | GenomeTools 1.6.6 and GFF3toolkit 2.1.0 | existing GFF3 validators | their verdicts on every retained GFF3 file are recorded in `model/validation/`, and CI fails if one changes |
 | https://github.com/enasequence/gff3tools | ENA's validator and converter for the INSDC GFF3 draft specification | not run yet; a comparison point in https://github.com/turbomam/feature-table-corpus/issues/185 |
 | https://github.com/daler/gffutils | loads GFF and GTF into SQLite tables that mirror the format; not a validator | its line iterator was inspected when `scripts/source_document.py` was designed ([source-documents.md](source-documents.md)); its SQLite layout is a comparison for the DuckDB layout and a candidate in https://github.com/turbomam/feature-table-corpus/issues/185 |
 | https://github.com/zaeleus/noodles | Rust readers and writers for GFF, GTF, BED and FASTA | the Rust option in https://github.com/turbomam/feature-table-corpus/issues/185 |
 | SMC backend scripts on JGI GitLab | GFF validation, fixing and parsing code for SMC | not readable from here; the problems the SMC team has met in GFF files are listed in the 2026-10-09 SequenceFeature Modeling notes, https://docs.google.com/document/d/17Z1o7KNNqlMFq4WArIlvVlBvNeaW9ADBwZPG8R6u52o |
 | https://github.com/cmdcolin/oddgenes | curated gene annotations that break common assumptions | cases mapped to model tests in [acceptance-tests.md](acceptance-tests.md) |
-| Chado, KBase CDM, https://github.com/biodatamodels/gff-schema | earlier models of a sequence feature | compared in [model-comparison.md](model-comparison.md) and [prior-art.md](prior-art.md) |
+| Chado, KBase CDM, https://github.com/biodatamodels/gff-schema | earlier models of a sequence feature | compared in [model-comparison.md](model-comparison.md) and [background.md](background.md#prior-art) |
 
 ## What reaches DuckDB
 

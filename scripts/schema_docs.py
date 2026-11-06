@@ -28,11 +28,9 @@ SUPPLEMENTARY = [
         ("Schema guide", "model/schema/README.md"),
     ]),
     ("Evidence and formats", [
-        ("Reading guide", "docs/feature-format-reading.md"),
-        ("Prior art", "docs/prior-art.md"),
+        ("Prior art, reading and scope", "docs/background.md"),
         ("Model comparison", "docs/model-comparison.md"),
         ("Columns and producer conventions", "docs/columns-and-discretion.md"),
-        ("Chado and scope", "docs/chado-and-scope.md"),
         ("Corpus sources and downloads", "corpus/README.md"),
         ("Acquisition history", "corpus/PROVENANCE.md"),
         ("Independent validation", "analyses/format-validation/README.md"),

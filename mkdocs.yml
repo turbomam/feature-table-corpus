@@ -78,9 +78,7 @@ nav:
       - Biosample transformation notes: model/examples/one-biosample-sequencing/notes.md
       - Multiple Pfams: model/examples/multiple-pfams/README.md
   - Background:
-      - Prior art: docs/prior-art.md
-      - Reading across formats: docs/feature-format-reading.md
-      - Chado and scope: docs/chado-and-scope.md
+      - Prior art, reading and scope: docs/background.md
       - Model comparison: docs/model-comparison.md
       - Build and publish the docs: docs/documentation-site.md
       - Artifact layout decision: docs/decisions/001-artifact-layout.md
