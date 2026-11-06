@@ -37,4 +37,52 @@ validation:
     anchors: warn
     unrecognized_links: warn
 nav:
-  - Schemas: index.md
+  - Getting started:
+      - Start here: docs/gff-validation-start-here.md
+      - How the pieces fit: docs/how-it-fits.md
+      - Repository map: docs/repository-map.md
+      - Repository overview: overview.md
+      - Overlaps and conflicts: docs/overlaps-and-conflicts.md
+      - Downstream copies: docs/downstream-copies.md
+  - The model:
+      - Schemas: index.md
+      - Schema guide: model/schema/README.md
+      - Schema diagram: docs/schema-diagram.md
+      - Generic attributes: docs/attributes.md
+      - Joined and circular locations: docs/feature-locations.md
+      - Protein coordinates: docs/protein-coordinates.md
+      - Source documents: docs/source-documents.md
+      - Workflow provenance: docs/workflow-provenance.md
+      - Flat profile: docs/flat-profile.md
+      - Query requirements: docs/query-requirements.md
+      - Acceptance tests: docs/acceptance-tests.md
+  - The corpus:
+      - Corpus inventory: corpus/README.md
+      - Acquisition history: corpus/PROVENANCE.md
+      - Columns and producer discretion: docs/columns-and-discretion.md
+      - JGI files that need a login: docs/jgi-inputs.md
+      - Excerpts of login-only sources: docs/restricted-sources.md
+      - Independent validation: analyses/format-validation/README.md
+      - NMDC DataObject catalogue: analyses/nmdc-data-objects/README.md
+      - NMDC source sampling: analyses/nmdc-selection/README.md
+  - Conversion and validation:
+      - Conversion profiles: docs/conversion-profiles.md
+      - Protein-relative Pfam profile: docs/protein-relative-profile.md
+      - Round-trip evidence: analyses/conversion-roundtrips/README.md
+      - Converted BED12: model/examples/conversions/README.md
+      - Parsed source document: model/examples/source-documents/README.md
+      - IMG core crosswalk: docs/img-core-crosswalk.md
+      - Parquet export: docs/lakehouse-export.md
+      - Actinorhodin walkthrough: docs/actinorhodin-walkthrough.md
+      - Actinorhodin Dataset and Parquet: model/examples/actinorhodin/README.md
+      - Real BGC query exercise: analyses/bgc-query/README.md
+      - One biosample: model/examples/one-biosample-sequencing/README.md
+      - Biosample transformation notes: model/examples/one-biosample-sequencing/notes.md
+      - Multiple Pfams: model/examples/multiple-pfams/README.md
+  - Background:
+      - Prior art: docs/prior-art.md
+      - Reading across formats: docs/feature-format-reading.md
+      - Chado and scope: docs/chado-and-scope.md
+      - Model comparison: docs/model-comparison.md
+      - Build and publish the docs: docs/documentation-site.md
+      - Artifact layout decision: docs/decisions/001-artifact-layout.md
