@@ -192,20 +192,28 @@ def check_separation(entries):
     return bad
 
 
-def check_readme(doc):
-    """Fail when the README's advertised counts drift from the index.
+CORPUS_README = "corpus/README.md"
+
+
+def check_readme(doc, path=None):
+    """Fail when corpus/README.md's advertised counts drift from the index.
 
     Stale counts have been a review finding twice: "eleven specifications" when
     there were twelve, and "48 entries" after a split took it to 51. The index
     is the source of truth, so the prose has to be checked against it rather
-    than maintained by hand.
+    than maintained by hand. The counted sentences live in corpus/README.md,
+    the corpus inventory, not in the top-level README.
     """
-    import re
-    path = os.path.join(ROOT, "README.md")
+    path = path or os.path.join(ROOT, CORPUS_README)
     if not os.path.exists(path):
-        print("README missing")
+        print(f"{CORPUS_README} missing")
         return 1
-    text = open(path).read()
+    return check_counts(doc, open(path).read())
+
+
+def check_counts(doc, text):
+    """Compare the counts stated in text with counts derived from the index entries."""
+    import re
     bad = 0
 
     # Counts are DERIVED from the entries, never read from the summary fields.
@@ -245,9 +253,14 @@ def check_readme(doc):
             bad += 1
 
     specs = sum(1 for e in entries if e.get("kind") == "specification")
-    words = {"eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "ten": 10, "nine": 9}
+    words = {"nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
+             "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19,
+             "twenty": 20}
     m = re.search(r"(\w+) specifications are recorded", text)
-    if m and words.get(m.group(1).lower()) not in (None, specs):
+    if not m:
+        print("README does not state a specification count in the expected form")
+        bad += 1
+    elif words.get(m.group(1).lower()) != specs:
         print(f"README-COUNT    specifications: README says {m.group(1)}, index has {specs}")
         bad += 1
 

@@ -25,7 +25,7 @@ whether an existing model should be extended instead of creating another one.
 | https://kbase.github.io/cdm-schema/Feature/ | Last push 2026-05-01. Sole human contributor is the handle `ialarmedalien`, 73 commits |
 | https://laceysanderson.github.io/chado-docs/sequence/tables/feature.html | The relational ancestor the others descend from |
 
-Two are vendored here, under `corpus/specifications/`, because their licenses allow it. See the README.
+Two are vendored here, under `corpus/specifications/`, because their licenses allow it. See the [corpus inventory](../corpus/README.md#specifications).
 
 **Chado repays close reading.** It keeps the feature separate from its location, in `featureloc`,
 and expresses parent and child through `feature_relationship`. Nothing is nested. That is the same
