@@ -403,7 +403,7 @@ Two more dialects describe a Phytozome genome's
 [`annotation_info.txt`](../model/dialects/phytozome-annotation-info.yaml), items 4 and 5 of
 https://github.com/turbomam/feature-table-corpus/issues/54. Both were measured on 2026-09-25
 against one genome only, Arabidopsis thaliana TAIR10 (`Phytozome-167` in
-[the JGI input list](jgi-inputs.md)): 532,682 GFF3 rows and 35,386 table rows. TAIR restricts
+[the JGI input list](restricted-sources.md#jgi-files-that-need-a-login)): 532,682 GFF3 rows and 35,386 table rows. TAIR restricts
 redistributing substantial subsets of TAIR10, so no row of either file is in this repository;
 the tests use a [constructed fixture](../tests/fixtures/phytozome/README.md).
 

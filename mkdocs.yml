@@ -60,8 +60,7 @@ nav:
       - Corpus inventory: corpus/README.md
       - Acquisition history: corpus/PROVENANCE.md
       - Columns and producer discretion: docs/columns-and-discretion.md
-      - JGI files that need a login: docs/jgi-inputs.md
-      - Excerpts of login-only sources: docs/restricted-sources.md
+      - Sources that need a login: docs/restricted-sources.md
       - Independent validation: analyses/format-validation/README.md
       - NMDC DataObject catalogue: analyses/nmdc-data-objects/README.md
       - NMDC source sampling: analyses/nmdc-selection/README.md

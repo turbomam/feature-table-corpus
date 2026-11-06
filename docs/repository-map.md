@@ -54,7 +54,7 @@ root; `just --show RECIPE` displays a task's implementation. Named defaults such
 | Queries | `bgc-check`, `bgc-report` | Check the real BGC exercise offline, or explicitly regenerate its selected excerpt and query report |
 | Source documents | `source-parse`, `source-validate`, `source-replay`, `validate-source-example` | Parse/replay into new files; validate consistency or compare with a retained original |
 | NMDC | `nmdc-collect`, `nmdc-render`, `nmdc-sample` | Explicit live collection/sampling or offline regeneration of source-specific reports |
-| JGI | `jgi-urls`, `jgi-verify [dir]`, `jgi-collect` | Print login-only download URLs, check local copies under `local/jgi/`, or refresh the file list from the search API ([guide](jgi-inputs.md)) |
+| JGI | `jgi-urls`, `jgi-verify [dir]`, `jgi-collect` | Print login-only download URLs, check local copies under `local/jgi/`, or refresh the file list from the search API ([guide](restricted-sources.md#jgi-files-that-need-a-login)) |
 | Documentation | `docs-build`, `docs-check`, `docs-serve [port]` | Stage tracked public files, render and check the site, or preview on loopback |
 
 `just check` keeps its validation scope: it does not collect live NMDC records, sample
@@ -119,7 +119,7 @@ observation, not automatically a reproduction of an earlier snapshot.
 | [Actinorhodin Dataset and Parquet](../model/examples/actinorhodin/README.md) | Harmonized feature model through `gff3-contig/4.0.0`, exported by `just lakehouse-export` | The RefSeq actinorhodin excerpt as a Dataset and three Parquet files. `features.parquet` and `contigs.parquet` are the bytes loaded into BERDL on 2026-10-02; the empty `contig_collections.parquet` was not loaded. `just actinorhodin-check`, part of `just check`, requires the Dataset to reproduce byte for byte and the Parquet files row for row. |
 | [Clean round trips](../model/examples/clean-round-trips.yaml) | Each dialect under `model/dialects/` with one vendored real input and its mapping, or a gap with its issue | `tests/test_clean_round_trips.py` fails if a dialect has no entry or a listed input doesn't map to the feature model and back byte for byte with nothing skipped (https://github.com/turbomam/feature-table-corpus/issues/107). |
 | [IMG core crosswalk](../model/crosswalks/img-core-v400.sssom.tsv) | SSSOM mappings from model slots to IMG `img_core_v400` columns | [Guide](img-core-crosswalk.md) gives the source commit and what doesn't line up; `tests/test_img_core_crosswalk.py` checks every subject is a slot of its class. |
-| [Restricted-source checklist](restricted-sources.md) | When a derived excerpt may come from a login-only source, and the `redistribution_basis` its index entry needs | `scripts/verify.py` refuses a derived entry from a restricted source without a complete `redistribution_basis`; `tests/test_verify_derived_sources.py` covers each part. |
+| [Restricted-source checklist](restricted-sources.md#excerpts-of-login-only-sources) | When a derived excerpt may come from a login-only source, and the `redistribution_basis` its index entry needs | `scripts/verify.py` refuses a derived entry from a restricted source without a complete `redistribution_basis`; `tests/test_verify_derived_sources.py` covers each part. |
 
 The first two represent biological records. The third preserves ordered source text,
 including comments, directives, and feature rows. Source replay alone is not evidence

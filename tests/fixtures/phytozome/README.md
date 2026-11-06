@@ -5,7 +5,7 @@
 identifier, coordinate or description from any Phytozome file.
 
 TAIR restricts redistributing substantial subsets of TAIR10, and whether TAIR10 is under CC BY
-is not yet confirmed ([JGI inputs](../../../docs/jgi-inputs.md)). So nothing from
+is not yet confirmed ([JGI inputs](../../../docs/restricted-sources.md#jgi-files-that-need-a-login)). So nothing from
 `Athaliana_167_TAIR10`, the only Phytozome genome read so far, is kept here, not even an excerpt.
 The genome name `EXv1`, the scaffold, the `Exa01g...` gene names, the pacids from 90000001,
 the coordinates, and the best-hit names and descriptions are invented. Accessions (Pfam,

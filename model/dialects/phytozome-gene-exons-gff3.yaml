@@ -16,7 +16,7 @@ comments:
     ##species directive and the ancestorIdentifier key; every other rule held on both. Other
     Phytozome genomes may differ.
   - >-
-    TAIR restricts redistributing substantial subsets of TAIR10 (docs/jgi-inputs.md), so no row
+    TAIR restricts redistributing substantial subsets of TAIR10 (docs/restricted-sources.md), so no row
     of that file is kept in this repository. A 200-gene Populus excerpt is, in
     corpus/derived-examples/; the rule tests use a constructed fixture.
   - >-

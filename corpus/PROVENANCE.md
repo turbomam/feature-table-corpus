@@ -243,7 +243,7 @@ left out: it is an archaeon, and the issue scopes this addition to the two bacte
 records.
 
 Downloading needs a JGI login, so these files were fetched in a logged-in browser as
-described in [docs/jgi-inputs.md](../docs/jgi-inputs.md), placed under `local/jgi/`, and
+described in [docs/restricted-sources.md](../docs/restricted-sources.md#jgi-files-that-need-a-login), placed under `local/jgi/`, and
 checked with `just jgi-verify`. Each file's size and md5 match the value the anonymous
 search API reports, recorded in `model/examples/jgi-inputs.yaml`, and were checked again
 after copying. The index records each file's portal `file_id`, its download URL, MD5 and
@@ -298,7 +298,7 @@ the annotation_info dialect's round trip clean in CI. The corpus now has 98 entr
 For https://github.com/turbomam/feature-table-corpus/issues/151, both Populus excerpts now carry a
 fourth provenance line, `# cite:`, with the two publications Phytozome asks users to cite
 (Tuskan et al. 2006, Goodstein et al. 2012) and JGI's legacy-policy acknowledgment, which is
-kept although whether that policy governs this genome is undetermined (`docs/jgi-inputs.md`), so the files name them and not only
+kept although whether that policy governs this genome is undetermined (`docs/restricted-sources.md`), so the files name them and not only
 `corpus/derived-examples/README.md`. The Phytozome dialects require the line in an excerpt's
 provenance block, and the converters' `--header` JSON keeps it. `scripts/populus_excerpt.py`
 regenerated both files from the same source md5s; the only change is that line.
