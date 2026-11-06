@@ -57,6 +57,20 @@ class SplitPrototypeTests(unittest.TestCase):
     def test_blank_lines_between_sequence_lines_stay_in_place(self):
         self.assertTrue(self.split(CASES["blank lines between sequence lines"])[0]["rebuilt_identical"])
 
+    def test_byte_order_mark_is_not_part_of_the_sequence_id(self):
+        summary, rows = self.split(b"\xef\xbb\xbf>s1\nAC\n")
+        self.assertTrue(summary["rebuilt_identical"])
+        self.assertEqual(rows[0]["sequence_id"], "s1")
+
+    def test_refuses_to_write_the_database_over_the_input(self):
+        with tempfile.TemporaryDirectory() as directory:
+            gff = Path(directory, "input.gff3")
+            gff.write_bytes(CASES["regular layout"])
+            result = subprocess.run([sys.executable, str(SCRIPT), str(gff), str(gff)],
+                                    capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(gff.read_bytes(), CASES["regular layout"])
+
     def test_every_case_round_trips(self):
         for name, content in CASES.items():
             with self.subTest(name):

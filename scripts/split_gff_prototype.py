@@ -54,7 +54,8 @@ def sequences(records):
     for record in records:
         size = len(record["raw_text"].encode("utf-8"))
         if record["kind"] == "fasta_header":
-            current = {"header_line_number": record["line_number"], "header_text": record["raw_text"],
+            current = {"sequence_id": record.get("sequence_id", ""),
+                       "header_line_number": record["line_number"], "header_text": record["raw_text"],
                        "offset": position + size, "lines": []}
             rows.append(current)
         elif record["kind"] == "fasta_sequence":
@@ -75,7 +76,8 @@ def sequences(records):
                    and (not lines or len(bases[-1]) <= line_bases))
         residues = "".join(bases)
         out.append({
-            "sequence_id": row["header_text"][1:].split()[0] if row["header_text"][1:].split() else "",
+            # The reader's own identifier, so a byte-order mark before ">" is not read as part of it.
+            "sequence_id": row["sequence_id"],
             "header_line_number": row["header_line_number"],
             "header_text": row["header_text"],
             "residues": residues,
@@ -143,6 +145,8 @@ def main():
     times["model_import_s"] = time.perf_counter() - start
 
     start = time.perf_counter()
+    if args.database.resolve() == args.gff3.resolve():
+        parser.error("the database path is the input file; choose another path so the input is not overwritten")
     args.database.unlink(missing_ok=True)
     if dataset is not None:
         _populate_database(dataset, args.database)
