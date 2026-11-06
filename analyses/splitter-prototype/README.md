@@ -6,17 +6,17 @@ Prototype for https://github.com/turbomam/feature-table-corpus/issues/185. Not t
 
 - `header_record`: every `##` directive, `#` comment, NCBI `#!` line, `###` sync mark, `##FASTA` line and blank line, one row each, valid against the `SourceRecord` class in `model/schema/source_document.yaml`.
 - `feature_record`: every feature row, also as a `SourceRecord` row, so files the feature model refuses still land.
-- `biosequence`: one row per embedded FASTA sequence, with the residues and the line layout needed to write the FASTA back exactly.
+- `biosequence`: one row per embedded FASTA sequence, with the residues and the line layout needed to write the FASTA back exactly. A sequence with the layout samtools faidx accepts is stored with the faidx `.fai` column meanings: `offset` (byte of the first base), `line_bases` (bases per line) and `line_bytes` (bytes per line including the line ending). Any other layout, such as blank lines between sequence lines or mixed line endings, keeps one entry per line in `lines`, with its original line number and ending.
 - `contig`, `contig_collection` and `sequence_feature`: the feature model's tables, only when the `gff3-contig/4.0.0` profile accepts the file.
 
 ## Results
 
 | file | bytes | header rows | feature rows | sequences | every row valid | feature model tables | rebuilt byte for byte | total seconds |
 |---|---|---|---|---|---|---|---|---|
-| Ensembl yeast mitochondrion GFF3 (`Saccharomyces_cerevisiae.R64-1-1.63.chromosome.Mito.gff3`) | 44006 | 63 | 257 | 0 | yes | no: refused as circular | yes | 0.55 |
-| Bakta v1.12.2 GFF3, *Mycoplasmoides genitalium* G37 (NC_000908.2; formerly *Mycoplasma genitalium*) | 687506 | 9 | 566 | 1 | yes | no: refused as circular | yes | 0.79 |
-| Prokka v1.15.6 GFF3, same genome | 707621 | 3 | 562 | 1 | yes | yes: 562 `sequence_feature` rows | yes | 0.99 |
-| NCBI RefSeq GFF3, phage MS2 (NC_001417.2) | 2961 | 6 | 11 | 0 | yes | yes: 11 `sequence_feature` rows | yes | 0.27 |
+| Ensembl yeast mitochondrion GFF3 (`Saccharomyces_cerevisiae.R64-1-1.63.chromosome.Mito.gff3`) | 44006 | 63 | 257 | 0 | yes | no: refused as circular | yes | 0.34 |
+| Bakta v1.12.2 GFF3, *Mycoplasmoides genitalium* G37 (NC_000908.2; formerly *Mycoplasma genitalium*) | 687506 | 9 | 566 | 1 | yes | no: refused as circular | yes | 0.75 |
+| Prokka v1.15.6 GFF3, same genome | 707621 | 3 | 562 | 1 | yes | yes: 562 `sequence_feature` rows | yes | 0.95 |
+| NCBI RefSeq GFF3, phage MS2 (NC_001417.2) | 2961 | 6 | 11 | 0 | yes | yes: 11 `sequence_feature` rows | yes | 0.28 |
 
 Header rows by kind:
 
@@ -35,6 +35,6 @@ From the review of established GFF tools, a review of how established GFF tools 
 
 1. Typed directive classes (`SequenceRegion`, `GenomeBuild`, `Species`, `GffVersion`) in `source_document.yaml`, after noodles-gff and ENA gff3tools, instead of one untyped key/value column.
 2. Directive and attribute content feeding the feature model: `Is_circular=true` into `Contig.topology` (both refusals above are this case), `#!genome-build-accession` into `ContigCollection.collection_id`, and a taxon id slot.
-3. The sequence table rebuilt on samtools faidx's `.fai` columns (bases per line, bytes per line, offset) instead of columns of my own.
+3. A choice among the sequence stores https://github.com/turbomam/feature-table-corpus/issues/185 lists (bgzipped FASTA with `.fai`, 2bit, or a Parquet sequence table) in place of the `biosequence` table.
 4. The nine GFF columns as typed columns in `feature_record`, as every Arrow reader stores them.
-5. A fix to the reader: a FASTA line containing a space is accepted as sequence and the space is counted in the length (found by reading the code, not yet reproduced).
+5. A decision on FASTA lines that contain spaces. The reader `scripts/source_document.py` accepts a line such as `AC GT` as sequence without a warning, and its `sequence_text` is `ACGT` with the space removed. The prototype builds residues and length from `sequence_text` and keeps the raw line for the rebuild.
