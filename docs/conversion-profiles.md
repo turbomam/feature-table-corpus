@@ -56,7 +56,7 @@ coordinates. Overlap queries can return both the enclosing record and its blocks
 filter `bed:role=block` when asking about covered blocks. A gap overlaps the parent
 span without becoming an annotated block.
 
-The [NMDC Pfam profile](protein-relative-profile.md), `nmdc-pfam-protein/5.0.0`,
+The [NMDC Pfam profile](protein-coordinates.md#the-nmdc-pfam-profile), `nmdc-pfam-protein/5.0.0`,
 adds explicit protein-to-CDS context and amino-acid bounds, while keeping the two
 original contracts unchanged. Supporting CDSs are not exported as additional
 Pfam rows. Source rows require HMMER/Pfam, ID, strand/phase `.`, and no Parent.

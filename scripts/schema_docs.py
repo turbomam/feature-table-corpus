@@ -45,7 +45,6 @@ SUPPLEMENTARY = [
     ]),
     ("Conversion and query examples", [
         ("Versioned profiles", "docs/conversion-profiles.md"),
-        ("Protein-relative Pfam profile", "docs/protein-relative-profile.md"),
         ("Protein coordinates", "docs/protein-coordinates.md"),
         ("Real BGC query exercise", "analyses/bgc-query/README.md"),
         ("Round-trip evidence", "analyses/conversion-roundtrips/README.md"),
