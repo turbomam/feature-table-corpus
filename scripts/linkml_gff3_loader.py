@@ -69,4 +69,8 @@ class Gff3Loader(Loader):
                                    check_dataset=False)
         except ConversionError as error:
             raise Gff3ConversionRefused(self.source, error) from error
+        except (OSError, ValueError) as error:
+            # A file that can't be read, isn't UTF-8 text, or names an unknown metadata profile
+            # gets the same clean error as a refusal, not a traceback.
+            raise click.ClickException(f"{self.source}: could not read this file as GFF3: {error}") from error
         yield bundle["dataset"]

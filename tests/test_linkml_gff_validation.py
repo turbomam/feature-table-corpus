@@ -62,6 +62,16 @@ class LinkmlGffValidationTests(unittest.TestCase):
         self.assertEqual(dataset["contigs"], [{"contig_id": "NC_001417.2", "length_bp": 3569}])
         self.assertGreater(len(dataset["features"]), 1)
 
+    def test_unreadable_or_non_utf8_input_gives_a_clean_error(self):
+        import click
+        not_utf8 = Path(self.temp.name, "latin1.gff3")
+        not_utf8.write_bytes(b"##gff-version 3\nc1\tsrc\tgene\t1\t9\t.\t+\t.\tID=g\xe91\n")
+        for path in (not_utf8, Path(self.temp.name, "missing.gff3")):
+            with self.subTest(path.name), self.assertRaises(click.ClickException) as caught:
+                list(Gff3Loader(str(path), reference_context="example:c1").iter_instances())
+            self.assertNotIsInstance(caught.exception, Gff3ConversionRefused)
+            self.assertIn(path.name, caught.exception.format_message())
+
     def test_circular_malformed_fixtures_are_refused_by_conversion(self):
         for name in ("dangling_parent.gff3", "duplicate_id.gff3"):
             with self.subTest(name), self.assertRaises(Gff3ConversionRefused) as caught:
