@@ -7,6 +7,8 @@ import sys
 import tempfile
 import unittest
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from source_document import parse_bytes, replay_bytes
@@ -38,7 +40,10 @@ class SourceDocumentTests(unittest.TestCase):
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff"))
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gff3"))
         paths += list((ROOT / "corpus/sources/ncbi-refseq").glob("*.gtf"))
-        self.assertEqual(len(paths), 29)
+        indexed = {e["path"] for e in yaml.safe_load((ROOT / "corpus/index.yaml").read_text())["entries"]
+                   if e.get("path")}
+        self.assertTrue(paths)
+        self.assertEqual([p.relative_to(ROOT).as_posix() for p in paths if p.relative_to(ROOT).as_posix() not in indexed], [])
         for path in paths:
             with self.subTest(path=path.name):
                 original = path.read_bytes()
