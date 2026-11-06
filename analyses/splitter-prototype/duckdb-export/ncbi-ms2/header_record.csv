@@ -1,0 +1,13 @@
+record_id,line_number,raw_text,kind,scope,sequence_id,metadata_type,metadata,feature_columns
+line-1,1,"##gff-version 3
+",directive,document,,gff-version,"[{""key"": ""gff-version"", ""value"": ""3""}]",
+line-2,2,"#!gff-spec-version 1.21
+",comment,document,,gff-spec-version,"[{""key"": ""gff-spec-version"", ""value"": ""1.21""}]",
+line-3,3,"#!processor NCBI annotwriter
+",comment,document,,processor,"[{""key"": ""processor"", ""value"": ""NCBI annotwriter""}]",
+line-4,4,"##sequence-region NC_001417.2 1 3569
+",directive,sequence,NC_001417.2,sequence-region,"[{""key"": ""seqid"", ""value"": ""NC_001417.2""}, {""key"": ""start"", ""value"": ""1""}, {""key"": ""end"", ""value"": ""3569""}]",
+line-5,5,"##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=12022
+",directive,document,,species,"[{""key"": ""species"", ""value"": ""https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=12022""}]",
+line-17,17,"
+",blank,stream,,,,

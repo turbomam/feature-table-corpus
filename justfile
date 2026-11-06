@@ -69,6 +69,16 @@ validate-example example=feature_example:
 validate-example-closed example=feature_example:
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py model/schema/ber_feature_model.yaml "$1" Dataset
 
+# linkml-validate takes custom loaders only from a config file, so this writes one per run. The
+# positional "$1" is not read: linkml 1.11.1 cli.py line 252 consumes the config's data_sources
+# when no positional source is given, and the run then validates nothing and reports no issues.
+[doc("Validate a GFF3 file with linkml-validate, the GFF3 loader and the cross-record plugin.")]
+[group("Validation")]
+validate-gff3-linkml gff3 reference_context metadata_profile="generic":
+    config="$(mktemp)"; trap 'rm -f "$config"' EXIT; \
+    python3 -c 'import json, sys; print(json.dumps({"schema": "model/schema/ber_feature_model.yaml", "target_class": "Dataset", "data_sources": [{"linkml_gff3_loader.Gff3Loader": {"source": sys.argv[1], "reference_context": sys.argv[2], "metadata_profile": sys.argv[3]}}], "plugins": {"JsonschemaValidationPlugin": {"closed": True}, "linkml_cross_record_plugin.CrossRecordPlugin": None}}))' "$1" "$2" "$3" > "$config"; \
+    PYTHONPATH=scripts uv run --with-requirements requirements-conversion.txt linkml-validate --config "$config" "$1"
+
 [doc("Run regression tests on real examples and negative controls.")]
 [group("Validation")]
 test:
@@ -431,6 +441,19 @@ map-phytozome-gff3-back input output *header:
 [group("Conversions")]
 map-phytozome-gff3-roundtrip input:
     uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py roundtrip "$1"
+
+# Empty reference keeps the prototype's default, file:<name>.
+[doc("Split one GFF3 into local/split-gff/<name>.duckdb with the prototype; profile is generic, ncbi or prodigal.")]
+[group("Conversions")]
+split-gff input profile="generic" reference="":
+    mkdir -p local/split-gff
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/split_gff_prototype.py "$1" "local/split-gff/$(basename "$1").duckdb" --metadata-profile "$2" ${3:+--reference-context "$3"}
+
+# Each run is a fresh process; the README in analyses/splitter-baseline/ records the results.
+[doc("Time the GFF reader and split prototype on the baseline files; options go to scripts/benchmark_gff_split.py.")]
+[group("Conversions")]
+benchmark-gff-split *options:
+    uv run --python 3.11 --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with duckdb python3 scripts/benchmark_gff_split.py "$@"
 
 [doc("Export exact bytes or reconstruct fields; refuse edited bundles.")]
 [group("Conversions")]

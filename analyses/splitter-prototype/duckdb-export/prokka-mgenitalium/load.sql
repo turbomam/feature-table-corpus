@@ -1,0 +1,7 @@
+COPY biosequence FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/biosequence.csv' (FORMAT 'csv', allow_quoted_nulls false, quote '"', delimiter ',', header 1);
+COPY contig FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/contig.csv' (FORMAT 'csv', allow_quoted_nulls false, force_not_null 'contig_id', quote '"', delimiter ',', header 1);
+COPY contig_collection FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/contig_collection.csv' (FORMAT 'csv', allow_quoted_nulls false, force_not_null 'collection_id', quote '"', delimiter ',', header 1);
+COPY feature_record FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/feature_record.csv' (FORMAT 'csv', allow_quoted_nulls false, force_not_null 'record_id', quote '"', delimiter ',', header 1);
+COPY header_record FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/header_record.csv' (FORMAT 'csv', allow_quoted_nulls false, force_not_null 'record_id', quote '"', delimiter ',', header 1);
+COPY sequence_feature FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/sequence_feature.csv' (FORMAT 'csv', allow_quoted_nulls false, force_not_null ('seqid', 'start', 'end', 'coordinate_system', 'feature_id'), quote '"', delimiter ',', header 1);
+COPY source_artifact FROM 'analyses/splitter-prototype/duckdb-export/prokka-mgenitalium/source_artifact.csv' (FORMAT 'csv', allow_quoted_nulls false, quote '"', delimiter ',', header 1);

@@ -42,6 +42,7 @@ and the [per-case preservation report](analyses/conversion-roundtrips/README.md)
 The GFF3, BED12, [NMDC Pfam](docs/protein-relative-profile.md) and [INSDC location](docs/feature-locations.md) profiles separately test exact byte recovery and reconstruction
 from mapped fields, with unsupported cases reported explicitly. The corpus now
 also includes [pinned BED12 and INSDC plant examples](corpus/sources/biopython/README.md).
+[Validating GFF3 with LinkML's validator](docs/linkml-gff-validation.md) runs the GFF3 profile as a LinkML loader, with a validation plugin for the cross-record checks.
 
 The [actinorhodin BGC exercise](analyses/bgc-query/README.md) connects retained
 RefSeq source evidence to genomic gene order, annotation lookup, signed distances
@@ -94,12 +95,12 @@ entry names the tool or project that wrote it, the URL it came from, and the dat
 
 ## What is here
 
-108 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
+116 entries in five tiers. The index is [corpus/index.yaml](corpus/index.yaml), which is the source of truth for the corpus inventory;
 this README describes it.
 
 | Tier | Count | Meaning |
 |---|---|---|
-| vendored | 66 | The file is in this repository, with its origin URL and an MD5 checksum |
+| vendored | 74 | The file is in this repository, with its origin URL and an MD5 checksum |
 | linked | 24 | Too large or not redistributable, so a stable public URL is recorded instead |
 | derived | 12 | Nine deliberately altered fixtures and three explicitly selected real excerpts (a BGC, and 200 Populus genes in GFF3 and table form), each traceable to its source |
 | restricted | 5 | Behind a login. Recorded for completeness, not fetchable here |
@@ -177,6 +178,8 @@ gzip the FTP site serves, because this repository carries no binary files. These
 a spec-version pragma, sequence regions, and proper parent and child structure.
 
 **NCBI RefSeq viral GFF3, 8 files.** Whole-record GFF3 exports of eight virus genomes, chosen by @simroux to show unusual viral genome features: origin-crossing features on circular genomes, a metagenome-assembled phage, ribosomal slippage, stop-codon readthrough, spliced giant-virus genes, a partial CDS, a modified base and RNA genomes. Each is byte-identical to NCBI's nucleotide-record GFF3 export on 2026-10-30. Which of them `gff3-contig/4.0.0` imports is recorded in [analyses/conversion-roundtrips/cases.yaml](analyses/conversion-roundtrips/cases.yaml) (https://github.com/turbomam/feature-table-corpus/issues/179).
+
+**Files chosen to cover GFF3 line kinds, 8 files (2026-11-06).** An Ensembl GFF3 of the yeast mitochondrial chromosome (`corpus/sources/ensembl/`) writes `#!` header lines, `###` between gene blocks, a circular sequence and CDS IDs spread over several rows; the NCBI GenBank record for the same chromosome is beside the other RefSeq files. Bakta v1.12.2 and Prokka v1.15.6 output for *Mycoplasmoides genitalium* G37 (NCBI's current name; the file names use the former *Mycoplasma genitalium*) (`corpus/sources/bakta/`, `corpus/sources/prokka/`) adds `#` comments and an embedded `##FASTA` section, with each tool's GenBank and tabular output from the same run for interconversion. The Bakta and Prokka files were produced here by `scripts/annotate_with_bakta_and_prokka.py`; the index records the versions and database.
 
 **NCBI RefSeq GTF, 2 files.** The same two annotations in GTF rather than GFF3, so a model can be
 tested for round-tripping between the two column 9 grammars. Both declare `#gtf-version 2.2` in
