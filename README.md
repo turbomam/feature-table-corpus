@@ -17,6 +17,8 @@ BER central schema connect, and which version each depends on.
 tables duplicate or disagree with the model, and the
 [actinorhodin walkthrough](docs/actinorhodin-walkthrough.md) follows one example from source file
 to BERDL table.
+For the GFF validator and the fast first-pass splitter, start with
+[GFF validation and splitting: start here](docs/gff-validation-start-here.md).
 
 The [repository map](docs/repository-map.md) explains artifact roles and reproduction,
 and the [layout decision](docs/decisions/001-artifact-layout.md) records the directory reorganization.
