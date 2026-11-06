@@ -58,6 +58,8 @@ def _populate_database(data, db_path):
     try:
         con.execute("BEGIN TRANSACTION")
         con.execute("DROP TABLE IF EXISTS sequence_feature")
+        # The table had this name before 0.2.0; dropping it keeps old queries from reading stale rows.
+        con.execute("DROP TABLE IF EXISTS feature")
         con.execute("DROP TABLE IF EXISTS contig")
         con.execute("DROP TABLE IF EXISTS contig_collection")
         con.execute("""

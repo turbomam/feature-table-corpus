@@ -675,6 +675,16 @@ class DatabaseTests(unittest.TestCase):
     def test_mixed_evidence_and_crispr_are_not_multiple_pfams(self):
         self.assertEqual(multiple_pfams(self.connect()), [])
 
+    def test_rebuild_drops_the_feature_table_from_before_the_rename(self):
+        # A database built before 0.2.0 has its features in a table named feature. Rebuilding
+        # it in place must not leave those rows behind for old queries to read.
+        con = duckdb.connect(str(self.db))
+        con.execute("CREATE TABLE feature AS SELECT * FROM sequence_feature")
+        con.close()
+        build_database(SCHEMA, PFAMS, self.db)
+        tables = {row[0] for row in self.connect().execute("SHOW TABLES").fetchall()}
+        self.assertEqual(tables, {"contig", "contig_collection", "sequence_feature"})
+
     def test_method_is_stored_and_filterable(self):
         # A table of every method's hits is only useful if it can be filtered by method.
         build_database(SCHEMA, PFAMS, self.db)
