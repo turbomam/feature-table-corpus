@@ -12,6 +12,7 @@ supported:
   - Document and sequence metadata, comments, group boundaries and embedded FASTA retained in source order.
   - Declared sequence-region bounds and explicit Prodigal sequence-context lengths checked; contig length taken from a region only as the length_bp mapping says.
   - Lexical numeric forms, missing versus empty source/attributes, BOM, CR/LF/CRLF and absent final newline.
+  - "A missing ##gff-version line, as in 33 of the 37 IMG and NMDC GFF files in corpus/sources; GenomeTools refuses these. A version line that is present must say 3."
 mapping:
   core: seqid, source and type decode percent escapes; start/end become integers; finite decimal score becomes float.
   typed_attributes: ID -> feature_id; Parent -> parent; product -> product; Name -> name; Note -> note; Dbxref -> dbxref; Ontology_term -> ontology_term (the last four from 3.0.0, issue 43).
@@ -19,7 +20,7 @@ mapping:
   missing_id: Assign urn:ftc:line-N; never insert an ID on reverse export; collision with a real ID is rejected.
   translation_table: Contig.translation_table is set when every CDS on the contig carries one assigned NCBI code in a translation_table attribute; disagreeing CDS values are refused; export never reads the slot.
   score_type: Left unset; column 6 meaning depends on the producer.
-  length_bp: From 4.0.0, under the ncbi metadata profile only, a contig with exactly one ##sequence-region starting at 1 gets that region's end as length_bp (issue 46). Otherwise length_bp stays unset; GFF3 lets a region cover part of a sequence, so nothing is inferred.
+  length_bp: "From 4.0.0, under the ncbi metadata profile only, a contig with exactly one ##sequence-region starting at 1 gets that region's end as length_bp (issue 46). Otherwise length_bp stays unset; GFF3 lets a region cover part of a sequence, so nothing is inferred."
 reverse:
   authority: Imported instances are immutable. Generic and typed copies must agree; inconsistent copies are rejected.
   exact: Validate the full imported projection; reconstruct semantics before restoring lexical cells and original record endings.
