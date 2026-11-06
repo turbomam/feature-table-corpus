@@ -1,5 +1,5 @@
 # Tested Parquet export toolchain for scripts/lakehouse_export.py; update deliberately with its tests.
-linkml==1.11.1
+linkml==1.12.1
 # linkml-store 0.3.2 plus the DuckDB scalar-type fix (float, double, integer, boolean), from
 # branch fix/duckdb-scalar-types of turbomam/linkml-store, a personal fork, until
 # https://github.com/linkml/linkml-store/pull/86 is merged and released.

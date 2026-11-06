@@ -6,7 +6,7 @@
 Parquet file per collection to `DIR`. It was written for
 https://github.com/turbomam/feature-table-corpus/issues/57. The code is
 [`scripts/lakehouse_export.py`](../scripts/lakehouse_export.py) and the pinned toolchain is
-[`requirements-lakehouse.txt`](../requirements-lakehouse.txt) (linkml 1.11.1, linkml-store
+[`requirements-lakehouse.txt`](../requirements-lakehouse.txt) (linkml 1.12.1, linkml-store
 0.3.2 plus the scalar-type fix described below, DuckDB 1.5.5, pyarrow 25.0.1).
 
 ```sh

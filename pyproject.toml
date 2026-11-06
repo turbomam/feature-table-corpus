@@ -5,7 +5,7 @@ description = "Validate Datasets against the BER feature model; the LinkML schem
 license = "CC0-1.0"
 requires-python = ">=3.11"
 dependencies = [
-    "linkml>=1.11.1",
+    "linkml>=1.12.1",
     "jsonschema>=4.26.0",
     "PyYAML>=6.0",
 ]

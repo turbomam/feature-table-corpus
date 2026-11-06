@@ -607,7 +607,7 @@ help. Existing source/output files are never overwritten.
 ## Reproduce the two guarantees
 
 Use Python 3.11+, uv and just 1.27+. The conversion commands and regression suite
-use [pinned dependencies](../requirements-conversion.txt): LinkML 1.11.1,
+use [pinned dependencies](../requirements-conversion.txt): LinkML 1.12.1,
 jsonschema 4.26.0, PyYAML 6.0.3, rfc3987 1.3.8 and Biopython 1.85. Use new output paths:
 
 ```sh

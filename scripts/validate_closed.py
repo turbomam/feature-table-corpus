@@ -224,11 +224,25 @@ def dataset_errors(data):
     return errors
 
 
+def _message(error):
+    """The error's message, naming the allowed values when a nullable enum rejects a value.
+
+    LinkML 1.12 writes an optional enum slot as anyOf [the enum, null], so jsonschema reports
+    only "is not valid under any of the given schemas". The enum branch's own error says which
+    values are allowed, as the plain $ref did in LinkML 1.11.
+    """
+    if error.validator == "anyOf" and error.instance is not None:
+        branches = [e for e in error.context if not (e.validator == "type" and e.validator_value == "null")]
+        if len(branches) == 1 and branches[0].validator == "enum" and not branches[0].relative_path:
+            return branches[0].message
+    return error.message
+
+
 def validation_errors(data, validator, class_name="Dataset"):
     # jsonschema recurses into the data and into repr() for its messages, so nesting a loader
     # accepted, or that was built in memory, can still exceed the recursion limit here.
     try:
-        errors = [f"{list(e.path)}: {e.message}" for e in validator.iter_errors(data)]
+        errors = [f"{list(e.path)}: {_message(e)}" for e in validator.iter_errors(data)]
     except RecursionError:
         return ["nested too deeply to validate"]
     # Only traverse data whose shape and primitive types have already been checked.
