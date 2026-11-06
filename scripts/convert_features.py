@@ -283,7 +283,14 @@ def protein_feature(columns, record_id, bindings):
     return rows, mapping
 
 
-def import_source(content, *, profile, reference_context, source_uri, metadata_profile="generic", protein_context=None):
+def import_source(content, *, profile, reference_context, source_uri, metadata_profile="generic", protein_context=None,
+                  check_dataset=True):
+    """Import a source as a conversion bundle; ConversionError when the profile refuses it.
+
+    check_dataset=False skips only the final closed Dataset check, so a caller such as
+    scripts/linkml_gff3_loader.py can hand the unvalidated Dataset to LinkML's Validator.
+    Every row-level and source-level refusal still applies.
+    """
     require(profile in PROFILES, "unsupported-profile", f"no executable conversion profile {profile!r}")
     require(isinstance(reference_context, str) and reference_context.strip(),
             "reference-context", "supply an assembly or source-scoped reference context explicitly")
@@ -358,8 +365,9 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
                 "protein context must cover exactly the source protein references")
         dataset = deepcopy(protein_context["dataset"])
         dataset["features"].extend(rows)
-    errors = validation_errors(dataset, dataset_validator())
-    require(not errors, "dataset-invalid", "; ".join(errors))
+    if check_dataset:
+        errors = validation_errors(dataset, dataset_validator())
+        require(not errors, "dataset-invalid", "; ".join(errors))
     bundle = {"conversion_version": 1, "profile": profile, "reference_context": reference_context,
               "source": source, "dataset": dataset, "mappings": mappings}
     if profile == PROTEIN:

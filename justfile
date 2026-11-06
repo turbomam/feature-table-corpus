@@ -69,6 +69,16 @@ validate-example example=feature_example:
 validate-example-closed example=feature_example:
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py model/schema/ber_feature_model.yaml "$1" Dataset
 
+# linkml-validate takes custom loaders only from a config file, so this writes one per run. The
+# positional "$1" is not read: linkml 1.11.1 cli.py line 252 consumes the config's data_sources
+# when no positional source is given, and the run then validates nothing and reports no issues.
+[doc("Validate a GFF3 file with linkml-validate, the GFF3 loader and the cross-record plugin.")]
+[group("Validation")]
+validate-gff3-linkml gff3 reference_context metadata_profile="generic":
+    config="$(mktemp)"; trap 'rm -f "$config"' EXIT; \
+    python3 -c 'import json, sys; print(json.dumps({"schema": "model/schema/ber_feature_model.yaml", "target_class": "Dataset", "data_sources": [{"linkml_gff3_loader.Gff3Loader": {"source": sys.argv[1], "reference_context": sys.argv[2], "metadata_profile": sys.argv[3]}}], "plugins": {"JsonschemaValidationPlugin": {"closed": True}, "linkml_cross_record_plugin.CrossRecordPlugin": None}}))' "$1" "$2" "$3" > "$config"; \
+    PYTHONPATH=scripts uv run --with-requirements requirements-conversion.txt linkml-validate --config "$config" "$1"
+
 [doc("Run regression tests on real examples and negative controls.")]
 [group("Validation")]
 test:
