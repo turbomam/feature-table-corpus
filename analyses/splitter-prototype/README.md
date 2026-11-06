@@ -14,7 +14,7 @@ Prototype for https://github.com/turbomam/feature-table-corpus/issues/185. Not t
 | file | bytes | header rows | feature rows | sequences | every row valid | feature model tables | rebuilt byte for byte | total seconds |
 |---|---|---|---|---|---|---|---|---|
 | Ensembl yeast mitochondrion GFF3 (`Saccharomyces_cerevisiae.R64-1-1.63.chromosome.Mito.gff3`) | 44006 | 63 | 257 | 0 | yes | no: refused as circular | yes | 0.55 |
-| Bakta v1.12.2 GFF3, *Mycoplasma genitalium* G37 (NC_000908.2) | 687506 | 9 | 566 | 1 | yes | no: refused as circular | yes | 0.79 |
+| Bakta v1.12.2 GFF3, *Mycoplasmoides genitalium* G37 (NC_000908.2; formerly *Mycoplasma genitalium*) | 687506 | 9 | 566 | 1 | yes | no: refused as circular | yes | 0.79 |
 | Prokka v1.15.6 GFF3, same genome | 707621 | 3 | 562 | 1 | yes | yes: 562 `sequence_feature` rows | yes | 0.99 |
 | NCBI RefSeq GFF3, phage MS2 (NC_001417.2) | 2961 | 6 | 11 | 0 | yes | yes: 11 `sequence_feature` rows | yes | 0.27 |
 

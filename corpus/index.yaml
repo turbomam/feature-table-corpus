@@ -2257,7 +2257,7 @@ entries:
   license: "Freely available NCBI data; see https://www.ncbi.nlm.nih.gov/home/about/policies/"
   notes: "circular, 85,779 bp, 19 CDS."
 - id: bakta-mgenitalium-g37-gff3
-  label: "Bakta GFF3, Mycoplasma genitalium G37 (NC_000908.2)"
+  label: "Bakta GFF3, Mycoplasmoides genitalium G37 (NC_000908.2)"
   tier: "vendored"
   path: "corpus/sources/bakta/Mycoplasma_genitalium_G37_NC_000908.2_bakta-1.12.2.gff3"
   format: "GFF3"
@@ -2272,9 +2272,9 @@ entries:
   selection: "a Bakta GFF3 with # comments and an embedded ##FASTA section (https://github.com/turbomam/feature-table-corpus/issues/177)"
   retrieved: "2026-11-06"
   license: "CC0 for this output; Bakta database 6.0 is CC-BY-4.0 (https://doi.org/10.5281/zenodo.14916843)"
-  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasma genitalium G37, 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Bakta v1.12.2 (oschwengers/bakta:v1.12.2) with database 6.0 light (https://doi.org/10.5281/zenodo.14916843, md5 4a6e059ded39e9c5537ef4137d2f5648) after amrfinder_update; --keep-contig-headers keeps the NCBI sequence name. The light database leaves more proteins as hypothetical than the full one."
+  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasmoides genitalium G37, formerly Mycoplasma genitalium, the name still used in the file names here; 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Bakta v1.12.2 (oschwengers/bakta:v1.12.2) with database 6.0 light (https://doi.org/10.5281/zenodo.14916843, md5 4a6e059ded39e9c5537ef4137d2f5648) after amrfinder_update; --keep-contig-headers keeps the NCBI sequence name. The light database leaves more proteins as hypothetical than the full one."
 - id: bakta-mgenitalium-g37-genbank
-  label: "Bakta GenBank, Mycoplasma genitalium G37 (NC_000908.2)"
+  label: "Bakta GenBank, Mycoplasmoides genitalium G37 (NC_000908.2)"
   tier: "vendored"
   path: "corpus/sources/bakta/Mycoplasma_genitalium_G37_NC_000908.2_bakta-1.12.2.gbff"
   format: "GenBank"
@@ -2289,9 +2289,9 @@ entries:
   selection: "the same Bakta run as its GFF3, for interconversion"
   retrieved: "2026-11-06"
   license: "CC0 for this output; Bakta database 6.0 is CC-BY-4.0 (https://doi.org/10.5281/zenodo.14916843)"
-  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasma genitalium G37, 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Bakta v1.12.2 (oschwengers/bakta:v1.12.2) with database 6.0 light (https://doi.org/10.5281/zenodo.14916843, md5 4a6e059ded39e9c5537ef4137d2f5648) after amrfinder_update; --keep-contig-headers keeps the NCBI sequence name. The light database leaves more proteins as hypothetical than the full one."
+  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasmoides genitalium G37, formerly Mycoplasma genitalium, the name still used in the file names here; 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Bakta v1.12.2 (oschwengers/bakta:v1.12.2) with database 6.0 light (https://doi.org/10.5281/zenodo.14916843, md5 4a6e059ded39e9c5537ef4137d2f5648) after amrfinder_update; --keep-contig-headers keeps the NCBI sequence name. The light database leaves more proteins as hypothetical than the full one."
 - id: bakta-mgenitalium-g37-tsv
-  label: "Bakta TSV feature table, Mycoplasma genitalium G37 (NC_000908.2)"
+  label: "Bakta TSV feature table, Mycoplasmoides genitalium G37 (NC_000908.2)"
   tier: "vendored"
   path: "corpus/sources/bakta/Mycoplasma_genitalium_G37_NC_000908.2_bakta-1.12.2.tsv"
   format: "TSV"
@@ -2306,9 +2306,9 @@ entries:
   selection: "the same Bakta run as its GFF3, for interconversion"
   retrieved: "2026-11-06"
   license: "CC0 for this output; Bakta database 6.0 is CC-BY-4.0 (https://doi.org/10.5281/zenodo.14916843)"
-  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasma genitalium G37, 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Bakta v1.12.2 (oschwengers/bakta:v1.12.2) with database 6.0 light (https://doi.org/10.5281/zenodo.14916843, md5 4a6e059ded39e9c5537ef4137d2f5648) after amrfinder_update; --keep-contig-headers keeps the NCBI sequence name. The light database leaves more proteins as hypothetical than the full one."
+  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasmoides genitalium G37, formerly Mycoplasma genitalium, the name still used in the file names here; 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Bakta v1.12.2 (oschwengers/bakta:v1.12.2) with database 6.0 light (https://doi.org/10.5281/zenodo.14916843, md5 4a6e059ded39e9c5537ef4137d2f5648) after amrfinder_update; --keep-contig-headers keeps the NCBI sequence name. The light database leaves more proteins as hypothetical than the full one."
 - id: prokka-mgenitalium-g37-gff3
-  label: "Prokka GFF3, Mycoplasma genitalium G37 (NC_000908.2)"
+  label: "Prokka GFF3, Mycoplasmoides genitalium G37 (NC_000908.2)"
   tier: "vendored"
   path: "corpus/sources/prokka/Mycoplasma_genitalium_G37_NC_000908.2_prokka-1.15.6.gff"
   format: "GFF3"
@@ -2323,9 +2323,9 @@ entries:
   selection: "a Prokka GFF3 with an embedded ##FASTA section, on the same genome as the Bakta files"
   retrieved: "2026-11-06"
   license: "CC0 for this output"
-  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasma genitalium G37, 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Prokka v1.15.6 (staphb/prokka:1.15.6) with --gcode 4."
+  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasmoides genitalium G37, formerly Mycoplasma genitalium, the name still used in the file names here; 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Prokka v1.15.6 (staphb/prokka:1.15.6) with --gcode 4."
 - id: prokka-mgenitalium-g37-genbank
-  label: "Prokka GenBank, Mycoplasma genitalium G37 (NC_000908.2)"
+  label: "Prokka GenBank, Mycoplasmoides genitalium G37 (NC_000908.2)"
   tier: "vendored"
   path: "corpus/sources/prokka/Mycoplasma_genitalium_G37_NC_000908.2_prokka-1.15.6.gbk"
   format: "GenBank"
@@ -2340,9 +2340,9 @@ entries:
   selection: "the same Prokka run as its GFF3, for interconversion"
   retrieved: "2026-11-06"
   license: "CC0 for this output"
-  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasma genitalium G37, 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Prokka v1.15.6 (staphb/prokka:1.15.6) with --gcode 4."
+  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasmoides genitalium G37, formerly Mycoplasma genitalium, the name still used in the file names here; 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Prokka v1.15.6 (staphb/prokka:1.15.6) with --gcode 4."
 - id: prokka-mgenitalium-g37-tbl
-  label: "Prokka feature table (.tbl), Mycoplasma genitalium G37 (NC_000908.2)"
+  label: "Prokka feature table (.tbl), Mycoplasmoides genitalium G37 (NC_000908.2)"
   tier: "vendored"
   path: "corpus/sources/prokka/Mycoplasma_genitalium_G37_NC_000908.2_prokka-1.15.6.tbl"
   format: "NCBI feature table"
@@ -2357,7 +2357,7 @@ entries:
   selection: "the same Prokka run as its GFF3, for interconversion"
   retrieved: "2026-11-06"
   license: "CC0 for this output"
-  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasma genitalium G37, 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Prokka v1.15.6 (staphb/prokka:1.15.6) with --gcode 4."
+  notes: "Produced in this repository on 2026-11-06 by scripts/annotate_with_bakta_and_prokka.py from the NCBI RefSeq sequence NC_000908.2 (Mycoplasmoides genitalium G37, formerly Mycoplasma genitalium, the name still used in the file names here; 580,076 bp, translation table 4), run in Docker on an Apple M5 Max under linux/amd64 emulation. Prokka v1.15.6 (staphb/prokka:1.15.6) with --gcode 4."
 tier_counts:
   vendored: 74
   linked: 24
