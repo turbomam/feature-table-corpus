@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v7
+      # Installs the version in .python-version, which every uv run below uses.
+      - name: Install Python from .python-version
+        run: uv python install
 
       - name: Index invariants and vendored checksums
         run: uv run --with pyyaml python scripts/verify.py
@@ -156,7 +159,7 @@ jobs:
       # first makes additions, deletions and modifications all visible.
       - name: Derived fixtures reproduce exactly
         run: |
-          python3 scripts/make_malformed.py
+          uv run python3 scripts/make_malformed.py
           git add -A -- corpus/fixtures/malformed corpus/fixtures/edge-cases
           git diff --cached --exit-code --stat -- corpus/fixtures/malformed corpus/fixtures/edge-cases
           test "$(ls corpus/fixtures/malformed | wc -l)" -eq 6
@@ -171,6 +174,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v7
+      # Installs the version in .python-version, which every uv run below uses.
+      - name: Install Python from .python-version
+        run: uv python install
       - uses: extractions/setup-just@v3
         with:
           just-version: '1.58.0'

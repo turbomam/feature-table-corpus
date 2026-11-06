@@ -26,6 +26,9 @@ jobs:
           # Empty means the triggering ref, which is what PR previews need.
           ref: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && 'main' || '' }}
       - uses: astral-sh/setup-uv@v7
+      # Installs the version in .python-version, which every uv run below uses.
+      - name: Install Python from .python-version
+        run: uv python install
       - uses: extractions/setup-just@v3
         with:
           just-version: '1.58.0'

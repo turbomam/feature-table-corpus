@@ -37,7 +37,7 @@ at the old paths. Commands below run from the repository root.
 
 ## Running tasks
 
-Use Python 3.11 or later, `uv`, and `just` 1.27 or later. The justfile uses
+Use `uv` and `just` 1.27 or later. uv runs the recipes on the Python in `.python-version` (3.14, the version CI tests on) and installs it if needed; the code itself supports Python 3.11 or later. The justfile uses
 [groups and explicit help descriptions](https://just.systems/man/en/attributes.html)
 to keep the command list readable. Run `just` or `just --list` from the repository
 root; `just --show RECIPE` displays a task's implementation. Named defaults such as

@@ -14,7 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v7
-        with:
-          python-version: '3.12'
+      # Installs the version in .python-version, which every uv run below uses.
+      - name: Install Python from .python-version
+        run: uv python install
       - name: Profile accounting and negative controls (offline)
         run: uv run --with linkml-runtime python -m unittest discover -s tests -p 'test_nmdc_profile.py' -v

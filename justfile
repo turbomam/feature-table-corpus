@@ -91,7 +91,7 @@ verify-links:
 [doc("Regenerate the nine tracked derived corpus fixtures.")]
 [group("Corpus")]
 fixtures-generate:
-    python3 scripts/make_malformed.py
+    uv run python3 scripts/make_malformed.py
 
 [doc("Install checksum-pinned GenomeTools and GFF3toolkit in local/. AGAT is blocked; see the report.")]
 [group("Corpus")]
@@ -100,7 +100,7 @@ validity-install: validity-install-genometools validity-install-gff3toolkit
 [doc("Install checksum-pinned GenomeTools in local/.")]
 [group("Corpus")]
 validity-install-genometools:
-    uv run --python '>=3.11.8' python scripts/install_genometools.py
+    uv run python scripts/install_genometools.py
 
 [doc("Install checksum-pinned GFF3toolkit QC in local/ with Python 3.11.15.")]
 [group("Corpus")]
@@ -218,25 +218,25 @@ query-neighbors seqid position db=duckdb_path *options:
 [group("Source documents")]
 source-parse input format output *options:
     source_input="$1"; source_format="$2"; source_output="$3"; shift 3; \
-        python3 scripts/source_document.py parse "$source_input" --format "$source_format" --output "$source_output" "$@"
+        uv run python3 scripts/source_document.py parse "$source_input" --format "$source_format" --output "$source_output" "$@"
 
 [doc("Check consistency; add --original PATH for source comparison.")]
 [group("Source documents")]
 source-validate input *options:
-    python3 scripts/source_document.py validate "$@"
+    uv run python3 scripts/source_document.py validate "$@"
 
 [doc("Replay to a new file; optionally compare with --original PATH.")]
 [group("Source documents")]
 source-replay input output *options:
     source_input="$1"; source_output="$2"; shift 2; \
-        python3 scripts/source_document.py replay "$source_input" --output "$source_output" "$@"
+        uv run python3 scripts/source_document.py replay "$source_input" --output "$source_output" "$@"
 
 # For another example, supply its matching original as the second argument.
 [doc("Check SourceDocument shape and agreement with its original.")]
 [group("Source documents")]
 validate-source-example example=source_example original=source_original:
     uv run --with linkml --with jsonschema python3 scripts/validate_closed.py model/schema/source_document.yaml "$1" SourceDocument
-    python3 scripts/source_document.py validate "$1" --original "$2"
+    uv run python3 scripts/source_document.py validate "$1" --original "$2"
 
 # ---- NMDC analysis (explicit tasks; never dependencies of check) -------------
 
@@ -254,7 +254,7 @@ nmdc-render work=nmdc_work output=nmdc_report:
 [doc("Sample live GFF candidates into local/ for inspection.")]
 [group("NMDC")]
 nmdc-sample:
-    python3 scripts/harvest_nmdc.py
+    uv run python3 scripts/harvest_nmdc.py
 
 # ---- JGI files that need a login -------------------------------------------
 
@@ -458,19 +458,19 @@ conversion-check:
 [doc("Build the public documentation and check local links.")]
 [group("Documentation")]
 docs-build:
-    uv run --python '>=3.11.8' python scripts/prepare_docs.py
-    uv run --python '>=3.11.8' --with linkml==1.12.1 python scripts/schema_docs.py
+    uv run python scripts/prepare_docs.py
+    uv run --with linkml==1.12.1 python scripts/schema_docs.py
     uv run --with-requirements requirements-docs.txt mkdocs build --strict
-    uv run --python '>=3.11.8' python scripts/check_site.py
+    uv run python scripts/check_site.py
 
 [doc("Check links and fragments in the already built documentation.")]
 [group("Documentation")]
 docs-check:
-    uv run --python '>=3.11.8' python scripts/check_site.py
+    uv run python scripts/check_site.py
 
 [doc("Stage and preview documentation on a chosen loopback port.")]
 [group("Documentation")]
 docs-serve port="8765":
-    uv run --python '>=3.11.8' python scripts/prepare_docs.py
-    uv run --python '>=3.11.8' --with linkml==1.12.1 python scripts/schema_docs.py
+    uv run python scripts/prepare_docs.py
+    uv run --with linkml==1.12.1 python scripts/schema_docs.py
     uv run --with-requirements requirements-docs.txt mkdocs serve --dev-addr "127.0.0.1:$1"
