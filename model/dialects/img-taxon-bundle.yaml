@@ -26,7 +26,7 @@ comments:
     `106476.assembled.gff` in the Bacillus bundle is not this dialect. It is the IMG pipeline
     4.14.0 output that the taxon GFF was loaded from: strand is written 1 and -1, sources are the
     calling tools, types include misc_bind and misc_feature, and IDs are <seqid>.<n>. See
-    docs/conversion-profiles.md.
+    docs/img-dialects.md.
 license: https://creativecommons.org/publicdomain/zero/1.0/
 prefixes:
   linkml: https://w3id.org/linkml/

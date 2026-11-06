@@ -65,6 +65,8 @@ nav:
       - NMDC source sampling: analyses/nmdc-selection/README.md
   - Conversion and validation:
       - Conversion profiles: docs/conversion-profiles.md
+      - IMG dialects: docs/img-dialects.md
+      - Phytozome dialects: docs/phytozome-dialects.md
       - Round-trip evidence: analyses/conversion-roundtrips/README.md
       - Converted BED12: model/examples/conversions/README.md
       - Parsed source document: model/examples/source-documents/README.md
