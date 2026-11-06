@@ -9,7 +9,7 @@ The model and conversion profiles are drafts; source-specific observations are e
 ## Start here
 
 1. [GFF validation and splitting: start here](docs/gff-validation-start-here.md) is for anyone picking up the GFF validator or the fast first-pass splitter. It lists the file kinds in this repository and the specification each one follows, and which lines of a file reach DuckDB today.
-2. [How the pieces fit](docs/how-it-fits.md) shows how the feature model, its converters, the NMDC pipeline in [nmdc-lakehouse](https://github.com/microbiomedata/nmdc-lakehouse), BERDL and the BER central schema connect, and which version each depends on. [Overlaps and conflicts](docs/overlaps-and-conflicts.md) lists where other people's schemas and tables duplicate or disagree with the model.
+2. [How the pieces fit](docs/how-it-fits.md) shows how the feature model, its converters, the NMDC pipeline in [nmdc-lakehouse](https://github.com/microbiomedata/nmdc-lakehouse), BERDL and the BER central schema connect, and which version each depends on. [Overlaps and conflicts](docs/how-it-fits.md#overlaps-and-conflicts) lists where other people's schemas and tables duplicate or disagree with the model.
 3. The [repository map](docs/repository-map.md) explains artifact roles and reproduction, and the [layout decision](docs/decisions/001-artifact-layout.md) records the directory reorganization.
 
 Then, depending on what you need:

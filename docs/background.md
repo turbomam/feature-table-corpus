@@ -1,6 +1,6 @@
 # Background: prior art, reading, and scope
 
-What existed before this corpus, what a feature table should be expected to cover, and what to read across formats. The [model comparison](model-comparison.md) compares the four existing models decision by decision. For the running list of overlaps and conflicts with other people's current work, including BRIDGE, KBase CDM and nmdc-lakehouse, see [overlaps and conflicts](overlaps-and-conflicts.md).
+What existed before this corpus, what a feature table should be expected to cover, and what to read across formats. The [model comparison](model-comparison.md) compares the four existing models decision by decision. For the running list of overlaps and conflicts with other people's current work, including BRIDGE, KBase CDM and nmdc-lakehouse, see [overlaps and conflicts](how-it-fits.md#overlaps-and-conflicts).
 
 ## Prior art
 

@@ -17,4 +17,4 @@ See docs/downstream-copies.md. Otherwise write "None". -->
 
 ## Documentation impact
 
-<!-- Pages added or changed, and whether docs/overlaps-and-conflicts.md needs a row. -->
+<!-- Pages added or changed, and whether the overlaps and conflicts section of docs/how-it-fits.md needs a row. -->

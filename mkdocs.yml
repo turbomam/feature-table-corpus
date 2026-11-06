@@ -42,7 +42,6 @@ nav:
       - How the pieces fit: docs/how-it-fits.md
       - Repository map: docs/repository-map.md
       - Repository overview: overview.md
-      - Overlaps and conflicts: docs/overlaps-and-conflicts.md
       - Downstream copies: docs/downstream-copies.md
   - The model:
       - Schemas: index.md
