@@ -91,10 +91,11 @@ class PackageTests(unittest.TestCase):
         self.assertTrue(any("duplicate" in error.lower() for error in json.loads(result.stdout)), result.stdout)
 
     def test_installed_function_reports_deep_nesting_without_a_traceback(self):
-        # Deeper than jsonschema can follow on any supported Python; a loader would refuse it,
-        # but data built in memory never passes through one.
+        # Deeper than json.dumps or jsonschema can follow on any supported Python; a loader would
+        # refuse it, but data built in memory never passes through one. Python 3.14 bounds C
+        # recursion by stack size, and copes with 10,000 levels, so this uses a million.
         script = ("import ber_feature_model as m; v = []; "
-                  "exec('for _ in range(10000): v = [v]'); "
+                  "exec('for _ in range(1_000_000): v = [v]'); "
                   "print(m.validate({'contigs': [{'contig_id': 'c1', 'member_of': v}]}))")
         result = subprocess.run(["uv", "run", "--no-project", "--isolated", "--with", str(self.wheel),
                                  "python", "-c", script], capture_output=True, text=True, cwd=self.tmp.name)

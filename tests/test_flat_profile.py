@@ -199,7 +199,8 @@ class FlatProfileTests(unittest.TestCase):
             flat_profile.flatten({"extra": deep}, self.tables)
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "deep.json"
-            path.write_text("[" * 100000 + "]" * 100000)
+            # Python 3.14's json reads 100,000 levels (its limit is the C stack); a million is past it.
+            path.write_text("[" * 1_000_000 + "]" * 1_000_000)
             out, err = io.StringIO(), io.StringIO()
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
                 self.assertEqual(flat_profile.main(["roundtrip", str(path)]), 1)

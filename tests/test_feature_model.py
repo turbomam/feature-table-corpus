@@ -159,9 +159,11 @@ class ValidationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, rf"data\[0\].*\.\.\.\({depth - 10} more\)\.\.\..*is not a finite number"):
                 _check_values(deep_inf)
             # Both loaders recurse; nesting past their limit is refused, not a traceback.
+            # Python 3.14's json limit is the C stack, not the recursion limit, and it reads
+            # 100,000 levels; a million is past it as well as past older Pythons' limit.
             for name in ("deep.json", "deep.yaml"):
                 deep = Path(tmp) / name
-                deep.write_text("[" * 100000 + "]" * 100000)
+                deep.write_text("[" * 1_000_000 + "]" * 1_000_000)
                 with self.assertRaisesRegex(ValueError, "nested too deeply to load"):
                     load_data(deep)
                 result = subprocess.run([sys.executable, str(ROOT / "scripts/validate_closed.py"),
