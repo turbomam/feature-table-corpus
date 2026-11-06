@@ -442,6 +442,19 @@ map-phytozome-gff3-back input output *header:
 map-phytozome-gff3-roundtrip input:
     uv run --with-requirements requirements-mapping.txt python3 scripts/phytozome_gene_exons_map.py roundtrip "$1"
 
+# Empty reference keeps the prototype's default, file:<name>.
+[doc("Split one GFF3 into local/split-gff/<name>.duckdb with the prototype; profile is generic, ncbi or prodigal.")]
+[group("Conversions")]
+split-gff input profile="generic" reference="":
+    mkdir -p local/split-gff
+    uv run --with-requirements requirements-conversion.txt --with duckdb python3 scripts/split_gff_prototype.py "$1" "local/split-gff/$(basename "$1").duckdb" --metadata-profile "$2" ${3:+--reference-context "$3"}
+
+# Each run is a fresh process; the README in analyses/splitter-baseline/ records the results.
+[doc("Time the GFF reader and split prototype on the baseline files; options go to scripts/benchmark_gff_split.py.")]
+[group("Conversions")]
+benchmark-gff-split *options:
+    uv run --python 3.11 --with-requirements requirements-conversion.txt --with-requirements requirements-mapping.txt --with duckdb python3 scripts/benchmark_gff_split.py "$@"
+
 [doc("Export exact bytes or reconstruct fields; refuse edited bundles.")]
 [group("Conversions")]
 conversion-export input output mode="exact" *options:
