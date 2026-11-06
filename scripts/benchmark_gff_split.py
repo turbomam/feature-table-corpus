@@ -137,17 +137,36 @@ def machine():
             "date": datetime.date.today().isoformat()}
 
 
+def file_size_and_lines(path, chunk_size=1 << 20):
+    """Byte size and bytes.splitlines() line count, read in chunks so the controller never holds the file.
+
+    On Linux a child's ru_maxrss can start at the controller's resident size, so holding a whole input here
+    could raise every reported peak.
+    """
+    breaks = 0
+    last = b""
+    with open(path, "rb") as handle:
+        while chunk := handle.read(chunk_size):
+            breaks += chunk.count(b"\n") + chunk.count(b"\r") - chunk.count(b"\r\n")
+            if last == b"\r" and chunk.startswith(b"\n"):
+                breaks -= 1
+            last = chunk[-1:]
+    return os.stat(path).st_size, breaks + (1 if last and last not in b"\r\n" else 0)
+
+
 def benchmark(cases, repeats, work_dir, roundtrip=None):
+    # Children run with cwd=ROOT, so a relative --work-dir must be resolved against the caller's cwd here.
+    work_dir = Path(work_dir).resolve()
     work_dir.mkdir(parents=True, exist_ok=True)
     report = {"machine": machine(), "repeats": repeats, "files": []}
     for path, profile in cases:
         path = Path(path)
-        content = (path if path.is_absolute() else ROOT / path).read_bytes()
+        size, lines = file_size_and_lines(path if path.is_absolute() else ROOT / path)
         parse = [measure("parse", path, profile, work_dir) for _ in range(repeats)]
         split = [measure("split", path, profile, work_dir) for _ in range(repeats)]
         report["files"].append({
-            "file": path.as_posix(), "profile": profile, "bytes": len(content),
-            "lines": len(content.splitlines()),
+            "file": path.as_posix(), "profile": profile, "bytes": size,
+            "lines": lines,
             "parse_s": median_of(parse, "seconds"), "split_s": median_of(split, "seconds"),
             "parse_peak_mb": median_of(parse, "peak_rss_mb"), "split_peak_mb": median_of(split, "peak_rss_mb"),
             "split_peak_mb_after_imports": median_of(split, "peak_rss_mb_after_imports"),
