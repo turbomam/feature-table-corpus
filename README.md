@@ -40,6 +40,7 @@ and the [per-case preservation report](analyses/conversion-roundtrips/README.md)
 The GFF3, BED12, [NMDC Pfam](docs/protein-relative-profile.md) and [INSDC location](docs/feature-locations.md) profiles separately test exact byte recovery and reconstruction
 from mapped fields, with unsupported cases reported explicitly. The corpus now
 also includes [pinned BED12 and INSDC plant examples](corpus/sources/biopython/README.md).
+[Validating GFF3 with LinkML's validator](docs/linkml-gff-validation.md) runs the GFF3 profile as a LinkML loader, with a validation plugin for the cross-record checks.
 
 The [actinorhodin BGC exercise](analyses/bgc-query/README.md) connects retained
 RefSeq source evidence to genomic gene order, annotation lookup, signed distances
