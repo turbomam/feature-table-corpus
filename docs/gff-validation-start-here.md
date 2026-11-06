@@ -20,12 +20,14 @@ Counts are entries in `corpus/index.yaml` on main; some entries are links to fil
 | NCBI RefSeq GFF3 | `corpus/sources/ncbi-refseq/` | SO GFF3 1.26 plus NCBI's dialect, including `#!` header lines | `gff3-contig` profile, `--metadata-profile ncbi` |
 | NCBI RefSeq viral GFF3, chosen by @simroux | `corpus/sources/ncbi-refseq/`, listed in the README section "The vendored files" | as above | `gff3-contig`; circular genomes and one CDS ID on several rows are refused (https://github.com/turbomam/feature-table-corpus/issues/181, https://github.com/turbomam/feature-table-corpus/issues/175, https://github.com/turbomam/feature-table-corpus/issues/179) |
 | NCBI RefSeq GTF | `corpus/sources/ncbi-refseq/` | GTF 2.2 | read by `scripts/source_document.py` only; no conversion profile |
-| NMDC GFF3 (JGI IMG annotation pipeline output) | `corpus/sources/nmdc/` | GFF3 as written by the IMG pipeline; 33 of the 37 IMG and NMDC GFF files have no `##gff-version` line | `gff3-contig`; Pfam protein-coordinate hits through `nmdc-pfam-protein` ([protein-coordinates.md](protein-coordinates.md)) |
+| NMDC GFF3 in contig coordinates (JGI IMG annotation pipeline output, such as `_structural_annotation`, `_functional_annotation` and `_prodigal`) | `corpus/sources/nmdc/` | GFF3 as written by the IMG pipeline; 33 of the 37 IMG and NMDC GFF files have no `##gff-version` line | `gff3-contig`; `--metadata-profile prodigal` for the Prodigal file |
+| NMDC and IMG per-method hit files (`_pfam`, `_cog`, `_ko_ec`, `_tigrfam`, `_smart`, `_supfam`, `_cath_funfam`) | `corpus/sources/nmdc/`, `corpus/sources/jgi-img/` | the IMG per-method dialect: column 1 is a gene ID and columns 4 and 5 are amino-acid positions in that gene's protein | not `gff3-contig`, which would read the protein positions as contig positions; `just map-img-per-method` with the matching functional-annotation file, and Pfam also through `nmdc-pfam-protein` ([protein-coordinates.md](protein-coordinates.md)) |
 | JGI IMG per-method, functional, assembled, TMHMM/SignalP and taxon-bundle GFF and TSV | `corpus/sources/jgi-img/` | the IMG dialects in `model/dialects/` | dialect mapping scripts (`just map-img-*`), described in [conversion-profiles.md](conversion-profiles.md) |
 | Phytozome `gene_exons` GFF3 and `annotation_info` TSV | restricted; derived excerpts in `corpus/derived-examples/` and a constructed fixture in `tests/fixtures/phytozome/` | the Phytozome dialects in `model/dialects/` | `just` Phytozome mapping recipes; TAIR10 is never vendored ([restricted-sources.md](restricted-sources.md)) |
 | BED12 | `corpus/sources/biopython/` | BED version 1 | `bed12-blocks` profile |
 | GenBank flat file | `corpus/sources/biopython/`, `corpus/sources/ncbi-refseq/` | INSDC Feature Table Definition | `insdc-locations` profile, which handles joins and origin-crossing locations |
-| Constructed invalid or refused GFF3 | `corpus/derived-examples/`, `tests/fixtures/` | one documented change each from a real file; see the `validity` field in `corpus/index.yaml` | negative tests |
+| Malformed and edge-case GFF3, each one documented change from a real file | `corpus/fixtures/malformed/`, `corpus/fixtures/edge-cases/` | the `validity` field in `corpus/index.yaml` says whether each is invalid GFF3 or valid but refused | negative tests |
+| Conversion refusal controls, written from scratch rather than changed from a real file | `tests/fixtures/conversions/` | its README | profile refusal tests |
 | JGI SMC (Secondary Metabolite Collaboratory) GFF3 | linked only | SMC's own output | not imported yet |
 
 ## Specifications and reference implementations
@@ -52,7 +54,7 @@ For files that go through `gff3-contig`, each line kind ends up in one of three 
 | `##gff-version` | no | must say 3 if present | yes |
 | `##sequence-region` | only as `contig.length_bp`, under `--metadata-profile ncbi`, when a contig has exactly one region starting at 1 | every feature must fall inside its declared region | yes |
 | other `##` directives, such as `##species` or `##genome-build` | no | | yes |
-| `#` comments | no | Prodigal's `# Sequence Data` lines set a length check on the features that follow | yes |
+| `#` comments | no | with `--metadata-profile prodigal` only, Prodigal's `# Sequence Data` lines set a length check on the features that follow; the default `generic` profile doesn't read them | yes |
 | NCBI `#!` header lines | no | | yes, parsed as named metadata under `--metadata-profile ncbi` |
 | `###` sync marks | no | nothing checks that no Parent crosses one | yes |
 | `##FASTA` and the embedded FASTA section | no | | yes; contig lengths are not taken from it yet (https://github.com/turbomam/feature-table-corpus/issues/124) |
