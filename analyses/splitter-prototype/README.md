@@ -38,3 +38,7 @@ From the review of established GFF tools, a review of how established GFF tools 
 3. A choice among the sequence stores https://github.com/turbomam/feature-table-corpus/issues/185 lists (bgzipped FASTA with `.fai`, 2bit, or a Parquet sequence table) in place of the `biosequence` table.
 4. The nine GFF columns as typed columns in `feature_record`, as every Arrow reader stores them.
 5. A decision on FASTA lines that contain spaces. The reader `scripts/source_document.py` accepts a line such as `AC GT` as sequence without a warning, and its `sequence_text` is `ACGT` with the space removed. The prototype builds residues and length from `sequence_text` and keeps the raw line for the rebuild.
+
+## DuckDB output
+
+The four databases are in `analyses/splitter-prototype/duckdb/`, built with the DuckDB Python package 1.5.5. Each is also exported as text with DuckDB's `EXPORT DATABASE ... (FORMAT csv)` in `analyses/splitter-prototype/duckdb-export/<name>/`: `schema.sql`, `load.sql` and one CSV per table. `IMPORT DATABASE 'analyses/splitter-prototype/duckdb-export/<name>'` rebuilds a database from the text in any DuckDB version that reads these files.

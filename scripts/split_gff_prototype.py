@@ -41,6 +41,14 @@ SOURCE_SCHEMA = ROOT / "model/schema/source_document.yaml"
 SEQUENCE_KINDS = {"fasta_header", "fasta_sequence"}
 
 
+def source_uri(path):
+    """The repository URL for a file inside this repository, so outputs carry no local path."""
+    path = path.resolve()
+    if path.is_relative_to(ROOT):
+        return "https://github.com/turbomam/feature-table-corpus/blob/main/" + path.relative_to(ROOT).as_posix()
+    return path.as_uri()
+
+
 def sequences(records):
     """Group FASTA records into one row per sequence, keeping what an exact rewrite needs.
 
@@ -122,7 +130,7 @@ def main():
     times = {}
 
     start = time.perf_counter()
-    document = parse_bytes(content, source_uri=args.gff3.resolve().as_uri(), format="gff3", profile=args.metadata_profile)
+    document = parse_bytes(content, source_uri=source_uri(args.gff3), format="gff3", profile=args.metadata_profile)
     times["parse_s"] = time.perf_counter() - start
 
     start = time.perf_counter()
@@ -137,7 +145,7 @@ def main():
     start = time.perf_counter()
     try:
         bundle = import_source(content, profile="gff3-contig/4.0.0", reference_context=args.reference_context
-                               or f"file:{args.gff3.name}", source_uri=args.gff3.resolve().as_uri(),
+                               or f"file:{args.gff3.name}", source_uri=source_uri(args.gff3),
                                metadata_profile=args.metadata_profile)
         dataset = bundle["dataset"]
     except ConversionError as error:
