@@ -95,6 +95,20 @@ Neither slot is read by export, so exact and reconstructed bytes do not change. 
 
 These versions support **unmodified imported instances**. Changes to modeled fields, attributes, block relationships, preservation records or mappings are rejected in both export modes. There is no precedence rule that silently overwrites an edit, and no implemented lossy or edited-instance export mode. Conversion/data errors return status 2 with a JSON diagnostic; command-usage errors use standard argparse help. Existing source/output files are never overwritten.
 
+## Contig collections
+
+No profile reads a genome from its source, so `import` writes no `ContigCollection` on its own. To put a genome's contigs in one, pass `--collection-id` and, optionally, `--collection-type` (a `ContigCollectionTypeEnum` value such as `isolate` or `virus`), `--collection-name` and `--taxonomic-lineage` once per rank, domain to strain. `import` then writes that one collection and sets `member_of` on every contig. The values come from the caller, for example the organism's record in GOLD (the JGI Genomes OnLine Database), not from the source file. The bundle keeps them under `collection`, so validation and export repeat the same import. Exact export still returns the source bytes, and reconstructed export is the same as without a collection. Without these options the bundle is unchanged. The `nmdc-pfam-protein` profile refuses them, because its contigs come from the JSON passed with `--protein-context`.
+
+```sh
+just conversion-import \
+  corpus/sources/jgi-img/IMG_AP-1268149/Ga0423362_structural_annotation.gff \
+  gff3-contig/4.0.0 img:IMG_AP-1268149 local/conversions/dj311.json \
+  --collection-id Ga0423362 --collection-type isolate \
+  --collection-name "Clostridium acetobutylicum DJ311" \
+  --taxonomic-lineage Bacteria --taxonomic-lineage Bacillati --taxonomic-lineage BACILLOTA \
+  --taxonomic-lineage Clostridium --taxonomic-lineage "Clostridium acetobutylicum" --taxonomic-lineage DJ311
+```
+
 ## Reproduce the two guarantees
 
 Use Python 3.11+, uv and just 1.27+. The conversion commands and regression suite use [pinned dependencies](../requirements-conversion.txt): LinkML 1.11.1, jsonschema 4.26.0, PyYAML 6.0.3, rfc3987 1.3.8 and Biopython 1.85. Use new output paths:

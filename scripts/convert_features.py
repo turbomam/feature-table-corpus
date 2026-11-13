@@ -283,14 +283,47 @@ def protein_feature(columns, record_id, bindings):
     return rows, mapping
 
 
+COLLECTION_KEYS = ("collection_id", "collection_type", "name", "taxonomic_lineage")
+
+
 def import_source(content, *, profile, reference_context, source_uri, metadata_profile="generic", protein_context=None,
-                  check_dataset=True):
+                  check_dataset=True, collection=None):
     """Import a source as a conversion bundle; ConversionError when the profile refuses it.
 
     check_dataset=False skips only the final closed Dataset check, so a caller such as
     scripts/linkml_gff3_loader.py can hand the unvalidated Dataset to LinkML's Validator.
     Every row-level and source-level refusal still applies.
+
+    collection, when given, is one ContigCollection supplied by the caller (none of its values come
+    from the source): it is written to the Dataset, every contig's member_of names it, and the
+    bundle keeps it under "collection" so validation and export can repeat the same import.
+    Without it the bundle is unchanged.
     """
+    bundle = import_without_collection(content, profile=profile, reference_context=reference_context,
+                                       source_uri=source_uri, metadata_profile=metadata_profile,
+                                       protein_context=protein_context, check_dataset=check_dataset)
+    if collection is None:
+        return bundle
+    require(isinstance(collection, dict) and set(collection) <= set(COLLECTION_KEYS), "collection",
+            f"collection keys must be among {', '.join(COLLECTION_KEYS)}")
+    require(isinstance(collection.get("collection_id"), str) and collection["collection_id"].strip(), "collection",
+            "a collection needs a nonempty collection_id")
+    require(profile != PROTEIN, "collection", "the protein profile takes its contigs from the protein context")
+    dataset = bundle["dataset"]
+    require(not dataset.get("contig_collections") and not any(c.get("member_of") for c in dataset["contigs"]),
+            "collection", "the imported Dataset already has contig collections")
+    dataset["contig_collections"] = [deepcopy(collection)]
+    for contig in dataset["contigs"]:
+        contig["member_of"] = [collection["collection_id"]]
+    if check_dataset:
+        errors = validation_errors(dataset, dataset_validator())
+        require(not errors, "dataset-invalid", "; ".join(errors))
+    bundle["collection"] = deepcopy(collection)
+    return bundle
+
+
+def import_without_collection(content, *, profile, reference_context, source_uri, metadata_profile, protein_context,
+                              check_dataset):
     require(profile in PROFILES, "unsupported-profile", f"no executable conversion profile {profile!r}")
     require(isinstance(reference_context, str) and reference_context.strip(),
             "reference-context", "supply an assembly or source-scoped reference context explicitly")
@@ -467,7 +500,7 @@ def validate_bundle(bundle, original_bytes=None, *, protein_context=None):
         content = replay_bytes(source, original_bytes=original_bytes)
         expected = import_source(content, profile=bundle["profile"], reference_context=bundle["reference_context"],
                                  source_uri=source["artifact"]["uri"], metadata_profile=source["profile"],
-                                 protein_context=protein_context)
+                                 protein_context=protein_context, collection=bundle.get("collection"))
         require(json.dumps(bundle, sort_keys=True) == json.dumps(expected, sort_keys=True),
                 "edited-bundle", "bundle differs from its imported projection; edited-instance export is not supported")
         return content
@@ -512,6 +545,17 @@ def export_source(bundle, *, mode, original_bytes=None, protein_context=None):
     return result
 
 
+def collection_from_args(args):
+    """The ContigCollection named on the command line, or None when no collection option is given."""
+    values = {"collection_id": args.collection_id, "collection_type": args.collection_type,
+              "name": args.collection_name, "taxonomic_lineage": args.taxonomic_lineage}
+    values = {key: value for key, value in values.items() if value is not None}
+    if not values:
+        return None
+    require("collection_id" in values, "collection", "--collection-id is required with the other collection options")
+    return values
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -523,6 +567,11 @@ def main():
     load.add_argument("--source-uri")
     load.add_argument("--protein-context", type=Path, help="Explicit JSON protein-to-CDS context for the NMDC Pfam profile")
     load.add_argument("--output", type=Path, required=True)
+    load.add_argument("--collection-id", help="Write one ContigCollection with this id and put every contig in it")
+    load.add_argument("--collection-type", help="ContigCollectionTypeEnum value, for example isolate or virus")
+    load.add_argument("--collection-name", help="ContigCollection name, for example an organism and strain")
+    load.add_argument("--taxonomic-lineage", action="append",
+                      help="One rank of the ContigCollection lineage, domain to strain; repeat in order")
     dump = commands.add_parser("export")
     dump.add_argument("input", type=Path)
     dump.add_argument("--mode", choices=("exact", "reconstruct"), required=True)
@@ -538,7 +587,8 @@ def main():
             bundle = import_source(args.input.read_bytes(), profile=args.profile,
                                    reference_context=args.reference_context, metadata_profile=args.metadata_profile,
                                    source_uri=args.source_uri or args.input.resolve().as_uri(),
-                                   protein_context=json.loads(args.protein_context.read_text()) if args.protein_context else None)
+                                   protein_context=json.loads(args.protein_context.read_text()) if args.protein_context else None,
+                                   collection=collection_from_args(args))
             write_new(args.output, (json.dumps(bundle, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
         else:
             bundle = json.loads(args.input.read_text(encoding="utf-8"))
