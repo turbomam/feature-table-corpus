@@ -322,6 +322,16 @@ def import_source(content, *, profile, reference_context, source_uri, metadata_p
     return bundle
 
 
+def without_collection(bundle):
+    """A copy of bundle as imported without its caller-supplied collection."""
+    plain = deepcopy(bundle)
+    if plain.pop("collection", None) is not None:
+        del plain["dataset"]["contig_collections"]
+        for contig in plain["dataset"]["contigs"]:
+            del contig["member_of"]
+    return plain
+
+
 def import_without_collection(content, *, profile, reference_context, source_uri, metadata_profile, protein_context,
                               check_dataset):
     require(profile in PROFILES, "unsupported-profile", f"no executable conversion profile {profile!r}")
@@ -513,7 +523,8 @@ def export_source(bundle, *, mode, original_bytes=None, protein_context=None):
     content = validate_bundle(bundle, original_bytes, protein_context=protein_context)
     if bundle["profile"] == "insdc-locations/1.0.0":
         from insdc_profile import reconstruct_document
-        reconstructed = reconstruct_document(bundle)
+        # The GenBank check reimports the reconstructed text, which carries no collection.
+        reconstructed = reconstruct_document(without_collection(bundle))
         return content if mode == "exact" else reconstructed
     by_id = {f["feature_id"]: f for f in bundle["dataset"]["features"]}
     mappings = {m["record_id"]: m for m in bundle["mappings"]}

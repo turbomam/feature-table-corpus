@@ -70,6 +70,16 @@ class ContigCollectionImportTests(unittest.TestCase):
             validate_bundle(edited, self.content)
         self.assertEqual(caught.exception.code, "edited-bundle")
 
+    def test_genbank_exports_with_a_collection(self):
+        source = ROOT / "corpus/sources/ncbi-refseq/NC_001422.1_2026-09-21.gb"
+        content = source.read_bytes()
+        bundles = [import_source(content, profile="insdc-locations/1.0.0", reference_context="refseq:NC_001422.1",
+                                 source_uri="urn:ftc:contig-collection-test", collection=collection)
+                   for collection in (None, {"collection_id": "NC_001422.1", "collection_type": "isolate"})]
+        self.assertEqual(export_source(bundles[1], mode="exact", original_bytes=content), content)
+        self.assertEqual(export_source(bundles[1], mode="reconstruct", original_bytes=content),
+                         export_source(bundles[0], mode="reconstruct", original_bytes=content))
+
     def test_refusals(self):
         for collection, code in (({"name": "no id"}, "collection"),
                                  ({"collection_id": "x", "organism": "y"}, "collection"),
