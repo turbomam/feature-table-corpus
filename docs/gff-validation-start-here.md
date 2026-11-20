@@ -2,6 +2,8 @@
 
 This page is for anyone picking up the GFF validator or the fast first-pass splitter (https://github.com/turbomam/feature-table-corpus/issues/185). It lists the file kinds in this repository and the specification each one follows, the specifications and reference implementations the work depends on, and exactly which lines of a file reach DuckDB today. Everything here was read from the code on main (139d23e) on 2026-11-06; nothing on this page was newly measured.
 
+New to GFF itself? Read the ranked list in [references.md](references.md) first.
+
 ## The pipeline today
 
 1. `scripts/source_document.py` reads a GFF3, GTF, BED12 or GenBank file into ordered records, one per line, and can replay the file byte for byte. Details: [source-documents.md](source-documents.md).
