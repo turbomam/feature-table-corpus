@@ -22,7 +22,7 @@ Every link on this page returned HTTP 200 on 2026-11-20, except where a note say
    Two established GFF3 validators: `gt gff3validator` in GenomeTools and `gff3_QC` in GFF3toolkit.
 8. Current schema work elsewhere:
    - https://github.com/doe-bridge/bridge-central-schema/pull/5 adds the BER feature model to the BRIDGE central schema as an imported module (open on 2026-11-20).
-   - https://github.com/kbase/cdm-data-loaders/blob/main/src/cdm_data_loaders/schemas/gff/gff.schema.json is the GFF JSON Schema in KBase's data loaders. Its `required` list misspells `seqid` as `sequid` (https://github.com/kbase/cdm-data-loaders/issues/385).
+   - https://github.com/kbase/cdm-data-loaders/blob/develop/src/cdm_data_loaders/schemas/gff/gff.schema.json is the GFF JSON Schema in KBase's data loaders. Its `required` list misspells `seqid` as `sequid` (https://github.com/kbase/cdm-data-loaders/issues/385).
 
 ## Useful context
 
@@ -35,7 +35,7 @@ Every link on this page returned HTTP 200 on 2026-11-20, except where a note say
 - https://github.com/NBISweden/AGAT
   The broadest GFF and GTF toolkit. It checks and repairs files as it reads them. It is licensed GPL-3.0.
 - https://github.com/dathere/qsv
-  A command-line tool for tabular files that can check columns against a JSON Schema and set bad rows aside. AJ suggested it in #bridge-gff on 2026-10-16 for the first eight GFF columns. It cannot check links between rows, such as `Parent`.
+  A command-line tool for tabular files that can check columns against a JSON Schema and set bad rows aside. @ialarmedalien suggested it in the BRIDGE #bridge-gff Slack channel on 2026-10-16 for the first eight GFF columns. It cannot check links between rows, such as `Parent`. https://github.com/turbomam/feature-table-corpus/issues/200 tracks benchmarking it here.
 - https://github.com/biodatamodels/gff-schema, https://kbase.github.io/cdm-schema/Feature/ and https://laceysanderson.github.io/chado-docs/sequence/tables/feature.html
   Earlier models of a sequence feature: a draft LinkML GFF3 schema, the KBase CDM Feature class, and Chado. [model-comparison.md](model-comparison.md) compares them.
 
