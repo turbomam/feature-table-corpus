@@ -39,6 +39,7 @@ validation:
 nav:
   - Getting started:
       - Start here: docs/gff-validation-start-here.md
+      - Key references: docs/references.md
       - How the pieces fit: docs/how-it-fits.md
       - Repository map: docs/repository-map.md
       - Repository overview: overview.md
