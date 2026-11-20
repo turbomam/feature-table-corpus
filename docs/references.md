@@ -54,4 +54,4 @@ These were considered on 2026-11-20 and left off, so the choice is recorded:
 - <https://github.com/tao-bioinfo/gff3sort> only sorts files for tabix indexing, and its last push was 2020-06-27.
 - <https://github.com/chapmanb/bcbb> holds the Biopython GFF parser in one directory of a general-purpose repository.
 - <https://bioconductor.org/packages/release/bioc/html/rtracklayer.html> is an R package that nothing in this work has used.
-- <https://genometools.org/tools/gt_gff3validator.html>, the GenomeTools web validator, did not respond on 2026-11-20. The GenomeTools repository above is the stable link.
+- <https://genometools.org/tools/gt_gff3validator.html>, the GenomeTools manual page for `gt gff3validator`, did not respond on 2026-11-20. The same page is in the GenomeTools repository above, under `www/genometools.org/htdocs/tools/`.
